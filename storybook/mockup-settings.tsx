@@ -1,6 +1,9 @@
 // The mockup's global settings: what the Storybook toolbar switches for every screen at once.
 import { createContext, useContext } from "react";
 
+/** Whether a screen is drawn inside the console's window (bars, menu, status strip) or alone. */
+export type FrameMode = "full" | "content";
+
 /** Where a list screen opens the record a reader picked. */
 export type DetailPresentation = "panel" | "drawer" | "page";
 
@@ -10,6 +13,8 @@ export interface MockupSettings {
   colorTheme: string;
   mode: "light" | "dark";
   locale: string;
+  /** `full` draws the UI kit's window chrome around the screen; `content` draws the screen alone. */
+  frame: FrameMode;
 }
 
 export const MockupSettingsContext = createContext<MockupSettings | null>(null);

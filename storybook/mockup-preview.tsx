@@ -1,5 +1,5 @@
 // Storybook preview for a mockup root: the framework's providers, the active kit design, and a
-// toolbar of global settings (detail presentation, colour theme, mode, locale) that applies to
+// toolbar of global settings (detail presentation, colour theme, mode, frame, locale) that applies to
 // every screen at once.
 import type { Decorator, Preview } from "@storybook/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -10,13 +10,15 @@ import { createI18nConfig, type LocaleCode } from "@simplix-react/i18n";
 import { I18nProvider } from "@simplix-react/i18n/react";
 import { UIProvider } from "@simplix-react/ui";
 import design from "virtual:kit-design";
-import { type DetailPresentation, type MockupSettings, MockupSettingsContext } from "./mockup-settings";
+import { type DetailPresentation, type FrameMode, type MockupSettings, MockupSettingsContext } from "./mockup-settings";
 
 export interface MockupPreviewConfig {
   /** Locales the toolbar offers, the first being the default. */
   locales: LocaleCode[];
   /** The detail presentation a screen opens with. */
   detailPresentation?: DetailPresentation;
+  /** Whether a screen opens inside the console's window or alone; `full` when absent. */
+  frame?: FrameMode;
   /** Translations of the mockup's own copy, as `import.meta.glob("./locales/*\/*.json", { eager: true })` returns them. */
   appTranslations?: Record<string, unknown>;
   /**
@@ -54,6 +56,7 @@ export function createMockupPreview(config: MockupPreviewConfig): Preview {
       colorTheme: context.globals.colorTheme,
       mode: context.globals.mode === "dark" ? "dark" : "light",
       locale: context.globals.locale,
+      frame: context.globals.frame === "content" ? "content" : "full",
     };
     // The theme goes on <html>, as a product's theme hook puts it: a drawer, dialog or popover
     // portals to <body>, outside any wrapper, and must still take the theme and the mode.
@@ -106,6 +109,18 @@ export function createMockupPreview(config: MockupPreviewConfig): Preview {
           dynamicTitle: true,
         },
       },
+      frame: {
+        description: "The console's window around the screen, or the screen alone",
+        toolbar: {
+          title: "Frame",
+          icon: "browser",
+          items: [
+            { value: "full", title: "Frame: full window" },
+            { value: "content", title: "Frame: screen only" },
+          ],
+          dynamicTitle: true,
+        },
+      },
       locale: {
         description: "Locale",
         toolbar: { title: "Locale", icon: "globe", items: config.locales.map((code) => ({ value: code, title: code.toUpperCase() })), dynamicTitle: true },
@@ -116,6 +131,7 @@ export function createMockupPreview(config: MockupPreviewConfig): Preview {
       colorTheme: design.colorTheme,
       mode: "light",
       locale: config.locales[0],
+      frame: config.frame ?? "full",
     },
     // Storybook applies a story's decorators innermost-first, so the kit's frame sits inside the
     // settings, providers and theme this preview sets up.
