@@ -24,7 +24,8 @@ export function AuthLayout() {
         <DarkModeToggle />
       </Flex>
       <Stack gap="md" className="w-full max-w-sm">
-        {brand}
+        {/* The mark sits centred over the form whatever the product hands in. */}
+        <span className="mx-auto text-foreground">{brand}</span>
         <Outlet />
       </Stack>
     </Flex>
