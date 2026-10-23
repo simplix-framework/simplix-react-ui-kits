@@ -9,5 +9,9 @@
   },
   "option": {
     "unnamed": "이름 없음"
+  },
+  "recordForm": {
+    "required": "필수 항목입니다",
+    "fixBeforeSave": "필수 항목 {{count, number}}개를 채워야 저장됩니다"
   }
 }

@@ -10,5 +10,9 @@
   },
   "option": {
     "unnamed": "No name"
+  },
+  "recordForm": {
+    "required": "Required",
+    "fixBeforeSave": "Fill in {{count, number}} required fields to save"
   }
 }

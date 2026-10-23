@@ -34,7 +34,11 @@ export function ConsolePreviewFrame({ console, namespace, children }: ConsolePre
           <LocalNoticeDismissalsProvider>
             <TilesCollapseProvider namespace={namespace}>
               <NoticeRegistryProvider>
-                <ConsoleContentColumn>{children}</ConsoleContentColumn>
+                {/* Bounded to the viewport as the shell bounds its column, so a list scrolls inside and
+                    a panel's footer stays on screen. */}
+                <div className="flex h-dvh min-h-0 flex-col">
+                  <ConsoleContentColumn>{children}</ConsoleContentColumn>
+                </div>
               </NoticeRegistryProvider>
             </TilesCollapseProvider>
           </LocalNoticeDismissalsProvider>

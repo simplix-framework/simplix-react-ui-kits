@@ -9,5 +9,9 @@
   },
   "option": {
     "unnamed": "名前なし"
+  },
+  "recordForm": {
+    "required": "必須項目です",
+    "fixBeforeSave": "必須項目を{{count, number}}件入力すると保存できます"
   }
 }
