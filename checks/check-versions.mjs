@@ -32,8 +32,10 @@ for (const [name, version] of Object.entries(pins)) {
   if (!/^\d+\.\d+\.\d+(-[\w.]+)?$/.test(version)) problems.push(`${name}@${version} is not an exact version`);
 }
 
-// Libraries the rendered framework packages import at runtime.
-const rendered = ["ui", "i18n", "headless", "api"].map((n) => packages.get(`${FRAMEWORK_SCOPE}${n}`)).filter(Boolean);
+// Libraries the rendered framework packages import at runtime. A root that takes the framework
+// from its workspace (`simplix-react` through the catalog) gets them with it.
+const fromWorkspace = typeof pins["simplix-react"] === "string" && delegated(pins["simplix-react"]);
+const rendered = fromWorkspace ? [] : ["ui", "i18n", "headless", "api"].map((n) => packages.get(`${FRAMEWORK_SCOPE}${n}`)).filter(Boolean);
 for (const { manifest: m } of rendered) {
   for (const name of Object.keys({ ...m.dependencies, ...m.peerDependencies })) {
     if (!name.startsWith(FRAMEWORK_SCOPE) && !pins[name]) problems.push(`${name} is used by ${m.name} but not in ${root}/package.json`);
