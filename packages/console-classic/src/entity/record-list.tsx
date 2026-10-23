@@ -2,6 +2,8 @@ import { useMemo, type ReactNode } from "react";
 import {
   CrudList,
   Flex,
+  Stack,
+  Text,
   ListTotalBadge,
   SearchOperator,
   useCrudList,
@@ -92,9 +94,40 @@ export interface RecordListProps<Row> {
   readonly features?: RecordListFeatures;
   /** What sits before the filter bar's controls, for a narrowing of the screen's own. */
   readonly leading?: ReactNode;
+  /**
+   * The list's width in px below which each row is drawn as a card: the first column as the card's
+   * title, the others as labelled lines under it, the row actions beside the title. Absent, it is
+   * the width the table needs to hold its columns ({@link tableWidth}); `false` keeps the table.
+   */
+  readonly cardBreakpoint?: number | false;
 }
 
 const DEFAULT_PAGE_SIZE = 20;
+
+/** The least a column with no fixed width is given before its text is cut. */
+const FLUID_COLUMN_MIN = 200;
+
+/** What one row action takes in the action cell, the cell's own inset included once. */
+const ACTION_WIDTH = 36;
+const ACTION_CELL_INSET = 24;
+
+/**
+ * The width a table needs to hold every column it always draws, which is where a row stops fitting
+ * on one line and a card reads better.
+ */
+function tableWidth<Row>(columns: readonly RecordColumn<Row>[], actions: number): number {
+  const drawn = columns.filter((column) => column.minTableWidth === undefined);
+  const cells = drawn.reduce((sum, column) => sum + (column.width ?? FLUID_COLUMN_MIN), 0);
+  return cells + (actions > 0 ? actions * ACTION_WIDTH + ACTION_CELL_INSET : 0);
+}
+
+/** What a column shows for one row: its own value, or the field's text. */
+function cellOf<Row>(column: RecordColumn<Row>, row: Row): ReactNode {
+  if (column.value) return <RecordValueView value={column.value(row)} />;
+  if (!column.field) return null;
+  const raw = (row as Record<string, unknown>)[column.field];
+  return raw === undefined || raw === null ? null : String(raw);
+}
 
 function filterDef<Row>(filter: RecordFilter<Row>): FilterDef {
   if (filter.kind === "choice") {
@@ -141,6 +174,7 @@ export function RecordList<Row>({
   empty,
   features = {},
   leading,
+  cardBreakpoint,
 }: RecordListProps<Row>) {
   const on = (feature: keyof RecordListFeatures) => features[feature] !== false;
   const useRows = useMemo<ListHook<Row>>(() => () => ({ data: [...rows], total: rows.length, isLoading: false, error: null }), [rows]);
@@ -155,6 +189,9 @@ export function RecordList<Row>({
         disabledReason: action.disabled ? (row: Row) => action.disabled?.(row) || undefined : undefined,
       }))
     : [];
+
+  const [titleColumn, ...lineColumns] = columns;
+  const breakpoint = cardBreakpoint === false ? undefined : cardBreakpoint ?? tableWidth(columns, rowActions.length);
 
   const chipRow =
     on("chips") && chips ? (
@@ -212,6 +249,27 @@ export function RecordList<Row>({
         }
         actions={rowActions.length > 0 ? rowActions : undefined}
         emptyState={empty}
+        cardBreakpoint={titleColumn ? breakpoint : undefined}
+        cardTitle={titleColumn ? ({ row }) => cellOf(titleColumn, row) : undefined}
+        cardContent={
+          lineColumns.length > 0
+            ? ({ row }) => (
+                <Stack gap="xs">
+                  {lineColumns.map((column) => (
+                    <Flex key={column.key} align="center" gap="sm">
+                      {/* A fixed label measure, so the values line up down the card. */}
+                      <Text as="span" size="caption" tone="muted" className="w-20 shrink-0">
+                        {column.header}
+                      </Text>
+                      <Flex flex minSize align="center">
+                        {cellOf(column, row)}
+                      </Flex>
+                    </Flex>
+                  ))}
+                </Stack>
+              )
+            : undefined
+        }
       >
         {columns.map((column) => (
           <CrudList.Column<Row>
@@ -222,7 +280,7 @@ export function RecordList<Row>({
             minTableWidth={column.minTableWidth}
             sortable={on("sort") && column.field !== undefined && column.sortable !== false}
           >
-            {column.value ? ({ row }) => <RecordValueView value={column.value?.(row)} /> : undefined}
+            {column.value ? ({ row }) => cellOf(column, row) : undefined}
           </CrudList.Column>
         ))}
       </CrudList.Table>
