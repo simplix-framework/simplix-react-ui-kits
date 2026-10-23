@@ -1,0 +1,12 @@
+{
+  "evidence": {
+    "retained": "保存中",
+    "retry": "再試行",
+    "open": "開く",
+    "state": {
+      "pendingSync": "同期待ち",
+      "failed": "アップロード失敗",
+      "missing": "必須 · 未取得"
+    }
+  }
+}

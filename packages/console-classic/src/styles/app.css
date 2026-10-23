@@ -1,0 +1,425 @@
+@import '@fontsource/noto-sans-kr/700.css';
+@import '@fontsource/noto-sans-jp/700.css';
+@import 'tailwindcss';
+@import 'tw-animate-css';
+/* Framework theme layer (single import): styles.css + base tokens + every
+   color preset. Presets activate via [data-color-theme]; dark mode via .dark. */
+@import '@simplix-react/ui/theme.css';
+/* Calendar package Tailwind content-source registration (same self-registration
+   mechanism as the framework UI styles.css). */
+@import '@simplix-react/calendar/styles.css';
+/* App font identity — after the framework so these families win over the base. */
+@import './fonts.css';
+/* App status tone + categorical accent system (seeds + derived slot paints). */
+@import './tone-system.css';
+
+@custom-variant dark (&:is(.dark *));
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+  html {
+    @apply overflow-x-hidden;
+  }
+  /* The console's body text is 14px, and this is the one place that says so.
+
+     Every size the framework and this product actually choose is 14px or 12px — the table cell,
+     the side nav, the buttons, the section descriptions, the empty states, and all 263 places a
+     screen names a size on a Text. 16px only ever appeared where nobody chose: the browser's
+     default, inherited by whatever carried no size class. That left the organization detail
+     drawing 39 values a size larger than the same values on every neighbouring screen, and the
+     list rows a size larger than the cell they sat in.
+
+     Only elements that state no size move. Tailwind's text-* utilities are absolute rem values,
+     so text-base still renders 16px where a title asks for it, and the figure and heading steps
+     are untouched. */
+  body {
+    @apply min-h-svh w-full font-sans text-sm antialiased bg-background text-foreground has-[div[data-variant='inset']]:bg-sidebar;
+  }
+
+  /* Override Radix scroll locking for sticky headers */
+  body[data-scroll-locked] {
+    overflow: unset !important;
+  }
+
+  h1 {
+    font-family: var(--font-title);
+    opacity: 0.8;
+  }
+
+  /* Cursor pointer for buttons */
+  button:not(:disabled),
+  [role='button']:not(:disabled) {
+    cursor: pointer;
+  }
+
+  /* A table cell with no value shows the same dash as the cell beside it.
+     Said once here rather than by every column that might be missing a value: a column
+     rendering its value straight — a code, an address, a count — draws nothing at all when the
+     row has none, while the neighbour that hand-writes a placeholder draws a dash. A blank cell
+     next to a dashed one reads as a different kind of data rather than as the same absence, and
+     the reader cannot tell "nothing is stored here" from "this failed to draw". The framework
+     leaves the placeholder to whoever is drawing the screen, so it is decided here, once. */
+  table > tbody > tr > td:empty::after {
+    content: '—';
+    color: var(--muted-foreground);
+  }
+
+  /* The manual's own prose, injected into the help panel.
+     The rendered page carries a stylesheet for when it is opened on its own, but a <style> in a
+     fetched document never reaches the panel — only the article's markup does. These are the
+     same rules, said where the panel can hear them, and scoped so nothing else on the screen
+     picks them up.
+
+     Sized for reading rather than for scanning. The console's own type is tuned for tables and
+     labels a reader's eye jumps around; a manual page is prose read a line at a time, and at the
+     table size it reads as cramped. The measure is short here — the panel is narrow — so the
+     line height carries what the width cannot. */
+  .manual-page {
+    font-size: 0.9375rem;
+    line-height: 1.75;
+    color: var(--foreground);
+  }
+  .manual-page h1 {
+    font-size: 1.375rem;
+    font-family: inherit;
+    font-weight: 700;
+    line-height: 1.4;
+    opacity: 1;
+    margin: 0 0 0.875rem;
+  }
+  .manual-page h2 {
+    font-size: 1.0625rem;
+    font-weight: 700;
+    line-height: 1.45;
+    margin: 1.75rem 0 0.625rem;
+    padding-top: 0.875rem;
+    border-top: 1px solid var(--border);
+  }
+  .manual-page h2:first-child {
+    margin-top: 0;
+    padding-top: 0;
+    border-top: 0;
+  }
+  .manual-page h3 {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    line-height: 1.5;
+    margin: 1.25rem 0 0.375rem;
+    color: var(--foreground);
+  }
+  .manual-page p {
+    margin: 0.625rem 0;
+  }
+  .manual-page strong {
+    font-weight: 600;
+  }
+  .manual-page ul {
+    list-style: disc;
+    margin: 0.625rem 0;
+    padding-inline-start: 1.35rem;
+  }
+  .manual-page ol {
+    list-style: decimal;
+    margin: 0.625rem 0;
+    padding-inline-start: 1.35rem;
+  }
+  .manual-page li {
+    margin: 0.375rem 0;
+  }
+  .manual-page li::marker {
+    color: var(--muted-foreground);
+  }
+  .manual-page code {
+    font-family: var(--font-mono, ui-monospace, monospace);
+    font-size: 0.875em;
+    background: var(--muted);
+    border-radius: 4px;
+    padding: 0.0625rem 0.3rem;
+    word-break: break-word;
+  }
+  .manual-page figure {
+    margin: 0.875rem 0;
+  }
+  /* The picture is drawn at the width of the screen it shows, so in a panel it is always smaller
+     than the thing it depicts. Pressing it opens it at its own size — and the cursor says so,
+     because an image that can be opened and does not look it is one nobody presses. */
+  .manual-page img {
+    max-width: 100%;
+    height: auto;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    cursor: zoom-in;
+    display: block;
+  }
+  .manual-page table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 0.875rem 0;
+    font-size: 0.875rem;
+    line-height: 1.6;
+  }
+  .manual-page th,
+  .manual-page td {
+    border: 1px solid var(--border);
+    padding: 0.4375rem 0.5625rem;
+    text-align: start;
+    vertical-align: top;
+  }
+  .manual-page th {
+    background: var(--muted);
+    font-weight: 600;
+  }
+  .manual-page a {
+    color: var(--primary);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  /* Prevent focus zoom on mobile devices */
+  @media screen and (max-width: 767px) {
+    input,
+    select,
+    textarea {
+      font-size: 16px !important;
+    }
+  }
+}
+
+@utility container {
+  margin-inline: auto;
+  padding-inline: 2rem;
+}
+
+@utility no-scrollbar {
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  /* Hide scrollbar for IE, Edge and Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+@utility scrollbar-always {
+  /* Classic (non-overlay) scrollbars so wide grids always show their scroll affordance.
+     The global rule sets the standard scrollbar-width/color properties, which makes
+     Chromium ignore ::-webkit-scrollbar styling — reset them to auto here so the
+     pseudo-element styles below take effect and opt out of macOS overlay auto-hiding. */
+  scrollbar-width: auto;
+  scrollbar-color: auto;
+  &::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--border);
+    border-radius: 5px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+  }
+}
+
+@utility faded-bottom {
+  @apply after:pointer-events-none after:absolute after:start-0 after:bottom-0 after:hidden after:h-32 after:w-full after:rounded-b-2xl after:bg-[linear-gradient(180deg,transparent_10%,var(--background)_70%)] md:after:block;
+}
+
+/* The page's figure row, folding away behind the header's rule and back out from under it.
+
+   Two of these sit under every page header — one holding the tiles, one holding the strip they
+   fold into — and they run in opposite directions at the same moment, so the row reads as one
+   thing sliding rather than as two things swapping.
+
+   A grid whose single row is sized 0fr → 1fr rather than a height transition: the tiles' own
+   height is whatever their content comes to, and a transition needs two numbers. The child owns
+   the clipping, which is also what cuts the strip's top edge off against the rule above it. */
+@utility tiles-fold {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 240ms cubic-bezier(0.22, 1, 0.36, 1);
+
+  & > * {
+    overflow: hidden;
+    /* Without this a grid item refuses to go below its content's height and the fold never
+       closes — the row simply stops animating, with nothing on screen saying why. */
+    min-height: 0;
+  }
+
+  &[data-open='true'] {
+    grid-template-rows: 1fr;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}
+
+/* The page title's rule casts a short shadow downward, which is what makes whatever sits directly
+   under it — the folded figure strip — read as being behind the rule rather than merely below it.
+   Short and faint on purpose: it is depth, not a raised card.
+
+   Black in both schemes, deeper in the dark one. Mixing it from `--foreground` would make it white
+   on a dark ground — which is not a faint shadow but a glow, and reads as the rule being lit rather
+   than as something sitting behind it. The negative spread keeps it off the sides and the top, so
+   the rule stays a rule. */
+@utility rule-shadow {
+  box-shadow: 0 3px 4px -3px color-mix(in oklab, black 16%, transparent);
+
+  .dark & {
+    box-shadow: 0 3px 5px -3px color-mix(in oklab, black 65%, transparent);
+  }
+}
+
+/* The same shadow, cast inward, for whatever is painted directly over the rule's own.
+
+   A shadow falls on the page, and anything drawn after it covers it — so the strip and its handle,
+   both flush against the rule, each cut a hole in the shadow exactly where it should be darkest.
+   Repeating it inside them closes the hole: the rule's shadow runs unbroken across the full width
+   whether or not something is sitting under it. */
+@utility under-rule {
+  box-shadow: inset 0 3px 4px -3px color-mix(in oklab, black 16%, transparent);
+
+  .dark & {
+    box-shadow: inset 0 3px 5px -3px color-mix(in oklab, black 65%, transparent);
+  }
+}
+
+/* One figure turning over on the folded strip. It rises from under the strip's own clipped edge,
+   which is why the strip clips: the line arrives from the same place the tiles went. */
+@keyframes tile-flip {
+  from {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@utility tile-flip {
+  animation: tile-flip 300ms cubic-bezier(0.22, 1, 0.36, 1) both;
+
+  /* The strip does not turn at all under reduced motion, so this only covers the first paint. */
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+@keyframes tile-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(-0.5rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Each tile arrives just behind the one before it, so an unfolding row is read left to right
+   instead of appearing all at once. The ladder stops at the fourth: past that the last tile would
+   still be arriving after the reader has finished with the first. */
+@utility tiles-cascade {
+  & > * {
+    animation: tile-reveal 220ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  & > *:nth-child(2) {
+    animation-delay: 40ms;
+  }
+  & > *:nth-child(3) {
+    animation-delay: 80ms;
+  }
+  & > *:nth-child(n + 4) {
+    animation-delay: 120ms;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    & > * {
+      animation: none;
+    }
+  }
+}
+
+/* Real-time event list row animations */
+@keyframes row-enter {
+  0% {
+    opacity: 0;
+    transform: translateY(-6px);
+    background-color: color-mix(in oklab, var(--color-emerald-500) 15%, transparent);
+  }
+  40% {
+    opacity: 1;
+    transform: translateY(0);
+    background-color: color-mix(in oklab, var(--color-emerald-500) 12%, transparent);
+  }
+  100% {
+    opacity: 1;
+    background-color: transparent;
+  }
+}
+
+@keyframes row-exit {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.3;
+  }
+}
+
+@utility animate-row-enter {
+  animation: row-enter 500ms ease-out both;
+}
+
+@utility animate-row-exit {
+  animation: row-exit 300ms ease-in both;
+}
+
+@keyframes live-flash {
+  0% { box-shadow: 0 0 0 0 color-mix(in oklab, var(--color-emerald-500) 40%, transparent); }
+  50% { box-shadow: 0 0 8px 2px color-mix(in oklab, var(--color-emerald-500) 25%, transparent); }
+  100% { box-shadow: 0 0 0 0 transparent; }
+}
+
+@utility animate-live-flash {
+  animation: live-flash 500ms ease-out;
+}
+
+/* Status bar event ticker flip */
+@keyframes ticker-flip {
+  0% {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  20% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@utility animate-ticker-flip {
+  animation: ticker-flip 400ms ease-out both;
+}
+
+/* Discovery icon ripple — radiates outward from center */
+@keyframes discovery-ping {
+  0% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(8);
+    opacity: 0;
+  }
+}

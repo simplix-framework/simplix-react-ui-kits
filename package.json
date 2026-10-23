@@ -1,0 +1,19 @@
+{
+  "name": "simplix-react-ui-kits",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.12.4",
+  "scripts": {
+    "build": "pnpm -r build",
+    "typecheck": "pnpm -r typecheck",
+    "test": "pnpm -r test",
+    "lint": "pnpm -r lint",
+    "local:link": "SIMPLIX_PROFILE=local pnpm install",
+    "local:unlink": "SIMPLIX_PROFILE=registry pnpm install",
+    "local:status": "node .pnpmfile.cjs status"
+  },
+  "simplix": {
+    "linkProfile": "registry",
+    "frameworkPath": "../simplix-react"
+  }
+}

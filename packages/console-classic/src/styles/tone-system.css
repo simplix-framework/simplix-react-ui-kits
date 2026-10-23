@@ -1,0 +1,130 @@
+/* ====================================================================
+ * Status tone + categorical accent system — one seed per tone drives
+ * every paint. App-specific; NOT part of the framework theme contract.
+ *
+ * Seeds (`--tone-*`, `--accent-*`) are defined here on :root/.dark.
+ * `.tone-<name>` / `.acc-<name>` select the active `--tone` seed; `.tsf-<slot>`
+ * derives a single paint from that seed via color-mix against the current
+ * surface (`--card`) and text (`--foreground`) supplied by the framework base,
+ * so light/dark and color-variant themes adapt on their own. Change a seed and
+ * every slot of that tone re-colors app-wide.
+ *
+ * Slot classes sit in @layer components so utilities (e.g. hover:border-*)
+ * still win. A screen applies `.tone-<name>` with `.tsf-<slot>` directly; a
+ * helper that resolves the pair from a status value belongs beside the status
+ * vocabulary that needs it and is not part of this file.
+ * ==================================================================== */
+
+:root {
+  /* Status tone seeds — one color per tone; the slots below derive icon/badge/surface/border. */
+  --tone-success: #10b981;
+  --tone-warning: #f59e0b;
+  --tone-danger: #ef4444;
+  --tone-info: #3b82f6;
+  --tone-neutral: #94a3b8;
+  --tone-pending: #f97316;
+  --tone-processing: #3b82f6;
+
+  /* Categorical accent seeds — one color per entity/type for non-status cards. */
+  --accent-emerald: #10b981;
+  --accent-blue: #3b82f6;
+  --accent-violet: #8b5cf6;
+  --accent-slate: #94a3b8;
+  --accent-rose: #f43f5e;
+  --accent-amber: #f59e0b;
+  --accent-cyan: #06b6d4;
+}
+
+.dark {
+  /* Status tone seeds — brighter in dark mode so icons/tints stay legible. */
+  --tone-success: #34d399;
+  --tone-warning: #fbbf24;
+  --tone-danger: #f87171;
+  --tone-info: #60a5fa;
+  --tone-neutral: #64748b;
+  --tone-pending: #fb923c;
+  --tone-processing: #60a5fa;
+
+  /* Categorical accent seeds — brighter in dark mode. */
+  --accent-emerald: #34d399;
+  --accent-blue: #60a5fa;
+  --accent-violet: #a78bfa;
+  --accent-slate: #94a3b8;
+  --accent-rose: #fb7185;
+  --accent-amber: #fbbf24;
+  --accent-cyan: #22d3ee;
+}
+
+/* Status tone selectors — set the active seed for a tone. */
+.tone-success { --tone: var(--tone-success); }
+.tone-warning { --tone: var(--tone-warning); }
+.tone-danger { --tone: var(--tone-danger); }
+.tone-info { --tone: var(--tone-info); }
+.tone-neutral { --tone: var(--tone-neutral); }
+.tone-pending { --tone: var(--tone-pending); }
+.tone-processing { --tone: var(--tone-processing); }
+
+/* Categorical accent selectors — set the active seed for entity/type cards. */
+.acc-emerald { --tone: var(--accent-emerald); }
+.acc-blue { --tone: var(--accent-blue); }
+.acc-violet { --tone: var(--accent-violet); }
+.acc-slate { --tone: var(--accent-slate); }
+.acc-rose { --tone: var(--accent-rose); }
+.acc-amber { --tone: var(--accent-amber); }
+.acc-cyan { --tone: var(--accent-cyan); }
+
+@layer components {
+  /* Foreground / icon / dot — the seed itself. */
+  .tsf-fg { color: var(--tone); }
+  .tsf-dot { background-color: var(--tone); }
+
+  /* Icon disc / filled badge — soft fill + legible on-fill text. */
+  .tsf-badge {
+    background-color: color-mix(in oklab, var(--tone) 18%, var(--card));
+    color: color-mix(in oklab, var(--tone) 72%, var(--foreground));
+  }
+
+  /* Outline badge — tinted border + on-surface text. */
+  .tsf-outline {
+    border-color: color-mix(in oklab, var(--tone) 30%, var(--card));
+    color: color-mix(in oklab, var(--tone) 72%, var(--foreground));
+  }
+
+  /* Strong surface — the highlighted/active card & banner tint. */
+  .tsf-surface {
+    background-color: color-mix(in oklab, var(--tone) 14%, var(--card));
+    border-color: color-mix(in oklab, var(--tone) 40%, var(--card));
+  }
+
+  /* Soft surface — the resting (non-active) card tint. */
+  .tsf-soft {
+    background-color: color-mix(in oklab, var(--tone) 5%, var(--card));
+    border-color: color-mix(in oklab, var(--tone) 15%, var(--card));
+  }
+
+  /* Border only — tinted border without a surface fill. */
+  .tsf-border {
+    border-color: color-mix(in oklab, var(--tone) 40%, var(--card));
+  }
+
+  /* Dark mode mixes the seed more strongly: the low percentages that tint a
+     white surface read as almost nothing against a near-black one, so the
+     fills/borders are scaled up to stay perceptible. */
+  .dark .tsf-badge {
+    background-color: color-mix(in oklab, var(--tone) 28%, var(--card));
+  }
+  .dark .tsf-outline {
+    border-color: color-mix(in oklab, var(--tone) 42%, var(--card));
+  }
+  .dark .tsf-surface {
+    background-color: color-mix(in oklab, var(--tone) 24%, var(--card));
+    border-color: color-mix(in oklab, var(--tone) 55%, var(--card));
+  }
+  .dark .tsf-soft {
+    background-color: color-mix(in oklab, var(--tone) 14%, var(--card));
+    border-color: color-mix(in oklab, var(--tone) 28%, var(--card));
+  }
+  .dark .tsf-border {
+    border-color: color-mix(in oklab, var(--tone) 55%, var(--card));
+  }
+}

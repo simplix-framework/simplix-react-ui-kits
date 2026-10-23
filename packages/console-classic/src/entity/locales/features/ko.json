@@ -1,0 +1,13 @@
+{
+  "filteredEmpty": {
+    "title": "조건에 맞는 항목이 없습니다",
+    "narrowed": "조건 {{count, number}}개를 모두 만족하는 항목이 없습니다.",
+    "clearAll": "필터 모두 지우기"
+  },
+  "formErrors": {
+    "title": "{{count, number}}곳을 고쳐야 저장됩니다"
+  },
+  "option": {
+    "unnamed": "이름 없음"
+  }
+}

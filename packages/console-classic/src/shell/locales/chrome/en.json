@@ -1,0 +1,12 @@
+{
+  "theme": {
+    "language": "Language",
+    "colorTheme": "Color Theme",
+    "darkMode": "Dark Mode"
+  },
+  "phone": {
+    "back": "Back",
+    "areas": "Main areas",
+    "unbuilt": "This screen has not been built yet"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "theme": {
+    "language": "언어",
+    "colorTheme": "색상 테마",
+    "darkMode": "다크 모드"
+  },
+  "phone": {
+    "back": "뒤로",
+    "areas": "주요 영역",
+    "unbuilt": "이 화면은 아직 만들지 않았습니다"
+  }
+}

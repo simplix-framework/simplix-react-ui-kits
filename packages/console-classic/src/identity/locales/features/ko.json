@@ -1,0 +1,35 @@
+{
+  "address": {
+    "searchPostalCode": "우편번호 찾기"
+  },
+  "permissionGroup": {
+    "LICENSE_CATALOGUE": "카탈로그",
+    "LICENSE_LEDGER": "판매 장부",
+    "LICENSE_VENDOR": "벤더와 열람 범위",
+    "PAYMENT_GATEWAY": "결제 연동",
+    "PAYMENT_LEDGER": "결제 장부",
+    "USER_ADMIN": "운영자 계정",
+    "ORG_ADMIN": "직위",
+    "AUTH_PERMISSION": "역할 권한",
+    "BACKOFFICE_ACCESS": "백오피스 접근",
+    "SYSTEM": "시스템 설정",
+    "LICENSE": "이 서버의 라이선스",
+    "DEV_TEST": "개발용 화면",
+    "TEST_RESOURCE": "시험용 자원"
+  },
+  "accountStanding": {
+    "ACTIVE": "활성",
+    "INVITE_PENDING": "초대 중",
+    "DORMANT": "휴면",
+    "SUSPENDED": "정지"
+  },
+  "audit": {
+    "column": {
+      "at": "시각",
+      "actor": "수행자",
+      "action": "동작",
+      "target": "대상",
+      "address": "접속 주소"
+    }
+  }
+}

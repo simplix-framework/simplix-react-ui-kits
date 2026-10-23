@@ -1,0 +1,12 @@
+{
+  "theme": {
+    "language": "言語",
+    "colorTheme": "カラーテーマ",
+    "darkMode": "ダークモード"
+  },
+  "phone": {
+    "back": "戻る",
+    "areas": "主な領域",
+    "unbuilt": "この画面はまだ作成されていません"
+  }
+}

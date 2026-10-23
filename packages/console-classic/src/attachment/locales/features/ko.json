@@ -1,0 +1,12 @@
+{
+  "evidence": {
+    "retained": "보존 중",
+    "retry": "다시 시도",
+    "open": "열기",
+    "state": {
+      "pendingSync": "동기화 대기",
+      "failed": "업로드 실패",
+      "missing": "필수 · 아직 없음"
+    }
+  }
+}

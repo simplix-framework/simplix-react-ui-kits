@@ -1,0 +1,28 @@
+packages:
+  - packages/*
+
+# The versions a product consuming these kits resolves. A product that adds the kits to its own
+# workspace resolves `catalog:` from its own catalog instead, so these entries keep the kits
+# buildable on their own and must match what the products pin.
+catalog:
+  simplix-react: 0.3.7
+  simplix-react-ext: 0.3.7
+  '@fontsource/noto-sans-jp': ^5.2.9
+  '@fontsource/noto-sans-kr': ^5.2.9
+  '@tanstack/react-query': ^5.90.21
+  '@tanstack/react-router': ^1.167.4
+  '@testing-library/react': ^16.3.2
+  '@types/react': ^19.2.14
+  '@types/react-dom': ^19.2.3
+  jsdom: ^29.0.0
+  lucide-react: ^1.34.0
+  oxlint: ^1.56.0
+  react: ^19.2.4
+  react-dom: ^19.2.4
+  tsup: ^8.5.1
+  typescript: ^5.9.3
+  vitest: ^4.1.0
+  zustand: ^5.0.12
+
+onlyBuiltDependencies:
+  - esbuild

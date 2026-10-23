@@ -1,0 +1,42 @@
+{
+  "error": {
+    "accessDeniedAskAdmin": "Ask a system administrator",
+    "accessDeniedDescription": "This account holds no permission for this screen. Ask a system administrator if you need one.",
+    "accessDeniedNeeds": "Permission needed: {{permission}}.",
+    "accessDeniedShort": "Not permitted",
+    "accessDeniedTitle": "You do not have permission for this screen",
+    "authRequiredDescription": "This screen is visible once you have signed in.",
+    "authRequiredTitle": "Sign-in required",
+    "clientErrorShort": "Request error",
+    "close": "Close",
+    "dismissAll": "Dismiss all",
+    "goBack": "Back",
+    "goHome": "Home",
+    "networkErrorShort": "Network error",
+    "notFoundDescription": "There is no screen at the address requested.",
+    "notFoundTitle": "Screen not found",
+    "refresh": "Refresh",
+    "serverErrorDescription": "Try again in a moment. Tell a system administrator if it keeps happening.",
+    "serverErrorShort": "Server error",
+    "serverErrorTitle": "The server could not handle the request",
+    "serviceUnavailable": "The server could not be reached.",
+    "serviceUnavailableDescription": "The server is not answering. Try again in a moment.",
+    "serviceUnavailableShort": "Not reachable",
+    "serviceUnavailableTitle": "The server could not be reached",
+    "signIn": "Sign in",
+    "tryAgain": "Try again",
+    "unknownErrorShort": "Unknown error",
+    "validationErrorShort": "Input error",
+    "permissionAction": {
+      "list": "List",
+      "view": "View",
+      "create": "Create",
+      "edit": "Edit",
+      "delete": "Delete",
+      "export": "Export",
+      "import": "Import",
+      "approve": "Approve",
+      "manage": "Manage"
+    }
+  }
+}

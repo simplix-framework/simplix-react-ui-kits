@@ -1,0 +1,42 @@
+{
+  "error": {
+    "accessDeniedAskAdmin": "システム管理者に依頼します",
+    "accessDeniedDescription": "このアカウントにはこの画面の権限がありません。必要な場合はシステム管理者に依頼します。",
+    "accessDeniedNeeds": "必要な権限は {{permission}} です。",
+    "accessDeniedShort": "権限不足",
+    "accessDeniedTitle": "この画面を表示する権限がありません",
+    "authRequiredDescription": "ログインすると表示できる画面です。",
+    "authRequiredTitle": "ログインが必要です",
+    "clientErrorShort": "要求エラー",
+    "close": "閉じる",
+    "dismissAll": "すべて閉じる",
+    "goBack": "戻る",
+    "goHome": "ホームへ",
+    "networkErrorShort": "ネットワークエラー",
+    "notFoundDescription": "要求されたアドレスに画面がありません。",
+    "notFoundTitle": "画面が見つかりません",
+    "refresh": "再読み込み",
+    "serverErrorDescription": "しばらくしてから再試行します。繰り返す場合はシステム管理者に連絡します。",
+    "serverErrorShort": "サーバーエラー",
+    "serverErrorTitle": "サーバーが要求を処理できませんでした",
+    "serviceUnavailable": "サーバーに接続できませんでした。",
+    "serviceUnavailableDescription": "サーバーが応答しません。しばらくしてから再試行します。",
+    "serviceUnavailableShort": "接続失敗",
+    "serviceUnavailableTitle": "サーバーに接続できませんでした",
+    "signIn": "ログイン",
+    "tryAgain": "再試行",
+    "unknownErrorShort": "不明なエラー",
+    "validationErrorShort": "入力エラー",
+    "permissionAction": {
+      "list": "一覧照会",
+      "view": "閲覧",
+      "create": "登録",
+      "edit": "編集",
+      "delete": "削除",
+      "export": "エクスポート",
+      "import": "インポート",
+      "approve": "承認",
+      "manage": "管理"
+    }
+  }
+}

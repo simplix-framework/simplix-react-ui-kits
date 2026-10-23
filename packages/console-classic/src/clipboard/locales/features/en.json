@@ -1,0 +1,9 @@
+{
+  "clipboard": {
+    "copied": "Copied",
+    "copyAction": "Copy to clipboard",
+    "failed": "Could not copy. Select the value below and copy it by hand.",
+    "unsupported": "The copy button does not work in this browser. Open the address over https, or select the value below and copy it by hand.",
+    "value": "Value: {{value}}"
+  }
+}

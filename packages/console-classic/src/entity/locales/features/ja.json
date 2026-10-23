@@ -1,0 +1,13 @@
+{
+  "filteredEmpty": {
+    "title": "条件に合う項目がありません",
+    "narrowed": "設定した{{count, number}}件の条件をすべて満たす項目がありません。",
+    "clearAll": "フィルターをすべて解除"
+  },
+  "formErrors": {
+    "title": "{{count, number}}か所を直すと保存できます"
+  },
+  "option": {
+    "unnamed": "名前なし"
+  }
+}

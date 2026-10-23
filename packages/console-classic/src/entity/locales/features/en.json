@@ -1,0 +1,14 @@
+{
+  "filteredEmpty": {
+    "title": "Nothing matches these conditions",
+    "narrowed": "Nothing satisfies all {{count, number}} conditions you set.",
+    "clearAll": "Clear all filters"
+  },
+  "formErrors": {
+    "title_one": "One field has to change before this saves",
+    "title_other": "{{count, number}} fields have to change before this saves"
+  },
+  "option": {
+    "unnamed": "No name"
+  }
+}

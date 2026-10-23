@@ -1,0 +1,35 @@
+{
+  "address": {
+    "searchPostalCode": "Find postal code"
+  },
+  "permissionGroup": {
+    "LICENSE_CATALOGUE": "Catalogue",
+    "LICENSE_LEDGER": "Sales ledger",
+    "LICENSE_VENDOR": "Vendors and ledger scope",
+    "PAYMENT_GATEWAY": "Payment gateways",
+    "PAYMENT_LEDGER": "Payment ledger",
+    "USER_ADMIN": "Operator accounts",
+    "ORG_ADMIN": "Job positions",
+    "AUTH_PERMISSION": "Role permissions",
+    "BACKOFFICE_ACCESS": "Back-office access",
+    "SYSTEM": "System settings",
+    "LICENSE": "This server's licence",
+    "DEV_TEST": "Development screens",
+    "TEST_RESOURCE": "Test resources"
+  },
+  "accountStanding": {
+    "ACTIVE": "Active",
+    "INVITE_PENDING": "Invited",
+    "DORMANT": "Dormant",
+    "SUSPENDED": "Suspended"
+  },
+  "audit": {
+    "column": {
+      "at": "When",
+      "actor": "Who",
+      "action": "Action",
+      "target": "Record",
+      "address": "Address"
+    }
+  }
+}

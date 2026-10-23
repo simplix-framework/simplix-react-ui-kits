@@ -1,0 +1,12 @@
+{
+  "evidence": {
+    "retained": "Retained",
+    "retry": "Try again",
+    "open": "Open",
+    "state": {
+      "pendingSync": "Waiting to sync",
+      "failed": "Upload failed",
+      "missing": "Required · not yet taken"
+    }
+  }
+}

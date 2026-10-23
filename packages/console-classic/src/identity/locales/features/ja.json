@@ -1,0 +1,35 @@
+{
+  "address": {
+    "searchPostalCode": "郵便番号検索"
+  },
+  "permissionGroup": {
+    "LICENSE_CATALOGUE": "カタログ",
+    "LICENSE_LEDGER": "販売台帳",
+    "LICENSE_VENDOR": "ベンダーと閲覧範囲",
+    "PAYMENT_GATEWAY": "決済連携",
+    "PAYMENT_LEDGER": "決済台帳",
+    "USER_ADMIN": "オペレーターアカウント",
+    "ORG_ADMIN": "職位",
+    "AUTH_PERMISSION": "ロール権限",
+    "BACKOFFICE_ACCESS": "バックオフィスへのアクセス",
+    "SYSTEM": "システム設定",
+    "LICENSE": "このサーバーのライセンス",
+    "DEV_TEST": "開発用画面",
+    "TEST_RESOURCE": "テスト用リソース"
+  },
+  "accountStanding": {
+    "ACTIVE": "有効",
+    "INVITE_PENDING": "招待中",
+    "DORMANT": "休眠",
+    "SUSPENDED": "停止"
+  },
+  "audit": {
+    "column": {
+      "at": "時刻",
+      "actor": "実行者",
+      "action": "操作",
+      "target": "対象",
+      "address": "接続元"
+    }
+  }
+}

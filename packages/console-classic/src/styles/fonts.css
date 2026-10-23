@@ -1,0 +1,14 @@
+/* ====================================================================
+ * App font identity — overrides the framework's neutral default stacks.
+ *
+ * Non-inline @theme so the font-* utilities resolve var(--font-*) and stay
+ * overridable. Imported after the @simplix-react/ui theme aggregator so these
+ * families win over the base defaults.
+ * ==================================================================== */
+
+@theme {
+  --font-sans: 'Inter', sans-serif;
+  --font-display: 'Manrope', sans-serif;
+  --font-title: 'seravek-web', 'Noto Sans KR', 'Noto Sans JP', sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+}

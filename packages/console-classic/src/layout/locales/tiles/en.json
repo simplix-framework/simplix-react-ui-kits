@@ -1,0 +1,12 @@
+{
+  "expand": "Show figures",
+  "collapse": "Hide figures",
+  "unreadable": {
+    "deniedTitle": "This {{record}} cannot be opened",
+    "deniedBody": "It is outside the range you were granted. Pick another from the list, or ask the system administrator for the range if you need this one.",
+    "absentTitle": "This {{record}} was not found",
+    "absentBody": "Nothing is stored at that address. It was deleted, or the address is wrong. Pick another from the list.",
+    "failedTitle": "This {{record}} could not be read",
+    "failedBody": "The server did not answer. Try again shortly, and tell a system administrator if it keeps happening."
+  }
+}
