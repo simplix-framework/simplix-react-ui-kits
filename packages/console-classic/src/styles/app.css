@@ -8,6 +8,9 @@
 /* Calendar package Tailwind content-source registration (same self-registration
    mechanism as the framework UI styles.css). */
 @import '@simplix-react/calendar/styles.css';
+/* This kit's own components as a content source, so an app importing this stylesheet gets every
+   utility the kit's parts write wherever the kit is installed. */
+@source '../**/*.{ts,tsx}';
 /* App font identity — after the framework so these families win over the base. */
 @import './fonts.css';
 /* App status tone + categorical accent system (seeds + derived slot paints). */

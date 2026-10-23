@@ -14,6 +14,7 @@ export {
 export { CountedIconButton, type CountedIconButtonProps } from "./counted-icon-button";
 export { ConsoleWindow, type ConsoleWindowProps } from "./console-window";
 export { ConsoleContentColumn, type ConsoleContentColumnProps } from "./content-column";
+export { ConsolePreviewFrame, type ConsolePreviewFrameProps } from "./console-preview-frame";
 export {
   ConsoleMenuBranch,
   ConsoleMenuBranchRow,

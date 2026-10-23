@@ -25,3 +25,7 @@ export type { ActionConfirm, ActionConfirmConfig } from "./action-confirm";
 export { paginationHandlers } from "@simplix-react/headless";
 export type { PaginationHandlers } from "@simplix-react/headless";
 export { missingRequired } from "@simplix-react/headless";
+export { RecordList } from "./record-list";
+export type { RecordColumn, RecordListProps } from "./record-list";
+export { RecordDetail } from "./record-detail";
+export type { RecordDetailProps, RecordField, RecordSection } from "./record-detail";
