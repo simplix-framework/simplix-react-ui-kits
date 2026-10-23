@@ -397,6 +397,9 @@
   :where([data-design="clarity"]) :where([data-slot="console-tile-strip"]) {
     @apply rounded-b-lg border border-t-0 bg-card ps-3 pe-16 text-start transition-colors duration-[var(--dur-fast)] ease-[var(--ease)] border-[var(--border)] hover:bg-[var(--hover-bg)];
   }
+  :where([data-design="clarity"]) :where([data-slot="console-tile"][data-dragging="true"]) {
+    @apply opacity-40;
+  }
   :where([data-design="clarity"]) :where([data-slot="console-share-segment"][data-tone="primary"]) {
     @apply bg-primary;
   }

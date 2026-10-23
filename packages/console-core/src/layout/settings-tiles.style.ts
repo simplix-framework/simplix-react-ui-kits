@@ -92,6 +92,8 @@ export const tileStyle = defineSlotStyle({
   base: "",
   variants: {
     emphasis: { true: "", false: "" },
+    /** The tile being dragged to a new place. */
+    dragging: { true: "opacity-40", false: "" },
   },
-  defaultVariants: { emphasis: false },
+  defaultVariants: { emphasis: false, dragging: false },
 });

@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
+import { type DragEvent, type KeyboardEvent, useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { useTranslation } from "@simplix-react/i18n/react";
 import {
   cn,
@@ -27,6 +27,7 @@ import {
   tileStyle,
 } from "./settings-tiles.style";
 import { NumericText } from "./numeric-text";
+import { useTileOrder } from "./tile-order";
 import { useTilesCollapse } from "./tiles-collapse";
 import { PHONE_WINDOW, REDUCED_MOTION } from "./window-size";
 import { slotAttributes } from "@simplix-react/ui/design";
@@ -284,9 +285,16 @@ interface SettingsTilesProps {
    * a row with a hole in it.
    */
   readonly columns?: 1 | 2 | 3 | 4;
+  /**
+   * Lets the reader put the tiles in their own order, kept in this browser under this key.
+   *
+   * <p>Drag a tile onto another, or focus it and press Alt with an arrow key. Absent, the row keeps
+   * the board's order and draws exactly as before.
+   */
+  readonly reorderKey?: string;
 }
 
-export function SettingsTiles({ tiles, columns = 4 }: SettingsTilesProps) {
+export function SettingsTiles({ tiles, columns = 4, reorderKey }: SettingsTilesProps) {
   const { t } = useTranslation(PACKAGE_NAMESPACE + "/tiles");
   const { collapsed, toggle } = useTilesCollapse();
   const header = usePageHeaderState();
@@ -349,7 +357,7 @@ export function SettingsTiles({ tiles, columns = 4 }: SettingsTilesProps) {
   if (!folding) {
     return (
       <div ref={anchor}>
-        <TileGrid tiles={tiles} columns={columns} />
+        <TileGrid tiles={tiles} columns={columns} reorderKey={reorderKey} />
       </div>
     );
   }
@@ -382,7 +390,7 @@ export function SettingsTiles({ tiles, columns = 4 }: SettingsTilesProps) {
           {/* Paying back exactly what the wrapper reached up by, so the tiles stand where they
               stood before this wrapper existed and no screen moved by adopting it. */}
           <div className={payBack} {...slotAttributes(tileRowStyle, {})}>
-            <TileGrid tiles={tiles} columns={columns} className="tiles-cascade" />
+            <TileGrid tiles={tiles} columns={columns} reorderKey={reorderKey} className="tiles-cascade" />
           </div>
         </div>
       </div>
@@ -524,19 +532,25 @@ function TileStrip({
 function TileGrid({
   tiles,
   columns,
+  reorderKey,
   className,
 }: {
   readonly tiles: readonly SettingsTile[];
   readonly columns: 1 | 2 | 3 | 4;
+  readonly reorderKey?: string;
   /**
    * Put on the grid itself rather than on a wrapper, so the cascade animation selects the cards as
    * its own children — a selector written two levels up breaks the day anything is put in between.
    */
   readonly className?: string;
 }) {
+  const keys = useMemo(() => tiles.map((t) => t.key), [tiles]);
+  const { order, moveTo, step, enabled } = useTileOrder(reorderKey, keys);
+  const [dragging, setDragging] = useState<string | null>(null);
+  const ordered = enabled ? order.map((k) => tiles.find((t) => t.key === k)!).filter(Boolean) : tiles;
   return (
     <Grid columns={columns} gap="md" fit className={className}>
-      {tiles.map((tile) => {
+      {ordered.map((tile) => {
         // The board stacks value → 추이 → 근거, so the comparison takes the card's first line under
         // the value and the basis moves below it. With no comparison the basis keeps that line and
         // nothing moves, which is why nineteen screens that pass no trend look exactly as before.
@@ -563,7 +577,39 @@ function TileGrid({
         // to be handed the grid cell's full height rather than shrinking to the text. A tile that
         // is not a link is the card itself, with nothing between it and the tile element.
         return (
-          <div key={tile.key} className="h-full" {...slotAttributes(tileStyle, { emphasis: tile.emphasis === true })}>
+          <div
+            key={tile.key}
+            className="h-full"
+            {...(enabled
+              ? {
+                  draggable: true,
+                  tabIndex: 0,
+                  "aria-roledescription": "sortable",
+                  onDragStart: (e: DragEvent) => {
+                    setDragging(tile.key);
+                    e.dataTransfer.effectAllowed = "move";
+                  },
+                  onDragOver: (e: DragEvent) => e.preventDefault(),
+                  onDrop: (e: DragEvent) => {
+                    e.preventDefault();
+                    if (dragging) moveTo(dragging, tile.key);
+                    setDragging(null);
+                  },
+                  onDragEnd: () => setDragging(null),
+                  onKeyDown: (e: KeyboardEvent) => {
+                    if (!e.altKey) return;
+                    if (e.key === "ArrowLeft" || e.key === "ArrowUp") step(tile.key, -1);
+                    else if (e.key === "ArrowRight" || e.key === "ArrowDown") step(tile.key, 1);
+                    else return;
+                    e.preventDefault();
+                  },
+                }
+              : {})}
+            {...slotAttributes(tileStyle, {
+              emphasis: tile.emphasis === true,
+              dragging: enabled && dragging === tile.key,
+            })}
+          >
             {tile.href ? (
               <MenuLink href={tile.href} className="block h-full">
                 {card}

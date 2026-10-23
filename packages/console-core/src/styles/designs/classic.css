@@ -397,6 +397,9 @@
   :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="console-tile-strip"]) {
     @apply rounded-b-lg border border-t-0 bg-card ps-3 pe-16 text-start transition-colors hover:bg-accent/40;
   }
+  :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="console-tile"][data-dragging="true"]) {
+    @apply opacity-40;
+  }
   :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="console-share-segment"][data-tone="primary"]) {
     @apply bg-primary;
   }
