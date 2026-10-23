@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { PageHeaderProvider } from "@simplix-react/ui";
+import { PageHeaderProvider, ToastContainer } from "@simplix-react/ui";
 
 import { TilesCollapseProvider } from "../layout/tiles-collapse";
 import { LocalNoticeDismissalsProvider } from "../notice/local-dismissals";
@@ -51,6 +51,8 @@ export function ConsolePreviewFrame({ console, namespace, chrome, children }: Co
                     <ConsoleContentColumn>{children}</ConsoleContentColumn>
                   </div>
                 )}
+                {/* Where a finished action says so, as the console's providers mount it. */}
+                <ToastContainer />
               </NoticeRegistryProvider>
             </TilesCollapseProvider>
           </LocalNoticeDismissalsProvider>

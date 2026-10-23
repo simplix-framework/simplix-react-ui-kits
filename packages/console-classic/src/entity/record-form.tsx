@@ -1,6 +1,6 @@
-import { useState, type FormEvent } from "react";
+import { useState, type FormEvent, type ReactNode } from "react";
 import { useTranslation } from "@simplix-react/i18n/react";
-import { Button, CrudForm, FormFields, Heading } from "@simplix-react/ui";
+import { Button, CrudForm, Flex, FormFields, Heading } from "@simplix-react/ui";
 
 import { RecordNote, RecordNotices, RecordVerbButton, type RecordNotice, type RecordVerb } from "./record-blocks";
 import { PACKAGE_NAMESPACE } from "./locales";
@@ -120,6 +120,8 @@ export interface RecordFormProps {
   readonly onCancel?: () => void;
   /** Actions beside the submit, such as a narrower alternative. */
   readonly actions?: readonly RecordVerb[];
+  /** What the form edits beyond its fields, drawn under them: a permission matrix, a list of rows. */
+  readonly children?: ReactNode;
 }
 
 /**
@@ -127,7 +129,7 @@ export interface RecordFormProps {
  * fields, the messages that explain them, and the finishing verbs. Required fields left empty are
  * marked when the reader tries to finish, and nothing is sent until they are filled.
  */
-export function RecordForm({ title, sections, notices, note, submitLabel, onSubmit, onCancel, actions = [] }: RecordFormProps) {
+export function RecordForm({ title, sections, notices, note, submitLabel, onSubmit, onCancel, actions = [], children }: RecordFormProps) {
   const { t: tUi } = useTranslation("simplix/ui");
   const form = useRecordFormValues(sections);
   const submit = (event: FormEvent<HTMLFormElement>) => {
@@ -161,6 +163,7 @@ export function RecordForm({ title, sections, notices, note, submitLabel, onSubm
       }
     >
       <RecordFormSections sections={sections} form={form} />
+      {children}
       <RecordNotices notices={notices} />
       <RecordNote text={note} />
     </CrudForm>
@@ -172,19 +175,46 @@ export interface SettingsFormProps {
   readonly sections: readonly RecordFormSection[];
   readonly notices?: readonly RecordNotice[];
   readonly note?: string;
+  /** Saves the settings; with it the form carries 취소 and 저장 once a value has changed. */
+  readonly onSave?: (values: Readonly<Record<string, unknown>>) => void;
 }
 
 /**
  * An installation's settings on a page of their own: sections of declared fields with their units
  * and hints. Saved from the page header's action, so it draws no footer of its own.
  */
-export function SettingsForm({ sections, notices, note }: SettingsFormProps) {
+export function SettingsForm({ sections, notices, note, onSave }: SettingsFormProps) {
+  const { t: tUi } = useTranslation("simplix/ui");
+  const [saved, setSaved] = useState(() => initialValues(sections));
   const form = useRecordFormValues(sections);
+  const changed = Object.keys(form.values).some((key) => JSON.stringify(form.values[key]) !== JSON.stringify(saved[key]));
   return (
     <>
       <RecordNotices notices={notices} />
       <RecordFormSections sections={sections} form={form} />
       <RecordNote text={note} />
+      {onSave ? (
+        <Flex gap="xs" justify="end">
+          <Button type="button" size="sm" variant="outline" disabled={!changed} onClick={() => Object.entries(saved).forEach(([key, value]) => form.set(key, value))}>
+            {tUi("common.cancel")}
+          </Button>
+          <Button
+            type="button"
+            size="sm"
+            disabled={!changed}
+            onClick={() => {
+              if (form.missing.length > 0) {
+                form.showErrors();
+                return;
+              }
+              onSave(form.values);
+              setSaved(form.values);
+            }}
+          >
+            {tUi("common.save")}
+          </Button>
+        </Flex>
+      ) : null}
     </>
   );
 }

@@ -1,4 +1,4 @@
-import { CrudDetail, DetailFieldWrapper, Dialog, DialogFooter, DialogHeader, DialogTitle, Flex, Stack, Stepline } from "@simplix-react/ui";
+import { Button, CrudDetail, DetailFieldWrapper, Dialog, DialogFooter, DialogHeader, DialogTitle, Flex, Stack, Stepline } from "@simplix-react/ui";
 
 import { RecordNote, RecordNotices, RecordVerbButton, type RecordNotice, type RecordVerb } from "../entity/record-blocks";
 import type { RecordSection } from "../entity/record-detail";
@@ -30,13 +30,22 @@ export interface ActionDialogProps {
   readonly leading?: readonly RecordVerb[];
   /** Verbs on the trailing side, the main one last. */
   readonly trailing?: readonly RecordVerb[];
+  /**
+   * The button that finishes the dialog, drawn last: it checks the required fields and hands the
+   * entered values over, and the dialog closes when it returns.
+   */
+  readonly submit?: {
+    readonly label: string;
+    readonly kind?: "primary" | "danger";
+    readonly onSubmit: (values: Readonly<Record<string, unknown>>) => void;
+  };
 }
 
 /**
  * A decision on a request: what was asked, what the decider sets, where it stands, and the verbs
  * that refuse or grant it.
  */
-export function ActionDialog({ title, open, onOpenChange, notices, sections, fields = [], steps, note, leading = [], trailing = [] }: ActionDialogProps) {
+export function ActionDialog({ title, open, onOpenChange, notices, sections, fields = [], steps, note, leading = [], trailing = [], submit }: ActionDialogProps) {
   const form = useRecordFormValues(fields);
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -70,6 +79,22 @@ export function ActionDialog({ title, open, onOpenChange, notices, sections, fie
               {trailing.map((verb) => (
                 <RecordVerbButton key={verb.label} verb={verb} />
               ))}
+              {submit ? (
+                <Button
+                  size="sm"
+                  variant={submit.kind === "danger" ? "destructive" : "primary"}
+                  onClick={() => {
+                    if (form.missing.length > 0) {
+                      form.showErrors();
+                      return;
+                    }
+                    submit.onSubmit(form.values);
+                    onOpenChange(false);
+                  }}
+                >
+                  {submit.label}
+                </Button>
+              ) : null}
             </Flex>
           </Flex>
         </DialogFooter>
