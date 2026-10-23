@@ -15,6 +15,13 @@ export { CountedIconButton, type CountedIconButtonProps } from "./counted-icon-b
 export { ConsoleWindow, type ConsoleWindowProps } from "./console-window";
 export { ConsoleContentColumn, type ConsoleContentColumnProps } from "./content-column";
 export { ConsolePreviewFrame, type ConsolePreviewFrameProps } from "./console-preview-frame";
+export type {
+  ConsolePreviewChrome,
+  ConsolePreviewChromeLabels,
+  ConsolePreviewMenu,
+  ConsolePreviewMenuEntry,
+  ConsolePreviewMenuGroup,
+} from "./preview-chrome";
 export {
   ConsoleMenuBranch,
   ConsoleMenuBranchRow,

@@ -7,6 +7,7 @@ import { NoticeRegistryProvider } from "../notice/notice-registry";
 import { PeekHost } from "../peek/peek-host";
 import { ConsoleContentColumn } from "./content-column";
 import { ConsoleContextProvider, type ConsoleContextValue } from "./console-context";
+import { ConsolePreviewWindowChrome, type ConsolePreviewChrome } from "./preview-chrome";
 
 /** Props for {@link ConsolePreviewFrame}. */
 export interface ConsolePreviewFrameProps {
@@ -14,6 +15,11 @@ export interface ConsolePreviewFrameProps {
   readonly console: ConsoleContextValue;
   /** The name the tile row's open or folded preference is kept under. */
   readonly namespace: string;
+  /**
+   * The console's window around the page: the area bar, the menu column and the status strip.
+   * Absent, the page is drawn alone, bounded to the viewport.
+   */
+  readonly chrome?: ConsolePreviewChrome;
   readonly children: ReactNode;
 }
 
@@ -26,7 +32,7 @@ export interface ConsolePreviewFrameProps {
  * supply handed in as props. Notices the reader puts away are kept for as long as the page is
  * open and come back from the header's list; the tile row folds and opens as it does in an app.
  */
-export function ConsolePreviewFrame({ console, namespace, children }: ConsolePreviewFrameProps) {
+export function ConsolePreviewFrame({ console, namespace, chrome, children }: ConsolePreviewFrameProps) {
   return (
     <ConsoleContextProvider value={console}>
       <PeekHost>
@@ -36,9 +42,15 @@ export function ConsolePreviewFrame({ console, namespace, children }: ConsolePre
               <NoticeRegistryProvider>
                 {/* Bounded to the viewport as the shell bounds its column, so a list scrolls inside and
                     a panel's footer stays on screen. */}
-                <div className="flex h-dvh min-h-0 flex-col">
-                  <ConsoleContentColumn>{children}</ConsoleContentColumn>
-                </div>
+                {chrome ? (
+                  <ConsolePreviewWindowChrome chrome={chrome}>
+                    <ConsoleContentColumn>{children}</ConsoleContentColumn>
+                  </ConsolePreviewWindowChrome>
+                ) : (
+                  <div className="flex h-dvh min-h-0 flex-col">
+                    <ConsoleContentColumn>{children}</ConsoleContentColumn>
+                  </div>
+                )}
               </NoticeRegistryProvider>
             </TilesCollapseProvider>
           </LocalNoticeDismissalsProvider>
