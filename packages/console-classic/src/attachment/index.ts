@@ -1,4 +1,1 @@
-import "./locales";
-
-export { EvidenceGrid } from "./evidence-grid";
-export type { EvidenceItem, EvidenceKind, EvidenceState } from "./evidence-grid";
+export * from "@simplix-react-ui-kits/console-core/attachment";

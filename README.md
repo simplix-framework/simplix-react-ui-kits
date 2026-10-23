@@ -6,7 +6,10 @@ UI kits for simplix-react products. A kit is a design: the page patterns, layout
 
 | Package | Design |
 | --- | --- |
-| `@simplix-react-ui-kits/console-classic` | Operations console: page pattern (header, tiles, notices, tabs, list and detail), layout, notices, shell, screen widgets |
+| `@simplix-react-ui-kits/console-core` | The console parts every console design shares: page pattern (header, tiles, notices, tabs, list and detail), layout, notices, shell, screen widgets. Behaviour and markup only; each element carries the `data-slot` a design draws |
+| `@simplix-react-ui-kits/console-classic` | Operations console, classic design: `console-core` drawn with the framework's classic look |
+
+A design kit re-exports `console-core` segment by segment and adds its stylesheet and its design defaults, so every console design behaves identically and differs only in how it looks.
 
 A kit is named `<area>-<design>`, because one area (a console, a kiosk, a field app) can have several designs.
 

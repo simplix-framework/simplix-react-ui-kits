@@ -2,7 +2,7 @@
   "name": "@simplix-react-ui-kits/console-classic",
   "version": "0.0.1",
   "private": true,
-  "description": "Console UI kit, classic design: page pattern, layout, notices, shell and screen widgets for simplix-react consoles",
+  "description": "Console UI kit, classic design: the console parts drawn with the framework's classic look",
   "type": "module",
   "sideEffects": [
     "**/locales/**",
@@ -22,7 +22,7 @@
       "import": "./dist/attachment/index.js"
     },
     "./badge": {
-      "source": "./src/badge/index.tsx",
+      "source": "./src/badge/index.ts",
       "types": "./dist/badge/index.d.ts",
       "import": "./dist/badge/index.js"
     },
@@ -116,6 +116,7 @@
     "clean": "rm -rf dist .turbo"
   },
   "dependencies": {
+    "@simplix-react-ui-kits/console-core": "workspace:*",
     "@fontsource/noto-sans-jp": "catalog:",
     "@fontsource/noto-sans-kr": "catalog:",
     "lucide-react": "catalog:",

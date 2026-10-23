@@ -1,0 +1,145 @@
+{
+  "name": "@simplix-react-ui-kits/console-core",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Console UI kit parts shared by every console design: page pattern, layout, notices, shell and screen widgets, each element marked with the slot a design draws",
+  "type": "module",
+  "sideEffects": [
+    "**/locales/**",
+    "**/*.css"
+  ],
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    "./api": {
+      "source": "./src/api/index.ts",
+      "types": "./dist/api/index.d.ts",
+      "import": "./dist/api/index.js"
+    },
+    "./attachment": {
+      "source": "./src/attachment/index.ts",
+      "types": "./dist/attachment/index.d.ts",
+      "import": "./dist/attachment/index.js"
+    },
+    "./badge": {
+      "source": "./src/badge/index.tsx",
+      "types": "./dist/badge/index.d.ts",
+      "import": "./dist/badge/index.js"
+    },
+    "./clipboard": {
+      "source": "./src/clipboard/index.ts",
+      "types": "./dist/clipboard/index.d.ts",
+      "import": "./dist/clipboard/index.js"
+    },
+    "./clipboard/fallback": {
+      "source": "./src/clipboard/fallback.ts",
+      "types": "./dist/clipboard/fallback.d.ts",
+      "import": "./dist/clipboard/fallback.js"
+    },
+    "./datetime": {
+      "source": "./src/datetime/index.ts",
+      "types": "./dist/datetime/index.d.ts",
+      "import": "./dist/datetime/index.js"
+    },
+    "./entity": {
+      "source": "./src/entity/index.ts",
+      "types": "./dist/entity/index.d.ts",
+      "import": "./dist/entity/index.js"
+    },
+    "./error": {
+      "source": "./src/error/index.ts",
+      "types": "./dist/error/index.d.ts",
+      "import": "./dist/error/index.js"
+    },
+    "./i18n": {
+      "source": "./src/i18n/index.ts",
+      "types": "./dist/i18n/index.d.ts",
+      "import": "./dist/i18n/index.js"
+    },
+    "./identity": {
+      "source": "./src/identity/index.ts",
+      "types": "./dist/identity/index.d.ts",
+      "import": "./dist/identity/index.js"
+    },
+    "./layout": {
+      "source": "./src/layout/index.ts",
+      "types": "./dist/layout/index.d.ts",
+      "import": "./dist/layout/index.js"
+    },
+    "./manual": {
+      "source": "./src/manual/index.ts",
+      "types": "./dist/manual/index.d.ts",
+      "import": "./dist/manual/index.js"
+    },
+    "./mock": {
+      "source": "./src/mock/index.ts",
+      "types": "./dist/mock/index.d.ts",
+      "import": "./dist/mock/index.js"
+    },
+    "./notice": {
+      "source": "./src/notice/index.ts",
+      "types": "./dist/notice/index.d.ts",
+      "import": "./dist/notice/index.js"
+    },
+    "./page": {
+      "source": "./src/page/index.ts",
+      "types": "./dist/page/index.d.ts",
+      "import": "./dist/page/index.js"
+    },
+    "./peek": {
+      "source": "./src/peek/index.ts",
+      "types": "./dist/peek/index.d.ts",
+      "import": "./dist/peek/index.js"
+    },
+    "./screen": {
+      "source": "./src/screen/index.ts",
+      "types": "./dist/screen/index.d.ts",
+      "import": "./dist/screen/index.js"
+    },
+    "./shell": {
+      "source": "./src/shell/index.ts",
+      "types": "./dist/shell/index.d.ts",
+      "import": "./dist/shell/index.js"
+    },
+    "./styles/*": "./src/styles/*"
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "NODE_OPTIONS=--max-old-space-size=4096 tsup",
+    "dev": "tsup --no-clean --no-dts",
+    "typecheck": "tsc --noEmit",
+    "lint": "oxlint src",
+    "test": "vitest run --passWithNoTests",
+    "clean": "rm -rf dist .turbo"
+  },
+  "dependencies": {
+    "@fontsource/noto-sans-jp": "catalog:",
+    "@fontsource/noto-sans-kr": "catalog:",
+    "lucide-react": "catalog:",
+    "react-daum-postcode": "^3.2.0",
+    "simplix-react": "catalog:",
+    "simplix-react-ext": "catalog:",
+    "zustand": "catalog:"
+  },
+  "peerDependencies": {
+    "react": ">=18.0.0",
+    "react-dom": ">=18.0.0",
+    "@tanstack/react-query": ">=5.0.0",
+    "@tanstack/react-router": ">=1.0.0"
+  },
+  "devDependencies": {
+    "@tanstack/react-query": "catalog:",
+    "@tanstack/react-router": "catalog:",
+    "@testing-library/react": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "tsup": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}
