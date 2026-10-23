@@ -86,5 +86,32 @@
     "tailwindcss": "4.2.1",
     "typescript": "5.9.3",
     "vite": "8.0.0"
+  },
+  "mockupRoot": {
+    "//": "What a mockup root installs to run this kit's Storybook preview and checks; versions come from this file.",
+    "dependencies": [
+      "@storybook/react",
+      "@tanstack/react-query",
+      "i18next",
+      "react",
+      "react-dom",
+      "react-i18next",
+      "react-router-dom",
+      "storybook"
+    ],
+    "devDependencies": [
+      "@storybook/addon-a11y",
+      "@storybook/react-vite",
+      "@tailwindcss/vite",
+      "@types/react",
+      "@types/react-dom",
+      "@vitejs/plugin-react",
+      "playwright",
+      "postcss",
+      "storybook-addon-pseudo-states",
+      "tailwindcss",
+      "typescript",
+      "vite"
+    ]
   }
 }

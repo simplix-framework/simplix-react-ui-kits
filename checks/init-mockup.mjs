@@ -75,9 +75,18 @@ const manifestPath = join(root, "package.json");
 if (existsSync(manifestPath)) {
   skipped.push("package.json");
 } else {
+  // The framework: a published version when one is named, the workspace's own pin inside a
+  // workspace (whose catalog decides it), and nothing otherwise (a checkout named in the config).
   const frameworkPackages = args["framework-version"]
     ? Object.fromEntries(["ui", "i18n", "headless", "api"].map((n) => [`@simplix-react/${n}`, String(args["framework-version"])]))
-    : {};
+    : catalog.has("simplix-react")
+      ? { "simplix-react": "catalog:" }
+      : {};
+  const pick = (names, from) => Object.fromEntries(names.map((n) => {
+    const version = from[n] ?? kit.dependencies[n] ?? kit.devDependencies[n];
+    if (!version) throw new Error(`kit package.json mockupRoot names ${n}, which the kit does not pin`);
+    return [n, version];
+  }));
   const manifest = {
     name: args.name,
     private: true,
@@ -90,8 +99,8 @@ if (existsSync(manifestPath)) {
       tokens: "node kit/checks/extract-tokens.mjs --out tokens --entry",
       check: "node kit/checks/check-screens.mjs && node kit/checks/check-designs.mjs && node kit/checks/check-imports.mjs && node kit/checks/check-versions.mjs --root .",
     },
-    dependencies: { ...frameworkPackages, [String(args["ui-kit"])]: args["ui-kit-version"] ? String(args["ui-kit-version"]) : "workspace:*", ...pin(kit.dependencies) },
-    devDependencies: pin(kit.devDependencies),
+    dependencies: { ...frameworkPackages, [String(args["ui-kit"])]: args["ui-kit-version"] ? String(args["ui-kit-version"]) : "workspace:*", ...pin(pick(kit.mockupRoot.dependencies, kit.dependencies)) },
+    devDependencies: pin(pick(kit.mockupRoot.devDependencies, kit.devDependencies)),
   };
   writeFileSync(manifestPath, JSON.stringify(manifest, null, 2) + "\n");
   created.push("package.json");
