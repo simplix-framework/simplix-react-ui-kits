@@ -15,8 +15,8 @@ export interface CrudPageNavigation {
   readonly showDetail: (id: string) => void;
   readonly showNew: () => void;
   readonly showEdit: (id: string) => void;
-  /** Closes the open record back to the list; absent where the detail is a page of its own. */
-  readonly closePanel: (() => void) | undefined;
+  /** Closes the open record back to the list, wherever it is presented. */
+  readonly closePanel: () => void;
 }
 
 /** Props for {@link CrudPage}. */
@@ -64,7 +64,9 @@ export function CrudPage({
     showDetail: nav.showDetail,
     showNew: nav.showNew,
     showEdit: nav.showEdit,
-    closePanel,
+    // A record presented as a page has no panel to close, and without this it has no way back to
+    // the list either: its close control returns to the list instead.
+    closePanel: closePanel ?? nav.showList,
   };
   const record = (
     <ListDetail.ViewSwitch
