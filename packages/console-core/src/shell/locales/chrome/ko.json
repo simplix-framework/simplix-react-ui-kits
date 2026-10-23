@@ -49,5 +49,36 @@
       "fresh": "산뜻",
       "grape": "포도"
     }
+  },
+  "help": "도움말",
+  "palette": {
+    "title": "명령 팔레트",
+    "search": "검색",
+    "placeholder": "화면, 메뉴, 작업 찾기",
+    "empty": "「{{query}}」에 맞는 항목이 없습니다",
+    "move": "이동",
+    "run": "열기",
+    "choseong": "초성으로도 찾습니다",
+    "groups": {
+      "go": "이동",
+      "action": "작업",
+      "menu": "메뉴"
+    },
+    "actions": {
+      "notifications": "알림 열기",
+      "help": "도움말 열기",
+      "shortcuts": "단축키 보기",
+      "toLight": "밝은 모드로 전환",
+      "toDark": "어두운 모드로 전환"
+    }
+  },
+  "shortcuts": {
+    "title": "단축키",
+    "palette": "명령 팔레트",
+    "search": "목록 검색",
+    "rail": "메뉴 접기·펴기",
+    "go": "{{name}}(으)로 이동",
+    "close": "닫기",
+    "list": "이 목록"
   }
 }

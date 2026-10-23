@@ -1,6 +1,7 @@
 import { ChevronDownIcon, ChevronRightIcon } from "lucide-react";
 import { forwardRef, type ComponentPropsWithoutRef, type ReactNode, type RefObject } from "react";
 import {
+  Button,
   MenuLink,
   PopoverContent,
   Separator,
@@ -21,6 +22,7 @@ import {
   menuFlyoutTitleStyle,
   menuGlyphStyle,
   menuLabelStyle,
+  menuRailButtonStyle,
   menuRailRuleStyle,
   menuRailStyle,
   menuRowStyle,
@@ -28,12 +30,9 @@ import {
 import { partAttributes, slotAttributes } from "@simplix-react/ui/design";
 
 /**
- * The measure the expanded column and the rail's flyout are both drawn at.
- *
- * <p>One value, because the flyout exists to show the rail's rows at the width the column would
- * have shown them at: a reader who collapses the column and opens a cluster is looking at the same
- * list, and two measures make it a different list. Written per call site it was the same class in
- * two files, which is a pair that can drift and nothing compares.
+ * The measure the rail's flyout is drawn at: the classic column's own width, so a reader who
+ * collapses the column and opens a cluster sees the same rows at the same width. The column's
+ * measure is its declaration's, where a design may set its own.
  */
 const MENU_MEASURE = "w-56";
 
@@ -80,7 +79,7 @@ export function ConsoleMenuGlyph({ children }: ConsoleMenuGlyphProps) {
  *
  * <p><b>The chevrons are imported rather than named.</b> The framework's `Icon` resolves a name
  * through two async hops, and a caret that arrives late or not at all is how a branch comes to look
- * like a leaf — one menu drew a caret on the branch that was open and none on the five beside it,
+ * like a leaf: one menu drew a caret on the branch that was open and none on the five beside it,
  * so five sets of destinations read as five screens nobody could reach.
  */
 function MenuCaret({ open }: { readonly open: boolean }) {
@@ -125,7 +124,6 @@ export function ConsoleMenuRail({ label, lead, children }: ConsoleMenuRailProps)
       gap="xs"
       align="center"
       shrink={false}
-      className="w-14"
       aria-label={label}
       {...partAttributes(menuRailStyle, {})}
     >
@@ -135,6 +133,39 @@ export function ConsoleMenuRail({ label, lead, children }: ConsoleMenuRailProps)
     </Flex>
   );
 }
+
+/** Props for {@link ConsoleMenuRailButton}. */
+export interface ConsoleMenuRailButtonProps extends Omit<ComponentPropsWithoutRef<"button">, "children"> {
+  /** Whether the cluster holds the screen the reader is on. */
+  readonly active: boolean;
+  /** The cluster's name, for a reader who is not looking at the mark. */
+  readonly label?: string;
+  /** The cluster's mark. */
+  readonly children?: ReactNode;
+}
+
+/**
+ * One mark on the rail, standing for a cluster and opening its flyout.
+ *
+ * <p>It forwards its ref and its props because a `PopoverTrigger asChild` clones it with the
+ * handlers and the state the popover reads.
+ */
+export const ConsoleMenuRailButton = forwardRef<HTMLButtonElement, ConsoleMenuRailButtonProps>(
+  ({ active, label, children, ...rest }, ref) => (
+    <Button
+      ref={ref}
+      variant={active ? "secondary" : "outline"}
+      size="icon-sm"
+      aria-label={label}
+      title={label}
+      {...rest}
+      {...partAttributes(menuRailButtonStyle, { active })}
+    >
+      <ConsoleMenuGlyph>{children}</ConsoleMenuGlyph>
+    </Button>
+  ),
+);
+ConsoleMenuRailButton.displayName = "ConsoleMenuRailButton";
 
 /** Props for {@link ConsoleMenuColumn}. */
 export interface ConsoleMenuColumnProps {
@@ -166,7 +197,7 @@ export interface ConsoleMenuColumnProps {
 }
 
 /**
- * The navigation column expanded — its area's name, and the destinations under it.
+ * The navigation column expanded: its area's name, and the destinations under it.
  *
  * <p><b>The body owns its own scroll rather than being a bounded read-through box.</b> `ScrollBox`
  * caps at 288px and draws a border, so a tab holding forty-eight destinations ended two-thirds of
@@ -184,7 +215,6 @@ export function ConsoleMenuColumn({
       direction="column"
       gap="none"
       shrink={false}
-      className={MENU_MEASURE}
       aria-label={label}
       {...partAttributes(menuColumnStyle, {})}
     >
@@ -253,7 +283,7 @@ export interface ConsoleMenuBranchProps {
    *
    * <p>The rule down the left is what says so: with several branches open at once the indent alone
    * is a column of rows at two x positions and nothing joining them. Where the column draws no
-   * branch row — a tab holding one cluster — there is nothing for them to hang off and the rule
+   * branch row (a tab holding one cluster) there is nothing for them to hang off and the rule
    * would be a border of its own.
    */
   readonly ruled?: boolean;
@@ -380,7 +410,7 @@ export const ConsoleMenuInactiveRow = forwardRef<HTMLSpanElement, ConsoleMenuIna
       aria-disabled="true"
       {...rest}
       // Merged rather than overwritten. `TooltipTrigger asChild` clones this element with props of
-      // its own, and a class written after the spread takes the last value for the attribute — so
+      // its own, and a class written after the spread takes the last value for the attribute, so
       // whatever the trigger passed is accepted, typed and thrown away with nothing saying so.
       className={cn(MENU_ROW_LAYOUT, "justify-between cursor-default", className)}
       {...slotAttributes(menuRowStyle, { kind: "inactive" })}

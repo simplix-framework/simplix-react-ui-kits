@@ -14,5 +14,10 @@
   "recordForm": {
     "required": "Required",
     "fixBeforeSave": "Fill in {{count, number}} required fields to save"
+  },
+  "recordList": {
+    "selected": "selected",
+    "clearSelection": "Clear selection",
+    "undo": "Undo"
   }
 }

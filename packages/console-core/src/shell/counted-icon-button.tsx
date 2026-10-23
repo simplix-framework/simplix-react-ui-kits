@@ -1,5 +1,7 @@
 import type { ReactNode } from "react";
 import { Badge, Button } from "@simplix-react/ui";
+import { partAttributes } from "@simplix-react/ui/design";
+import { countedButtonStyle, countedCountStyle } from "./counted-icon-button.style";
 
 /** Props for {@link CountedIconButton}. */
 export interface CountedIconButtonProps {
@@ -17,7 +19,7 @@ export interface CountedIconButtonProps {
  * A glyph button with a count pinned to its corner.
  *
  * <p><b>It is one component because the pair cannot be split.</b> A pinned count needs a positioned
- * ancestor and an offset measured against it, and neither `Button` nor `Badge` names either — so
+ * ancestor and an offset measured against it, and neither `Button` nor `Badge` names either - so
  * written at the call site the two halves sit on different elements with nothing saying they belong
  * together. Either half can then be edited alone: drop the positioning and the count leaves for the
  * corner of the window, change the button's size and the offset is measured against a box it was
@@ -35,6 +37,7 @@ export function CountedIconButton({ count, label, onClick, children }: CountedIc
       onClick={onClick}
       aria-label={label}
       className="relative"
+      {...partAttributes(countedButtonStyle, {})}
     >
       {children}
       {count > 0 && (
@@ -42,7 +45,8 @@ export function CountedIconButton({ count, label, onClick, children }: CountedIc
           variant="destructive"
           size="sm"
           rounded="full"
-          className="absolute -right-0.5 -top-0.5"
+          className="absolute"
+          {...partAttributes(countedCountStyle, {})}
         >
           {count}
         </Badge>

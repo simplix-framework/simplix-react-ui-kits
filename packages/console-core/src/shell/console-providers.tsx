@@ -4,13 +4,13 @@ import { I18nProvider } from "@simplix-react/i18n/react";
 import { AuthProvider } from "@simplix-react/auth/react";
 import { AccessProvider } from "@simplix-react/access/react";
 import { ToastContainer, TooltipProvider, UIProvider } from "@simplix-react/ui";
-import { CLASSIC_DESIGN, DESIGNS, type Design } from "@simplix-react/ui/design";
+import { CLASSIC_DESIGN, type Design } from "@simplix-react/ui/design";
 import { QueryClientProvider } from "@tanstack/react-query";
 import type { QueryClient } from "@tanstack/react-query";
 
 import { ErrorDialog } from "../error";
 import { TilesCollapseProvider } from "../layout/tiles-collapse";
-import { ConsoleDesignContext } from "./console-design";
+import { CONSOLE_DESIGNS, ConsoleDesignContext } from "./console-design";
 import { useAppliedFill, useDisplayPreferences } from "./display-preferences";
 import { useTheme } from "./use-theme";
 
@@ -77,7 +77,7 @@ export function ConsoleProviders({
   children,
 }: ConsoleProvidersProps) {
   const { prefs } = useDisplayPreferences();
-  const chosen = DESIGNS.find((d) => d.id === prefs.design) ?? design;
+  const chosen = CONSOLE_DESIGNS.find((d) => d.id === prefs.design) ?? design;
   const defaults = prefs.density ? { density: prefs.density } : undefined;
   return (
     <I18nProvider adapter={i18nAdapter}>

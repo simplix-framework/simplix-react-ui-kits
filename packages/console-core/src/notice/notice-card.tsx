@@ -1,13 +1,36 @@
 import { useCallback, useEffect, useRef, type ReactNode } from "react";
-import { XIcon } from "lucide-react";
+import { ChevronDownIcon, XIcon } from "lucide-react";
 import { useTranslation } from "@simplix-react/i18n/react";
 import { AlertBanner, Button, Flex, Stack, Text } from "@simplix-react/ui";
 
 import { DISMISSIBLE_NOTICE_KIND_STYLE, type DismissibleNoticeKind } from "./notice-kind";
 import { useRegisterNotice } from "./notice-registry";
+import { type ActionOrUnbuilt, UNBUILT, UnbuiltAction } from "./unbuilt-action";
 import { useNoticeDismissals } from "./dismissal-source";
-import { explanationCardStyle, noticeCardStyle } from "./notice-card.style";
-import { slotAttributes } from "@simplix-react/ui/design";
+import {
+  explanationCardStyle,
+  noticeActionStyle,
+  noticeActionsStyle,
+  noticeBodyStyle,
+  noticeCardStyle,
+  noticeChevronStyle,
+  noticeTextStyle,
+  noticeTitleStyle,
+} from "./notice-card.style";
+import { partAttributes, slotAttributes } from "@simplix-react/ui/design";
+
+/** One of the verbs a card offers under its text. */
+export interface NoticeCardAction {
+  /** What the button says. */
+  readonly label: string;
+  /**
+   * What pressing it does, or `UNBUILT` where the screen it leads to does not exist yet: the
+   * button is then drawn disabled with the not-built mark, never as a control that does nothing.
+   */
+  readonly onAction: ActionOrUnbuilt;
+  /** `primary` is the way out of the state the card is about; the rest are quieter. */
+  readonly emphasis?: "primary" | "secondary";
+}
 
 /** Props for {@link NoticeCard}. */
 export interface NoticeCardProps {
@@ -47,6 +70,22 @@ export interface NoticeCardProps {
    * render to decide whether its list changed.
    */
   readonly onAction?: () => void;
+  /**
+   * Whether the card's own button discloses {@link NoticeCardProps.body}, and whether it is open.
+   *
+   * <p>Left out, the button is a plain action. Set, it carries `aria-expanded` and a chevron that
+   * turns as the body opens under the card's title.
+   */
+  readonly expanded?: boolean;
+  /** What the card's button opens inside the card, under its title, when `expanded` is true. */
+  readonly body?: ReactNode;
+  /**
+   * Several verbs, drawn as a row of buttons under the card's text, the primary one first.
+   *
+   * <p>For a card that offers more than one way forward. The first is the one the header's
+   * dropdown offers as well, unless {@link NoticeCardProps.actionLabel} names another.
+   */
+  readonly actions?: readonly NoticeCardAction[];
 }
 
 /**
@@ -84,12 +123,23 @@ export function NoticeCard({
   trailing,
   actionLabel,
   onAction,
+  expanded,
+  body,
+  actions,
 }: NoticeCardProps) {
   const { t } = useTranslation("common");
   const dismissals = useNoticeDismissals();
   const style = DISMISSIBLE_NOTICE_KIND_STYLE[kind];
 
-  useRegisterNotice({ noticeKey, kind, title, hint, actionLabel, onAction });
+  const first = actions?.[0];
+  useRegisterNotice({
+    noticeKey,
+    kind,
+    title,
+    hint,
+    actionLabel: actionLabel ?? first?.label,
+    onAction: actionLabel ? onAction : typeof first?.onAction === "function" ? first.onAction : undefined,
+  });
 
   const hide = useCallback(() => dismissals.hide(noticeKey), [dismissals, noticeKey]);
 
@@ -136,8 +186,18 @@ export function NoticeCard({
         <Flex align="center" gap="xs">
           {trailing}
           {actionLabel && onAction && (
-            <Button type="button" variant="outline" size="sm" onClick={onAction}>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={onAction}
+              aria-expanded={expanded}
+              {...partAttributes(noticeActionStyle, { kind })}
+            >
               {actionLabel}
+              {expanded !== undefined && (
+                <ChevronDownIcon aria-hidden {...slotAttributes(noticeChevronStyle, { open: expanded })} />
+              )}
             </Button>
           )}
           <Button
@@ -154,13 +214,53 @@ export function NoticeCard({
       }
     >
       <Stack gap="none">
-        <Text weight="medium">{title}</Text>
-        {hint && (
-          <Text size="caption" tone="muted">
-            {hint}
+        {/* The title and the line under it; a design may set them side by side on one line. */}
+        <div className="flex" {...slotAttributes(noticeTextStyle, { kind })}>
+          <Text weight="medium" {...partAttributes(noticeTitleStyle, {})}>
+            {title}
           </Text>
-        )}
+          {hint && (
+            <Text size="caption" tone="muted">
+              {hint}
+            </Text>
+          )}
+        </div>
         {children}
+        {actions && actions.length > 0 && (
+          <div className="flex flex-wrap items-center" {...slotAttributes(noticeActionsStyle, {})}>
+            {actions.map((one) =>
+              one.onAction === UNBUILT ? (
+                <UnbuiltAction
+                  key={one.label}
+                  label={one.label}
+                  variant={one.emphasis === "primary" ? "default" : "ghost"}
+                />
+              ) : (
+                <Button
+                  key={one.label}
+                  type="button"
+                  variant={one.emphasis === "primary" ? "default" : "ghost"}
+                  size="sm"
+                  onClick={one.onAction}
+                >
+                  {one.label}
+                </Button>
+              ),
+            )}
+          </div>
+        )}
+        {/* Mounted closed as well as open, so opening is the rows growing rather than a jump; a
+            closed body is out of the reading order and the focus order both. */}
+        {body !== undefined && (
+          <div
+            className="grid"
+            aria-hidden={!expanded}
+            inert={!expanded}
+            {...slotAttributes(noticeBodyStyle, { open: expanded === true })}
+          >
+            <div className="min-h-0 overflow-hidden">{body}</div>
+          </div>
+        )}
       </Stack>
     </AlertBanner>
     </div>

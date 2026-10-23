@@ -49,5 +49,36 @@
       "fresh": "Fresh",
       "grape": "Grape"
     }
+  },
+  "help": "Help",
+  "palette": {
+    "title": "Command palette",
+    "search": "Search",
+    "placeholder": "Find screens, menus and actions",
+    "empty": "Nothing matches “{{query}}”",
+    "move": "Move",
+    "run": "Open",
+    "choseong": "Korean initial consonants also match",
+    "groups": {
+      "go": "Go to",
+      "action": "Actions",
+      "menu": "Menu"
+    },
+    "actions": {
+      "notifications": "Open notifications",
+      "help": "Open help",
+      "shortcuts": "Show shortcuts",
+      "toLight": "Switch to light mode",
+      "toDark": "Switch to dark mode"
+    }
+  },
+  "shortcuts": {
+    "title": "Keyboard shortcuts",
+    "palette": "Command palette",
+    "search": "Search the list",
+    "rail": "Collapse or expand the menu",
+    "go": "Go to {{name}}",
+    "close": "Close",
+    "list": "This list"
   }
 }

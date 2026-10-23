@@ -13,7 +13,7 @@ import { defineSlotStyle } from "@simplix-react/ui/design";
 export const menuColumnStyle = defineSlotStyle({
   slot: "console-menu-column",
   as: "part",
-  base: "border-r bg-muted/30",
+  base: "w-56 border-r bg-muted/30",
   variants: {},
   defaultVariants: {},
 });
@@ -22,7 +22,7 @@ export const menuColumnStyle = defineSlotStyle({
 export const menuRailStyle = defineSlotStyle({
   slot: "console-menu-rail",
   as: "part",
-  base: "border-r bg-muted/30 py-2",
+  base: "w-14 border-r bg-muted/30 py-2",
   variants: {},
   defaultVariants: {},
 });
@@ -142,4 +142,15 @@ export const menuFlyoutTitleStyle = defineSlotStyle({
   base: "px-2",
   variants: {},
   defaultVariants: {},
+});
+
+/** One mark on the rail, and whether its cluster holds the current screen. */
+export const menuRailButtonStyle = defineSlotStyle({
+  slot: "console-menu-rail-button",
+  as: "part",
+  base: "",
+  variants: {
+    active: { true: "", false: "" },
+  },
+  defaultVariants: { active: false },
 });

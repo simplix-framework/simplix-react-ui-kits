@@ -150,7 +150,6 @@ export function CountedTab({ value, label, count }: CountedTabProps) {
           <NumericText
             size="caption"
             tone="muted"
-            className="self-start group-data-[state=active]:text-inherit"
             {...partAttributes(countedTabCountStyle, {})}
           >
             {grouped(count)}

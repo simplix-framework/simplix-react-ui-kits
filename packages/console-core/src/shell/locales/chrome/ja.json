@@ -49,5 +49,36 @@
       "fresh": "フレッシュ",
       "grape": "グレープ"
     }
+  },
+  "help": "ヘルプ",
+  "palette": {
+    "title": "コマンドパレット",
+    "search": "検索",
+    "placeholder": "画面・メニュー・操作を検索",
+    "empty": "「{{query}}」に一致する項目はありません",
+    "move": "移動",
+    "run": "開く",
+    "choseong": "ハングルの初声でも検索できます",
+    "groups": {
+      "go": "移動",
+      "action": "操作",
+      "menu": "メニュー"
+    },
+    "actions": {
+      "notifications": "通知を開く",
+      "help": "ヘルプを開く",
+      "shortcuts": "ショートカットを表示",
+      "toLight": "ライトモードに切り替え",
+      "toDark": "ダークモードに切り替え"
+    }
+  },
+  "shortcuts": {
+    "title": "キーボードショートカット",
+    "palette": "コマンドパレット",
+    "search": "一覧を検索",
+    "rail": "メニューの折りたたみ・展開",
+    "go": "{{name}}へ移動",
+    "close": "閉じる",
+    "list": "この一覧"
   }
 }

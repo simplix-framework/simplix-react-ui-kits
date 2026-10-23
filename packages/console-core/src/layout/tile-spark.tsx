@@ -1,5 +1,5 @@
 import { cn, STATUS_TONES, type StatusTone } from "@simplix-react/ui";
-import { tileSparkStyle } from "./tile-spark.style";
+import { tileSparkBarStyle, tileSparkStyle } from "./tile-spark.style";
 import { slotAttributes } from "@simplix-react/ui/design";
 
 /** The board's two shapes: a measure over time, and counts per period. */
@@ -119,6 +119,9 @@ export function TileSpark({ shape, series, tone }: TileSparkProps) {
               rx={1}
               fill="currentColor"
               opacity={0.45}
+              {...slotAttributes(tileSparkBarStyle, {
+                mark: index !== series.length - 1 ? "plain" : tone ? "lastToned" : "last",
+              })}
             />
           );
         })}

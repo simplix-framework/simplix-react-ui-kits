@@ -1,9 +1,12 @@
 import { defineSlotStyle } from "@simplix-react/ui/design";
-/** The page header band with the rule under it. */
+/**
+ * The page header band with the rule under it. The rule casts a short shadow downward, so the
+ * figure row folded away underneath reads as sitting behind it.
+ */
 export const pageHeaderStyle = defineSlotStyle({
   slot: "console-page-header",
   as: "part",
-  base: "pb-2 mb-4 border-b",
+  base: "pb-2 mb-4 border-b rule-shadow",
   variants: {},
   defaultVariants: {},
 });

@@ -1,4 +1,4 @@
-import { Fragment, type ReactNode } from "react";
+import { Fragment, useMemo, type ReactNode } from "react";
 import { Stack, usePageHeader } from "@simplix-react/ui";
 
 import {
@@ -14,6 +14,7 @@ import { Container, Heading, TabsTrigger } from "@simplix-react/ui";
 import { NoticeCard, UnbuiltTab } from "../notice";
 import { PhoneScreenColumn, useConsoleOnAPhone } from "../shell";
 import { usePageBackLink } from "./page-back";
+import { PageMeta } from "./page-meta";
 import type {
   ConsoleSearch,
   PageBlocks,
@@ -69,12 +70,21 @@ export function ConsolePage({
     slot in (blocks?.override ?? {}) ? blocks?.override?.[slot] : drawn;
   const seam = (name: PageSeam): ReactNode => blocks?.insert?.[name];
 
+  // A list of facts is drawn as one element per fact. Keyed by its words, so the header sees the
+  // same description on every render that does not change them.
+  const metaKey = Array.isArray(spec.description) ? spec.description.join("\u0000") : undefined;
+  const metaLine = useMemo(
+    () => (metaKey === undefined ? undefined : <PageMeta items={metaKey.split("\u0000")} />),
+    [metaKey],
+  );
+  const description = metaLine ?? (typeof spec.description === "string" ? spec.description : undefined);
+
   usePageHeader({
     title: spec.title,
     // Read off the menu tree rather than off the page: a screen with a row of its own is returned
     // to by pressing that row, and only a screen without one owes the reader a breadcrumb.
     back: usePageBackLink(spec.backParams),
-    description: spec.description,
+    description,
     actions: at("actions", spec.actions),
   });
 
@@ -93,7 +103,13 @@ export function ConsolePage({
   const tiles = at(
     "tiles",
     spec.tiles && spec.tiles.length > 0 ? (
-      <SettingsTiles tiles={spec.tiles} columns={spec.tilesColumns ?? 4} />
+      <SettingsTiles
+        tiles={spec.tiles}
+        columns={spec.tilesColumns ?? 4}
+        reorderKey={spec.tilesReorderKey}
+        title={spec.tilesTitle}
+        loading={spec.tilesLoading}
+      />
     ) : null,
   );
   const helps = (Array.isArray(spec.help) ? spec.help : [spec.help]).filter(
@@ -119,6 +135,7 @@ export function ConsolePage({
             trailing={one.trailing}
             actionLabel={one.actionLabel}
             onAction={one.onAction}
+            actions={one.actions}
           >
             {one.children}
           </NoticeCard>

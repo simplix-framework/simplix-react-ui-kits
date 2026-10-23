@@ -1,6 +1,8 @@
 import type { ReactNode } from "react";
 import { EmptyValue, Flex, StatusBadge, Text, type StatusTone } from "@simplix-react/ui";
 
+import { InitialsAvatar } from "../identity/initials-avatar";
+
 /** A badge a value is drawn as: a standing, a role, a period. */
 export interface RecordBadge {
   readonly label: string;
@@ -18,7 +20,13 @@ export type RecordValue =
   | number
   | null
   | undefined
-  | { readonly text: string; readonly sub?: string; readonly badge?: RecordBadge }
+  | {
+      readonly text: string;
+      readonly sub?: string;
+      readonly badge?: RecordBadge;
+      /** Draws the person the text names beside it, tinted by this seed (their id). */
+      readonly avatar?: string;
+    }
   | { readonly badge: RecordBadge }
   | { readonly badges: readonly RecordBadge[] }
   | { readonly link: string };
@@ -38,7 +46,7 @@ export function RecordValueView({ value }: { readonly value: RecordValue }): Rea
   }
   if ("link" in value) return <Text tone="primary">{value.link}</Text>;
   if ("text" in value) {
-    return (
+    const lines = (
       <Flex direction="column" gap="none" minSize>
         <Flex align="center" gap="xs">
           <span>{value.text}</span>
@@ -49,6 +57,13 @@ export function RecordValueView({ value }: { readonly value: RecordValue }): Rea
             {value.sub}
           </Text>
         ) : null}
+      </Flex>
+    );
+    if (value.avatar === undefined) return lines;
+    return (
+      <Flex align="center" gap="sm" minSize>
+        <InitialsAvatar name={value.text} seed={value.avatar} />
+        {lines}
       </Flex>
     );
   }

@@ -12,6 +12,11 @@ const translations = buildModuleTranslations({
       ko: () => import("./tiles/ko.json"),
       ja: () => import("./tiles/ja.json"),
     },
+    explanation: {
+      en: () => import("./explanation/en.json"),
+      ko: () => import("./explanation/ko.json"),
+      ja: () => import("./explanation/ja.json"),
+    },
   },
 });
 

@@ -15,13 +15,27 @@ export {
   type Density,
   type DisplayPreferences,
 } from "./display-preferences";
-export { ConsoleDesignContext, useConsoleDesign } from "./console-design";
+export { CONSOLE_CLARITY_DESIGN, CONSOLE_DESIGNS, ConsoleDesignContext, useConsoleDesign } from "./console-design";
 export { ConsoleContextProvider, useConsole } from "./console-context";
 export {
   ConsoleAreaSwitch,
   type ConsoleArea,
   type ConsoleAreaSwitchProps,
 } from "./area-switch";
+export {
+  ConsoleBarSearch,
+  ConsoleCommandPalette,
+  ConsoleKeyCap,
+  ConsoleShortcutList,
+  type ConsoleBarSearchProps,
+  type ConsoleCommand,
+  type ConsoleCommandGroup,
+  type ConsoleCommandPaletteProps,
+  type ConsoleKeyCapProps,
+  type ConsoleShortcut,
+  type ConsoleShortcutListProps,
+} from "./command-palette";
+export { useConsoleHotkeys, CHORD_WINDOW_MS, type ConsoleHotkeyActions } from "./console-hotkeys";
 export { CountedIconButton, type CountedIconButtonProps } from "./counted-icon-button";
 export { ConsoleWindow, type ConsoleWindowProps } from "./console-window";
 export { ConsoleContentColumn, type ConsoleContentColumnProps } from "./content-column";
@@ -32,6 +46,8 @@ export type {
   ConsolePreviewMenu,
   ConsolePreviewMenuEntry,
   ConsolePreviewMenuGroup,
+  ConsolePreviewStatus,
+  ConsolePreviewStatusSegment,
 } from "./preview-chrome";
 export {
   ConsoleMenuBranch,
@@ -42,6 +58,8 @@ export {
   ConsoleMenuInactiveRow,
   ConsoleMenuLinkRow,
   ConsoleMenuRail,
+  ConsoleMenuRailButton,
+  type ConsoleMenuRailButtonProps,
   type ConsoleMenuBranchProps,
   type ConsoleMenuBranchRowProps,
   type ConsoleMenuColumnProps,

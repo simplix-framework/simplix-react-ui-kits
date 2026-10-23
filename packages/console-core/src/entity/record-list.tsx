@@ -1,5 +1,8 @@
-import { useMemo, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useMemo, type ReactNode } from "react";
+import { useTranslation } from "@simplix-react/i18n/react";
 import {
+  addToast,
+  Button,
   CrudList,
   Flex,
   Stack,
@@ -12,7 +15,11 @@ import {
   type ListHook,
   type RowActionDef,
 } from "@simplix-react/ui";
+import { slotAttributes } from "@simplix-react/ui/design";
+import { BulkActionBar } from "@simplix-react/ui/interaction";
 
+import { PACKAGE_NAMESPACE } from "./locales";
+import { recordListStyle } from "./record-list.style";
 import { RecordValueView, type RecordValue } from "./record-value";
 
 /** One column of a {@link RecordList}. */
@@ -52,6 +59,51 @@ export interface RecordAction<Row> {
   /** Rows the action is drawn for but cannot run on, with the reason a reader hovers to see. */
   readonly disabled?: (row: Row) => string | false | undefined;
 }
+
+/** What a bulk action reports once it has run: what changed, and how to take it back. */
+export interface RecordOutcome {
+  readonly message: string;
+  readonly tone?: "success" | "info" | "warning";
+  /** Restores what the action changed; given, the toast offers 「실행 취소」, which runs it once. */
+  readonly undo?: () => void;
+}
+
+/** An action on the rows the reader has selected, in the bar that rises while any are. */
+export interface RecordBulkAction<Row> {
+  readonly label: string;
+  readonly icon?: ReactNode;
+  /**
+   * Runs on the selected rows, which are then let go. Returning an outcome reports it in a toast;
+   * an action that asks first (a dialog) reports through {@link announceOutcome} once it has run.
+   */
+  readonly run: (rows: readonly Row[]) => RecordOutcome | void;
+}
+
+/**
+ * Reports what an action did in a toast, with 「실행 취소」 when it can be taken back.
+ *
+ * @param outcome what changed and how to restore it
+ * @param undoLabel the undo button's wording
+ */
+export function announceOutcome(outcome: RecordOutcome, undoLabel: string): void {
+  addToast({
+    type: outcome.tone ?? "success",
+    message: outcome.message,
+    action: outcome.undo ? { label: undoLabel, run: outcome.undo } : undefined,
+  });
+}
+
+/**
+ * {@link announceOutcome} in the reader's language: what a screen calls once an action that asked
+ * first (a dialog) has run.
+ */
+export function useAnnounceOutcome(): (outcome: RecordOutcome) => void {
+  const { t } = useTranslation(PACKAGE_NAMESPACE + "/features");
+  return useCallback((outcome: RecordOutcome) => announceOutcome(outcome, t("recordList.undo")), [t]);
+}
+
+/** Set by a record's tabs, so a list inside one is drawn as part of the record rather than as a card of its own. */
+export const RecordListNestingContext = createContext(false);
 
 /**
  * The list's features. Every one is on; a screen turns one off by naming it, so no list on any
@@ -100,6 +152,16 @@ export interface RecordListProps<Row> {
    * the width the table needs to hold its columns ({@link tableWidth}); `false` keeps the table.
    */
   readonly cardBreakpoint?: number | false;
+  /**
+   * Lets the reader select rows (a checkbox column with select-all) and act on the selection from
+   * a bar that rises while any are selected.
+   */
+  readonly bulkActions?: readonly RecordBulkAction<Row>[];
+  /**
+   * Gives the page's keys to this list: `/` moves into the search, `j` and `k` step along the
+   * rows, `x` selects the marked row and `Enter` opens it. One list per screen takes them.
+   */
+  readonly keyboard?: boolean;
 }
 
 const DEFAULT_PAGE_SIZE = 20;
@@ -175,7 +237,11 @@ export function RecordList<Row>({
   features = {},
   leading,
   cardBreakpoint,
+  bulkActions,
+  keyboard = false,
 }: RecordListProps<Row>) {
+  const { t } = useTranslation(PACKAGE_NAMESPACE + "/features");
+  const nested = useContext(RecordListNestingContext);
   const on = (feature: keyof RecordListFeatures) => features[feature] !== false;
   const useRows = useMemo<ListHook<Row>>(() => () => ({ data: [...rows], total: rows.length, isLoading: false, error: null }), [rows]);
   const list = useCrudList(useRows, { stateMode: "client", filterMode: "immediate", defaultPageSize: pageSize });
@@ -200,11 +266,25 @@ export function RecordList<Row>({
   // A fixed width keeps the search beside the filter control rather than taking the whole row.
   const search = on("search") ? (
     <div className="w-60 shrink-0">
-      <CrudList.Search value={list.filters.search} onChange={list.filters.setSearch} placeholder={searchPlaceholder} />
+      <CrudList.Search
+        value={list.filters.search}
+        onChange={list.filters.setSearch}
+        placeholder={searchPlaceholder}
+        shortcut={keyboard ? "/" : undefined}
+      />
     </div>
   ) : null;
 
+  const selectable = bulkActions !== undefined && bulkActions.length > 0;
+  const selectedRows = selectable ? [...list.selection.selected].sort((a, b) => a - b).flatMap((index) => (list.data[index] === undefined ? [] : [list.data[index]!])) : [];
+  const runBulk = (action: RecordBulkAction<Row>) => {
+    const outcome = action.run(selectedRows);
+    list.selection.clear();
+    if (outcome) announceOutcome(outcome, t("recordList.undo"));
+  };
+
   return (
+    <div {...slotAttributes(recordListStyle, { nested })}>
     <CrudList>
       {on("filters") && filters.length > 0 ? (
         <CrudList.FilterBar
@@ -239,6 +319,11 @@ export function RecordList<Row>({
         rowId={rowId}
         activeRowId={activeRowId ?? null}
         onRowClick={onRowClick}
+        selectable={selectable}
+        selectedIndices={selectable ? list.selection.selected : undefined}
+        onSelectionChange={selectable ? list.selection.toggle : undefined}
+        onSelectAll={selectable ? () => list.selection.toggleAll(list.data) : undefined}
+        keyboardNav={keyboard}
         density="compact"
         sort={on("sort") && list.sort.field ? { field: list.sort.field, direction: list.sort.direction } : null}
         onSortChange={on("sort") ? (next) => list.sort.setSort(next.field, next.direction) : undefined}
@@ -295,5 +380,24 @@ export function RecordList<Row>({
         />
       ) : null}
     </CrudList>
+    {selectable ? (
+      // Over the foot of the window, centred; the bar takes the pointer only while it is open.
+      <div className="pointer-events-none fixed bottom-12 left-1/2 z-40 -translate-x-1/2 [&>[data-open=true]]:pointer-events-auto">
+      <BulkActionBar
+        count={selectedRows.length}
+        countLabel={t("recordList.selected")}
+        onClear={list.selection.clear}
+        clearLabel={t("recordList.clearSelection")}
+      >
+        {bulkActions.map((action) => (
+          <Button key={action.label} variant="ghost" size="sm" onClick={() => runBulk(action)}>
+            {action.icon}
+            {action.label}
+          </Button>
+        ))}
+      </BulkActionBar>
+      </div>
+    ) : null}
+    </div>
   );
 }

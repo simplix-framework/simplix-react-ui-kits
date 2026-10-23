@@ -1,10 +1,15 @@
 import type { ReactNode } from "react";
 import { CrudDetail, DetailFieldWrapper, Flex, Heading, Stack, Tabs, TabsContent, TabsList } from "@simplix-react/ui";
 
+import { slotAttributes } from "@simplix-react/ui/design";
+
+import { CopyableDetailField } from "../clipboard/copyable-detail-field";
+import { InitialsAvatar } from "../identity/initials-avatar";
 import { CountedTab } from "../layout/page-tabs";
 import { RecordNote, RecordNotices, RecordVerbButton, RecordVerbs, type RecordNotice, type RecordVerb } from "./record-blocks";
 import { PermissionMatrix, type PermissionMatrixProps } from "./permission-matrix";
-import { RecordList, type RecordListProps } from "./record-list";
+import { recordHeadStyle, recordHeadSubtitleStyle } from "./record-detail.style";
+import { RecordList, RecordListNestingContext, type RecordListProps } from "./record-list";
 import { RecordValueView, type RecordValue } from "./record-value";
 
 /** One labelled value of a {@link RecordDetail} section. */
@@ -13,6 +18,8 @@ export interface RecordField {
   readonly value: RecordValue;
   /** Spans the section's full width, for a sentence rather than a value. */
   readonly wide?: boolean;
+  /** The value is one the reader carries elsewhere: a control beside it copies it, and a toast says so. */
+  readonly copy?: boolean;
 }
 
 /** One section of a {@link RecordDetail}. */
@@ -49,6 +56,10 @@ export interface RecordTab extends RecordTabContent {
 export interface RecordDetailProps {
   /** What the record is called, at the head of the panel. */
   readonly title: string;
+  /** What the record is to the reader, under its name: a role and where it belongs. */
+  readonly subtitle?: string;
+  /** Draws the person the record is beside the name, tinted by this seed (their id). */
+  readonly avatar?: string;
   /** The tabs; the first is open. A record with no tabs passes `sections` instead. */
   readonly tabs?: readonly RecordTab[];
   readonly sections?: readonly RecordSection[];
@@ -72,11 +83,15 @@ function Sections({ sections }: { readonly sections?: readonly RecordSection[] }
     <>
       {sections.map((section) => (
         <CrudDetail.Section key={section.key} title={section.title} variant="flat" layout="two-column">
-          {section.fields.map((field) => (
-            <DetailFieldWrapper key={field.label} label={field.label} layout="inline" className={field.wide ? "col-span-full" : undefined}>
-              <RecordValueView value={field.value} />
-            </DetailFieldWrapper>
-          ))}
+          {section.fields.map((field) =>
+            field.copy && typeof field.value === "string" ? (
+              <CopyableDetailField key={field.label} label={field.label} layout="inline" value={field.value} className={field.wide ? "col-span-full" : undefined} />
+            ) : (
+              <DetailFieldWrapper key={field.label} label={field.label} layout="inline" className={field.wide ? "col-span-full" : undefined}>
+                <RecordValueView value={field.value} />
+              </DetailFieldWrapper>
+            ),
+          )}
         </CrudDetail.Section>
       ))}
     </>
@@ -87,7 +102,11 @@ function Content({ content }: { readonly content: RecordTabContent }): ReactNode
   return (
     <Stack gap="sm">
       <Sections sections={content.sections} />
-      {content.list ? <RecordList {...content.list} /> : null}
+      {content.list ? (
+        <RecordListNestingContext.Provider value={true}>
+          <RecordList {...content.list} />
+        </RecordListNestingContext.Provider>
+      ) : null}
       {content.matrix ? (
         <Stack gap="xs">
           {content.matrix.title ? <Heading level={5}>{content.matrix.title}</Heading> : null}
@@ -110,6 +129,8 @@ function Content({ content }: { readonly content: RecordTabContent }): ReactNode
  */
 export function RecordDetail({
   title,
+  subtitle,
+  avatar,
   tabs,
   sections,
   notices,
@@ -144,7 +165,15 @@ export function RecordDetail({
   return (
     <CrudDetail
       isLoading={isLoading}
-      header={<Heading level={4} tone="muted">{title}</Heading>}
+      header={
+        <Flex align="center" gap="sm" minSize {...slotAttributes(recordHeadStyle, {})}>
+          {avatar !== undefined ? <InitialsAvatar name={title} seed={avatar} size="lg" /> : null}
+          <Stack gap="none" minSize>
+            <Heading level={4} tone="muted">{title}</Heading>
+            {subtitle ? <span {...slotAttributes(recordHeadSubtitleStyle, {})}>{subtitle}</span> : null}
+          </Stack>
+        </Flex>
+      }
       onClose={onClose}
       auditData={audit}
       displayZone="Asia/Seoul"

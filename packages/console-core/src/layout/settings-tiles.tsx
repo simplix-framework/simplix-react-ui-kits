@@ -12,25 +12,35 @@ import {
   usePageHeaderState,
   type StatusTone,
 } from "@simplix-react/ui";
-import { ChevronDownIcon } from "lucide-react";
+import { DigitRoll } from "@simplix-react/ui/interaction";
+import { ArrowRightIcon, ChevronDownIcon, GripVerticalIcon } from "lucide-react";
 
 import { PACKAGE_NAMESPACE } from "./locales";
 import {
+  tileGoStyle,
+  tileGripStyle,
   tileGutterStyle,
   tileHandleChevronStyle,
+  tileHandleLabelStyle,
+  tileChipFigureStyle,
+  tileChipStyle,
+  tileChipsStyle,
   tileHandleStyle,
+  tileHeadStyle,
+  tileReachStyle,
   tileRowStyle,
   tileStripDividerStyle,
   tileStripDotStyle,
   tileStripInsetStyle,
   tileStripStyle,
   tileStyle,
+  tileTitleStyle,
 } from "./settings-tiles.style";
 import { NumericText } from "./numeric-text";
 import { useTileOrder } from "./tile-order";
 import { useTilesCollapse } from "./tiles-collapse";
 import { PHONE_WINDOW, REDUCED_MOTION } from "./window-size";
-import { slotAttributes } from "@simplix-react/ui/design";
+import { partAttributes, slotAttributes } from "@simplix-react/ui/design";
 
 /** Which way a figure has moved since the moment the comparison names. */
 export type TileTrendDirection = "up" | "flat" | "down";
@@ -292,9 +302,19 @@ interface SettingsTilesProps {
    * the board's order and draws exactly as before.
    */
   readonly reorderKey?: string;
+  /**
+   * What the row is about, drawn as a heading over it.
+   *
+   * <p>Titled, the row carries its own head: the heading, the folded strip and the fold control
+   * stand on one line above the tiles, wherever the row is on the page. Untitled, the row folds up
+   * under the header's rule as before.
+   */
+  readonly title?: string;
+  /** Whether the figures are still being read; every tile draws a placeholder for its figure. */
+  readonly loading?: boolean;
 }
 
-export function SettingsTiles({ tiles, columns = 4, reorderKey }: SettingsTilesProps) {
+export function SettingsTiles({ tiles, columns = 4, reorderKey, title, loading = false }: SettingsTilesProps) {
   const { t } = useTranslation(PACKAGE_NAMESPACE + "/tiles");
   const { collapsed, toggle } = useTilesCollapse();
   const header = usePageHeaderState();
@@ -327,17 +347,19 @@ export function SettingsTiles({ tiles, columns = 4, reorderKey }: SettingsTilesP
   // row 32px into whatever is above it.
   const underARule = Boolean(onAPhone ? header.actions : header.title);
   const folding = underARule && leads !== "content";
+  // A titled row folds into chips in its own head and has no strip to turn.
+  const turningFolded = !title && folding && collapsed;
 
   // How far up the row has to reach to sit against whatever is above it, and the same distance paid
-  // back so the tiles stand exactly where they stood. Under the header it is two gaps — the
-  // header's own `mb-4` AND the page column's `gap="md"`, which add in a flex column — and under a
-  // back link it is the one gap between two siblings.
-  const reach = leads === "rule" ? "-mt-8" : "-mt-4";
-  const payBack = leads === "rule" ? "pt-8" : "pt-4";
+  // back so the tiles stand exactly where they stood. Under the header it is two gaps: the
+  // header's own bottom margin AND the page column's `gap="md"`, which add in a flex column. Under
+  // a back link it is the one gap between two siblings. Both are the design's, since the header's
+  // margin is (`tileReachStyle`, `tileRowStyle`).
+  const reachFrom: "rule" | "lead" = leads === "rule" ? "rule" : "lead";
 
   // Nothing turns while the row is open, while a pointer is on the strip, or where there is only
   // one figure to show — a lone tile flipping to itself is movement that says nothing.
-  const turning = folding && collapsed && !held && !stillness && tiles.length > 1;
+  const turning = turningFolded && !held && !stillness && tiles.length > 1;
 
   useEffect(() => {
     if (!turning) return;
@@ -352,18 +374,85 @@ export function SettingsTiles({ tiles, columns = 4, reorderKey }: SettingsTilesP
   // that was about to be shown.
   const showing = at % tiles.length;
 
+  if (title) {
+    return (
+      <section ref={anchor} aria-label={title}>
+        {/* The head: the heading, the folded strip in the room between it and the control, and the
+            control at the right. */}
+        <div className="flex items-center" {...slotAttributes(tileHeadStyle, { folded: collapsed })}>
+          <h2 className="shrink-0" {...slotAttributes(tileTitleStyle, {})}>
+            {title}
+          </h2>
+          <div className="min-w-0 flex-1">
+            <div className="tiles-fold" data-open={collapsed ? "true" : "false"} aria-hidden={!collapsed}>
+              {/* Folded, every figure as a chip; pressing one unfolds the row. The fold clips its
+                  child, so the chips sit in a wrapper of their own. */}
+              <div>
+                <div className="flex items-center overflow-x-auto" {...slotAttributes(tileChipsStyle, {})}>
+                  {tiles.map((tile) => (
+                    <button
+                      key={tile.key}
+                      type="button"
+                      tabIndex={collapsed ? 0 : -1}
+                      onClick={toggle}
+                      className="inline-flex shrink-0 items-center"
+                      {...slotAttributes(tileChipStyle, {})}
+                    >
+                      <span>{tile.label}</span>
+                      <NumericText
+                        weight="semibold"
+                        className={cn(tile.tone && STATUS_TONES[tile.tone].icon)}
+                        {...partAttributes(tileChipFigureStyle, { tone: tile.tone ?? "none" })}
+                      >
+                        {tileFigure(tile)}
+                      </NumericText>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={toggle}
+            aria-expanded={!collapsed}
+            aria-label={collapsed ? t("expand") : t("collapse")}
+            className="group flex shrink-0 items-center"
+            {...slotAttributes(tileHandleStyle, { placement: "head" })}
+          >
+            <ChevronDownIcon
+              className="size-3.5"
+              aria-hidden
+              {...slotAttributes(tileHandleChevronStyle, { folded: collapsed })}
+            />
+            <span aria-hidden {...slotAttributes(tileHandleLabelStyle, { placement: "head" })}>
+              {collapsed ? t("expand") : t("collapse")}
+            </span>
+          </button>
+        </div>
+        <div className="tiles-fold" data-open={collapsed ? "false" : "true"} aria-hidden={collapsed}>
+          <div {...slotAttributes(tileGutterStyle, {})}>
+            <div {...slotAttributes(tileRowStyle, {})}>
+              <TileGrid tiles={tiles} columns={columns} reorderKey={reorderKey} loading={loading} className="tiles-cascade" />
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   // The wrapper is drawn either way, so there is always an element to ask about its siblings — and
   // so switching between the two shapes never adds or removes a node the measurement depends on.
   if (!folding) {
     return (
       <div ref={anchor}>
-        <TileGrid tiles={tiles} columns={columns} reorderKey={reorderKey} />
+        <TileGrid tiles={tiles} columns={columns} reorderKey={reorderKey} loading={loading} />
       </div>
     );
   }
 
   return (
-    <div ref={anchor} className={cn("relative", reach)}>
+    <div ref={anchor} className="relative" {...slotAttributes(tileReachStyle, { leads: reachFrom })}>
       {/* The strip. Its own fold rather than a `collapsed &&`, so it slides away under the rule as
           the tiles come down instead of vanishing on the frame the press landed on. */}
       <div className="tiles-fold" data-open={collapsed ? "true" : "false"} aria-hidden={!collapsed}>
@@ -389,8 +478,8 @@ export function SettingsTiles({ tiles, columns = 4, reorderKey }: SettingsTilesP
         <div {...slotAttributes(tileGutterStyle, {})}>
           {/* Paying back exactly what the wrapper reached up by, so the tiles stand where they
               stood before this wrapper existed and no screen moved by adopting it. */}
-          <div className={payBack} {...slotAttributes(tileRowStyle, {})}>
-            <TileGrid tiles={tiles} columns={columns} reorderKey={reorderKey} className="tiles-cascade" />
+          <div {...slotAttributes(tileRowStyle, { leads: reachFrom })}>
+            <TileGrid tiles={tiles} columns={columns} reorderKey={reorderKey} loading={loading} className="tiles-cascade" />
           </div>
         </div>
       </div>
@@ -404,14 +493,19 @@ export function SettingsTiles({ tiles, columns = 4, reorderKey }: SettingsTilesP
         onClick={toggle}
         aria-expanded={!collapsed}
         aria-label={collapsed ? t("expand") : t("collapse")}
-        className="under-rule group absolute end-6 top-0 z-10 flex h-4 w-11 items-center justify-center"
-        {...slotAttributes(tileHandleStyle, {})}
+        className="group absolute z-10 flex items-center justify-center"
+        {...slotAttributes(tileHandleStyle, { placement: "rule" })}
       >
         <ChevronDownIcon
           className="size-3.5"
           aria-hidden
           {...slotAttributes(tileHandleChevronStyle, { folded: collapsed })}
         />
+        {/* The control's name in words, for a design that draws the handle as a labelled button
+            rather than as a tab hanging off the rule. The button's own label already names it. */}
+        <span aria-hidden {...slotAttributes(tileHandleLabelStyle, { placement: "rule" })}>
+          {collapsed ? t("expand") : t("collapse")}
+        </span>
       </button>
     </div>
   );
@@ -455,7 +549,7 @@ function TileStrip({
       onMouseEnter={() => onHold(true)}
       onMouseLeave={() => onHold(false)}
       aria-label={label}
-      className="under-rule flex h-8 w-full items-center overflow-hidden"
+      className="flex h-8 w-full items-center overflow-hidden"
       {...slotAttributes(tileStripStyle, {})}
     >
       {/* What a reader of the page's structure gets instead of a line that rewrites itself: every
@@ -533,11 +627,13 @@ function TileGrid({
   tiles,
   columns,
   reorderKey,
+  loading,
   className,
 }: {
   readonly tiles: readonly SettingsTile[];
   readonly columns: 1 | 2 | 3 | 4;
   readonly reorderKey?: string;
+  readonly loading: boolean;
   /**
    * Put on the grid itself rather than on a wrapper, so the cascade animation selects the cards as
    * its own children — a selector written two levels up breaks the day anything is put in between.
@@ -547,6 +643,7 @@ function TileGrid({
   const keys = useMemo(() => tiles.map((t) => t.key), [tiles]);
   const { order, moveTo, step, enabled } = useTileOrder(reorderKey, keys);
   const [dragging, setDragging] = useState<string | null>(null);
+  const [over, setOver] = useState<string | null>(null);
   const ordered = enabled ? order.map((k) => tiles.find((t) => t.key === k)!).filter(Boolean) : tiles;
   return (
     <Grid columns={columns} gap="md" fit className={className}>
@@ -557,14 +654,32 @@ function TileGrid({
         const trendLine = tile.trend
           ? `${TREND_ARROW[tile.trend.direction]} ${tile.trend.text}`
           : undefined;
+        // A counted number rolls its digits when it changes; a word, a date or an absent figure is
+        // drawn as it is. The unit is its own element so a design can set it beside the figure at
+        // a smaller size.
+        const figure =
+          typeof tile.value === "number" ? (
+            <DigitRoll value={tile.value} format={String} />
+          ) : (
+            tile.value ?? ABSENT
+          );
         const card = (
           <StatCard
             title={tile.label}
-            value={tileFigure(tile)}
+            value={figure}
+            unit={tile.value === undefined ? undefined : tile.unit}
+            headerExtra={
+              enabled ? (
+                <span aria-hidden className="flex shrink-0 items-center justify-center" {...slotAttributes(tileGripStyle, {})}>
+                  <GripVerticalIcon className="size-3.5" />
+                </span>
+              ) : undefined
+            }
             chart={tile.spark}
             description={trendLine ?? tile.basis}
             tone={tile.tone}
             highlighted={tile.tone !== undefined && tile.tone !== "success"}
+            loading={loading}
           >
             {trendLine && tile.basis ? (
               <Text size="caption" tone="muted">
@@ -579,7 +694,7 @@ function TileGrid({
         return (
           <div
             key={tile.key}
-            className="h-full"
+            className="group relative h-full"
             {...(enabled
               ? {
                   draggable: true,
@@ -589,13 +704,21 @@ function TileGrid({
                     setDragging(tile.key);
                     e.dataTransfer.effectAllowed = "move";
                   },
-                  onDragOver: (e: DragEvent) => e.preventDefault(),
+                  onDragOver: (e: DragEvent) => {
+                    e.preventDefault();
+                    if (over !== tile.key) setOver(tile.key);
+                  },
+                  onDragLeave: () => setOver((was) => (was === tile.key ? null : was)),
                   onDrop: (e: DragEvent) => {
                     e.preventDefault();
                     if (dragging) moveTo(dragging, tile.key);
                     setDragging(null);
+                    setOver(null);
                   },
-                  onDragEnd: () => setDragging(null),
+                  onDragEnd: () => {
+                    setDragging(null);
+                    setOver(null);
+                  },
                   onKeyDown: (e: KeyboardEvent) => {
                     if (!e.altKey) return;
                     if (e.key === "ArrowLeft" || e.key === "ArrowUp") step(tile.key, -1);
@@ -608,11 +731,16 @@ function TileGrid({
             {...slotAttributes(tileStyle, {
               emphasis: tile.emphasis === true,
               dragging: enabled && dragging === tile.key,
+              drop: enabled && dragging !== null && dragging !== tile.key && over === tile.key,
             })}
           >
             {tile.href ? (
               <MenuLink href={tile.href} className="block h-full">
                 {card}
+                {/* Where the press goes, shown under the pointer on a tile that leads to a list. */}
+                <span aria-hidden className="pointer-events-none absolute bottom-3 end-3" {...slotAttributes(tileGoStyle, {})}>
+                  <ArrowRightIcon className="size-4" />
+                </span>
               </MenuLink>
             ) : (
               card

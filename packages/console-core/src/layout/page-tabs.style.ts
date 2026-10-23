@@ -25,7 +25,7 @@ export const pageTabPanelStyle = defineSlotStyle({
 export const countedTabCountStyle = defineSlotStyle({
   slot: "console-counted-tab-count",
   as: "part",
-  base: "leading-none",
+  base: "self-start leading-none group-data-[state=active]:text-inherit",
   variants: {},
   defaultVariants: {},
 });

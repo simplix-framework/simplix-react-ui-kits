@@ -46,18 +46,16 @@ export function ConsolePageHeader() {
     // paragraph above already says why `NoticeMenu` is safe unconditionally: it draws nothing where
     // the screen holds no cards.
     return (
-      <Flex justify="end" align="center" gap="sm" className="rule-shadow" {...partAttributes(pageHeaderStyle, {})}>
+      <Flex justify="end" align="center" gap="sm" {...partAttributes(pageHeaderStyle, {})}>
         <NoticeMenu />
         {actions}
       </Flex>
     );
   }
   return (
-    // The rule casts a short shadow downward. What it is for is the figure row folded away
-    // underneath it (`PageTiles`): the strip reads as sitting behind the rule rather than as a
-    // second bar stacked below it. Where nothing is folded there, the shadow falls on 32px of
-    // empty page and nobody sees it.
-    <Flex justify="between" align="end" className="relative rule-shadow" {...partAttributes(pageHeaderStyle, {})}>
+    // The rule and the short shadow it casts over the folded figure row are the declaration's
+    // (`pageHeaderStyle`), so a design that draws no rule draws no shadow either.
+    <Flex justify="between" align="end" className="relative" {...partAttributes(pageHeaderStyle, {})}>
       <Stack gap="none">
         {back}
         <Heading level={1}>{title}</Heading>

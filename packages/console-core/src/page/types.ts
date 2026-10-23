@@ -2,7 +2,7 @@ import type { ComponentType, ReactNode } from "react";
 import type { CrudSearch } from "@simplix-react/ui";
 
 import type { SettingsTile } from "../layout";
-import type { DismissibleNoticeKind } from "../notice";
+import type { DismissibleNoticeKind, NoticeCardAction } from "../notice";
 
 /**
  * Where a console page draws something, named so a page can replace exactly that part.
@@ -205,6 +205,8 @@ export interface PageNoticeSpec {
   /** A verb the card offers, and what it does. */
   readonly actionLabel?: string;
   readonly onAction?: () => void;
+  /** Several verbs, drawn as a row under the card's text, the primary one first. */
+  readonly actions?: readonly NoticeCardAction[];
   /** What the card holds beyond its hint — a table, a list, an example. */
   readonly children?: ReactNode;
 }
@@ -218,7 +220,11 @@ export interface PageNoticeSpec {
  */
 export interface PageSpec {
   readonly title: string;
-  readonly description?: string;
+  /**
+   * The line under the title. Several facts about the page (a workplace, a date, a shift) are
+   * given as a list, so a design can set them apart rather than as one sentence.
+   */
+  readonly description?: string | readonly string[];
   /**
    * The segments of this screen's way back that its own address does not carry.
    *
@@ -247,6 +253,15 @@ export interface PageSpec {
   readonly steps?: ReactNode;
   readonly tiles?: readonly SettingsTile[];
   readonly tilesColumns?: 1 | 2 | 3 | 4;
+  /**
+   * Lets the reader put the figures in their own order, kept in this browser under this key.
+   * Absent, the figures keep the order they are declared in.
+   */
+  readonly tilesReorderKey?: string;
+  /** What the figures are about, drawn as a heading over them with the fold control on its line. */
+  readonly tilesTitle?: string;
+  /** Whether the figures are still being read. */
+  readonly tilesLoading?: boolean;
   /**
    * The cards under the figures saying what this screen settles.
    *

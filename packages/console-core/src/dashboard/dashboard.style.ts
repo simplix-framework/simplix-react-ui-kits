@@ -1,0 +1,103 @@
+import { defineSlotStyle } from "@simplix-react/ui/design";
+
+/** A dashboard card: a heading row over a chart or a list. */
+export const dashboardCardStyle = defineSlotStyle({
+  slot: "dashboard-card",
+  base: "rounded-lg border bg-card text-card-foreground shadow-sm",
+  variants: {},
+  defaultVariants: {},
+});
+
+/** The card's heading row: its title, and a legend or a line of context at the right. */
+export const dashboardCardHeadStyle = defineSlotStyle({
+  slot: "dashboard-card-head",
+  base: "gap-3 px-4 pb-1 pt-3.5",
+  variants: {},
+  defaultVariants: {},
+});
+
+/** What the card shows. */
+export const dashboardCardTitleStyle = defineSlotStyle({
+  slot: "dashboard-card-title",
+  base: "text-sm font-semibold",
+  variants: {},
+  defaultVariants: {},
+});
+
+/** A line of context at the right of the heading. */
+export const dashboardCardMetaStyle = defineSlotStyle({
+  slot: "dashboard-card-meta",
+  base: "text-sm text-muted-foreground",
+  variants: {},
+  defaultVariants: {},
+});
+
+/** The region under the heading a chart is drawn in. */
+export const dashboardCardBodyStyle = defineSlotStyle({
+  slot: "dashboard-card-body",
+  base: "px-3 pb-2.5 pt-1",
+  variants: {
+    kind: { chart: "", list: "px-2 pb-2 pt-0.5" },
+  },
+  defaultVariants: { kind: "chart" },
+});
+
+/** Cards side by side, two to a row. */
+export const dashboardColumnsStyle = defineSlotStyle({
+  slot: "dashboard-columns",
+  base: "gap-3",
+  variants: {},
+  defaultVariants: {},
+});
+
+/** One entry of the day's schedule. */
+export const scheduleRowStyle = defineSlotStyle({
+  slot: "schedule-row",
+  base: "h-11 gap-3 rounded-md px-2.5 text-left text-sm transition-colors hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+  variants: {
+    past: { true: "text-muted-foreground", false: "" },
+  },
+  defaultVariants: { past: false },
+});
+
+/** The entry's start time. */
+export const scheduleTimeStyle = defineSlotStyle({
+  slot: "schedule-time",
+  base: "font-medium tabular-nums",
+  variants: {},
+  defaultVariants: {},
+});
+
+/** What happens then. */
+export const scheduleTaskStyle = defineSlotStyle({
+  slot: "schedule-task",
+  base: "font-medium",
+  variants: {
+    past: { true: "font-normal", false: "" },
+  },
+  defaultVariants: { past: false },
+});
+
+/** Where it happens. */
+export const scheduleZoneStyle = defineSlotStyle({
+  slot: "schedule-zone",
+  base: "gap-1.5 text-sm text-muted-foreground",
+  variants: {},
+  defaultVariants: {},
+});
+
+/** The arrow at the end of the entry, which moves under the pointer. */
+export const scheduleGoStyle = defineSlotStyle({
+  slot: "schedule-go",
+  base: "text-muted-foreground transition-transform group-hover:translate-x-[3px] group-hover:text-foreground",
+  variants: {},
+  defaultVariants: {},
+});
+
+/** The rule at the current time, between what is past and what is still to come. */
+export const scheduleNowStyle = defineSlotStyle({
+  slot: "schedule-now",
+  base: "mx-2.5 gap-2.5 text-[11px] font-semibold tabular-nums text-destructive after:h-px after:bg-destructive after:opacity-50",
+  variants: {},
+  defaultVariants: {},
+});

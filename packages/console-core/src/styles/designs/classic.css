@@ -65,7 +65,7 @@
     @apply -my-1;
   }
   :where(:root:not([data-design]), [data-design="classic"]) :where([data-part="console-counted-tab-count"])[data-part] {
-    @apply leading-none;
+    @apply self-start leading-none group-data-[state=active]:text-inherit;
   }
   :where(:root:not([data-design]), [data-design="classic"]) :where([data-part="console-page-tab-panel"])[data-part] {
     @apply pt-4;
@@ -118,6 +118,9 @@
   :where(:root:not([data-design]), [data-design="classic"]) :where([data-part="console-notice-menu"])[data-part] {
     @apply gap-0.5;
   }
+  :where(:root:not([data-design]), [data-design="classic"]) :where([data-part="console-explanation-body"])[data-part] {
+    @apply pt-3 pb-1;
+  }
   :where(:root:not([data-design]), [data-design="classic"]) :where([data-part="console-history-lane"])[data-part] {
     @apply ml-2 border-l-2;
   }
@@ -151,11 +154,20 @@
   :where(:root:not([data-design]), [data-design="classic"]) :where([data-part="console-auth-page"])[data-part] {
     @apply bg-background px-4 py-8;
   }
+  :where(:root:not([data-design]), [data-design="classic"]) :where([data-part="console-palette-list"])[data-part] {
+    @apply p-1;
+  }
+  :where(:root:not([data-design]), [data-design="classic"]) :where([data-part="console-palette"])[data-part] {
+    @apply gap-0 overflow-hidden;
+  }
   :where(:root:not([data-design]), [data-design="classic"]) :where([data-part="console-window"])[data-part] {
     @apply bg-background;
   }
   :where(:root:not([data-design]), [data-design="classic"]) :where([data-part="console-content-column-body"])[data-part] {
     @apply mx-auto;
+  }
+  :where(:root:not([data-design]), [data-design="classic"]) :where([data-part="console-counted-count"])[data-part] {
+    @apply -right-0.5 -top-0.5;
   }
   :where(:root:not([data-design]), [data-design="classic"]) :where([data-part="console-display-settings"])[data-part] {
     @apply w-80 gap-4 p-4;
@@ -170,7 +182,7 @@
     @apply border-b px-3 py-2;
   }
   :where(:root:not([data-design]), [data-design="classic"]) :where([data-part="console-menu-column"])[data-part] {
-    @apply border-r bg-muted/30;
+    @apply w-56 border-r bg-muted/30;
   }
   :where(:root:not([data-design]), [data-design="classic"]) :where([data-part="console-menu-flyout"])[data-part] {
     @apply p-2;
@@ -182,13 +194,13 @@
     @apply my-1;
   }
   :where(:root:not([data-design]), [data-design="classic"]) :where([data-part="console-menu-rail"])[data-part] {
-    @apply border-r bg-muted/30 py-2;
+    @apply w-14 border-r bg-muted/30 py-2;
   }
   :where(:root:not([data-design]), [data-design="classic"]) :where([data-part="console-page-header-metadata"])[data-part] {
     @apply mt-4;
   }
   :where(:root:not([data-design]), [data-design="classic"]) :where([data-part="console-page-header"])[data-part] {
-    @apply pb-2 mb-4 border-b;
+    @apply pb-2 mb-4 border-b rule-shadow;
   }
   :where(:root:not([data-design]), [data-design="classic"]) :where([data-part="console-phone-action-bar"])[data-part] {
     @apply border-t border-border bg-card px-3 py-2;
@@ -212,7 +224,7 @@
     @apply py-1;
   }
   :where(:root:not([data-design]), [data-design="classic"]) :where([data-part="console-preview-topbar-row"])[data-part] {
-    @apply px-3;
+    @apply min-h-12 px-3;
   }
   :where(:root:not([data-design]), [data-design="classic"]) :where([data-part="console-preview-topbar"])[data-part] {
     @apply border-b bg-background;
@@ -223,6 +235,51 @@
   :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="console-copyable-field"]) {
     @apply gap-1.5;
   }
+  :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="dashboard-card-body"]) {
+    @apply px-3 pb-2.5 pt-1;
+  }
+  :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="dashboard-card-body"][data-kind="list"]) {
+    @apply px-2 pb-2 pt-0.5;
+  }
+  :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="dashboard-card-head"]) {
+    @apply gap-3 px-4 pb-1 pt-3.5;
+  }
+  :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="dashboard-card-meta"]) {
+    @apply text-sm text-muted-foreground;
+  }
+  :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="dashboard-card"]) {
+    @apply rounded-lg border bg-card text-card-foreground shadow-sm;
+  }
+  :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="dashboard-card-title"]) {
+    @apply text-sm font-semibold;
+  }
+  :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="dashboard-columns"]) {
+    @apply gap-3;
+  }
+  :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="schedule-go"]) {
+    @apply text-muted-foreground transition-transform group-hover:translate-x-[3px] group-hover:text-foreground;
+  }
+  :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="schedule-now"]) {
+    @apply mx-2.5 gap-2.5 text-[11px] font-semibold tabular-nums text-destructive after:h-px after:bg-destructive after:opacity-50;
+  }
+  :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="schedule-row"]) {
+    @apply h-11 gap-3 rounded-md px-2.5 text-left text-sm transition-colors hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring;
+  }
+  :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="schedule-row"][data-past="true"]) {
+    @apply text-muted-foreground;
+  }
+  :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="schedule-task"]) {
+    @apply font-medium;
+  }
+  :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="schedule-task"][data-past="true"]) {
+    @apply font-normal;
+  }
+  :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="schedule-time"]) {
+    @apply font-medium tabular-nums;
+  }
+  :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="schedule-zone"]) {
+    @apply gap-1.5 text-sm text-muted-foreground;
+  }
   :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="console-form-error-card"]) {
     @apply rounded-md border border-destructive/40 bg-destructive/5 px-3 py-2;
   }
@@ -231,6 +288,9 @@
   }
   :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="console-permission-check"]) {
     @apply text-success;
+  }
+  :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="console-record-head-subtitle"]) {
+    @apply hidden;
   }
   :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="console-error-glyph"][data-kind="server"]) {
     @apply text-red-500;
@@ -258,6 +318,9 @@
   }
   :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="console-admin-destination-link"]) {
     @apply gap-1 underline-offset-2 hover:underline;
+  }
+  :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="console-initials-avatar"]) {
+    @apply hidden;
   }
   :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="console-user-avatar"]) {
     @apply rounded-full;
@@ -361,6 +424,18 @@
   :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="console-push-start"]) {
     @apply mr-auto;
   }
+  :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="console-tile-chip"]) {
+    @apply h-7 gap-2 rounded-full border bg-card px-3 text-xs transition-colors hover:bg-accent/40;
+  }
+  :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="console-tile-chips"]) {
+    @apply gap-1.5;
+  }
+  :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="console-tile-go"]) {
+    @apply text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100;
+  }
+  :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="console-tile-grip"]) {
+    @apply ms-auto size-5 cursor-grab rounded-sm text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100;
+  }
   :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="console-tile-gutter"]) {
     @apply -mx-1 px-1;
   }
@@ -373,11 +448,41 @@
   :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="console-tile-handle-chevron"][data-folded="false"]) {
     @apply rotate-180 group-hover:-translate-y-0.5;
   }
+  :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="console-tile-handle-label"][data-placement="rule"]) {
+    @apply sr-only;
+  }
+  :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="console-tile-handle-label"][data-placement="head"]) {
+    @apply whitespace-nowrap;
+  }
   :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="console-tile-handle"]) {
-    @apply rounded-b-md border border-t-0 bg-card transition-colors hover:bg-accent/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset;
+    @apply transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset;
+  }
+  :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="console-tile-handle"][data-placement="rule"]) {
+    @apply top-0 under-rule end-6 h-4 w-11 rounded-b-md border border-t-0 bg-card hover:bg-accent/40;
+  }
+  :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="console-tile-handle"][data-placement="head"]) {
+    @apply ms-auto h-7 gap-1 rounded-md px-2 text-xs text-muted-foreground hover:bg-accent hover:text-foreground;
+  }
+  :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="console-tile-head"]) {
+    @apply min-h-7 gap-3;
+  }
+  :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="console-tile-head"][data-folded="false"]) {
+    @apply mb-2;
+  }
+  :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="console-tile-reach"][data-leads="rule"]) {
+    @apply -mt-8;
+  }
+  :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="console-tile-reach"][data-leads="lead"]) {
+    @apply -mt-4;
   }
   :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="console-tile-row"]) {
     @apply pb-1;
+  }
+  :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="console-tile-row"][data-leads="rule"]) {
+    @apply pt-8;
+  }
+  :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="console-tile-row"][data-leads="lead"]) {
+    @apply pt-4;
   }
   :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="console-tile-strip-divider"]) {
     @apply bg-border;
@@ -395,10 +500,16 @@
     @apply px-3;
   }
   :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="console-tile-strip"]) {
-    @apply rounded-b-lg border border-t-0 bg-card ps-3 pe-16 text-start transition-colors hover:bg-accent/40;
+    @apply under-rule rounded-b-lg border border-t-0 bg-card ps-3 pe-16 text-start transition-colors hover:bg-accent/40;
   }
   :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="console-tile"][data-dragging="true"]) {
     @apply opacity-40;
+  }
+  :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="console-tile"][data-drop="true"]) {
+    @apply rounded-lg ring-2 ring-ring;
+  }
+  :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="console-tile-title"]) {
+    @apply text-base font-semibold;
   }
   :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="console-share-segment"][data-tone="primary"]) {
     @apply bg-primary;
@@ -450,6 +561,27 @@
   }
   :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="console-mono-block"]) {
     @apply font-mono text-xs;
+  }
+  :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="console-notice-actions"]) {
+    @apply mt-2 gap-1.5;
+  }
+  :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="console-notice-body"]) {
+    @apply transition-[grid-template-rows] duration-300;
+  }
+  :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="console-notice-body"][data-open="true"]) {
+    @apply grid-rows-[1fr];
+  }
+  :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="console-notice-body"][data-open="false"]) {
+    @apply grid-rows-[0fr];
+  }
+  :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="console-notice-chevron"]) {
+    @apply hidden size-3.5 transition-transform;
+  }
+  :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="console-notice-chevron"][data-open="true"]) {
+    @apply rotate-180;
+  }
+  :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="console-notice-text"]) {
+    @apply flex-col;
   }
   :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="console-notice-ping"]) {
     @apply animate-ping rounded-full opacity-50 [animation-duration:2.6s];
@@ -559,17 +691,56 @@
   :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="console-target-track"]) {
     @apply rounded-full bg-muted;
   }
+  :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="console-area-ink"]) {
+    @apply h-0.5 bg-primary [transition:left_var(--dur-slow)_var(--ease),top_var(--dur-slow)_var(--ease),width_var(--dur-slow)_var(--ease)];
+  }
   :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="console-area-tab"]) {
-    @apply px-3 text-sm;
+    @apply border-b-2 border-transparent px-3 text-sm;
   }
   :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="console-area-tab"][data-current="true"]) {
-    @apply border-b-2 border-primary font-medium;
+    @apply font-medium;
   }
   :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="console-area-tab"][data-current="false"]) {
-    @apply border-b-2 border-transparent text-muted-foreground hover:text-foreground;
+    @apply text-muted-foreground hover:text-foreground;
   }
   :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="console-auth-brand"]) {
     @apply mx-auto text-foreground;
+  }
+  :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="console-bar-search-label"]) {
+    @apply text-left;
+  }
+  :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="console-bar-search"]) {
+    @apply h-8 w-64 max-w-[40vw] gap-2 rounded-md border border-input bg-background pl-3 pr-1.5 text-sm text-muted-foreground transition-colors hover:bg-accent max-[1281px]:w-8 max-[1281px]:justify-center max-[1281px]:pl-0 max-[1281px]:pr-0 max-[1281px]:[&>kbd]:!hidden max-[1281px]:[&>span]:!hidden;
+  }
+  :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="console-key-cap"]) {
+    @apply h-[18px] min-w-[18px] rounded-sm border bg-muted px-1 font-mono text-[11px] leading-none text-muted-foreground;
+  }
+  :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="console-key-cap"][data-onBar="true"]) {
+    @apply bg-transparent;
+  }
+  :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="console-palette-esc"]) {
+    @apply inset-y-0 right-3;
+  }
+  :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="console-palette-foot"]) {
+    @apply gap-4 border-t px-3 py-2 text-xs text-muted-foreground;
+  }
+  :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="console-palette-hint"]) {
+    @apply gap-1;
+  }
+  :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="console-palette-keys"]) {
+    @apply ml-auto gap-1;
+  }
+  :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="console-palette-match"]) {
+    @apply bg-transparent font-semibold text-primary;
+  }
+  :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="console-palette-sub"]) {
+    @apply text-xs text-muted-foreground;
+  }
+  :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="console-shortcut-keys"]) {
+    @apply gap-1;
+  }
+  :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="console-shortcut-list"]) {
+    @apply gap-x-6 gap-y-2.5 text-sm;
   }
   :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="console-content-column"]) {
     @apply px-6 pt-4;
@@ -654,5 +825,35 @@
   }
   :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="console-phone-tabbar"]) {
     @apply border-t border-border bg-card;
+  }
+  :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="console-preview-account-caret"]) {
+    @apply opacity-60;
+  }
+  :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="console-preview-avatar"]) {
+    @apply size-6 rounded-full bg-muted text-[10px] font-semibold text-muted-foreground;
+  }
+  :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="console-preview-clock"]) {
+    @apply ml-3 gap-1.5 border-l pl-3 text-xs tabular-nums text-muted-foreground;
+  }
+  :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="console-preview-live-dot"]) {
+    @apply size-[7px] rounded-full bg-destructive;
+  }
+  :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="console-preview-live-pulse"]) {
+    @apply -inset-[3px] animate-ping rounded-full border-[1.5px] border-destructive motion-reduce:animate-none;
+  }
+  :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="console-preview-segment-rule"]) {
+    @apply mx-3 h-2.5 w-px bg-border;
+  }
+  :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="console-preview-segment"]) {
+    @apply text-xs text-muted-foreground;
+  }
+  :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="console-preview-segment"][data-tone="warn"]) {
+    @apply font-semibold text-amber-700 dark:text-amber-400;
+  }
+  :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="console-preview-ticker"]) {
+    @apply gap-2 text-xs text-muted-foreground;
+  }
+  :where(:root:not([data-design]), [data-design="classic"]) :where([data-slot="console-preview-ticker"][data-live="true"]) {
+    @apply font-medium text-foreground;
   }
 }

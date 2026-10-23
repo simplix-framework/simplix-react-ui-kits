@@ -36,6 +36,11 @@
       "types": "./dist/clipboard/fallback.d.ts",
       "import": "./dist/clipboard/fallback.js"
     },
+    "./dashboard": {
+      "source": "./src/dashboard/index.ts",
+      "types": "./dist/dashboard/index.d.ts",
+      "import": "./dist/dashboard/index.js"
+    },
     "./datetime": {
       "source": "./src/datetime/index.ts",
       "types": "./dist/datetime/index.d.ts",
@@ -114,8 +119,8 @@
     "lint": "oxlint src",
     "test": "vitest run --passWithNoTests",
     "clean": "rm -rf dist .turbo",
-    "design:css": "simplix-design-css --root . --out src/styles/designs/classic.css && simplix-design-css --root . --design-spec src/styles/designs/clarity.spec.ts --out src/styles/designs/clarity.css",
-    "design:check": "simplix-design-css --root . --out src/styles/designs/classic.css --check && simplix-design-css --root . --design-spec src/styles/designs/clarity.spec.ts --out src/styles/designs/clarity.css --check && simplix-design-coverage src/styles/designs/classic.css src/styles/designs/clarity.css && simplix-design-classes src"
+    "design:css": "simplix-design-css --root . --out src/styles/designs/classic.css && simplix-design-css --root . --design-spec src/styles/designs/clarity.spec.ts --out src/styles/designs/clarity.css --compiled src/styles/designs/clarity-stylesheet.ts --tailwind-from ../../../accesscore/simplix-react/apps/storybook --reference src/styles/utilities.css",
+    "design:check": "simplix-design-css --root . --out src/styles/designs/classic.css --check && simplix-design-css --root . --design-spec src/styles/designs/clarity.spec.ts --out src/styles/designs/clarity.css --compiled src/styles/designs/clarity-stylesheet.ts --tailwind-from ../../../accesscore/simplix-react/apps/storybook --reference src/styles/utilities.css --check && simplix-design-coverage src/styles/designs/classic.css src/styles/designs/clarity.css && simplix-design-classes src"
   },
   "dependencies": {
     "@fontsource/noto-sans-jp": "catalog:",

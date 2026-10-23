@@ -13,5 +13,10 @@
   "recordForm": {
     "required": "必須項目です",
     "fixBeforeSave": "必須項目を{{count, number}}件入力すると保存できます"
+  },
+  "recordList": {
+    "selected": "件選択",
+    "clearSelection": "選択解除",
+    "undo": "元に戻す"
   }
 }

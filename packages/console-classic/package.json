@@ -36,6 +36,11 @@
       "types": "./dist/clipboard/fallback.d.ts",
       "import": "./dist/clipboard/fallback.js"
     },
+    "./dashboard": {
+      "source": "./src/dashboard/index.ts",
+      "types": "./dist/dashboard/index.d.ts",
+      "import": "./dist/dashboard/index.js"
+    },
     "./datetime": {
       "source": "./src/datetime/index.ts",
       "types": "./dist/datetime/index.d.ts",

@@ -9,6 +9,7 @@ export default defineConfig((options) => ({
     "badge/index": "src/badge/index.ts",
     "clipboard/index": "src/clipboard/index.ts",
     "clipboard/fallback": "src/clipboard/fallback.ts",
+    "dashboard/index": "src/dashboard/index.ts",
     "datetime/index": "src/datetime/index.ts",
     "entity/index": "src/entity/index.ts",
     "error/index": "src/error/index.ts",

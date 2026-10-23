@@ -7,7 +7,7 @@ export type { NoticeBoxProps, NoticeBoxTone } from "./notice-box";
 export { NoticeCard } from "./notice-card";
 export { NoticeDeclaration } from "./notice-declaration";
 export type { DeclaredNotice, NoticeDeclarationProps } from "./notice-declaration";
-export type { NoticeCardProps } from "./notice-card";
+export type { NoticeCardAction, NoticeCardProps } from "./notice-card";
 export { DISMISSIBLE_NOTICE_KINDS, DISMISSIBLE_NOTICE_KIND_STYLE } from "./notice-kind";
 export type { DismissibleNoticeKind, DismissibleNoticeKindStyle } from "./notice-kind";
 export { NoticeMenu } from "./notice-menu";

@@ -2,7 +2,7 @@ import { SlidersHorizontal } from "lucide-react";
 import type { CSSProperties } from "react";
 import { useTranslation } from "@simplix-react/i18n/react";
 import { Button, Popover, PopoverContent, PopoverTrigger, THEMES } from "@simplix-react/ui";
-import { DESIGNS, partAttributes, slotAttributes } from "@simplix-react/ui/design";
+import { partAttributes, slotAttributes } from "@simplix-react/ui/design";
 
 import { PACKAGE_NAMESPACE } from "./locales";
 import { type CardFill, type Density, resolveFill, useDisplayPreferences } from "./display-preferences";
@@ -14,7 +14,7 @@ import {
   displaySettingsThemeStyle,
   displaySettingsThemesStyle,
 } from "./display-settings.style";
-import { useConsoleDesign } from "./console-design";
+import { CONSOLE_DESIGNS, useConsoleDesign } from "./console-design";
 import { useTheme } from "./use-theme";
 
 const FILLS: readonly CardFill[] = ["plain", "outline", "raised", "tint", "lead"];
@@ -98,7 +98,7 @@ export function DisplaySettings() {
           <h3>{t("display.design")}</h3>
           <Choices
             value={design}
-            options={DESIGNS.map((d) => d.id)}
+            options={CONSOLE_DESIGNS.map((d) => d.id)}
             label={(id) => t(`display.designs.${id}`, { defaultValue: id })}
             onChange={(id) => update({ design: id === defaultDesign ? null : id })}
           />
