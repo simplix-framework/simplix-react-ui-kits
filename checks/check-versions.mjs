@@ -11,9 +11,12 @@ import { KIT_ROOT } from "../lib/kit-root.mjs";
 
 const args = parseArgs(process.argv.slice(2));
 const root = resolve(args.root ?? KIT_ROOT);
-const { frameworkRoot, packages } = locateFramework({ framework: args.framework, libraryRoot: root });
+const configPath = join(root, "mockup.config.json");
+const configured = existsSync(configPath) ? JSON.parse(readFileSync(configPath, "utf8")).framework : undefined;
+const framework = args.framework ?? (configured ? resolve(root, configured) : undefined);
+const { frameworkRoot, packages } = locateFramework({ framework, libraryRoot: root });
 if (!frameworkRoot) {
-  console.error("check-versions needs a framework checkout (--framework or SIMPLIX_FRAMEWORK) for its lockfile");
+  console.error("check-versions needs a framework checkout (--framework, mockup.config.json framework, or SIMPLIX_FRAMEWORK) for its lockfile");
   process.exit(2);
 }
 const manifest = JSON.parse(readFileSync(join(root, "package.json"), "utf8"));
