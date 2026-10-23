@@ -1,7 +1,7 @@
 import { FormFields, Text } from "@simplix-react/ui";
 import { useTranslation } from "@simplix-react/i18n/react";
 
-import type { EntitySearch } from "./entity-search";
+import type { EntitySearch } from "@simplix-react/ui";
 
 interface EntitySearchComboboxProps {
   label: string;

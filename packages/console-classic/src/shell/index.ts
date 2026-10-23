@@ -66,6 +66,6 @@ export { createConsoleQueryClient, isSessionExpiry } from "./query-client";
 export { guarded } from "./guarded-route";
 export { RouteErrorFallback } from "./route-error";
 export { useSidebarCollapse, type SidebarCollapse } from "./sidebar-collapse";
-export { createRememberMe, type RememberMe } from "./remember-me";
+export { createRememberMe, type RememberMe } from "@simplix-react/auth";
 export { createSelfAccessPolicy, type SelfAccessConfig } from "./self-access";
 export type { ConsoleContextValue, ConsoleSite } from "./console-context";

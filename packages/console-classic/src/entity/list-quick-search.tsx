@@ -8,7 +8,7 @@ import {
   type CrudListFilters,
 } from "@simplix-react/ui";
 
-import { useDebouncedValue } from "./use-debounced-value";
+import { useDebouncedValue } from "@simplix-react/headless";
 
 /**
  * How long typing has to stop before the box asks the server.

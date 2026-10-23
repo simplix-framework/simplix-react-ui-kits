@@ -3,7 +3,7 @@ import { useTranslation } from "@simplix-react/i18n/react";
 import { TimeRangeSelector } from "@simplix-react/ui";
 import type { CrudListFilters, TimeRange, TimeRangeValue, WindowPreset } from "@simplix-react/ui";
 
-import { useAppTimeZone } from "./app-timezone";
+import { useAppTimeZone } from "@simplix-react/headless";
 
 /** What a strip asks its screen for: a window, a slice count, and the list's other conditions. */
 export interface TimeRangeCountQuery {

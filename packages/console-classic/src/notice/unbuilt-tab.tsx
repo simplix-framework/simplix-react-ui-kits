@@ -2,7 +2,7 @@ import { ClockIcon } from "lucide-react";
 import { useTranslation } from "@simplix-react/i18n/react";
 import { Flex, Icon, TabsTrigger, Tooltip, TooltipContent, TooltipTrigger } from "@simplix-react/ui";
 
-import { useGroupedFigure } from "../i18n/grouped-figure";
+import { useGroupedFigure } from "@simplix-react/i18n/react";
 import { NumericText, TooltipTarget } from "../layout";
 
 interface UnbuiltTabProps {

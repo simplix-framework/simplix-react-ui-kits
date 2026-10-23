@@ -35,7 +35,7 @@ export {
   type ConflictChoice,
   type ConflictField,
 } from "./edit-conflict";
-export { chipFilterValues } from "./chip-filter-values";
+export { chipFilterValues } from "@simplix-react/ui";
 export { FeatureLock } from "./feature-lock";
 export { HistoryRail, type HistoryLane, type HistoryNode, type HistoryNodeState } from "./history-rail";
 export { ImpactAnalysis, type ImpactGroup, type ImpactKind, type ImpactRow } from "./impact-analysis";
@@ -84,5 +84,5 @@ export {
 } from "./search-results";
 export { TimeBasisCards, TimeBasisStrip, zoneToday, type TimeBasis } from "./time-basis";
 export { TargetBar } from "./target-bar";
-export { useOnline } from "./use-online";
+export { useOnline } from "@simplix-react/headless";
 export type { TargetBarProps, TargetBarRow } from "./target-bar";

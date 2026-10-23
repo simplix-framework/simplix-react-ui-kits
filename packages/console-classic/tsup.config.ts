@@ -23,7 +23,7 @@ export default defineConfig((options) => ({
     "clipboard/index": "src/clipboard/index.ts",
     // Its own entry so an app's polyfills file can install the fill without pulling React and
     // the framework's UI package in ahead of them — that file runs before anything is set up.
-    "clipboard/fallback": "src/clipboard/install-clipboard-fallback.ts",
+    "clipboard/fallback": "src/clipboard/fallback.ts",
     "datetime/index": "src/datetime/index.ts",
     "entity/index": "src/entity/index.ts",
     // The failure screens and the failure dialog: shared because three apps drew them and one

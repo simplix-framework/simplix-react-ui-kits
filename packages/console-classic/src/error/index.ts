@@ -10,4 +10,4 @@ export {
   ServiceUnavailablePage,
 } from "./error-pages";
 export type { AccessDeniedPageProps } from "./error-pages";
-export { dismissAllErrors, dismissError, dispatchError, useErrorStore } from "./error-store";
+export { dismissAllErrors, dismissError, dispatchError, useErrorStore } from "@simplix-react/ui";

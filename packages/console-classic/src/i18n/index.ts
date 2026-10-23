@@ -1,23 +1,24 @@
-export { configureFallbackLocale, useFallbackLocale, getFallbackLocale, DEFAULT_FALLBACK_LOCALE } from "./app-locale";
-export { useContentEditLanguage, useI18nEditLanguage } from "./edit-language";
-export type { I18nEditLanguage } from "./edit-language";
-export { useOptionalTranslation } from "./optional-translation";
-export { countedFigure } from "./counted-figure";
-export { useGroupedFigure } from "./grouped-figure";
-export { byteSize } from "./byte-size";
-export { unitAmount } from "./unit-amount";
-export { messageLength } from "./message-length";
-export type { MessageLength } from "./message-length";
+export { configureFallbackLocale, useFallbackLocale, getFallbackLocale, DEFAULT_FALLBACK_LOCALE } from "@simplix-react/i18n";
+export { useContentEditLanguage, useI18nEditLanguage } from "@simplix-react/i18n/react";
+export type { I18nEditLanguage } from "@simplix-react/i18n/react";
+export { useOptionalTranslation } from "@simplix-react/i18n/react";
+export { countedFigure } from "@simplix-react/i18n/react";
+export { useGroupedFigure } from "@simplix-react/i18n/react";
+export { byteSize } from "@simplix-react/i18n";
+export { unitAmount } from "@simplix-react/i18n";
+export { messageLength } from "@simplix-react/i18n";
+export type { MessageLength } from "@simplix-react/i18n";
 export {
   contentLanguageDualName,
   contentLanguageLabel,
   contentLanguageNames,
   useContentLanguageLabel,
   useContentLanguageNames,
-} from "./content-language";
-export type { OptionalTranslation, TranslationValues } from "./optional-translation";
-export { koreanParticle, localeParticle, KOREAN_PARTICLES } from "./korean-particle";
-export type { KoreanParticle } from "./korean-particle";
+} from "@simplix-react/i18n/react";
+export type { OptionalTranslation } from "@simplix-react/i18n/react";
+export type { TranslationValues } from "@simplix-react/i18n";
+export { koreanParticle, localeParticle, KOREAN_PARTICLES } from "@simplix-react/i18n";
+export type { KoreanParticle } from "@simplix-react/i18n";
 export {
   APP_NAME,
   CONTENT_FALLBACK_ORDER,

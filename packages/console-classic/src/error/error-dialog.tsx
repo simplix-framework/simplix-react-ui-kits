@@ -19,7 +19,7 @@ import {
   useErrorStore,
   dismissError,
   dismissAllErrors,
-} from "./error-store";
+} from "@simplix-react/ui";
 import { BoundedDialogContent } from "../layout";
 
 const categoryConfig: Record<

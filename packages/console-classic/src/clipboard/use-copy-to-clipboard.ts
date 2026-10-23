@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import { addToast } from "@simplix-react/ui";
 import { useTranslation } from "@simplix-react/i18n/react";
 
-import { copyText } from "./copy-text";
+import { copyText } from "@simplix-react/headless";
 import { PACKAGE_NAMESPACE } from "./locales";
 
 /** What a screen may say instead of the shared wording. */

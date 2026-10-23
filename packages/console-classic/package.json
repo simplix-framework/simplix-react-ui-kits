@@ -32,7 +32,7 @@
       "import": "./dist/clipboard/index.js"
     },
     "./clipboard/fallback": {
-      "source": "./src/clipboard/install-clipboard-fallback.ts",
+      "source": "./src/clipboard/fallback.ts",
       "types": "./dist/clipboard/fallback.d.ts",
       "import": "./dist/clipboard/fallback.js"
     },

@@ -1,5 +1,5 @@
-export { useAppTimeZone, getAppTimeZone, configureAppTimeZone, APP_TIME_ZONE } from "./app-timezone";
-export { browserZoneLabel, withBrowserZone, zoneLabel } from "./browser-zone-label";
+export { useAppTimeZone, getAppTimeZone, configureAppTimeZone, APP_TIME_ZONE } from "@simplix-react/headless";
+export { browserZoneLabel, withBrowserZone, zoneLabel } from "@simplix-react/headless";
 // **Everything the zone helpers hold, not the four that happened to be re-exported.** Nineteen are
 // written here and six reached the barrel, and the six were exactly the six with importers anywhere
 // in the tree — the correlation is perfect because it is causal. `zoneCalendarDate` is written here
@@ -16,8 +16,8 @@ export {
   isSameZoneDay,
   timeAtOrAfter,
   timePlusHours,
-} from "./zone-time";
-export { daysUntilDay } from "./days-until";
+} from "@simplix-react/headless";
+export { daysUntilDay } from "@simplix-react/headless";
 export {
   calendarDayLabel,
   pickedCalendarDay,
@@ -31,13 +31,13 @@ export {
   zonePickedMonthRange,
   zonePickedWeekRange,
   zoneWeekRange,
-} from "./zone-bounds";
-export type { CalendarDayStyle } from "./zone-bounds";
+} from "@simplix-react/headless";
+export type { CalendarDayStyle } from "@simplix-react/headless";
 export { ListTimeRange, readCounts, useTimeWindowPresets } from "./list-time-range";
 export type { ListTimeRangeProps, TimeRangeCountQuery } from "./list-time-range";
 export { RemainingText } from "./remaining-text";
 export type { RemainingTextProps } from "./remaining-text";
-export { periodStanding } from "./period-distance";
-export type { PeriodStanding } from "./period-distance";
-export { elapsedSpan, elapsedSpanBetween, elapsedSpanOf } from "./elapsed-span";
-export type { ElapsedSpan, ElapsedUnit } from "./elapsed-span";
+export { periodStanding } from "@simplix-react/headless";
+export type { PeriodStanding } from "@simplix-react/headless";
+export { elapsedSpan, elapsedSpanBetween, elapsedSpanOf } from "@simplix-react/headless";
+export type { ElapsedSpan, ElapsedUnit } from "@simplix-react/headless";

@@ -1,8 +1,8 @@
 import "./locales";
 
-export { copyText } from "./copy-text";
-export type { CopyOutcome } from "./copy-text";
-export { installClipboardFallback } from "./install-clipboard-fallback";
+export { copyText } from "@simplix-react/headless";
+export type { CopyOutcome } from "@simplix-react/headless";
+export { installClipboardFallback } from "@simplix-react/headless";
 export { useCopyToClipboard } from "./use-copy-to-clipboard";
 export type { CopyMessages } from "./use-copy-to-clipboard";
 export { CopyableDetailField } from "./copyable-detail-field";

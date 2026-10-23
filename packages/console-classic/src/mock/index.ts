@@ -1,2 +1,2 @@
-export { stopMocking } from "./stop-mocking";
-export type { StopMockingOptions } from "./stop-mocking";
+export { stopMocking } from "@simplix-react/mock";
+export type { StopMockingOptions } from "@simplix-react/mock";

@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { Flex, Tabs, TabsContent, TabsTrigger } from "@simplix-react/ui";
 
-import { useGroupedFigure } from "../i18n/grouped-figure";
+import { useGroupedFigure } from "@simplix-react/i18n/react";
 import { NumericText } from "./numeric-text";
 
 interface PageTabsProps {
