@@ -1,0 +1,18 @@
+{
+  "framework": "../simplix-react",
+  "uiKit": "",
+  "screenImports": [],
+  "design": "framework",
+  "designDirs": [],
+  "locales": [
+    "ko",
+    "en"
+  ],
+  "detailPresentation": "panel",
+  "viewports": [
+    {
+      "width": 1920,
+      "height": 1080
+    }
+  ]
+}
