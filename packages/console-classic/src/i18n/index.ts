@@ -19,10 +19,4 @@ export type { OptionalTranslation } from "@simplix-react/i18n/react";
 export type { TranslationValues } from "@simplix-react/i18n";
 export { koreanParticle, localeParticle, KOREAN_PARTICLES } from "@simplix-react/i18n";
 export type { KoreanParticle } from "@simplix-react/i18n";
-export {
-  APP_NAME,
-  CONTENT_FALLBACK_ORDER,
-  CONTENT_LOCALES,
-  DEFAULT_LOCALE,
-  SUPPORTED_LOCALES,
-} from "./app-config";
+

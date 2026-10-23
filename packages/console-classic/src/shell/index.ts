@@ -1,13 +1,6 @@
 // Side-effect: register the chrome's own translations
 import "./locales";
 
-export {
-  AccessCORELogo,
-  LOGO_HEIGHTS,
-  type AccessCORELogoProps,
-  type LogoPlacement,
-} from "./accesscore-logo";
-export { AccessCOREMark, type AccessCOREMarkProps } from "./accesscore-mark";
 export { ChromeControlRows, type ChromeControlRowsProps } from "./chrome-control-rows";
 export { DarkModeToggle, type DarkModeToggleProps } from "./dark-mode-toggle";
 export { LocalePicker, type LocalePickerProps } from "./locale-picker";

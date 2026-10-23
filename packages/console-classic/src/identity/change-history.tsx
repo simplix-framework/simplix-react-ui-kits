@@ -22,7 +22,7 @@ import { useChangeHistorySource, type ChangeHistoryEvent } from "./change-histor
 import { EllipsisText, PanelList, StrongText, useWideList, WIDE_LIST_WIDTH } from "../layout";
 import { useAppTimeZone } from "../datetime";
 
-import { SUBJECTS } from "./subjects";
+import { useConsoleSubject } from "./console-product";
 
 /** How many events one page of a history tab carries. */
 const PAGE_SIZE = 20;
@@ -102,7 +102,7 @@ export function useChangeHistory(
   enabled: boolean,
   scope: ChangeHistoryScope = {},
 ) {
-  const mayReadAudit = useCan("list", SUBJECTS.auditLog);
+  const mayReadAudit = useCan("list", useConsoleSubject("auditLog"));
   // By the audit log's own address rather than by this tab's parameters: a save writes a row that
   // every history over that entity may want, and naming the prefix takes them all.
   const invalidateAudit = useInvalidateEntity(AUDIT_EVENT_ENTITY);

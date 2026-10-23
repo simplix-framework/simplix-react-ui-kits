@@ -13,4 +13,3 @@ export {
   type PeekRenderer,
   type PeekTarget,
 } from "./peek-registry";
-export { PEEK_SUBJECT } from "./peek-subjects";

@@ -1,3 +1,4 @@
+import { ConsoleProductProvider, type ConsoleProduct } from "../identity/console-product";
 import type { ReactNode } from "react";
 import { I18nProvider } from "@simplix-react/i18n/react";
 import { AuthProvider } from "@simplix-react/auth/react";
@@ -27,6 +28,8 @@ export interface ConsoleProvidersProps {
   readonly accessPolicy: Parameters<typeof AccessProvider>[0]["policy"];
   /** The client the console's two caches were built into. */
   readonly queryClient: QueryClient;
+  /** The product's values the kit parts read: permission subjects and the sign-in mark. */
+  readonly product: ConsoleProduct;
   /** Whatever the app mounts inside its own providers — a router, a shell. */
   readonly children: ReactNode;
 }
@@ -53,6 +56,7 @@ export function ConsoleProviders({
   auth,
   accessPolicy,
   queryClient,
+  product,
   children,
 }: ConsoleProvidersProps) {
   return (
@@ -66,7 +70,9 @@ export function ConsoleProviders({
                     choice the operator makes once and every route reads, so it cannot live in a
                     layout a navigation remounts. */}
                 <TilesCollapseProvider namespace={namespace}>
-                  {children}
+                  <ConsoleProductProvider subjects={product.subjects} brand={product.brand}>
+                    {children}
+                  </ConsoleProductProvider>
                 </TilesCollapseProvider>
                 <ErrorDialog />
                 <ToastContainer />

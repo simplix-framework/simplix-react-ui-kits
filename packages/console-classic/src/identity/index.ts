@@ -8,7 +8,13 @@ export { getUserAvatarUrl, type UserAvatarSize } from "./avatar-url";
 export { publishAvatarDirectory, useAvatarDirectory } from "./avatar-directory";
 export { DEFAULT_USER_AVATAR_URL, UserAvatar, UserHeading, UserLabel } from "./user-avatar";
 export { usePermissionGroupName } from "./permission-groups";
-export { SUBJECTS, type Subject } from "./subjects";
+export {
+  ConsoleProductProvider,
+  useConsoleBrand,
+  useConsoleSubject,
+  type ConsoleProduct,
+  type ConsoleProductProviderProps,
+} from "./console-product";
 export { AdminDestination, type AdminDestinationProps } from "./admin-destination";
 export {
   ChangeHistoryTable,

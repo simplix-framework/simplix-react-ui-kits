@@ -3,12 +3,12 @@ import { useCan } from "@simplix-react/access/react";
 import { Button, MenuLink } from "@simplix-react/ui";
 import { ShieldCogCornerIcon } from "lucide-react";
 
-import { SUBJECTS } from "./subjects";
+import { useConsoleSubject } from "./console-product";
 
 /** Props for {@link AdminDestination}. */
 export interface AdminDestinationProps {
   /** Which screen it opens, by the key its permission is registered under. */
-  readonly subject: keyof typeof SUBJECTS;
+  readonly subject: string;
   /** The address, already resolved. */
   readonly to: string;
   /** What the control says. */
@@ -56,7 +56,7 @@ export function AdminDestination({
   appearance = "button",
   variant = "outline",
 }: AdminDestinationProps) {
-  const may = useCan("view", SUBJECTS[subject]);
+  const may = useCan("view", useConsoleSubject(subject));
   if (!may) return null;
 
   if (appearance === "link") {
