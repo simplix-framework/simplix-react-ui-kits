@@ -8,5 +8,46 @@
     "back": "뒤로",
     "areas": "주요 영역",
     "unbuilt": "이 화면은 아직 만들지 않았습니다"
+  },
+  "display": {
+    "title": "화면 설정",
+    "design": "디자인",
+    "fill": "카드 채움",
+    "density": "행 간격",
+    "designs": {
+      "classic": "클래식",
+      "clarity": "정돈"
+    },
+    "fills": {
+      "plain": "흰 카드",
+      "outline": "테두리",
+      "raised": "입체",
+      "tint": "옅은 색",
+      "lead": "강조"
+    },
+    "densities": {
+      "compact": "좁게",
+      "default": "기본",
+      "comfortable": "넓게"
+    },
+    "modes": {
+      "light": "라이트",
+      "dark": "다크"
+    },
+    "themes": {
+      "default": "기본",
+      "blue": "파랑",
+      "green": "초록",
+      "krds": "KRDS",
+      "orange": "주황",
+      "rose": "장미",
+      "violet": "보라",
+      "graphite": "흑연",
+      "cobalt": "코발트",
+      "forest": "숲",
+      "clear": "청량",
+      "fresh": "산뜻",
+      "grape": "포도"
+    }
   }
 }

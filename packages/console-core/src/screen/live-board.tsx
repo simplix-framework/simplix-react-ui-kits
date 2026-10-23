@@ -5,6 +5,8 @@ import { AlertBanner, Badge, Button, Flex, Stack, Text } from "@simplix-react/ui
 
 import { KOREAN_PARTICLES, localeParticle } from "../i18n";
 import { ActionButton, type ActionOrUnbuilt } from "../notice";
+import { liveNoticeActionStyle, liveNoticeStyle } from "./live-board.style";
+import { partAttributes, slotAttributes } from "@simplix-react/ui/design";
 
 /** Whether the board is still being fed. */
 export type FeedState = "connected" | "stale" | "disconnected";
@@ -177,14 +179,14 @@ export function LiveTicker({ notices }: { readonly notices: readonly LiveNotice[
           align="center"
           gap="sm"
           wrap
-          className={notice.weight === "action" ? "rounded-md border border-warning/50 px-2 py-1" : "px-2 py-1"}
+          {...partAttributes(liveNoticeStyle, { action: notice.weight === "action" })}
         >
           <Text size="caption" tone="muted">
             {notice.at}
           </Text>
-          <Text className={notice.weight === "action" ? "font-medium" : undefined}>{notice.body}</Text>
+          <Text weight={notice.weight === "action" ? "medium" : undefined}>{notice.body}</Text>
           {notice.unread && <Badge variant="outline">{t("liveBoard.unread")}</Badge>}
-          {notice.action && <span className="ml-auto">{notice.action}</span>}
+          {notice.action && <span {...slotAttributes(liveNoticeActionStyle, {})}>{notice.action}</span>}
         </Flex>
       ))}
     </Stack>

@@ -23,6 +23,7 @@ import {
 
 import { BoundedDialogContent, SettingsTiles, SizedHead, TableCard } from "../layout";
 import { ActionButton, type ActionOrUnbuilt } from "../notice";
+import { PushStart } from "../layout/push-edge";
 
 /**
  * The three stages, in the only order they occur.
@@ -267,12 +268,13 @@ export function BulkPreviewDialog({
 
         <DialogFooter>
           {onExportBlocked && counts.blocked > 0 && (
-            <ActionButton
-              behaviour={onExportBlocked}
-              variant="outline"
-              className="mr-auto"
-              label={t("bulk.exportBlocked", { count: counted(counts.blocked) })}
-            />
+            <PushStart>
+              <ActionButton
+                behaviour={onExportBlocked}
+                variant="outline"
+                label={t("bulk.exportBlocked", { count: counted(counts.blocked) })}
+              />
+            </PushStart>
           )}
           <Button variant="outline" onClick={onCancel}>
             {t("bulk.cancel")}

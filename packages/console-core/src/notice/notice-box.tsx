@@ -1,16 +1,13 @@
 import type { ReactNode } from "react";
 
-import { Flex, Stack, cn } from "@simplix-react/ui";
+import { Flex, Stack } from "@simplix-react/ui";
+import { partAttributes } from "@simplix-react/ui/design";
+
+import { noticeBoxStyle } from "./notice-box.style";
 import type { ComponentProps } from "react";
 
 /** How loudly a box asks to be read. */
 export type NoticeBoxTone = "quiet" | "accent" | "danger";
-
-const TONE_CLASS: Record<NoticeBoxTone, string> = {
-  quiet: "border-border bg-muted/40",
-  accent: "border-primary/30 bg-primary/5",
-  danger: "border-destructive/40 bg-muted/40",
-};
 
 /** Props for {@link NoticeBox}. */
 export interface NoticeBoxProps {
@@ -44,13 +41,13 @@ export interface NoticeBoxProps {
  * than as the wrong container.
  */
 export function NoticeBox({ children, tone = "quiet", gap = "xs", direction = "column", className }: NoticeBoxProps) {
-  const surface = cn("rounded-md border p-3", TONE_CLASS[tone], className);
+  const part = partAttributes(noticeBoxStyle, { tone });
   return direction === "row" ? (
-    <Flex align="center" gap={gap} className={surface}>
+    <Flex align="center" gap={gap} className={className} {...part}>
       {children}
     </Flex>
   ) : (
-    <Stack gap={gap} className={surface}>
+    <Stack gap={gap} className={className} {...part}>
       {children}
     </Stack>
   );

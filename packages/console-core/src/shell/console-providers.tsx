@@ -4,11 +4,15 @@ import { I18nProvider } from "@simplix-react/i18n/react";
 import { AuthProvider } from "@simplix-react/auth/react";
 import { AccessProvider } from "@simplix-react/access/react";
 import { ToastContainer, TooltipProvider, UIProvider } from "@simplix-react/ui";
+import { CLASSIC_DESIGN, DESIGNS, type Design } from "@simplix-react/ui/design";
 import { QueryClientProvider } from "@tanstack/react-query";
 import type { QueryClient } from "@tanstack/react-query";
 
 import { ErrorDialog } from "../error";
 import { TilesCollapseProvider } from "../layout/tiles-collapse";
+import { ConsoleDesignContext } from "./console-design";
+import { useAppliedFill, useDisplayPreferences } from "./display-preferences";
+import { useTheme } from "./use-theme";
 
 /** Props for {@link ConsoleProviders}. */
 export interface ConsoleProvidersProps {
@@ -30,8 +34,20 @@ export interface ConsoleProvidersProps {
   readonly queryClient: QueryClient;
   /** The product's values the kit parts read: permission subjects and the sign-in mark. */
   readonly product: ConsoleProduct;
+  /**
+   * The design this console draws in until the reader picks another in the display settings.
+   * A design kit passes its own; the classic design when absent.
+   */
+  readonly design?: Design;
   /** Whatever the app mounts inside its own providers — a router, a shell. */
   readonly children: ReactNode;
+}
+
+/** Writes the card fill the reader's theme and choices name onto the document element. */
+function AppliedFill() {
+  const { colorTheme } = useTheme();
+  useAppliedFill(colorTheme);
+  return null;
 }
 
 /**
@@ -57,21 +73,26 @@ export function ConsoleProviders({
   accessPolicy,
   queryClient,
   product,
+  design = CLASSIC_DESIGN,
   children,
 }: ConsoleProvidersProps) {
+  const { prefs } = useDisplayPreferences();
+  const chosen = DESIGNS.find((d) => d.id === prefs.design) ?? design;
+  const defaults = prefs.density ? { density: prefs.density } : undefined;
   return (
     <I18nProvider adapter={i18nAdapter}>
       <AuthProvider auth={auth}>
         <AccessProvider policy={accessPolicy} auth={auth}>
           <QueryClientProvider client={queryClient}>
             <TooltipProvider>
-              <UIProvider>
+              <UIProvider design={chosen} defaults={defaults}>
+                <AppliedFill />
                 {/* Inside the UI provider and above the router: the figure row's fold is one
                     choice the operator makes once and every route reads, so it cannot live in a
                     layout a navigation remounts. */}
                 <TilesCollapseProvider namespace={namespace}>
                   <ConsoleProductProvider subjects={product.subjects} brand={product.brand}>
-                    {children}
+                    <ConsoleDesignContext.Provider value={design}>{children}</ConsoleDesignContext.Provider>
                   </ConsoleProductProvider>
                 </TilesCollapseProvider>
                 <ErrorDialog />

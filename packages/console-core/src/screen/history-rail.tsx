@@ -1,5 +1,7 @@
 import type { ReactNode } from "react";
 import { Badge, Card, Flex, Heading, Stack, Text } from "@simplix-react/ui";
+import { historyDotStyle, historyLaneStyle, historyLineStyle, historyNodeStyle } from "./history-rail.style";
+import { partAttributes, slotAttributes } from "@simplix-react/ui/design";
 
 /**
  * Where a node stands. The four are different facts and are never collapsed into two.
@@ -74,13 +76,6 @@ const HEADING_TONE: Readonly<Record<HistoryNodeState, "default" | "muted" | "pri
   skip: "muted",
 };
 
-const DOT: Readonly<Record<HistoryNodeState, string>> = {
-  done: "bg-muted-foreground border-muted-foreground",
-  active: "bg-primary border-primary ring-4 ring-primary/20",
-  pending: "bg-background border-muted-foreground/40",
-  skip: "bg-background border-dashed border-muted-foreground/40",
-};
-
 interface HistoryRailProps {
   readonly nodes: readonly HistoryNode[];
 }
@@ -120,19 +115,20 @@ export function HistoryRail({ nodes }: HistoryRailProps) {
               unbroken between nodes. A `gap` on the outer stack would cut the line into segments,
               which is the one thing the rail cannot do, so the space is inside the row. */}
           <Flex direction="column" align="center" className="w-4 shrink-0">
-            <span className={`mt-1.5 size-3 shrink-0 rounded-full border-2 ${DOT[node.state]}`} />
+            <span className="size-3 shrink-0" {...slotAttributes(historyDotStyle, { state: node.state })} />
             {index < nodes.length - 1 && (
               <span
-                className={
-                  node.state === "skip"
-                    ? "w-px flex-1 border-l border-dashed border-muted-foreground/40"
-                    : "w-px flex-1 bg-border"
-                }
+                className="w-px flex-1"
+                {...slotAttributes(historyLineStyle, { skipped: node.state === "skip" })}
               />
             )}
           </Flex>
 
-          <Stack gap="xs" className={index < nodes.length - 1 ? "min-w-0 flex-1 pb-4" : "min-w-0 flex-1"}>
+          <Stack
+            gap="xs"
+            className="min-w-0 flex-1"
+            {...partAttributes(historyNodeStyle, { open: index < nodes.length - 1 })}
+          >
             {/* The set's name, over the first node of each run of it. Drawn inside the node's own
                 column rather than across the rail, so the line down the left stays unbroken —
                 cutting it to make room for a heading would take away the one thing the rail
@@ -156,9 +152,7 @@ export function HistoryRail({ nodes }: HistoryRailProps) {
             </Flex>
             {node.body}
             {node.lane && (
-              // The elbow: an indented card tied to the node above it, so the branch reads as part
-              // of that step rather than as a step of its own.
-              <Card padding="sm" className="ml-2 border-l-2">
+              <Card padding="sm" {...partAttributes(historyLaneStyle, {})}>
                 <Stack gap="xs">
                   <Badge variant="outline">{node.lane.title}</Badge>
                   {node.lane.body}

@@ -8,5 +8,46 @@
     "back": "Back",
     "areas": "Main areas",
     "unbuilt": "This screen has not been built yet"
+  },
+  "display": {
+    "title": "Display settings",
+    "design": "Design",
+    "fill": "Card fill",
+    "density": "Row spacing",
+    "designs": {
+      "classic": "Classic",
+      "clarity": "Clarity"
+    },
+    "fills": {
+      "plain": "White cards",
+      "outline": "Outline",
+      "raised": "Raised",
+      "tint": "Tint",
+      "lead": "Lead card"
+    },
+    "densities": {
+      "compact": "Compact",
+      "default": "Default",
+      "comfortable": "Comfortable"
+    },
+    "modes": {
+      "light": "Light",
+      "dark": "Dark"
+    },
+    "themes": {
+      "default": "Default",
+      "blue": "Blue",
+      "green": "Green",
+      "krds": "KRDS",
+      "orange": "Orange",
+      "rose": "Rose",
+      "violet": "Violet",
+      "graphite": "Graphite",
+      "cobalt": "Cobalt",
+      "forest": "Forest",
+      "clear": "Clear",
+      "fresh": "Fresh",
+      "grape": "Grape"
+    }
   }
 }

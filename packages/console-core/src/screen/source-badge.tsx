@@ -1,5 +1,7 @@
 import { useTranslation } from "@simplix-react/i18n/react";
 import { Badge, cn, Text } from "@simplix-react/ui";
+import { sourceBadgeStyle, sourceDividerStyle } from "./source-badge.style";
+import { partAttributes, slotAttributes } from "@simplix-react/ui/design";
 
 /**
  * Which layer set a value, as the closed set of words a reader learns once (P-13 · 설계서 13.10절).
@@ -65,7 +67,8 @@ export function SourceBadge({ source, basis, className }: SourceBadgeProps) {
   return (
     <Badge
       variant={source === "STATUTORY_DEFAULT" ? "outline" : "secondary"}
-      className={cn("gap-1.5 whitespace-normal", className)}
+      className={cn("whitespace-normal", className)}
+      {...partAttributes(sourceBadgeStyle, {})}
     >
       {t(`source.${source}`)}
       {basis ? (
@@ -73,8 +76,12 @@ export function SourceBadge({ source, basis, className }: SourceBadgeProps) {
           {/* A rule rather than a 가운뎃점: the two halves are different kinds of fact, and a
               separator that looks like the one joining words inside each half reads as a third
               item in a list. */}
-          <span aria-hidden className="h-3 w-px shrink-0 bg-current opacity-30" />
-          <Text as="span" size="caption" className="font-normal">
+          <span
+            aria-hidden
+            className="h-3 w-px shrink-0"
+            {...slotAttributes(sourceDividerStyle, {})}
+          />
+          <Text as="span" size="caption" weight="normal">
             {basis}
           </Text>
         </>

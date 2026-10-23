@@ -1,4 +1,6 @@
 import { Flex, Stack, Text } from "@simplix-react/ui";
+import { targetFillStyle, targetMarkStyle, targetTrackStyle } from "./target-bar.style";
+import { slotAttributes } from "@simplix-react/ui/design";
 
 /** One measure and the target it is being read against. */
 export interface TargetBarRow {
@@ -70,18 +72,21 @@ export function TargetBar({ rows, max }: TargetBarProps) {
                 primitive for either — `Flex` and `Stack` arrange things, they do not paint one.
                 The figures above carry the same two numbers, so nothing here is read off pixels. */}
             <div
-              className="relative h-2 w-full overflow-hidden rounded-full bg-muted"
+              className="relative h-2 w-full overflow-hidden"
               role="img"
               aria-label={`${row.label} ${row.value}${unit} / ${row.target}${unit}`}
+              {...slotAttributes(targetTrackStyle, {})}
             >
               <div
-                className={`h-full rounded-full ${reached ? "bg-primary" : "bg-muted-foreground/60"}`}
+                className="h-full"
                 style={{ width: `${share}%` }}
+                {...slotAttributes(targetFillStyle, { reached })}
               />
               <div
-                className="absolute inset-y-0 w-px bg-foreground"
+                className="absolute inset-y-0 w-px"
                 style={{ left: `${mark}%` }}
                 aria-hidden
+                {...slotAttributes(targetMarkStyle, {})}
               />
             </div>
           </Stack>

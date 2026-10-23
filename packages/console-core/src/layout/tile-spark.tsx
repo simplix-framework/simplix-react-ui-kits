@@ -1,4 +1,6 @@
 import { cn, STATUS_TONES, type StatusTone } from "@simplix-react/ui";
+import { tileSparkStyle } from "./tile-spark.style";
+import { slotAttributes } from "@simplix-react/ui/design";
 
 /** The board's two shapes: a measure over time, and counts per period. */
 export type TileSparkShape = "line" | "bars";
@@ -83,8 +85,8 @@ export function TileSpark({ shape, series, tone }: TileSparkProps) {
   // figure and no shape, which is what the board asks for where a measure has no series.
   if (series.length < 2) return null;
 
-  const tint = tone ? STATUS_TONES[tone].icon : "text-muted-foreground";
-  const className = cn("block h-[26px] w-full", tint);
+  const className = cn("block h-[26px] w-full", tone && STATUS_TONES[tone].icon);
+  const look = slotAttributes(tileSparkStyle, { toned: tone !== undefined });
 
   if (shape === "bars") {
     // Counts per period start at zero, so the bars are drawn from zero: a baseline anywhere else
@@ -99,6 +101,7 @@ export function TileSpark({ shape, series, tone }: TileSparkProps) {
         className={className}
         aria-hidden
         focusable="false"
+        {...look}
       >
         {series.map((value, index) => {
           const height = top > 0 && value > 0
@@ -152,6 +155,7 @@ export function TileSpark({ shape, series, tone }: TileSparkProps) {
       className={className}
       aria-hidden
       focusable="false"
+      {...look}
     >
       <polyline
         points={points}

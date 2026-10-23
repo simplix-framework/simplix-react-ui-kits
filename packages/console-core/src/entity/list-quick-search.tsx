@@ -9,6 +9,8 @@ import {
 } from "@simplix-react/ui";
 
 import { useDebouncedValue } from "@simplix-react/headless";
+import { quickSearchIconStyle, quickSearchInputStyle } from "./list-quick-search.style";
+import { partAttributes, slotAttributes } from "@simplix-react/ui/design";
 
 /**
  * How long typing has to stop before the box asks the server.
@@ -89,8 +91,9 @@ export function ListQuickSearch({
   return (
     <Flex align="center" gap="xs" className="relative">
       <SearchIcon
-        className="pointer-events-none absolute start-2 size-3.5 text-muted-foreground"
+        className="pointer-events-none absolute start-2 size-3.5"
         aria-hidden
+        {...slotAttributes(quickSearchIconStyle, {})}
       />
       <Input
         type="search"
@@ -98,7 +101,8 @@ export function ListQuickSearch({
         onChange={(event) => setTyped(event.target.value)}
         placeholder={placeholder}
         aria-label={placeholder}
-        className="h-7 ps-7 text-sm"
+        className="h-7"
+        {...partAttributes(quickSearchInputStyle, {})}
         style={{ width }}
       />
     </Flex>

@@ -19,6 +19,15 @@ import {
 import { DISMISSIBLE_NOTICE_KINDS, DISMISSIBLE_NOTICE_KIND_STYLE, type DismissibleNoticeKind } from "./notice-kind";
 import { useNoticeEntries, type NoticeEntry } from "./notice-registry";
 import { useNoticeDismissals } from "./dismissal-source";
+import {
+  noticeMenuActionStyle,
+  noticeMenuCardStyle,
+  noticeMenuLabelStyle,
+  noticeMenuRuleStyle,
+  noticeMenuStyle,
+  noticePingStyle,
+} from "./notice-menu.style";
+import { partAttributes, slotAttributes } from "@simplix-react/ui/design";
 
 /**
  * How wide the dropdown is drawn.
@@ -58,10 +67,8 @@ export function NoticeMenu() {
   const dismissals = useNoticeDismissals();
   if (entries.length === 0) return null;
   return (
-    // Tighter than the header's own `gap="sm"`: these are one control repeated per kind, not four
-    // separate verbs, and at the header's spacing they read as four unrelated buttons somebody
-    // happened to put in a row. Grouped, they are one cluster the eye takes in at once.
-    <Flex align="center" className="gap-0.5">
+    // One cluster rather than four verbs; the slot says how tight.
+    <Flex align="center" {...partAttributes(noticeMenuStyle, {})}>
       {DISMISSIBLE_NOTICE_KINDS.map((kind) => {
         const ofKind = entries.filter((entry) => entry.kind === kind);
         // `ready` as well as `isHidden`, for the same reason `NoticeCard` gates its own render on
@@ -120,15 +127,9 @@ function NoticeKindMenu({ kind, entries }: { readonly kind: DismissibleNoticeKin
               keyboard then cannot see where they are. */}
           {hiding && style.pulses && (
             <span
-              className={cn(
-                // Slower and smaller than the framework's default ping. A one-second pulse at the
-                // glyph's own width reads as an alarm and pulls the eye off whatever the reader
-                // came to do; at this size and cadence it is a heartbeat behind the icon — visible
-                // when looked at, ignorable while working.
-                "pointer-events-none absolute inline-flex size-3 animate-ping rounded-full opacity-50 [animation-duration:2.6s]",
-                STATUS_TONES[style.tone].ring,
-              )}
+              className={cn("pointer-events-none absolute inline-flex size-3", STATUS_TONES[style.tone].ring)}
               aria-hidden
+              {...slotAttributes(noticePingStyle, {})}
             />
           )}
           <KindIcon
@@ -137,12 +138,10 @@ function NoticeKindMenu({ kind, entries }: { readonly kind: DismissibleNoticeKin
           />
         </Button>
       </DropdownMenuTrigger>
-      {/* The card's surface rather than the popover's, and the card's padding step. `p-1` is what a
-          menu uses to sit its rows edge to edge; a card puts a gutter between its border and the
-          first character. */}
       <DropdownMenuContent
         align="end"
-        className={`${MENU_WIDTH} rounded-lg border-border bg-card px-4 py-3 shadow-sm`}
+        className={MENU_WIDTH}
+        {...partAttributes(noticeMenuCardStyle, {})}
         // **Focus goes back to the icon without dragging the page to it.** Closing, the menu
         // restores focus to its trigger, and the browser scrolls a focused element into view — so
         // a card that has just brought itself onto the screen is scrolled off again before the
@@ -153,13 +152,13 @@ function NoticeKindMenu({ kind, entries }: { readonly kind: DismissibleNoticeKin
           trigger.current?.focus({ preventScroll: true });
         }}
       >
-        <DropdownMenuLabel className="px-0 pt-0">{kindLabel}</DropdownMenuLabel>
+        <DropdownMenuLabel {...partAttributes(noticeMenuLabelStyle, {})}>{kindLabel}</DropdownMenuLabel>
         <Stack gap="sm">
           {entries.map((entry, at) => {
             const hidden = dismissals.isHidden(entry.noticeKey);
             return (
               <Fragment key={entry.noticeKey}>
-                {at > 0 && <DropdownMenuSeparator className="-mx-4" />}
+                {at > 0 && <DropdownMenuSeparator {...partAttributes(noticeMenuRuleStyle, {})} />}
                 {/* The same component the card on the page renders, so the tint, the icon and the
                     words are one thing drawn twice rather than two things kept in step by hand.
                     The controls go under the text instead of beside it: at a card's width the
@@ -180,7 +179,8 @@ function NoticeKindMenu({ kind, entries }: { readonly kind: DismissibleNoticeKin
                     <Flex gap="xs" wrap>
                       {entry.actionLabel && entry.onAction && (
                         <DropdownMenuItem
-                          className="w-auto rounded-md border border-input bg-background px-2 py-1 text-xs font-medium"
+                          className="w-auto"
+                          {...partAttributes(noticeMenuActionStyle, {})}
                           onSelect={() => entry.onAction?.()}
                         >
                           {entry.actionLabel}
@@ -195,7 +195,8 @@ function NoticeKindMenu({ kind, entries }: { readonly kind: DismissibleNoticeKin
                           own close control is where hiding belongs. */}
                       {hidden && (
                         <DropdownMenuItem
-                          className="w-auto rounded-md border border-input bg-background px-2 py-1 text-xs font-medium"
+                          className="w-auto"
+                          {...partAttributes(noticeMenuActionStyle, {})}
                           onSelect={() => dismissals.show(entry.noticeKey)}
                         >
                           {t("notice.show")}

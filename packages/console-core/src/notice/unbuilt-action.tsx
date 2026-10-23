@@ -10,6 +10,8 @@ import {
   type ButtonProps,
   type IconName,
 } from "@simplix-react/ui";
+import { unbuiltMarkStyle } from "./unbuilt.style";
+import { slotAttributes } from "@simplix-react/ui/design";
 
 /** How loud a control is, in the framework's own words. */
 type ActionVariant = ButtonProps["variant"];
@@ -94,7 +96,7 @@ export function UnbuiltAction({
       variant={variant}
       icon={icon}
       className={className}
-      mark={<ClockIcon className="size-3.5 opacity-50" />}
+      mark={<ClockIcon className="size-3.5" {...slotAttributes(unbuiltMarkStyle, {})} />}
     />
   );
 }

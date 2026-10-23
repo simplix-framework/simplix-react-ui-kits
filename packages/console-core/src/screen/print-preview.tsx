@@ -6,6 +6,9 @@ import { AlertBanner, Badge, Button, Card, Flex, Icon, QrCode, Stack, Text } fro
 import { useContentLanguageLabel } from "../i18n";
 import { HorizontalScroll } from "../layout";
 import { UnbuiltAction } from "../notice";
+import { printSheetRowStyle, printWarnMarkStyle } from "./print-preview.style";
+import { partAttributes, slotAttributes } from "@simplix-react/ui/design";
+import { PushEnd } from "../layout/push-edge";
 
 /**
  * A paper size, by the name printers and inspectors use for it.
@@ -88,11 +91,13 @@ export function PrintSheet({
       // raw layout: the sheet is a fixed proportion of real paper, so its box is measured rather
       // than composed — a framework primitive would fit it to the column and hide the overflow
       // this preview exists to show.
-      className="shrink-0 border shadow-sm"
+      className="shrink-0"
       style={{ width: sheet.width, minHeight: sheet.width * sheet.ratio, padding: margin }}
     >
       <Stack gap="md">
-        <Text className="text-center font-medium">{title}</Text>
+        <Text align="center" weight="medium">
+          {title}
+        </Text>
         {children}
         {verifyUrl && (
           <Flex gap="md" align="center">
@@ -225,7 +230,8 @@ export function DocumentViewer({
 
         <Badge variant="outline">{t(`print.paper.${size}`)}</Badge>
 
-        <Flex gap="xs" align="center" className="ml-auto min-w-0">
+        <PushEnd className="min-w-0">
+        <Flex gap="xs" align="center" className="min-w-0">
           {onZoomChange && (
             <Flex gap="xs" align="center">
               <Button variant="outline" size="xs" onClick={() => step(-25)} disabled={zoom <= 50}>
@@ -255,6 +261,7 @@ export function DocumentViewer({
             </Button>
           ))}
         </Flex>
+        </PushEnd>
       </Flex>
 
       {/* The rail: every page reachable by name, with the ones carrying a problem marked. */}
@@ -267,7 +274,7 @@ export function DocumentViewer({
             onClick={() => onPageChange(one)}
           >
             {t("print.pageNumber", { page: one })}
-            {marks?.includes(one) && <TriangleAlertIcon className="size-3.5 text-warning" />}
+            {marks?.includes(one) && <TriangleAlertIcon className="size-3.5" {...slotAttributes(printWarnMarkStyle, {})} />}
           </Button>
         ))}
       </Flex>
@@ -303,7 +310,7 @@ export function DocumentViewer({
             print preview needs — a transform would leave the scrollable area the size of the
             unscaled paper and hide the half the reader zoomed in to see. */}
         <span className="block" style={{ zoom: zoom / 100 }}>
-          <Flex gap="md" align="start" className="p-2">
+          <Flex gap="md" align="start" {...partAttributes(printSheetRowStyle, {})}>
             {children}
           </Flex>
         </span>

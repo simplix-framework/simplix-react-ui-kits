@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import { useTranslation } from "@simplix-react/i18n/react";
 import {
   cn,
@@ -15,9 +15,21 @@ import {
 import { ChevronDownIcon } from "lucide-react";
 
 import { PACKAGE_NAMESPACE } from "./locales";
+import {
+  tileGutterStyle,
+  tileHandleChevronStyle,
+  tileHandleStyle,
+  tileRowStyle,
+  tileStripDividerStyle,
+  tileStripDotStyle,
+  tileStripInsetStyle,
+  tileStripStyle,
+  tileStyle,
+} from "./settings-tiles.style";
 import { NumericText } from "./numeric-text";
 import { useTilesCollapse } from "./tiles-collapse";
 import { PHONE_WINDOW, REDUCED_MOTION } from "./window-size";
+import { slotAttributes } from "@simplix-react/ui/design";
 
 /** Which way a figure has moved since the moment the comparison names. */
 export type TileTrendDirection = "up" | "flat" | "down";
@@ -82,6 +94,13 @@ interface SettingsTileShape {
   readonly basis?: string;
   /** Set only where the figure has crossed a threshold the reader must act on. */
   readonly tone?: StatusTone;
+  /**
+   * Whether the data marks this figure as important.
+   *
+   * <p>Drawn as `data-emphasis="true"` on the tile element; what a design does with it is the
+   * design's own. Unlike {@link SettingsTile.tone} it says nothing about a threshold being crossed.
+   */
+  readonly emphasis?: boolean;
   /**
    * How the figure has moved since the comparison it names.
    *
@@ -342,7 +361,7 @@ export function SettingsTiles({ tiles, columns = 4 }: SettingsTilesProps) {
       <div className="tiles-fold" data-open={collapsed ? "true" : "false"} aria-hidden={!collapsed}>
         {/* Inset from both ends by a hair, so the rule still reads as the wider thing the strip
             came out from under. */}
-        <div className="px-3">
+        <div {...slotAttributes(tileStripInsetStyle, {})}>
           <TileStrip
             tiles={tiles}
             showing={showing}
@@ -359,10 +378,10 @@ export function SettingsTiles({ tiles, columns = 4 }: SettingsTilesProps) {
             live in — without it the leftmost and rightmost rings are shaved off while every other
             card on the screen draws a whole one (frontend invariant #58: the arithmetic is fixed
             here rather than the clipping hidden). */}
-        <div className="-mx-1 px-1">
+        <div {...slotAttributes(tileGutterStyle, {})}>
           {/* Paying back exactly what the wrapper reached up by, so the tiles stand where they
               stood before this wrapper existed and no screen moved by adopting it. */}
-          <div className={cn("pb-1", payBack)}>
+          <div className={payBack} {...slotAttributes(tileRowStyle, {})}>
             <TileGrid tiles={tiles} columns={columns} className="tiles-cascade" />
           </div>
         </div>
@@ -377,18 +396,13 @@ export function SettingsTiles({ tiles, columns = 4 }: SettingsTilesProps) {
         onClick={toggle}
         aria-expanded={!collapsed}
         aria-label={collapsed ? t("expand") : t("collapse")}
-        className={cn(
-          "under-rule group absolute end-6 top-0 z-10 flex h-4 w-11 items-center justify-center rounded-b-md border border-t-0 bg-card",
-          "transition-colors hover:bg-accent/40",
-          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset",
-        )}
+        className="under-rule group absolute end-6 top-0 z-10 flex h-4 w-11 items-center justify-center"
+        {...slotAttributes(tileHandleStyle, {})}
       >
         <ChevronDownIcon
-          className={cn(
-            "size-3.5 text-muted-foreground transition-transform duration-200",
-            collapsed ? "group-hover:translate-y-0.5" : "rotate-180 group-hover:-translate-y-0.5",
-          )}
+          className="size-3.5"
           aria-hidden
+          {...slotAttributes(tileHandleChevronStyle, { folded: collapsed })}
         />
       </button>
     </div>
@@ -433,10 +447,8 @@ function TileStrip({
       onMouseEnter={() => onHold(true)}
       onMouseLeave={() => onHold(false)}
       aria-label={label}
-      className={cn(
-        "under-rule flex h-8 w-full items-center overflow-hidden rounded-b-lg border border-t-0 bg-card ps-3 pe-16 text-start",
-        "transition-colors hover:bg-accent/40",
-      )}
+      className="under-rule flex h-8 w-full items-center overflow-hidden"
+      {...slotAttributes(tileStripStyle, {})}
     >
       {/* What a reader of the page's structure gets instead of a line that rewrites itself: every
           figure at once, in the order the cards are in. A strip that flips is a convenience for the
@@ -453,10 +465,7 @@ function TileStrip({
           {tiles.map((each, index) => (
             <span
               key={each.key}
-              className={cn(
-                "size-1 rounded-full transition-all duration-300",
-                index === showing ? "w-3 bg-foreground/50" : "bg-border",
-              )}
+              {...slotAttributes(tileStripDotStyle, { current: index === showing })}
             />
           ))}
         </Flex>
@@ -492,7 +501,10 @@ function TileStrip({
             the window is narrow, for the same reason. */}
         {(trendLine || tile.basis) && (
           <>
-            <span className="h-3 w-px shrink-0 self-center bg-border" />
+            <span
+              className="h-3 w-px shrink-0 self-center"
+              {...slotAttributes(tileStripDividerStyle, {})}
+            />
             <Text size="caption" tone="muted" className="min-w-0 truncate">
               {[trendLine, tile.basis].filter(Boolean).join(" · ")}
             </Text>
@@ -549,13 +561,17 @@ function TileGrid({
         );
         // The card fills whatever height it is handed, so a tile that is a link needs its anchor
         // to be handed the grid cell's full height rather than shrinking to the text. A tile that
-        // is not a link is the card itself, with nothing between it and the cell.
-        return tile.href ? (
-          <MenuLink key={tile.key} href={tile.href} className="block h-full">
-            {card}
-          </MenuLink>
-        ) : (
-          <Fragment key={tile.key}>{card}</Fragment>
+        // is not a link is the card itself, with nothing between it and the tile element.
+        return (
+          <div key={tile.key} className="h-full" {...slotAttributes(tileStyle, { emphasis: tile.emphasis === true })}>
+            {tile.href ? (
+              <MenuLink href={tile.href} className="block h-full">
+                {card}
+              </MenuLink>
+            ) : (
+              card
+            )}
+          </div>
         );
       })}
     </Grid>

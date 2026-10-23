@@ -11,6 +11,11 @@
 /* This kit's own components as a content source, so an app importing this stylesheet gets every
    utility the kit's parts write wherever the kit is installed. */
 @source '../**/*.{ts,tsx}';
+/* The kit's own slots in the classic design (generated from the .style.ts declarations), then
+   every other design the kit draws. */
+@import './designs/classic.css';
+@import './designs/clarity.css';
+@import './fills.css';
 /* App font identity — after the framework so these families win over the base. */
 @import './fonts.css';
 /* App status tone + categorical accent system (seeds + derived slot paints). */

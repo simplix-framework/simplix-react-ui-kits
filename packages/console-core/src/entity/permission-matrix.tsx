@@ -3,6 +3,8 @@ import { Checkbox, EmptyValue, Flex, StatusBadge, Table, TableBody, TableCell, T
 
 import { SizedHead } from "../layout/sized-head";
 import { TableCard } from "../layout/table-card";
+import { permissionCheckStyle } from "./permission-matrix.style";
+import { slotAttributes } from "@simplix-react/ui/design";
 
 /** One cell: granted, not granted, or granted with a limit the cell names. */
 export type PermissionCell = { readonly state: "on" } | { readonly state: "off" } | { readonly state: "limited"; readonly label: string };
@@ -54,7 +56,7 @@ export function PermissionMatrix({ corner, columns, rows, onToggle }: Permission
                       {cell.state === "limited" ? <StatusBadge tone="warning" label={cell.label} /> : null}
                     </Flex>
                   ) : cell.state === "on" ? (
-                    <CheckIcon className="size-4 text-success" aria-label={columns[index]} />
+                    <CheckIcon className="size-4" aria-label={columns[index]} {...slotAttributes(permissionCheckStyle, {})} />
                   ) : cell.state === "limited" ? (
                     <StatusBadge tone="warning" label={cell.label} />
                   ) : (

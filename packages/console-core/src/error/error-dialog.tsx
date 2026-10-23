@@ -1,4 +1,4 @@
-import { AlertCircle, AlertTriangle, Lock, ServerOff, WifiOff } from "lucide-react";
+import { AlertCircle, AlertTriangle, Lock, ServerOff, WifiOff, type LucideIcon } from "lucide-react";
 import { useTranslation } from "@simplix-react/i18n/react";
 
 import { PACKAGE_NAMESPACE } from "./locales";
@@ -21,45 +21,23 @@ import {
   dismissAllErrors,
 } from "@simplix-react/ui";
 import { BoundedDialogContent } from "../layout";
+import { errorGlyphStyle, errorIconStyle } from "./error-dialog.style";
+import { partAttributes, slotAttributes } from "@simplix-react/ui/design";
 
 const categoryConfig: Record<
   ErrorCategory,
   {
-    icon: React.ReactNode;
-    iconClassName: string;
+    Glyph: LucideIcon;
+    kind: string;
     titleKey: string;
   }
 > = {
-  server: {
-    icon: <AlertTriangle size={20} className="text-red-500" />,
-    iconClassName: "bg-red-50 dark:bg-red-950/30",
-    titleKey: "error.serverErrorShort",
-  },
-  client: {
-    icon: <AlertTriangle size={20} className="text-amber-500" />,
-    iconClassName: "bg-amber-50 dark:bg-amber-950/30",
-    titleKey: "error.clientErrorShort",
-  },
-  network: {
-    icon: <WifiOff size={20} className="text-slate-500" />,
-    iconClassName: "bg-slate-100 dark:bg-slate-800/30",
-    titleKey: "error.networkErrorShort",
-  },
-  auth: {
-    icon: <Lock size={20} className="text-slate-500" />,
-    iconClassName: "bg-slate-100 dark:bg-slate-800/30",
-    titleKey: "error.accessDeniedShort",
-  },
-  validation: {
-    icon: <AlertCircle size={20} className="text-yellow-500" />,
-    iconClassName: "bg-yellow-50 dark:bg-yellow-950/30",
-    titleKey: "error.validationErrorShort",
-  },
-  unknown: {
-    icon: <AlertTriangle size={20} className="text-gray-500" />,
-    iconClassName: "bg-gray-100 dark:bg-gray-800/30",
-    titleKey: "error.unknownErrorShort",
-  },
+  server: { Glyph: AlertTriangle, kind: "server", titleKey: "error.serverErrorShort" },
+  client: { Glyph: AlertTriangle, kind: "client", titleKey: "error.clientErrorShort" },
+  network: { Glyph: WifiOff, kind: "network", titleKey: "error.networkErrorShort" },
+  auth: { Glyph: Lock, kind: "auth", titleKey: "error.accessDeniedShort" },
+  validation: { Glyph: AlertCircle, kind: "validation", titleKey: "error.validationErrorShort" },
+  unknown: { Glyph: AlertTriangle, kind: "unknown", titleKey: "error.unknownErrorShort" },
 };
 
 /**
@@ -70,8 +48,8 @@ const categoryConfig: Record<
  */
 const GATEWAY_STATUSES = new Set([502, 503, 504]);
 const gatewayConfig = {
-  icon: <ServerOff size={20} className="text-amber-500" />,
-  iconClassName: "bg-amber-50 dark:bg-amber-950/30",
+  Glyph: ServerOff,
+  kind: "gateway",
   titleKey: "error.serviceUnavailableShort",
 };
 
@@ -104,14 +82,14 @@ export function ErrorDialog() {
       <BoundedDialogContent>
         <DialogHeader>
           <Flex align="center" gap="sm">
-            {/* The circle and its tint have no token — the design system names four tones and
-                these are five kinds of failure — but centring is `Flex`'s job, not a class list's. */}
+            {/* The circle's tint is the slot's. */}
             <Flex
               align="center"
               justify="center"
-              className={`size-8 rounded-full ${config.iconClassName}`}
+              className="size-8"
+              {...partAttributes(errorIconStyle, { kind: config.kind })}
             >
-              {config.icon}
+              <config.Glyph size={20} {...slotAttributes(errorGlyphStyle, { kind: config.kind })} />
             </Flex>
             <DialogTitle>{t(config.titleKey)}</DialogTitle>
           </Flex>

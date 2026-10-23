@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { cn, Text, type TextProps } from "@simplix-react/ui";
+import { Text, type TextProps } from "@simplix-react/ui";
 
 interface StrongTextProps extends Omit<TextProps, "children"> {
   /** The words that carry the row, the card or the group they sit in. */
@@ -20,12 +20,10 @@ interface StrongTextProps extends Omit<TextProps, "children"> {
  */
 export function StrongText({ children, className, ...textProps }: StrongTextProps) {
   return (
-  // The caller's class is merged rather than overwritten. Spreading the props and then setting
-  // `className` drops whatever was passed, silently: the prop is accepted, typed and ignored, and
-  // the symptom is never 「the prop did nothing」 but whatever the class was for — a cap that does
-  // not cap, a width that does not fill. `cn` also settles a Tailwind conflict in the caller's
-  // favour, which a plain join cannot.
-    <Text as="span" {...textProps} className={cn("font-medium", className)}>
+  // The weight is set after the spread so it wins over a caller's `weight`, as the class it
+  // replaces won over the caller's props. The caller's class is passed on rather than overwritten:
+  // spreading the props and then setting `className` drops whatever was passed, silently.
+    <Text as="span" {...textProps} weight="medium" className={className}>
       {children}
     </Text>
   );

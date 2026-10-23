@@ -1,5 +1,8 @@
 import type { ReactNode } from "react";
 import { TableCardFrame } from "@simplix-react/ui";
+import { slotAttributes } from "@simplix-react/ui/design";
+
+import { tableCardStyle } from "./table-card.style";
 
 interface TableCardProps {
   /** The table. */
@@ -22,5 +25,9 @@ interface TableCardProps {
  * directly, because the pager is the thing it has to be handed.
  */
 export function TableCard({ children }: TableCardProps) {
-  return <TableCardFrame>{children}</TableCardFrame>;
+  return (
+    <div className="flex min-w-0 flex-col" {...slotAttributes(tableCardStyle, {})}>
+      <TableCardFrame>{children}</TableCardFrame>
+    </div>
+  );
 }

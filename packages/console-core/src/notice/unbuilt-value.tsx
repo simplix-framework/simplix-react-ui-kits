@@ -8,6 +8,8 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@simplix-react/ui";
+import { unbuiltMarkStyle } from "./unbuilt.style";
+import { slotAttributes } from "@simplix-react/ui/design";
 
 interface UnbuiltValueProps {
   /** What the cell says in place of the value — 「판정 전」, 「아직 없음」. */
@@ -39,7 +41,7 @@ export function UnbuiltValue({ label, reason }: UnbuiltValueProps) {
     <Tooltip>
       <TooltipTrigger asChild>
         <Flex gap="xs" align="center">
-          <ClockIcon className="size-3.5 opacity-50" />
+          <ClockIcon className="size-3.5" {...slotAttributes(unbuiltMarkStyle, {})} />
           <Text size="caption" tone="muted">
             {label}
           </Text>

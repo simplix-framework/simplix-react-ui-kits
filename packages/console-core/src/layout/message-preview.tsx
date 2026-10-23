@@ -10,8 +10,17 @@ import {
   TableHeader,
   TableRow,
   Text,
-  cn,
 } from "@simplix-react/ui";
+import {
+  chatCardStyle,
+  chatPreviewStyle,
+  mailBodyStyle,
+  mailCardStyle,
+  mailFooterStyle,
+  mailHeaderStyle,
+  wordingButtonStyle,
+} from "./message-preview.style";
+import { slotAttributes } from "@simplix-react/ui/design";
 
 /**
  * How loud one button of a wording is drawn.
@@ -29,13 +38,6 @@ export interface WordingButton {
   readonly grade?: WordingButtonGrade;
 }
 
-/** How each grade is drawn — filled for what to press, filled and red for what a casualty presses. */
-const GRADE_SHAPE: Record<WordingButtonGrade, string> = {
-  PRIMARY: "border-primary bg-primary text-primary-foreground",
-  NORMAL: "border-input bg-background",
-  URGENT: "border-destructive bg-destructive text-destructive-foreground",
-};
-
 /**
  * The buttons of one wording, drawn at the grades it fixed.
  *
@@ -51,10 +53,7 @@ function WordingButtons({ buttons }: { readonly buttons: readonly WordingButton[
       {buttons.map((button) => (
         <div
           key={button.label}
-          className={cn(
-            "rounded-md border px-3 py-2 text-center",
-            GRADE_SHAPE[button.grade ?? "NORMAL"]
-          )}
+          {...slotAttributes(wordingButtonStyle, { grade: button.grade ?? "NORMAL" })}
         >
           <Text as="span" size="sm">
             {button.label}
@@ -227,8 +226,8 @@ export interface MailPreviewProps {
 export function MailPreview({ subject, from, to, children, footer, buttons = [], labels }: MailPreviewProps) {
   return (
     // raw layout: a mail client's own frame, which the design system has no primitive for
-    <div className="mx-auto max-w-2xl overflow-hidden rounded-md border bg-background">
-      <div className="border-b bg-muted/40 px-4 py-3">
+    <div className="max-w-2xl overflow-hidden" {...slotAttributes(mailCardStyle, {})}>
+      <div {...slotAttributes(mailHeaderStyle, {})}>
         <Stack gap="none">
           <Text weight="medium">{subject}</Text>
           {/* A label with nothing after it promises a value and delivers none, and a reader
@@ -255,14 +254,14 @@ export function MailPreview({ subject, from, to, children, footer, buttons = [],
       {/* The wording's own line breaks are kept. What separates 구역 from 작업 from 발령시각 in
           the message people receive is a newline, and a preview that reflowed them would be a
           preview of a message nobody sends. */}
-      <div className="px-4 py-4">
+      <div {...slotAttributes(mailBodyStyle, {})}>
         <Stack gap="md">
           <span className="whitespace-pre-wrap">{children}</span>
           <WordingButtons buttons={buttons} />
         </Stack>
       </div>
       {footer ? (
-        <div className="border-t bg-muted/20 px-4 py-3">
+        <div {...slotAttributes(mailFooterStyle, {})}>
           <Text as="span" size="caption" tone="muted">
             {footer}
           </Text>
@@ -302,7 +301,7 @@ export interface ChatPreviewProps {
 export function ChatPreview({ app, sender, children, buttons = [], note }: ChatPreviewProps) {
   return (
     // raw layout: a messenger bubble at phone width, which the design system has no primitive for
-    <div className="mx-auto max-w-sm">
+    <div className="max-w-sm" {...slotAttributes(chatPreviewStyle, {})}>
       <Stack gap="xs">
         <Flex align="center" gap="xs">
           <Badge variant="secondary">{app}</Badge>
@@ -310,7 +309,7 @@ export function ChatPreview({ app, sender, children, buttons = [], note }: ChatP
             {sender}
           </Text>
         </Flex>
-        <div className="rounded-lg border bg-muted/40 px-3 py-3">
+        <div {...slotAttributes(chatCardStyle, {})}>
           <Stack gap="sm">
             <span className="whitespace-pre-wrap">{children}</span>
             {/* Drawn as the channel draws them, at the grades the wording fixed. */}

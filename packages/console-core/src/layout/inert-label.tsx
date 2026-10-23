@@ -1,4 +1,6 @@
 import type { ReactNode } from "react";
+import { inertLabelStyle } from "./inert-label.style";
+import { slotAttributes } from "@simplix-react/ui/design";
 
 /**
  * The body of a `Button` that is standing inert rather than carrying a `Link`.
@@ -14,5 +16,7 @@ import type { ReactNode } from "react";
  * button already styles.
  */
 export function InertLabel({ children }: { readonly children: ReactNode }) {
-  return <span className="inline-flex items-center gap-2 whitespace-nowrap">{children}</span>;
+  return <span className="inline-flex items-center whitespace-nowrap" {...slotAttributes(inertLabelStyle, {})}>
+      {children}
+    </span>;
 }

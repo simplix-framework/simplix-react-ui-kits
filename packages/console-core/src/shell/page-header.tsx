@@ -2,6 +2,8 @@ import { Flex, Heading, Stack, Text, usePageHeaderState } from "@simplix-react/u
 
 import { NoticeMenu } from "../notice";
 import { useConsoleOnAPhone } from "./phone-shell";
+import { pageHeaderMetadataStyle, pageHeaderStyle } from "./page-header.style";
+import { partAttributes } from "@simplix-react/ui/design";
 
 /**
  * The band at the top of every routed screen — its title, what it is for, and what it offers.
@@ -44,7 +46,7 @@ export function ConsolePageHeader() {
     // paragraph above already says why `NoticeMenu` is safe unconditionally: it draws nothing where
     // the screen holds no cards.
     return (
-      <Flex justify="end" align="center" gap="sm" className="pb-2 mb-4 border-b rule-shadow">
+      <Flex justify="end" align="center" gap="sm" className="rule-shadow" {...partAttributes(pageHeaderStyle, {})}>
         <NoticeMenu />
         {actions}
       </Flex>
@@ -55,7 +57,7 @@ export function ConsolePageHeader() {
     // underneath it (`PageTiles`): the strip reads as sitting behind the rule rather than as a
     // second bar stacked below it. Where nothing is folded there, the shadow falls on 32px of
     // empty page and nobody sees it.
-    <Flex justify="between" align="end" className="relative pb-2 mb-4 border-b rule-shadow">
+    <Flex justify="between" align="end" className="relative rule-shadow" {...partAttributes(pageHeaderStyle, {})}>
       <Stack gap="none">
         {back}
         <Heading level={1}>{title}</Heading>
@@ -64,7 +66,7 @@ export function ConsolePageHeader() {
             {description}
           </Text>
         )}
-        {metadata && <Stack className="mt-4">{metadata}</Stack>}
+        {metadata && <Stack {...partAttributes(pageHeaderMetadataStyle, {})}>{metadata}</Stack>}
       </Stack>
       {center && <Stack className="absolute left-1/2 -translate-x-1/2 bottom-2">{center}</Stack>}
       <Flex align="center" gap="sm" shrink={false}>

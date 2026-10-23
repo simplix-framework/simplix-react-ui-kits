@@ -6,6 +6,8 @@ import { AlertBanner, Button, Flex, Stack, Text } from "@simplix-react/ui";
 import { DISMISSIBLE_NOTICE_KIND_STYLE, type DismissibleNoticeKind } from "./notice-kind";
 import { useRegisterNotice } from "./notice-registry";
 import { useNoticeDismissals } from "./dismissal-source";
+import { explanationCardStyle, noticeCardStyle } from "./notice-card.style";
+import { slotAttributes } from "@simplix-react/ui/design";
 
 /** Props for {@link NoticeCard}. */
 export interface NoticeCardProps {
@@ -115,7 +117,12 @@ export function NoticeCard({
   if (!dismissals.ready || dismissals.isHidden(noticeKey)) return null;
 
   return (
-    <div ref={box}>
+    <div
+      ref={box}
+      {...(kind === "help"
+        ? slotAttributes(explanationCardStyle, { kind })
+        : slotAttributes(noticeCardStyle, { kind }))}
+    >
     <AlertBanner
       tone={style.tone}
       icon={style.icon}

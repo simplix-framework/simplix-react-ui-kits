@@ -6,7 +6,6 @@ import {
   Button,
   Flex,
   Icon,
-  Stack,
   Text,
   Tooltip,
   TooltipContent,
@@ -15,11 +14,25 @@ import {
   useMediaQuery,
   type ButtonProps,
   type IconName,
+  Stack,
 } from "@simplix-react/ui";
 
 import { PHONE_WINDOW } from "../layout/window-size";
 import { ConsoleWindow } from "./console-window";
 import { PACKAGE_NAMESPACE } from "./locales";
+import {
+  phoneActionBarStyle,
+  phoneBarStyle,
+  phoneEmptyStyle,
+  phoneRowButtonStyle,
+  phoneScreenBodyStyle,
+  phoneStripStyle,
+  phoneTabBadgeStyle,
+  phoneTabLabelStyle,
+  phoneTabStyle,
+  phoneTabbarStyle,
+} from "./phone-shell.style";
+import { partAttributes, slotAttributes } from "@simplix-react/ui/design";
 
 /**
  * How tall and wide anything a thumb has to hit is drawn.
@@ -99,8 +112,9 @@ export function ConsolePhoneShell({
       <Flex
         align="center"
         gap="xs"
-        className="shrink-0 border-b border-border bg-card px-2 py-1"
+        shrink={false}
         role="banner"
+        {...partAttributes(phoneBarStyle, {})}
       >
         {back && (
           <Button
@@ -129,8 +143,9 @@ export function ConsolePhoneShell({
       <div className="flex-1 min-h-0 overflow-y-auto">{children}</div>
 
       <nav
-        className="flex shrink-0 border-t border-border bg-card"
+        className="flex shrink-0"
         aria-label={t("phone.areas")}
+        {...slotAttributes(phoneTabbarStyle, {})}
       >
         {tabs.map((tab) => (
           <PhoneTab key={tab.key} tab={tab} active={tab.key === activeTab} />
@@ -149,21 +164,17 @@ function PhoneTab({ tab, active }: { readonly tab: ConsolePhoneTab; readonly act
         <Icon name={tab.icon} className="size-5" aria-hidden />
         {tab.badge !== undefined && tab.badge > 0 && (
           <span
-            className="absolute -right-2 -top-1 min-w-4 rounded-full bg-destructive px-1
-                       text-center text-[0.625rem] font-medium leading-4 text-destructive-foreground"
+            className="absolute -right-2 -top-1 min-w-4"
+            {...slotAttributes(phoneTabBadgeStyle, {})}
           >
             {tab.badge}
           </span>
         )}
       </span>
-      <span className="text-xs">{tab.label}</span>
+      <span {...slotAttributes(phoneTabLabelStyle, {})}>{tab.label}</span>
     </>
   );
-  const shape = cn(
-    "flex flex-1 flex-col items-center justify-center gap-0.5 py-1.5",
-    TOUCH_TARGET,
-    active ? "text-primary" : "text-muted-foreground"
-  );
+  const shape = cn("flex flex-1 flex-col items-center justify-center", TOUCH_TARGET);
 
   if (!tab.to) {
     return (
@@ -172,7 +183,12 @@ function PhoneTab({ tab, active }: { readonly tab: ConsolePhoneTab; readonly act
           {/* A button rather than a span, so the reason reaches a reader who is not using a
               pointer: a tooltip on something unfocusable is invisible to the keyboard and to a
               screen reader alike. */}
-          <button type="button" disabled className={cn(shape, "opacity-50")}>
+          <button
+            type="button"
+            disabled
+            className={shape}
+            {...slotAttributes(phoneTabStyle, { active, unbuilt: true })}
+          >
             {body}
           </button>
         </TooltipTrigger>
@@ -182,7 +198,12 @@ function PhoneTab({ tab, active }: { readonly tab: ConsolePhoneTab; readonly act
   }
 
   return (
-    <Link to={tab.to} className={shape} aria-current={active ? "page" : undefined}>
+    <Link
+      to={tab.to}
+      className={shape}
+      aria-current={active ? "page" : undefined}
+      {...slotAttributes(phoneTabStyle, { active })}
+    >
       {body}
     </Link>
   );
@@ -220,7 +241,11 @@ export function PhoneScrollArea({ children }: { readonly children: ReactNode }) 
  */
 export function PhoneStripScroller({ children }: { readonly children: ReactNode }) {
   // raw layout: the one region allowed to scroll sideways, which no primitive expresses
-  return <div className="overflow-x-auto border-b border-border">{children}</div>;
+  return (
+    <div className="overflow-x-auto" {...slotAttributes(phoneStripStyle, {})}>
+      {children}
+    </div>
+  );
 }
 
 /**
@@ -231,7 +256,7 @@ export function PhoneStripScroller({ children }: { readonly children: ReactNode 
  */
 export function PhoneActionBar({ children }: { readonly children: ReactNode }) {
   return (
-    <Flex justify="end" className="shrink-0 border-t border-border bg-card px-3 py-2">
+    <Flex justify="end" shrink={false} {...partAttributes(phoneActionBarStyle, {})}>
       {children}
     </Flex>
   );
@@ -246,7 +271,7 @@ export function PhoneActionBar({ children }: { readonly children: ReactNode }) {
  */
 export function PhoneScreenBody({ children }: { readonly children: ReactNode }) {
   return (
-    <Stack gap="sm" className="p-3">
+    <Stack gap="sm" {...partAttributes(phoneScreenBodyStyle, {})}>
       {children}
     </Stack>
   );
@@ -261,7 +286,7 @@ export function PhoneEmptyState({
   readonly body?: ReactNode;
 }) {
   return (
-    <Stack gap="xs" className="py-8 text-center">
+    <Stack gap="xs" {...partAttributes(phoneEmptyStyle, {})}>
       <Text weight="medium">{title}</Text>
       {body && (
         <Text size="caption" tone="muted">
@@ -306,11 +331,8 @@ export function PhoneRowButton({
     <button
       type="button"
       onClick={onPress}
-      className={cn(
-        "w-full rounded-lg border px-3 py-2 text-left",
-        TOUCH_TARGET,
-        accent ? "border-l-4 border-l-primary bg-card" : "border-border bg-background"
-      )}
+      className={cn("w-full", TOUCH_TARGET)}
+      {...slotAttributes(phoneRowButtonStyle, { accent })}
     >
       {children}
     </button>

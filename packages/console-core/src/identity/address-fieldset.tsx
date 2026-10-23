@@ -7,6 +7,12 @@ import type { Address } from "react-daum-postcode";
 
 import { PACKAGE_NAMESPACE } from "./locales";
 import { BoundedDialogContent } from "../layout/bounded-dialog-content";
+import {
+  addressLookupButtonStyle,
+  addressLookupDialogStyle,
+  addressLookupHeaderStyle,
+} from "./address-fieldset.style";
+import { partAttributes } from "@simplix-react/ui/design";
 
 /** Countries whose addresses read large-to-small (postal code and region first). */
 const EAST_ASIA_COUNTRIES = new Set(["KR", "JP", "CN", "TW", "HK", "MO"]);
@@ -69,7 +75,8 @@ export function AddressFieldset({ values, onFieldChange, fieldLabel, disabled }:
         type="button"
         variant="outline"
         size="sm"
-        className="mb-3.5 shrink-0"
+        className="shrink-0"
+        {...partAttributes(addressLookupButtonStyle, {})}
         onClick={() => setPostcodeOpen(true)}
         disabled={disabled}
       >
@@ -138,8 +145,8 @@ export function AddressFieldset({ values, onFieldChange, fieldLabel, disabled }:
       )}
 
       <Dialog open={postcodeOpen} onOpenChange={setPostcodeOpen}>
-        <BoundedDialogContent className="max-w-lg p-0">
-          <DialogHeader className="px-4 pt-4">
+        <BoundedDialogContent className="max-w-lg" {...partAttributes(addressLookupDialogStyle, {})}>
+          <DialogHeader {...partAttributes(addressLookupHeaderStyle, {})}>
             <DialogTitle>{t("address.searchPostalCode")}</DialogTitle>
           </DialogHeader>
           {postcodeOpen && (

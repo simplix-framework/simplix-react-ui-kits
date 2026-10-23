@@ -5,6 +5,8 @@ import { Flex, Heading, cn } from "@simplix-react/ui";
 
 import { getUserAvatarUrl, type UserAvatarSize } from "./avatar-url";
 import { useAvatarDirectory } from "./avatar-directory";
+import { userAvatarStyle } from "./user-avatar.style";
+import { slotAttributes } from "@simplix-react/ui/design";
 
 /** App-served person-icon placeholder for users without an uploaded profile photo. */
 export const DEFAULT_USER_AVATAR_URL = "/images/avatars/default-avatar.svg";
@@ -83,7 +85,8 @@ export function UserAvatar({
         failedAvatarUrls.add(resolved);
         setFailCount((count) => count + 1);
       }}
-      className={cn("size-6 shrink-0 rounded-full object-cover", className)}
+      className={cn("size-6 shrink-0 object-cover", className)}
+      {...slotAttributes(userAvatarStyle, {})}
     />
   );
 }

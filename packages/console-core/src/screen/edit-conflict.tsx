@@ -22,6 +22,7 @@ import {
 
 import { BoundedDialogContent, SizedHead, TableCard } from "../layout";
 import { ActionButton, type ActionOrUnbuilt } from "../notice";
+import { PushStart } from "../layout/push-edge";
 
 /** Whose value a field keeps. `same` is not a choice — it is the absence of a disagreement. */
 export type ConflictChoice = "mine" | "theirs";
@@ -155,12 +156,13 @@ export function EditConflictDialog({
         </Stack>
 
         <DialogFooter>
-          <ActionButton
-            behaviour={onDiscardMine}
-            variant="outline"
-            className="mr-auto"
-            label={t("conflict.discardMine")}
-          />
+          <PushStart>
+            <ActionButton
+              behaviour={onDiscardMine}
+              variant="outline"
+              label={t("conflict.discardMine")}
+            />
+          </PushStart>
           <Button variant="outline" onClick={onCancel}>
             {t("conflict.cancel")}
           </Button>

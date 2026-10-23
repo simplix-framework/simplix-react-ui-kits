@@ -14,6 +14,7 @@ import {
 import { BoundedDialogContent } from "../layout/bounded-dialog-content";
 import { NoticeCard, NoticeDeclaration } from "../notice";
 import type { DismissibleNoticeKind } from "../notice";
+import { PushEnd } from "../layout/push-edge";
 
 interface HelpCardProps {
   /**
@@ -178,9 +179,11 @@ export function HelpCard({
               {t("help.close")}
             </Button>
             {action ? (
-              <Flex gap="sm" align="center" className="ml-auto">
-                {action}
-              </Flex>
+              <PushEnd>
+                <Flex gap="sm" align="center">
+                  {action}
+                </Flex>
+              </PushEnd>
             ) : null}
           </DialogFooter>
         </BoundedDialogContent>

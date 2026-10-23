@@ -1,5 +1,7 @@
 import { Fragment, type ReactNode } from "react";
 import { Flex, Stack, Text } from "@simplix-react/ui";
+import { matrixCellStyle, matrixCornerStyle, matrixFrameStyle, matrixHeadStyle, matrixRowHeadStyle } from "./matrix.style";
+import { slotAttributes } from "@simplix-react/ui/design";
 
 /** How one cell of the matrix is tinted, where it is tinted at all. */
 export type MatrixCellTone = "warning" | "danger" | "muted";
@@ -46,13 +48,6 @@ export interface MatrixProps {
   readonly align?: "start" | "center";
 }
 
-/** What each tone paints a cell with. */
-const TONES: Readonly<Record<MatrixCellTone, string>> = {
-  warning: "bg-warning/15",
-  danger: "bg-destructive/15",
-  muted: "bg-muted/40",
-};
-
 /**
  * Two axes crossed, with a cell where they meet — posts by days, roles by permissions, areas by
  * shifts.
@@ -94,13 +89,17 @@ export function Matrix({
   return (
     // raw layout: a two-axis grid that scrolls sideways inside its own frame; the framework ships
     // no matrix primitive, and a table would put the row heads on the scrolling side
-    <div className="overflow-x-auto rounded-md border">
+    <div className="overflow-x-auto" {...slotAttributes(matrixFrameStyle, {})}>
       <div
         className="grid min-w-max"
         style={{ gridTemplateColumns: `minmax(10rem, auto) repeat(${columns.length}, minmax(7rem, 1fr))` }}
         role="table"
       >
-        <div className="sticky left-0 z-10 border-b bg-muted/60 px-3 py-2" role="columnheader">
+        <div
+          className="sticky left-0 z-10"
+          role="columnheader"
+          {...slotAttributes(matrixCornerStyle, {})}
+        >
           <Text size="caption" tone="muted">
             {corner}
           </Text>
@@ -108,8 +107,8 @@ export function Matrix({
         {columns.map((column, index) => (
           <div
             key={`head-${index}`}
-            className={`border-b px-3 py-2 ${centered ? "text-center" : ""} ${marked.has(index) ? "bg-warning/10" : "bg-muted/60"}`}
             role="columnheader"
+            {...slotAttributes(matrixHeadStyle, { centered, marked: marked.has(index) })}
           >
             <Text size="caption" tone="muted">
               {column}
@@ -120,9 +119,10 @@ export function Matrix({
         {rows.map((row) => (
           <Fragment key={row.key}>
             <div
-              className="sticky left-0 z-10 border-b bg-background px-3 py-2"
+              className="sticky left-0 z-10"
               style={row.depth ? { paddingLeft: `${0.75 + row.depth * 0.875}rem` } : undefined}
               role="rowheader"
+              {...slotAttributes(matrixRowHeadStyle, {})}
             >
               <Text size="sm">{row.label}</Text>
             </div>
@@ -132,8 +132,8 @@ export function Matrix({
               return (
                 <div
                   key={`${row.key}-${index}`}
-                  className={`border-b px-3 py-2 ${tone ? TONES[tone] : marked.has(index) ? "bg-warning/5" : ""}`}
                   role="cell"
+                  {...slotAttributes(matrixCellStyle, { tone, marked: !tone && marked.has(index) })}
                 >
                   <Stack gap="none" minSize align={centered ? "center" : undefined}>
                     <Flex align="center" gap="xs" wrap justify={centered ? "center" : undefined}>

@@ -4,6 +4,8 @@ import { Flex, Icon, TabsTrigger, Tooltip, TooltipContent, TooltipTrigger } from
 
 import { useGroupedFigure } from "@simplix-react/i18n/react";
 import { NumericText, TooltipTarget } from "../layout";
+import { unbuiltMarkStyle } from "./unbuilt.style";
+import { slotAttributes } from "@simplix-react/ui/design";
 
 interface UnbuiltTabProps {
   /** The tab's value, as `Tabs` addresses it. */
@@ -53,7 +55,7 @@ export function UnbuiltTab({ value, label, count }: UnbuiltTabProps) {
                   {grouped(count)}
                 </NumericText>
               )}
-              <ClockIcon className="size-3.5 opacity-50" />
+              <ClockIcon className="size-3.5" {...slotAttributes(unbuiltMarkStyle, {})} />
             </Flex>
           </TabsTrigger>
         </TooltipTarget>

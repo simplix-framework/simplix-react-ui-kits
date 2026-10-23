@@ -5,6 +5,17 @@ export { ChromeControlRows, type ChromeControlRowsProps } from "./chrome-control
 export { DarkModeToggle, type DarkModeToggleProps } from "./dark-mode-toggle";
 export { LocalePicker, type LocalePickerProps } from "./locale-picker";
 export { COLOR_THEMES, type ColorThemeConfig, useTheme } from "./use-theme";
+export { DisplaySettings } from "./display-settings";
+export {
+  applyFill,
+  resolveFill,
+  useAppliedFill,
+  useDisplayPreferences,
+  type CardFill,
+  type Density,
+  type DisplayPreferences,
+} from "./display-preferences";
+export { ConsoleDesignContext, useConsoleDesign } from "./console-design";
 export { ConsoleContextProvider, useConsole } from "./console-context";
 export {
   ConsoleAreaSwitch,

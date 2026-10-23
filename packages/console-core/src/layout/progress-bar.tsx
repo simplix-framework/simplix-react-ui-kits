@@ -1,3 +1,7 @@
+import { slotAttributes } from "@simplix-react/ui/design";
+
+import { progressFillStyle, progressTrackStyle } from "./progress-bar.style";
+
 interface ProgressBarProps {
   /** How far along, 0–100. Values outside that range are clamped rather than overflowing. */
   percent: number;
@@ -22,14 +26,15 @@ export function ProgressBar({ percent, label }: ProgressBarProps) {
   return (
     // raw layout: a determinate progress bar; the framework ships no progress primitive
     <div
-      className="h-2 overflow-hidden rounded-full border bg-muted"
+      className="h-2 overflow-hidden"
       role="progressbar"
       aria-valuenow={Math.round(clamped)}
       aria-valuemin={0}
       aria-valuemax={100}
       aria-label={label}
+      {...slotAttributes(progressTrackStyle, {})}
     >
-      <div className="h-full bg-primary transition-all" style={{ width: `${clamped}%` }} />
+      <div className="h-full" style={{ width: `${clamped}%` }} {...slotAttributes(progressFillStyle, {})} />
     </div>
   );
 }

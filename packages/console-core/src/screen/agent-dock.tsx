@@ -25,6 +25,9 @@ import {
 import { SizedHead, TableCard } from "../layout";
 import { ActionButton, type ActionOrUnbuilt } from "../notice";
 import { AiBadge } from "./ai-marking";
+import { agentDockGlyphStyle, agentDockSuffixStyle } from "./agent-dock.style";
+import { slotAttributes } from "@simplix-react/ui/design";
+import { PushEnd } from "../layout/push-edge";
 
 /**
  * Which of the three groups a task falls in.
@@ -111,13 +114,13 @@ export function AgentDock({ tasks, summary, onSeeAll, counts }: AgentDockProps) 
     <Popover>
       <PopoverTrigger asChild>
         <Button variant={blocking > 0 ? "secondary" : "outline"} size="sm">
-          <span aria-hidden className="mr-1">
+          <span aria-hidden {...slotAttributes(agentDockGlyphStyle, {})}>
             ◈
           </span>
           {/* The count stays on screen at zero. 「할 일이 없다」 is an answer, and a dock that
               disappears when it is empty leaves the reader unable to tell it from one that broke. */}
           {t("agentDock.todo", { count: todo })}
-          {blocking > 0 && <span className="ml-1">{t("agentDock.blockingSuffix", { count: blocking })}</span>}
+          {blocking > 0 && <span {...slotAttributes(agentDockSuffixStyle, {})}>{t("agentDock.blockingSuffix", { count: blocking })}</span>}
         </Button>
       </PopoverTrigger>
 
@@ -126,13 +129,14 @@ export function AgentDock({ tasks, summary, onSeeAll, counts }: AgentDockProps) 
           <Flex align="center" gap="sm">
             <Heading level={6}>{t("agentDock.title")}</Heading>
             {onSeeAll && (
-              <ActionButton
-                behaviour={onSeeAll}
-                variant="outline"
-                size="xs"
-                className="ml-auto"
-                label={t("agentDock.seeAll")}
-              />
+              <PushEnd>
+                <ActionButton
+                  behaviour={onSeeAll}
+                  variant="outline"
+                  size="xs"
+                  label={t("agentDock.seeAll")}
+                />
+              </PushEnd>
             )}
           </Flex>
 

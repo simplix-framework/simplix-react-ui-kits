@@ -15,6 +15,8 @@ import {
 } from "@simplix-react/ui";
 
 import { NumericText, StrongText } from "../layout";
+import { rosterCellStyle, rosterUnassignedStyle } from "./roster.style";
+import { partAttributes } from "@simplix-react/ui/design";
 
 /** How a cell reads. */
 export type RosterCellTone = "assigned" | "rest" | "breach";
@@ -115,7 +117,7 @@ export function Roster({ corner, columns, rows }: RosterProps) {
             <TableRow>
               <TableHead>{corner}</TableHead>
               {columns.map((column) => (
-                <TableHead key={column.key} className="text-center">
+                <TableHead key={column.key} {...partAttributes(rosterCellStyle, {})}>
                   <Stack gap="none" align="center">
                     <span>{column.label}</span>
                     {column.nonWorking && (
@@ -126,7 +128,7 @@ export function Roster({ corner, columns, rows }: RosterProps) {
                   </Stack>
                 </TableHead>
               ))}
-              <TableHead className="text-center">{t("roster.rowTotal")}</TableHead>
+              <TableHead {...partAttributes(rosterCellStyle, {})}>{t("roster.rowTotal")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -138,7 +140,7 @@ export function Roster({ corner, columns, rows }: RosterProps) {
                 {columns.map((column, index) => {
                   const cell = row.cells[index];
                   return (
-                    <TableCell key={column.key} className="text-center">
+                    <TableCell key={column.key} {...partAttributes(rosterCellStyle, {})}>
                       {cell?.value ? (
                         cell.tone === "breach" ? (
                           <StrongText tone="destructive">{cell.value}</StrongText>
@@ -150,16 +152,14 @@ export function Roster({ corner, columns, rows }: RosterProps) {
                       ) : (
                         // Never a dash: a blank that reads as a value hides the thing this screen
                         // is for. It is named, and the banner below counts how many there are.
-                        // `outline` plus the muted class: the badge has no quiet variant — every
-                        // filled one reads as a value, which is the one thing 「미배정」 must not do.
-                        <Badge variant="outline" className="text-muted-foreground">
+                        <Badge variant="outline" {...partAttributes(rosterUnassignedStyle, {})}>
                           {t("roster.unassigned")}
                         </Badge>
                       )}
                     </TableCell>
                   );
                 })}
-                <TableCell className="text-center">
+                <TableCell {...partAttributes(rosterCellStyle, {})}>
                   <NumericText>{rowTotal(row)}</NumericText>
                 </TableCell>
               </TableRow>
@@ -169,7 +169,7 @@ export function Roster({ corner, columns, rows }: RosterProps) {
                 <StrongText>{t("roster.columnTotal")}</StrongText>
               </TableCell>
               {columns.map((column, index) => (
-                <TableCell key={column.key} className="text-center">
+                <TableCell key={column.key} {...partAttributes(rosterCellStyle, {})}>
                   <NumericText>{columnTotal(index)}</NumericText>
                 </TableCell>
               ))}

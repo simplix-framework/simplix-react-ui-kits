@@ -1,4 +1,6 @@
 import { Flex, Stack, Text } from "@simplix-react/ui";
+import { shareSegmentStyle, shareSwatchStyle, shareTrackStyle } from "./share-bar.style";
+import { slotAttributes } from "@simplix-react/ui/design";
 
 /** One share of the whole, as it is drawn and as it is named. */
 export interface Share {
@@ -11,14 +13,6 @@ export interface Share {
   /** Which of the four tints draws it. */
   readonly tone: "primary" | "secondary" | "muted" | "warning";
 }
-
-/** The class each tone paints the segment and its legend swatch with. */
-const TONES: Readonly<Record<Share["tone"], string>> = {
-  primary: "bg-primary",
-  secondary: "bg-chart-2",
-  muted: "bg-muted-foreground/40",
-  warning: "bg-warning",
-};
 
 interface ShareBarProps {
   /** What the bar divides, as a heading over it. */
@@ -51,12 +45,12 @@ export function ShareBar({ title, shares, note }: ShareBarProps) {
     <Stack gap="sm">
       <Text weight="medium">{title}</Text>
       {/* raw layout: a stacked proportion bar; the framework ships no share primitive */}
-      <div className="flex h-3 w-full overflow-hidden rounded-full border bg-muted">
+      <div className="flex h-3 w-full overflow-hidden" {...slotAttributes(shareTrackStyle, {})}>
         {shares.map((share) => (
           <div
             key={share.key}
-            className={TONES[share.tone]}
             style={{ width: total > 0 ? `${(share.count / total) * 100}%` : "0%" }}
+            {...slotAttributes(shareSegmentStyle, { tone: share.tone })}
           />
         ))}
       </div>
@@ -64,7 +58,7 @@ export function ShareBar({ title, shares, note }: ShareBarProps) {
         {shares.map((share) => (
           <Flex key={share.key} gap="xs" align="center">
             {/* raw layout: a legend swatch matching the segment above it */}
-            <span className={`size-2 rounded-full ${TONES[share.tone]}`} aria-hidden />
+            <span className="size-2" aria-hidden {...slotAttributes(shareSwatchStyle, { tone: share.tone })} />
             <Text size="caption" tone="muted">
               {share.label} {share.count}
             </Text>

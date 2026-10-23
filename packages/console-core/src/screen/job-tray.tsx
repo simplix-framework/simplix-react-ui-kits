@@ -20,6 +20,9 @@ import {
 import { JOB_STATE_VARIANT, statusVariant } from "../badge";
 import { ProgressBar } from "../layout";
 import { ActionButton, type ActionOrUnbuilt } from "../notice";
+import { PushEnd } from "../layout/push-edge";
+import { jobCardStyle } from "./job-tray.style";
+import { partAttributes } from "@simplix-react/ui/design";
 
 /**
  * Where one long-running job stands. Four states, because they call for four different things
@@ -101,9 +104,11 @@ export function JobTray({ open, onOpenChange, jobs, onMarkAllRead }: JobTrayProp
           <Flex align="center" gap="sm">
             <SheetTitle>{t("jobs.trayTitle")}</SheetTitle>
             {onMarkAllRead && jobs.some((job) => job.unread) && (
-              <Button variant="outline" size="xs" className="ml-auto" onClick={onMarkAllRead}>
-                {t("jobs.markAllRead")}
-              </Button>
+              <PushEnd>
+                <Button variant="outline" size="xs" onClick={onMarkAllRead}>
+                  {t("jobs.markAllRead")}
+                </Button>
+              </PushEnd>
             )}
           </Flex>
         </SheetHeader>
@@ -138,7 +143,7 @@ export function JobTrayRow({ job }: { readonly job: TrayJob }) {
   const cancellable = job.state === "queued" || job.state === "running";
 
   return (
-    <Card padding="sm" className={job.unread ? "border-primary" : undefined}>
+    <Card padding="sm" {...partAttributes(jobCardStyle, { unread: job.unread })}>
       <Stack gap="xs">
         <Flex align="center" gap="sm" wrap>
           <Badge variant={statusVariant(JOB_STATE_VARIANT, job.state)}>{t(`jobs.state.${job.state}`)}</Badge>
@@ -146,9 +151,9 @@ export function JobTrayRow({ job }: { readonly job: TrayJob }) {
             {job.when}
           </Text>
           {job.unread && (
-            <Badge variant="outline" className="ml-auto">
-              {t("jobs.unread")}
-            </Badge>
+            <PushEnd>
+              <Badge variant="outline">{t("jobs.unread")}</Badge>
+            </PushEnd>
           )}
         </Flex>
 

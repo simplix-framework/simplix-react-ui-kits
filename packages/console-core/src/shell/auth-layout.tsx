@@ -4,6 +4,8 @@ import { Flex, Stack } from "@simplix-react/ui";
 import { useConsoleBrand } from "../identity/console-product";
 import { DarkModeToggle } from "./dark-mode-toggle";
 import { LocalePicker } from "./locale-picker";
+import { authBrandStyle, authPageStyle } from "./auth-layout.style";
+import { partAttributes, slotAttributes } from "@simplix-react/ui/design";
 
 /**
  * Chrome for sign-in, shared by every app in the installation.
@@ -18,14 +20,19 @@ import { LocalePicker } from "./locale-picker";
 export function AuthLayout() {
   const brand = useConsoleBrand();
   return (
-    <Flex align="center" justify="center" className="relative min-h-dvh bg-background px-4 py-8">
+    <Flex
+      align="center"
+      justify="center"
+      className="relative min-h-dvh"
+      {...partAttributes(authPageStyle, {})}
+    >
       <Flex gap="xs" align="center" className="absolute right-4 top-4 z-10">
         <LocalePicker />
         <DarkModeToggle />
       </Flex>
       <Stack gap="md" className="w-full max-w-sm">
         {/* The mark sits centred over the form whatever the product hands in. */}
-        <span className="mx-auto text-foreground">{brand}</span>
+        <span {...slotAttributes(authBrandStyle, {})}>{brand}</span>
         <Outlet />
       </Stack>
     </Flex>

@@ -12,6 +12,8 @@ import {
 } from "@simplix-react/ui";
 
 import { PACKAGE_NAMESPACE } from "./locales";
+import { evidenceBodyStyle, evidenceIconStyle } from "./evidence-grid.style";
+import { partAttributes, slotAttributes } from "@simplix-react/ui/design";
 
 /** What a piece of evidence is. The three are read differently and are drawn apart. */
 export type EvidenceKind = "photo" | "file" | "signature";
@@ -95,11 +97,11 @@ export function EvidenceGrid({ title, items, onRetry, onOpen }: EvidenceGridProp
           const state = item.state ?? "held";
           const wrong = state === "failed" || state === "missing";
           return (
-            <Card key={item.id} className="p-3">
+            <Card key={item.id} padding="none" {...partAttributes(evidenceBodyStyle, {})}>
               <Stack gap="sm">
                 <Flex gap="sm" align="start" justify="between">
                   <Flex gap="sm" align="center">
-                    <Icon name={KIND_ICON[item.kind]} className={wrong ? "opacity-50" : undefined} />
+                    <Icon name={KIND_ICON[item.kind]} {...slotAttributes(evidenceIconStyle, { wrong })} />
                     <Text weight="medium">{item.label}</Text>
                   </Flex>
                   {item.retained && <Badge variant="outline">{t("evidence.retained")}</Badge>}

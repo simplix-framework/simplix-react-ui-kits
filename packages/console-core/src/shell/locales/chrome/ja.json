@@ -8,5 +8,46 @@
     "back": "戻る",
     "areas": "主な領域",
     "unbuilt": "この画面はまだ作成されていません"
+  },
+  "display": {
+    "title": "表示設定",
+    "design": "デザイン",
+    "fill": "カードの塗り",
+    "density": "行の間隔",
+    "designs": {
+      "classic": "クラシック",
+      "clarity": "クラリティ"
+    },
+    "fills": {
+      "plain": "白いカード",
+      "outline": "枠線",
+      "raised": "立体",
+      "tint": "淡い色",
+      "lead": "強調"
+    },
+    "densities": {
+      "compact": "狭く",
+      "default": "標準",
+      "comfortable": "広く"
+    },
+    "modes": {
+      "light": "ライト",
+      "dark": "ダーク"
+    },
+    "themes": {
+      "default": "デフォルト",
+      "blue": "ブルー",
+      "green": "グリーン",
+      "krds": "KRDS",
+      "orange": "オレンジ",
+      "rose": "ローズ",
+      "violet": "バイオレット",
+      "graphite": "グラファイト",
+      "cobalt": "コバルト",
+      "forest": "フォレスト",
+      "clear": "クリア",
+      "fresh": "フレッシュ",
+      "grape": "グレープ"
+    }
   }
 }

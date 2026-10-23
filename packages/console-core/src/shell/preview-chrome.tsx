@@ -32,6 +32,9 @@ import {
   ConsoleMenuRail,
 } from "./menu-tree";
 import { useSidebarCollapse } from "./sidebar-collapse";
+import { consoleWindowStyle } from "./console-window.style";
+import { previewFlyoutTitleStyle, previewStatusStyle, previewTopBarLeadStyle, previewTopBarRowStyle, previewTopBarStyle } from "./preview-chrome.style";
+import { partAttributes, slotAttributes } from "@simplix-react/ui/design";
 
 /** One destination in the preview's menu. */
 export interface ConsolePreviewMenuEntry {
@@ -129,7 +132,7 @@ export function ConsolePreviewWindowChrome({
   const menu = chrome.menuFor(area);
 
   return (
-    <Flex direction="column" gap="none" className="h-dvh bg-background">
+    <Flex direction="column" gap="none" className="h-dvh" {...partAttributes(consoleWindowStyle, {})}>
       <PreviewTopBar chrome={chrome} area={area} onArea={setArea} />
       <Flex gap="none" flex overflow="hidden">
         {menu.groups.length > 0 &&
@@ -186,9 +189,9 @@ function PreviewTopBar({
   const { displayName, roleName, sites, site, selectSite } = useConsole();
   return (
     // The bar's height, rule and inset, as the console's own top bar writes them.
-    <Stack gap="none" shrink={false} className="border-b bg-background">
-      <Flex align="center" gap="sm" className="min-h-12 px-3">
-        <Flex align="center" gap="md" flex minSize wrap className="py-1">
+    <Stack gap="none" shrink={false} {...partAttributes(previewTopBarStyle, {})}>
+      <Flex align="center" gap="sm" className="min-h-12" {...partAttributes(previewTopBarRowStyle, {})}>
+        <Flex align="center" gap="md" flex minSize wrap {...partAttributes(previewTopBarLeadStyle, {})}>
           <Flex align="center" gap="xs" shrink={false}>
             {chrome.mark}
             <Heading level={6}>{chrome.title}</Heading>
@@ -259,7 +262,7 @@ function NotificationsButton({ label, empty, count }: { readonly label: string; 
         </span>
       </PopoverTrigger>
       <ConsoleMenuFlyout title={label}>
-        <Text size="caption" tone="muted" className="px-2">
+        <Text size="caption" tone="muted" {...partAttributes(previewFlyoutTitleStyle, {})}>
           {empty}
         </Text>
       </ConsoleMenuFlyout>
@@ -272,7 +275,15 @@ function PreviewStatusStrip({ labels }: { readonly labels: ConsolePreviewChromeL
   const zone = site && siteTimeZone ? labels.siteClock(zoneLabel(siteTimeZone, new Date())) : labels.noSite;
   return (
     // The strip's height, rule, chrome tint and inset, as the console's own strip writes them.
-    <Flex align="center" justify="between" gap="md" shrink={false} className="h-7 border-t bg-muted/30 px-3" aria-label={labels.status}>
+    <Flex
+      align="center"
+      justify="between"
+      gap="md"
+      shrink={false}
+      className="h-7"
+      aria-label={labels.status}
+      {...partAttributes(previewStatusStyle, {})}
+    >
       <EllipsisText size="caption" tone="muted">
         {labels.quiet}
       </EllipsisText>

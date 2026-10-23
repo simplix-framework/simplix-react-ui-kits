@@ -4,6 +4,8 @@ import { Button, MenuLink } from "@simplix-react/ui";
 import { ShieldCogCornerIcon } from "lucide-react";
 
 import { useConsoleSubject } from "./console-product";
+import { adminDestinationIconStyle, adminDestinationLinkStyle } from "./admin-destination.style";
+import { slotAttributes } from "@simplix-react/ui/design";
 
 /** Props for {@link AdminDestination}. */
 export interface AdminDestinationProps {
@@ -61,9 +63,13 @@ export function AdminDestination({
 
   if (appearance === "link") {
     return (
-      <MenuLink href={to} className="inline-flex items-center gap-1 underline-offset-2 hover:underline">
+      <MenuLink
+        href={to}
+        className="inline-flex items-center"
+        attributes={slotAttributes(adminDestinationLinkStyle, {})}
+      >
         {children}
-        <ShieldCogCornerIcon aria-hidden size={14} className="shrink-0 opacity-70" />
+        <ShieldCogCornerIcon aria-hidden size={14} className="shrink-0" {...slotAttributes(adminDestinationIconStyle, {})} />
       </MenuLink>
     );
   }
@@ -71,7 +77,7 @@ export function AdminDestination({
   return (
     <Button asChild variant={variant} size="sm">
       <MenuLink href={to}>
-        <ShieldCogCornerIcon aria-hidden size={14} className="shrink-0 opacity-70" />
+        <ShieldCogCornerIcon aria-hidden size={14} className="shrink-0" {...slotAttributes(adminDestinationIconStyle, {})} />
         {children}
       </MenuLink>
     </Button>

@@ -2,6 +2,8 @@ import { FormFields, Text } from "@simplix-react/ui";
 import { useTranslation } from "@simplix-react/i18n/react";
 
 import type { EntitySearch } from "@simplix-react/ui";
+import { entitySearchMoreStyle } from "./entity-search-combobox.style";
+import { partAttributes } from "@simplix-react/ui/design";
 
 interface EntitySearchComboboxProps {
   label: string;
@@ -57,7 +59,7 @@ export function EntitySearchCombobox({ label, value, onChange, search, error, pl
       className={className}
       footer={
         search.hasMore ? (
-          <Text as="span" size="caption" tone="muted" className="px-2 py-1.5">
+          <Text as="span" size="caption" tone="muted" {...partAttributes(entitySearchMoreStyle, {})}>
             {t("field.moreResults")}
           </Text>
         ) : undefined

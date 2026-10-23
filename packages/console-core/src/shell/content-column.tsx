@@ -3,6 +3,8 @@ import { Stack } from "@simplix-react/ui";
 
 import { useScrollEndRoom } from "../layout";
 import { ConsolePageHeader } from "./page-header";
+import { contentColumnBodyStyle, contentColumnStyle } from "./content-column.style";
+import { partAttributes, slotAttributes } from "@simplix-react/ui/design";
 
 /** Props for {@link ConsoleContentColumn}. */
 export interface ConsoleContentColumnProps {
@@ -49,9 +51,14 @@ export function ConsoleContentColumn({ children }: ConsoleContentColumnProps) {
     // what it exists to hold.
     <main
       ref={content}
-      className="flex flex-col flex-1 min-h-0 overflow-auto px-6 pt-4 [scrollbar-gutter:stable]"
+      className="flex flex-col flex-1 min-h-0 overflow-auto [scrollbar-gutter:stable]"
+      {...slotAttributes(contentColumnStyle, {})}
     >
-      <Stack flex className="max-w-screen-2xl mx-auto w-full">
+      <Stack
+        flex
+        className="max-w-screen-2xl w-full"
+        {...partAttributes(contentColumnBodyStyle, {})}
+      >
         <ConsolePageHeader />
         {children}
         <div aria-hidden className={`${room} shrink-0 pointer-events-none`} />

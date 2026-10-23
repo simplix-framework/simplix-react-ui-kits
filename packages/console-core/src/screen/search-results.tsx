@@ -4,6 +4,9 @@ import { useTranslation } from "@simplix-react/i18n/react";
 import { Card, EmptyState, Flex, Heading, Icon, Stack, Text } from "@simplix-react/ui";
 
 import { ActionButton, NoticeCard, type ActionOrUnbuilt } from "../notice";
+import { searchHitStyle } from "./search-results.style";
+import { slotAttributes } from "@simplix-react/ui/design";
+import { PushEnd } from "../layout/push-edge";
 
 /** One record the search matched. */
 export interface SearchHitEntry {
@@ -103,13 +106,14 @@ export function SearchHit({ hit }: { readonly hit: SearchHitEntry }) {
         <Flex align="center" gap="sm" wrap>
           <Heading level={6}>{hit.title}</Heading>
           {hit.onOpen && (
-            <ActionButton
-              behaviour={hit.onOpen}
-              variant="outline"
-              size="xs"
-              className="ml-auto"
-              label={t("search.open")}
-            />
+            <PushEnd>
+              <ActionButton
+                behaviour={hit.onOpen}
+                variant="outline"
+                size="xs"
+                label={t("search.open")}
+              />
+            </PushEnd>
           )}
         </Flex>
 
@@ -120,7 +124,7 @@ export function SearchHit({ hit }: { readonly hit: SearchHitEntry }) {
             // get. Keyed by position because a term can legitimately repeat in one snippet.
             <span
               key={`${index}-${part.text}`}
-              className={part.hit ? "rounded-sm bg-warning/30 px-0.5 font-medium" : undefined}
+              {...slotAttributes(searchHitStyle, { hit: part.hit })}
             >
               {part.text}
             </span>

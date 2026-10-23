@@ -1,5 +1,8 @@
 import type { ReactNode } from "react";
 import { Flex } from "@simplix-react/ui";
+import { partAttributes } from "@simplix-react/ui/design";
+
+import { consoleWindowStyle } from "./console-window.style";
 
 /** Props for {@link ConsoleWindow}. */
 export interface ConsoleWindowProps {
@@ -22,7 +25,7 @@ export interface ConsoleWindowProps {
  */
 export function ConsoleWindow({ children }: ConsoleWindowProps) {
   return (
-    <Flex direction="column" gap="none" className="h-dvh bg-background">
+    <Flex direction="column" gap="none" className="h-dvh" {...partAttributes(consoleWindowStyle, {})}>
       {children}
     </Flex>
   );

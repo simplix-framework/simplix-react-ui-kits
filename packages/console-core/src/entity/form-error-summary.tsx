@@ -2,6 +2,8 @@ import { Text } from "@simplix-react/ui";
 import { useTranslation } from "@simplix-react/i18n/react";
 
 import { PACKAGE_NAMESPACE } from "./locales";
+import { formErrorCardStyle, formErrorFieldsStyle } from "./form-error-summary.style";
+import { partAttributes, slotAttributes } from "@simplix-react/ui/design";
 
 interface FormErrorSummaryProps {
   /** What the server refused, keyed by the field it refused. */
@@ -75,11 +77,11 @@ export function FormErrorSummary({
   const names = [...new Set(fields.map(nameOf))];
 
   return (
-    <div className="rounded-md border border-destructive/40 bg-destructive/5 px-3 py-2">
+    <div {...slotAttributes(formErrorCardStyle, {})}>
       <Text as="p" size="sm" weight="medium" tone="destructive">
         {t("formErrors.title", { count: names.length })}
       </Text>
-      <Text as="p" size="caption" className="text-destructive/90">
+      <Text as="p" size="caption" {...partAttributes(formErrorFieldsStyle, {})}>
         {names.join(" · ")}
       </Text>
     </div>

@@ -12,6 +12,8 @@ import {
 } from "@simplix-react/ui";
 
 import { NoticeCard } from "../notice";
+import { aiMarkingExplanationStyle, aiMarkingGlyphStyle } from "./ai-marking.style";
+import { slotAttributes } from "@simplix-react/ui/design";
 
 /**
  * The five words this product marks a machine-made value with. The set is closed.
@@ -77,7 +79,7 @@ export function AiBadge({ word, basis }: AiBadgeProps) {
   const { t } = useTranslation("common");
   const badge = (
     <Badge variant="secondary">
-      <span aria-hidden className="mr-1">
+      <span aria-hidden {...slotAttributes(aiMarkingGlyphStyle, {})}>
         ◈
       </span>
       {t(`ai.word.${word}`)}
@@ -160,7 +162,7 @@ export function AiFeatureCard({ title, summary, tier, explanation }: AiFeatureCa
           <span aria-hidden>◈</span>
           <Text weight="medium">{title}</Text>
           <Badge variant="outline">{t("ai.tier", { tier })}</Badge>
-          {explanation && <span className="ml-auto">{explanation}</span>}
+          {explanation && <span {...slotAttributes(aiMarkingExplanationStyle, {})}>{explanation}</span>}
         </Flex>
         <Text size="caption" tone="muted">
           {summary}

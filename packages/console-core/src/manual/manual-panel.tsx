@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { Button, Dialog, DialogTitle, Flex, Stack, Text } from "@simplix-react/ui";
+import { Button, Dialog, DialogTitle, Stack, Text, Flex } from "@simplix-react/ui";
 import { useTranslation } from "@simplix-react/i18n/react";
 import { ArrowLeftIcon, CircleHelpIcon, XIcon } from "lucide-react";
 
@@ -14,6 +14,20 @@ import {
   readManualWidth,
   writeManualWidth,
 } from "./manual-width";
+import {
+  manualBodyStyle,
+  manualContentsLinkStyle,
+  manualFallbackCardStyle,
+  manualHeaderStyle,
+  manualMarkStyle,
+  manualPanelStyle,
+  manualResizerStyle,
+  manualSectionsStyle,
+  manualStepStyle,
+  manualZoomImageStyle,
+  manualZoomTitleStyle,
+} from "./manual-panel.style";
+import { partAttributes, slotAttributes } from "@simplix-react/ui/design";
 
 /** How far a keyboard press moves the panel's edge. */
 const KEYBOARD_STEP = 40;
@@ -114,8 +128,9 @@ export function ManualPanel({ route }: ManualPanelProps) {
     <>
       <aside
         aria-label={t("manual.title")}
-        className="relative flex shrink-0 flex-col border-s border-border bg-background"
+        className="relative flex shrink-0 flex-col"
         style={{ width }}
+        {...slotAttributes(manualPanelStyle, {})}
       >
         {/* The edge the reader drags. A real element with a role rather than a bare cursor, so
             the width can also be set from the keyboard by somebody who cannot drag. */}
@@ -145,10 +160,11 @@ export function ManualPanel({ route }: ManualPanelProps) {
               return next;
             });
           }}
-          className="absolute inset-y-0 -start-1 z-10 w-2 cursor-col-resize hover:bg-border focus-visible:bg-border focus-visible:outline-none"
+          className="absolute inset-y-0 -start-1 z-10 w-2 cursor-col-resize"
+          {...slotAttributes(manualResizerStyle, {})}
         />
 
-        <Flex align="center" gap="sm" className="border-b border-border px-4 py-2.5">
+        <Flex align="center" gap="sm" {...partAttributes(manualHeaderStyle, {})}>
           {chosen && (
             <Button
               variant="outline"
@@ -161,8 +177,12 @@ export function ManualPanel({ route }: ManualPanelProps) {
           )}
           {/* The same mark as the control that opened this, so the panel says what it is even
               when its title is the name of a page rather than the word "help". */}
-          <CircleHelpIcon aria-hidden className="size-4 shrink-0 text-muted-foreground" />
-          <Text className="min-w-0 flex-1 truncate font-medium">
+          <CircleHelpIcon
+            aria-hidden
+            className="size-4 shrink-0"
+            {...slotAttributes(manualMarkStyle, {})}
+          />
+          <Text weight="medium" className="min-w-0 flex-1 truncate">
             {state.status === "page" ? state.page.title : t("manual.title")}
           </Text>
           <Button variant="outline" size="sm" onClick={close} title={t("manual.close")}>
@@ -171,7 +191,7 @@ export function ManualPanel({ route }: ManualPanelProps) {
         </Flex>
 
         {state.status === "page" && state.page.sections.length > 0 && (
-          <Flex wrap gap="xs" className="border-b border-border px-4 py-2">
+          <Flex wrap gap="xs" {...partAttributes(manualSectionsStyle, {})}>
             {state.page.sections.map((label, i) => (
               <Button
                 key={label}
@@ -185,7 +205,7 @@ export function ManualPanel({ route }: ManualPanelProps) {
           </Flex>
         )}
 
-        <Stack flex className="min-h-0 overflow-auto px-4 py-3">
+        <Stack flex className="min-h-0 overflow-auto" {...partAttributes(manualBodyStyle, {})}>
           {state.status === "loading" && <Text tone="muted">{t("manual.loading")}</Text>}
 
           {state.status === "unavailable" && <Text tone="muted">{t("manual.unavailable")}</Text>}
@@ -202,9 +222,10 @@ export function ManualPanel({ route }: ManualPanelProps) {
                     variant="outline"
                     size="sm"
                     onClick={() => setChosen(page.slug)}
-                    className="h-auto justify-start whitespace-normal px-2 py-1.5 text-start"
+                    className="h-auto justify-start whitespace-normal"
+                    {...partAttributes(manualContentsLinkStyle, {})}
                   >
-                    <span className="me-2 text-muted-foreground tabular-nums">{page.step}</span>
+                    <span {...slotAttributes(manualStepStyle, {})}>{page.step}</span>
                     {page.title}
                   </Button>
                 ))}
@@ -215,10 +236,7 @@ export function ManualPanel({ route }: ManualPanelProps) {
           {state.status === "page" && (
             <Stack gap="sm">
               {state.fellBack && (
-                <Text
-                  size="caption"
-                  className="rounded-md border border-s-2 border-border border-s-primary bg-muted/40 px-3 py-2"
-                >
+                <Text size="caption" {...partAttributes(manualFallbackCardStyle, {})}>
                   {t("manual.fellBackToEnglish")}
                 </Text>
               )}
@@ -238,7 +256,7 @@ export function ManualPanel({ route }: ManualPanelProps) {
         {/* The width is the caller's and none of the four named steps fits it: a picture opened at
             its own size wants the window rather than a step, so it is written here. */}
         <BoundedDialogContent className="max-w-[92vw] sm:max-w-[92vw]">
-          <DialogTitle className="text-sm font-normal">{zoomed?.alt}</DialogTitle>
+          <DialogTitle {...partAttributes(manualZoomTitleStyle, {})}>{zoomed?.alt}</DialogTitle>
           {zoomed && (
             <img
               src={zoomed.src}
@@ -248,7 +266,8 @@ export function ManualPanel({ route }: ManualPanelProps) {
               // `100dvh` less its inset, and the 10rem here is that inset plus the padding, the
               // gap and a title of two lines. Sized against the window instead, a short screen
               // gets a picture taller than the panel and a viewer that scrolls to see a picture.
-              className="max-h-[calc(100dvh-10rem)] w-full rounded-md border border-border object-contain"
+              className="max-h-[calc(100dvh-10rem)] w-full object-contain"
+              {...slotAttributes(manualZoomImageStyle, {})}
             />
           )}
         </BoundedDialogContent>

@@ -1,5 +1,7 @@
 import type { ReactNode } from "react";
 import { Flex } from "@simplix-react/ui";
+import { areaSwitchStyle, areaTabStyle } from "./area-switch.style";
+import { partAttributes, slotAttributes } from "@simplix-react/ui/design";
 
 /** One area in the switch. */
 export interface ConsoleArea {
@@ -37,7 +39,14 @@ export interface ConsoleAreaSwitchProps {
  */
 export function ConsoleAreaSwitch({ areas, current, onSelect }: ConsoleAreaSwitchProps) {
   return (
-    <Flex gap="none" align="stretch" wrap className="min-h-9 gap-y-1" role="tablist">
+    <Flex
+      gap="none"
+      align="stretch"
+      wrap
+      className="min-h-9"
+      role="tablist"
+      {...partAttributes(areaSwitchStyle, {})}
+    >
       {areas.map((area) => (
         <button
           key={area.key}
@@ -45,11 +54,8 @@ export function ConsoleAreaSwitch({ areas, current, onSelect }: ConsoleAreaSwitc
           role="tab"
           aria-selected={area.key === current}
           onClick={() => onSelect(area.key)}
-          className={`whitespace-nowrap px-3 text-sm min-h-11 md:min-h-0 ${
-            area.key === current
-              ? "border-b-2 border-primary font-medium"
-              : "border-b-2 border-transparent text-muted-foreground hover:text-foreground"
-          }`}
+          className="whitespace-nowrap min-h-11 md:min-h-0"
+          {...slotAttributes(areaTabStyle, { current: area.key === current })}
         >
           {area.label}
         </button>

@@ -1,6 +1,7 @@
 import { Flex, Stack, Text } from "@simplix-react/ui";
 import { useTranslation } from "@simplix-react/i18n/react";
 import { DarkModeToggle } from "./dark-mode-toggle";
+import { DisplaySettings } from "./display-settings";
 import { LocalePicker } from "./locale-picker";
 import { PACKAGE_NAMESPACE } from "./locales";
 
@@ -16,7 +17,7 @@ export interface ChromeControlRowsProps {
  * menu has room for the name instead — and the name is what makes an icon findable by somebody
  * looking for "language" rather than for a glyph they have to recognise first.
  *
- * <p>Same two controls as the bar's, so a narrow width moves them rather than dropping them.
+ * <p>Same controls as the bar's, so a narrow width moves them rather than dropping them.
  */
 export function ChromeControlRows({ className }: ChromeControlRowsProps) {
   const { t } = useTranslation(PACKAGE_NAMESPACE + "/chrome");
@@ -34,6 +35,12 @@ export function ChromeControlRows({ className }: ChromeControlRowsProps) {
           {t("theme.darkMode")}
         </Text>
         <DarkModeToggle />
+      </Flex>
+      <Flex justify="between" align="center">
+        <Text size="sm" tone="muted">
+          {t("display.title")}
+        </Text>
+        <DisplaySettings />
       </Flex>
     </Stack>
   );

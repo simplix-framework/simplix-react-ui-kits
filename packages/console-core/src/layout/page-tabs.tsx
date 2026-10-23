@@ -3,6 +3,8 @@ import { Flex, Tabs, TabsContent, TabsTrigger } from "@simplix-react/ui";
 
 import { useGroupedFigure } from "@simplix-react/i18n/react";
 import { NumericText } from "./numeric-text";
+import { countedTabCountStyle, pageTabPanelStyle, pageTabsStyle } from "./page-tabs.style";
+import { partAttributes } from "@simplix-react/ui/design";
 
 interface PageTabsProps {
   /** Which tab is on. */
@@ -27,7 +29,12 @@ interface PageTabsProps {
  */
 export function PageTabs({ value, onValueChange, children }: PageTabsProps) {
   return (
-    <Tabs value={value} onValueChange={onValueChange} className="flex flex-col flex-1 min-h-0 gap-4">
+    <Tabs
+      value={value}
+      onValueChange={onValueChange}
+      className="flex flex-col flex-1 min-h-0"
+      {...partAttributes(pageTabsStyle, {})}
+    >
       {children}
     </Tabs>
   );
@@ -75,7 +82,7 @@ interface PageTabPanelProps {
  */
 export function PageTabPanel({ value, children }: PageTabPanelProps) {
   return (
-    <TabsContent value={value} className="flex min-h-0 flex-col pt-4">
+    <TabsContent value={value} className="flex min-h-0 flex-col" {...partAttributes(pageTabPanelStyle, {})}>
       {children}
     </TabsContent>
   );
@@ -143,7 +150,8 @@ export function CountedTab({ value, label, count }: CountedTabProps) {
           <NumericText
             size="caption"
             tone="muted"
-            className="self-start leading-none group-data-[state=active]:text-inherit"
+            className="self-start group-data-[state=active]:text-inherit"
+            {...partAttributes(countedTabCountStyle, {})}
           >
             {grouped(count)}
           </NumericText>

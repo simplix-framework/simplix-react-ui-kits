@@ -13,20 +13,17 @@ import { useTranslation } from "@simplix-react/i18n/react";
 import { PACKAGE_NAMESPACE } from "./locales";
 import { Button, EmptyState, Flex } from "@simplix-react/ui";
 import { usePermissionGroupName } from "../identity";
+import { errorPageIconStyle, errorPageStyle } from "./error-pages.style";
+import { partAttributes } from "@simplix-react/ui/design";
 
 interface ErrorPageLayoutProps {
   code: string;
   icon: React.ReactNode;
   /**
-   * The tint the kind of error is read by — amber for something being worked on, red for a
-   * failure, slate for a refusal, blue for a sign-in.
-   *
-   * <p><b>A class name and staying one.</b> The design system names four tones (default, muted,
-   * primary, destructive) and only the red of a server error is among them; the other three carry
-   * a distinction the tokens do not make, and collapsing them would make a maintenance window and
-   * a crash the same colour.
+   * The tint the kind of error is read by - amber for something being worked on, red for a
+   * failure, slate for a refusal, blue for a sign-in. See {@link errorPageIconStyle}.
    */
-  iconClassName: string;
+  iconTint: "amber" | "red" | "slate" | "blue";
   titleKey: string;
   /** Catalogue key for the body line; ignored when {@link description} is supplied. */
   descriptionKey?: string;
@@ -38,7 +35,7 @@ interface ErrorPageLayoutProps {
 function ErrorPageLayout({
   code,
   icon,
-  iconClassName,
+  iconTint,
   titleKey,
   descriptionKey,
   description,
@@ -53,7 +50,12 @@ function ErrorPageLayout({
     // with nothing to scroll to. Where a mount supplies no height at all, that mount supplies the
     // screen: the root route's error boundary replaces the whole layout, and `RouteErrorFallback`
     // is the one place that has to say so.
-    <Flex align="center" justify="center" className="flex-1 min-h-0 py-8">
+    <Flex
+      align="center"
+      justify="center"
+      className="flex-1 min-h-0"
+      {...partAttributes(errorPageStyle, {})}
+    >
       {/* ONE box. This drew a `Card` around an `EmptyState`, which draws a bordered box of its
           own — so every error page was a box inside a box, and the icon was a badge inside the
           badge this already draws. The state panel is the box.
@@ -64,7 +66,7 @@ function ErrorPageLayout({
       <EmptyState
         className="w-full max-w-md"
         icon={icon}
-        iconClassName={iconClassName}
+        iconAttributes={partAttributes(errorPageIconStyle, { tint: iconTint })}
         title={t(titleKey)}
         description={description ?? (descriptionKey ? t(descriptionKey) : undefined)}
         action={<Flex gap="sm">{actions}</Flex>}
@@ -83,7 +85,7 @@ export function NotFoundPage() {
     <ErrorPageLayout
       code=""
       icon={<Wrench />}
-      iconClassName="bg-amber-50 text-amber-600 dark:bg-amber-950/30 dark:text-amber-400"
+      iconTint="amber"
       titleKey="error.notFoundTitle"
       descriptionKey="error.notFoundDescription"
       actions={
@@ -112,7 +114,7 @@ export function ServerErrorPage({ reset }: { reset?: () => void }) {
     <ErrorPageLayout
       code="500"
       icon={<AlertTriangle />}
-      iconClassName="bg-red-50 text-red-600 dark:bg-red-950/30 dark:text-red-400"
+      iconTint="red"
       titleKey="error.serverErrorTitle"
       descriptionKey="error.serverErrorDescription"
       actions={
@@ -162,7 +164,7 @@ export function AccessDeniedPage({ permission }: AccessDeniedPageProps = {}) {
     <ErrorPageLayout
       code="403"
       icon={<Lock />}
-      iconClassName="bg-slate-100 text-slate-600 dark:bg-slate-800/30 dark:text-slate-300"
+      iconTint="slate"
       titleKey="error.accessDeniedTitle"
       description={description}
       actions={
@@ -198,7 +200,7 @@ export function AuthRequiredPage() {
     <ErrorPageLayout
       code="401"
       icon={<LogIn />}
-      iconClassName="bg-blue-50 text-blue-600 dark:bg-blue-950/30 dark:text-blue-400"
+      iconTint="blue"
       titleKey="error.authRequiredTitle"
       descriptionKey="error.authRequiredDescription"
       actions={
@@ -229,7 +231,7 @@ export function ServiceUnavailablePage() {
     <ErrorPageLayout
       code="503"
       icon={<Wrench />}
-      iconClassName="bg-amber-50 text-amber-600 dark:bg-amber-950/30 dark:text-amber-400"
+      iconTint="amber"
       titleKey="error.serviceUnavailableTitle"
       descriptionKey="error.serviceUnavailableDescription"
       /*

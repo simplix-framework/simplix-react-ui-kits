@@ -113,7 +113,9 @@
     "typecheck": "tsc --noEmit",
     "lint": "oxlint src",
     "test": "vitest run --passWithNoTests",
-    "clean": "rm -rf dist .turbo"
+    "clean": "rm -rf dist .turbo",
+    "design:css": "simplix-design-css --root . --out src/styles/designs/classic.css && simplix-design-css --root . --design-spec src/styles/designs/clarity.spec.ts --out src/styles/designs/clarity.css",
+    "design:check": "simplix-design-css --root . --out src/styles/designs/classic.css --check && simplix-design-css --root . --design-spec src/styles/designs/clarity.spec.ts --out src/styles/designs/clarity.css --check && simplix-design-coverage src/styles/designs/classic.css src/styles/designs/clarity.css && simplix-design-classes src"
   },
   "dependencies": {
     "@fontsource/noto-sans-jp": "catalog:",

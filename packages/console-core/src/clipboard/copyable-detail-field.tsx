@@ -5,6 +5,8 @@ import { Copy } from "lucide-react";
 
 import { useCopyToClipboard } from "./use-copy-to-clipboard";
 import { PACKAGE_NAMESPACE } from "./locales";
+import { copyableFieldStyle } from "./copyable-detail-field.style";
+import { slotAttributes } from "@simplix-react/ui/design";
 
 type WrapperProps = ComponentProps<typeof DetailFieldWrapper>;
 
@@ -50,7 +52,7 @@ export function CopyableDetailField({ value, fallback, ...wrapper }: CopyableDet
 
   return (
     <DetailFieldWrapper {...wrapper}>
-      <span className="inline-flex min-w-0 items-start gap-1.5">
+      <span className="inline-flex min-w-0 items-start" {...slotAttributes(copyableFieldStyle, {})}>
         <span className="min-w-0 break-words">
           {hasValue ? value : <EmptyValue>{fallback}</EmptyValue>}
         </span>

@@ -1,0 +1,15 @@
+/* ===== Card fills: the console's tiles =====
+   The lead fill fills only the tile its data marks important (data-emphasis), with the theme's
+   --lead colour; the framework's fills.css draws the other fills on the card it renders. */
+
+@layer utilities {
+  [data-fill="lead"] :where([data-slot="console-tile"][data-emphasis="true"]) :where([data-slot="stat-card"]) {
+    border-color: transparent;
+    background-color: var(--lead);
+    color: var(--lead-foreground);
+    box-shadow: var(--shadow-2);
+  }
+  [data-fill="lead"] :where([data-slot="console-tile"][data-emphasis="true"]) :where([data-slot="stat-card"]) :where([data-slot]) {
+    color: inherit;
+  }
+}

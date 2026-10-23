@@ -1,6 +1,8 @@
 import type { ReactNode } from "react";
 import { CheckIcon, XIcon } from "lucide-react";
 import { Flex, Stack, Text } from "@simplix-react/ui";
+import { approvalRailStyle, approvalStepStyle } from "./approval-flow.style";
+import { slotAttributes } from "@simplix-react/ui/design";
 
 /** Where one step of a chain stands. */
 export type ApprovalStepState = "done" | "now" | "wait" | "reject";
@@ -25,14 +27,6 @@ export interface ApprovalFlowProps {
   readonly steps: readonly ApprovalStep[];
 }
 
-/** What tints each state, so a reader can see where the chain is without reading it. */
-const STATE_STYLE: Record<ApprovalStepState, string> = {
-  done: "border-border bg-muted/40 text-muted-foreground",
-  now: "border-primary bg-primary/10 text-foreground",
-  wait: "border-dashed border-border text-muted-foreground",
-  reject: "border-destructive bg-destructive/10 text-foreground",
-};
-
 /**
  * Where a record is in a chain, and who it is waiting on.
  *
@@ -55,12 +49,13 @@ const STATE_STYLE: Record<ApprovalStepState, string> = {
 export function ApprovalFlow({ steps }: ApprovalFlowProps) {
   return (
     // raw layout: a horizontal rail of steps; the framework ships no step-chain primitive
-    <div className="flex flex-wrap gap-2" role="list">
+    <div className="flex flex-wrap" role="list" {...slotAttributes(approvalRailStyle, {})}>
       {steps.map((step) => (
         <div
           key={step.key}
           role="listitem"
-          className={`flex min-w-40 flex-1 items-start gap-2 rounded-md border px-3 py-2 ${STATE_STYLE[step.state]}`}
+          className="flex min-w-40 flex-1 items-start"
+          {...slotAttributes(approvalStepStyle, { state: step.state })}
         >
           <Flex align="center" justify="center">
             {step.state === "done" && <CheckIcon className="size-4" aria-hidden />}

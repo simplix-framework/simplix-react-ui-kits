@@ -1,7 +1,9 @@
 import type { ReactNode } from "react";
 
 import { cn } from "@simplix-react/ui";
+import { slotAttributes } from "@simplix-react/ui/design";
 
+import { monoBlockStyle } from "./mono-block.style";
 import { NoticeBox } from "./notice-box";
 
 /** Props for {@link MonoBlock}. */
@@ -32,12 +34,12 @@ export function MonoBlock({ children, height = "md", className }: MonoBlockProps
   return (
     <NoticeBox
       className={cn(
-        "overflow-auto whitespace-pre-wrap break-all font-mono text-xs select-all",
+        "overflow-auto whitespace-pre-wrap break-all select-all",
         HEIGHT_CLASS[height],
         className,
       )}
     >
-      {children}
+      <div {...slotAttributes(monoBlockStyle, {})}>{children}</div>
     </NoticeBox>
   );
 }

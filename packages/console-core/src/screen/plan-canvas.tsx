@@ -17,6 +17,15 @@ import {
 } from "@simplix-react/ui";
 
 import { NumericText, StrongText, TooltipTarget } from "../layout";
+import {
+  planMarkStyle,
+  planMinimapDotStyle,
+  planMinimapStyle,
+  planPaletteItemStyle,
+  planStageStyle,
+  planSurfaceStyle,
+} from "./plan-canvas.style";
+import { slotAttributes } from "@simplix-react/ui/design";
 
 /** One tool on the bar. A tool this build cannot perform carries its reason and is not selectable. */
 export interface CanvasToolDef {
@@ -301,9 +310,11 @@ export function PlanCanvas({
                         // A `Button` centres its label and this is a list row: the reader
                         // scans a column of names down their left edge. What is missing is an
                         // alignment on `Button`; until it has one the row is drawn here.
-                        className={`rounded-md px-2 py-1.5 text-left text-sm ${
-                          armedId === item.id ? "bg-accent font-medium" : ""
-                        } ${item.placeable ? "hover:bg-accent" : "cursor-default"}`}
+                        className={item.placeable ? undefined : "cursor-default"}
+                        {...slotAttributes(planPaletteItemStyle, {
+                          armed: armedId === item.id,
+                          placeable: item.placeable,
+                        })}
                       >
                         <Flex align="center" gap="xs" wrap>
                           <span>{item.label}</span>
@@ -326,7 +337,7 @@ export function PlanCanvas({
         {/* The plan itself. Absolute positions rather than a layout primitive: a mark's place on a
             drawing is a coordinate, and a flow layout has no way to express one. */}
         <Card padding="none" className="min-w-0 flex-1 overflow-hidden">
-          <div className="relative overflow-hidden bg-muted/30">
+          <div className="relative overflow-hidden" {...slotAttributes(planStageStyle, {})}>
             <div
               style={{
                 transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
@@ -339,7 +350,8 @@ export function PlanCanvas({
                 onPointerMove={onSurfacePointerMove}
                 onPointerUp={endPointer}
                 onPointerLeave={endPointer}
-                className="relative w-full bg-background"
+                className="relative w-full"
+                {...slotAttributes(planSurfaceStyle, {})}
                 style={{
                   paddingBottom: `${ratio}%`,
                   cursor: activeTool === "pan" ? "grab" : activeTool === "pin" ? "crosshair" : "default",
@@ -363,13 +375,11 @@ export function PlanCanvas({
                     }}
                     title={`${mark.kind} · ${mark.label}`}
                     style={{ left: `${mark.x}%`, top: `${mark.y}%` }}
-                    className={`absolute -translate-x-1/2 -translate-y-1/2 rounded-md border px-1.5 py-0.5 text-xs shadow-sm ${
-                      selectedId === mark.id
-                        ? "border-primary bg-primary text-primary-foreground"
-                        : mark.warn
-                          ? "border-warning bg-background"
-                          : "border-border bg-background"
-                    } ${mark.region ? "border-dashed" : ""}`}
+                    className="absolute -translate-x-1/2 -translate-y-1/2"
+                    {...slotAttributes(planMarkStyle, {
+                      tone: selectedId === mark.id ? "selected" : mark.warn ? "warn" : "plain",
+                      region: Boolean(mark.region),
+                    })}
                   >
                     {mark.label}
                   </button>
@@ -379,15 +389,17 @@ export function PlanCanvas({
 
             {/* The minimap, which is only here because the picture is bigger than the window. */}
             {scaled && (
-              <div className="absolute bottom-2 right-2 h-24 w-32 overflow-hidden rounded border bg-background/90">
+              <div
+                className="absolute bottom-2 right-2 h-24 w-32 overflow-hidden"
+                {...slotAttributes(planMinimapStyle, {})}
+              >
                 <div className="relative h-full w-full">
                   {marks.map((mark) => (
                     <span
                       key={mark.id}
                       style={{ left: `${mark.x}%`, top: `${mark.y}%` }}
-                      className={`absolute size-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full ${
-                        selectedId === mark.id ? "bg-primary" : "bg-muted-foreground"
-                      }`}
+                      className="absolute size-1.5 -translate-x-1/2 -translate-y-1/2"
+                      {...slotAttributes(planMinimapDotStyle, { selected: selectedId === mark.id })}
                     />
                   ))}
                 </div>
