@@ -12,6 +12,7 @@ export { DISMISSIBLE_NOTICE_KINDS, DISMISSIBLE_NOTICE_KIND_STYLE } from "./notic
 export type { DismissibleNoticeKind, DismissibleNoticeKindStyle } from "./notice-kind";
 export { NoticeMenu } from "./notice-menu";
 export { NoticeRegistryProvider, useNoticeEntries, useRegisterNotice } from "./notice-registry";
+export { LocalNoticeDismissalsProvider } from "./local-dismissals";
 export type { NoticeEntry } from "./notice-registry";
 export { NoticeDismissalsProvider, useNoticeDismissals } from "./dismissal-source";
 export type { NoticeDismissals } from "./dismissal-source";
