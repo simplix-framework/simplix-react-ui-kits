@@ -48,9 +48,9 @@ export interface CrudPageProps {
   /** A fixed list width in px while a record stands open beside it. */
   readonly listWidth?: number;
   /**
-   * How wide the record opens, in every presentation but the page: `regular` is the framework's
-   * detail width, `wide` the width a record with many tabs or wide parts needs. Use
-   * {@link detailWidthFor} to choose it from the record's tab labels.
+   * How wide the record opens: `wide` opens a dialog wider for a record with many tabs or wide
+   * parts; a panel keeps the framework's width and a drawer its own, whatever the record, and a
+   * tab strip wider than either scrolls. Use {@link detailWidthFor} to choose it from the tabs.
    */
   readonly detailWidth?: DetailWidth;
   readonly renderList: (nav: CrudPageNavigation) => ReactNode;

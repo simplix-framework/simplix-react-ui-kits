@@ -3,7 +3,7 @@ export type DetailWidth = "regular" | "wide";
 
 /** The framework's detail width (ListDetail's DETAIL_PANEL_WIDTH), which a regular record opens at. */
 export const REGULAR_DETAIL_WIDTH = 768;
-/** The width a record opens at when its tab strip or its parts need more than the regular width. */
+/** The width a dialog opens a record at when its tab strip or its parts need more than the regular width. */
 export const WIDE_DETAIL_WIDTH = 880;
 
 /**
@@ -16,7 +16,9 @@ export const DRAWER_DETAIL_WIDTH = 880;
 /** The px a record opens at, by presentation and width; undefined leaves the framework's own. */
 export function detailWidthPx(presentation: string, width: DetailWidth): number | undefined {
   if (presentation === "drawer") return DRAWER_DETAIL_WIDTH;
-  return width === "wide" ? WIDE_DETAIL_WIDTH : undefined;
+  // A panel takes its width from the list beside it, so it stays at the framework's width and lets
+  // a wide tab strip scroll; only a dialog, which covers nothing it needs, opens wider.
+  return presentation === "dialog" && width === "wide" ? WIDE_DETAIL_WIDTH : undefined;
 }
 
 /**
