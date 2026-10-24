@@ -1,0 +1,27 @@
+{
+  "measurement": {
+    "empty": "미측정",
+    "held": "해석 보류",
+    "safe": "안전",
+    "unsafe": "위험",
+    "nextDue": "다음 측정",
+    "nextDueHeld": "측정 주기 해석 보류",
+    "nextDueNone": "기한 없음",
+    "duePassed": "기한 지남",
+    "measuredAt": "측정 시각",
+    "measurer": "측정자",
+    "signature": "서명",
+    "trigger": "측정 사유",
+    "unsafeTitle": "위험 판정 {{count}}칸",
+    "unsafeBody": "위험 판정이 해소될 때까지 작업을 계속하거나 재개할 수 없습니다.",
+    "heldCount": "해석 보류 {{count}}칸",
+    "corner": "물질 × 위치"
+  },
+  "check": {
+    "empty": "미점검",
+    "clear": "판정 지우기",
+    "corner": "항목 × 회차",
+    "badCount": "불량 {{count}}칸",
+    "uncheckedCount": "미점검 {{count}}칸"
+  }
+}

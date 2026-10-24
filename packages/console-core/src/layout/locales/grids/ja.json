@@ -1,0 +1,27 @@
+{
+  "measurement": {
+    "empty": "未測定",
+    "held": "解釈保留",
+    "safe": "安全",
+    "unsafe": "危険",
+    "nextDue": "次回測定",
+    "nextDueHeld": "測定周期は解釈保留",
+    "nextDueNone": "期限なし",
+    "duePassed": "期限超過",
+    "measuredAt": "測定時刻",
+    "measurer": "測定者",
+    "signature": "署名",
+    "trigger": "測定理由",
+    "unsafeTitle": "危険判定 {{count}}件",
+    "unsafeBody": "危険判定が解消されるまで作業を継続・再開できません。",
+    "heldCount": "解釈保留 {{count}}件",
+    "corner": "物質 × 位置"
+  },
+  "check": {
+    "empty": "未点検",
+    "clear": "判定を消去",
+    "corner": "項目 × 回次",
+    "badCount": "不良 {{count}}件",
+    "uncheckedCount": "未点検 {{count}}件"
+  }
+}

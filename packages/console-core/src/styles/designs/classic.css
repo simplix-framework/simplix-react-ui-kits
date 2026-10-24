@@ -714,6 +714,15 @@
   :where([data-part="console-peek-trigger"])[data-part][data-p-console-peek-trigger] {
     @apply -my-1;
   }
+  :where([data-part="console-grid-empty-mark"])[data-part][data-p-console-grid-empty-mark] {
+    @apply border-dashed text-muted-foreground;
+  }
+  :where([data-part="console-grid-reading-input"])[data-part][data-p-console-grid-reading-input] {
+    @apply h-8 w-24 tabular-nums;
+  }
+  :where([data-part="console-grid-reading"])[data-part][data-p-console-grid-reading] {
+    @apply tabular-nums;
+  }
   :where([data-part="console-counted-tab-count"])[data-part][data-p-console-counted-tab-count] {
     @apply h-[18px] min-w-5 self-auto rounded-full bg-muted px-1.5 text-center text-[11px] leading-[18px] font-semibold text-muted-foreground transition-colors duration-[var(--dur-base)] group-data-[state=active]:bg-primary/10 group-data-[state=active]:text-primary;
   }

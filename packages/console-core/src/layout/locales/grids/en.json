@@ -1,0 +1,27 @@
+{
+  "measurement": {
+    "empty": "Not measured",
+    "held": "Held for interpretation",
+    "safe": "Safe",
+    "unsafe": "Unsafe",
+    "nextDue": "Next measurement",
+    "nextDueHeld": "Interval held for interpretation",
+    "nextDueNone": "No due time",
+    "duePassed": "Overdue",
+    "measuredAt": "Measured at",
+    "measurer": "Measured by",
+    "signature": "Signature",
+    "trigger": "Reason",
+    "unsafeTitle": "{{count}} unsafe cells",
+    "unsafeBody": "Work cannot continue or resume until the unsafe readings are resolved.",
+    "heldCount": "{{count}} held for interpretation",
+    "corner": "Substance × position"
+  },
+  "check": {
+    "empty": "Not checked",
+    "clear": "Clear verdict",
+    "corner": "Item × round",
+    "badCount": "{{count}} deficient",
+    "uncheckedCount": "{{count}} not checked"
+  }
+}

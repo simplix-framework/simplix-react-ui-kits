@@ -20,6 +20,36 @@ export type {
 export { ProgressBar } from "./progress-bar";
 export { ApprovalFlow } from "./approval-flow";
 export { Matrix } from "./matrix";
+export { MeasurementGrid } from "./measurement-grid";
+export type {
+  MeasurementAnalyte,
+  MeasurementEvent,
+  MeasurementGridProps,
+  MeasurementPosition,
+} from "./measurement-grid";
+export { CheckMatrix } from "./check-matrix";
+export type { CheckColumn, CheckMatrixProps, CheckRow } from "./check-matrix";
+export {
+  CHECK_VERDICTS,
+  checkCellState,
+  checkKey,
+  checkSummary,
+  isCheckColumnEditable,
+  measurementCellState,
+  measurementSummary,
+  nextDueState,
+  parseReading,
+  sampleKey,
+} from "./grid-cells";
+export type {
+  CheckCellState,
+  CheckSummary,
+  CheckVerdict,
+  MeasurementCellState,
+  MeasurementSummary,
+  MeasurementVerdict,
+  NextDueState,
+} from "./grid-cells";
 export { ChatPreview, MailPreview, WordingBody } from "./message-preview";
 export type {
   ChatPreviewProps,
