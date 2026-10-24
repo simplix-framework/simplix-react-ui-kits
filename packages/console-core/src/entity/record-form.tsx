@@ -1,105 +1,79 @@
 import { useState, type FormEvent, type ReactNode } from "react";
 import { useTranslation } from "@simplix-react/i18n/react";
-import { Button, CrudForm, Flex, FormFields, Heading, Stack } from "@simplix-react/ui";
+import { Button, CrudForm, Flex, Heading, Stack } from "@simplix-react/ui";
 
 import { RecordNote, RecordNotices, RecordVerbButton, type RecordNotice, type RecordVerb } from "./record-blocks";
+import { FormErrorSummary } from "./form-error-summary";
 import { PACKAGE_NAMESPACE } from "./locales";
+import { RecordFieldView } from "./record-form-fields";
+import { formFieldErrors, initialFieldValue } from "./record-form-rules";
+import type { RecordFormSection } from "./record-form-types";
 
-/** A choice a select or a multi-select offers. */
-export interface RecordOption {
-  readonly value: string;
-  readonly label: string;
-}
-
-/** One field of a {@link RecordForm} or a {@link SettingsForm}, declared rather than drawn. */
-export type RecordFormField =
-  | ({ readonly kind: "text" | "email" | "textarea"; readonly value?: string } & FieldCommon)
-  | ({ readonly kind: "number"; readonly value?: number | null; readonly unit?: string; readonly min?: number; readonly max?: number } & FieldCommon)
-  | ({ readonly kind: "select"; readonly value?: string; readonly options: readonly RecordOption[] } & FieldCommon)
-  | ({ readonly kind: "multi"; readonly value?: readonly string[]; readonly options: readonly RecordOption[] } & FieldCommon)
-  | ({ readonly kind: "date"; readonly value?: string } & FieldCommon)
-  | ({ readonly kind: "switch"; readonly value?: boolean } & FieldCommon);
-
-interface FieldCommon {
-  readonly key: string;
-  readonly label: string;
-  /** What to know before filling it in, under the field. */
-  readonly hint?: string;
-  readonly required?: boolean;
-  readonly placeholder?: string;
-  readonly disabled?: boolean;
-}
-
-/** One section of fields. */
-export interface RecordFormSection {
-  readonly key: string;
-  readonly title?: string;
-  readonly fields: readonly RecordFormField[];
-  /** Two columns where the fields are short; one where they are sentences. */
-  readonly columns?: 1 | 2;
-}
+export type { RecordFormField, RecordFormSection, RecordOption } from "./record-form-types";
 
 type Values = Record<string, unknown>;
 
 function initialValues(sections: readonly RecordFormSection[]): Values {
   const values: Values = {};
-  for (const section of sections) for (const field of section.fields) values[field.key] = field.value ?? (field.kind === "multi" ? [] : field.kind === "switch" ? false : field.kind === "number" ? null : "");
+  for (const section of sections) for (const field of section.fields) values[field.key] = initialFieldValue(field);
   return values;
 }
 
-function isEmpty(value: unknown): boolean {
-  return value === null || value === undefined || value === "" || (Array.isArray(value) && value.length === 0);
-}
-
-/** Draws one {@link RecordFormField} against a value. */
-function FieldView({ field, value, onChange, error }: { readonly field: RecordFormField; readonly value: unknown; readonly onChange: (value: unknown) => void; readonly error?: string }) {
-  const common = { label: field.label, description: field.hint, required: field.required, disabled: field.disabled, error };
-  switch (field.kind) {
-    case "number":
-      return <FormFields.NumberField {...common} value={(value as number | null) ?? null} onChange={onChange} suffix={field.unit} min={field.min} max={field.max} placeholder={field.placeholder} />;
-    case "select":
-      return <FormFields.SelectField {...common} value={value as string} onChange={onChange} options={[...field.options]} placeholder={field.placeholder} />;
-    case "multi":
-      return <FormFields.MultiSelectField {...common} value={[...((value as string[]) ?? [])]} onChange={onChange} options={[...field.options]} placeholder={field.placeholder} />;
-    case "date":
-      return <FormFields.DateField {...common} value={(value as string) || null} onChange={(next) => onChange(next ? next.toISOString().slice(0, 10) : "")} placeholder={field.placeholder} />;
-    case "switch":
-      return <FormFields.SwitchField {...common} value={Boolean(value)} onChange={onChange} />;
-    case "textarea":
-      return <FormFields.TextareaField {...common} value={(value as string) ?? ""} onChange={onChange} placeholder={field.placeholder} />;
-    default:
-      return <FormFields.TextField {...common} type={field.kind === "email" ? "email" : "text"} value={(value as string) ?? ""} onChange={onChange} placeholder={field.placeholder} />;
-  }
+/**
+ * Moves the focus to the first control of a field, after the error marks have been drawn.
+ *
+ * @param key - The field's key, as its wrapper's `data-record-field` carries it.
+ */
+function focusField(key: string | undefined): void {
+  if (!key || typeof document === "undefined") return;
+  requestAnimationFrame(() => {
+    const wrapper = document.querySelector(`[data-record-field="${CSS.escape(key)}"]`);
+    const control = wrapper?.querySelector<HTMLElement>("input, textarea, button, [tabindex]:not([tabindex='-1'])");
+    control?.focus();
+    wrapper?.scrollIntoView({ block: "center" });
+  });
 }
 
 /** The fields of a form's sections with their values, shared by {@link RecordForm} and {@link SettingsForm}. */
 export function useRecordFormValues(sections: readonly RecordFormSection[]) {
   const [values, setValues] = useState<Values>(() => initialValues(sections));
   const [shown, setShown] = useState(false);
-  const missing = sections.flatMap((s) => s.fields).filter((f) => f.required && isEmpty(values[f.key])).map((f) => f.key);
+  const errors = formFieldErrors(sections, values);
+  const missing = Object.keys(errors);
   return {
     values,
     set: (key: string, value: unknown) => setValues((current) => ({ ...current, [key]: value })),
+    /** The keys of the fields that refuse their value, in drawing order. */
     missing,
-    showErrors: () => setShown(true),
+    /** Why each refused field refuses it. */
+    errors,
+    /** Marks the refused fields and moves the focus to the first of them. */
+    showErrors: () => {
+      setShown(true);
+      focusField(missing[0]);
+    },
     errorsShown: shown,
   };
 }
 
 /** Draws form sections against their values; for a form inside something else (a dialog). */
 export function RecordFormSections({ sections, form }: { readonly sections: readonly RecordFormSection[]; readonly form: ReturnType<typeof useRecordFormValues> }) {
+  const fieldLabels = new Map(sections.flatMap((section) => section.fields).map((field) => [field.key, field.label]));
   const { t } = useTranslation(PACKAGE_NAMESPACE + "/features");
+  const shownErrors = form.errorsShown ? Object.fromEntries(Object.entries(form.errors).map(([key, code]) => [key, t(`recordForm.errors.${code}`)])) : undefined;
   return (
     <>
+      <FormErrorSummary fieldErrors={shownErrors} label={(key) => fieldLabels.get(key) ?? key} />
       {sections.map((section) => (
         <CrudForm.Section key={section.key} title={section.title} layout={section.columns === 2 ? "two-column" : "single-column"}>
           {section.fields.map((field) => (
-            <FieldView
+            <RecordFieldView
               key={field.key}
               field={field}
               value={form.values[field.key]}
               onChange={(value) => form.set(field.key, value)}
-              error={form.errorsShown && form.missing.includes(field.key) ? t("recordForm.required") : undefined}
+              error={form.errorsShown ? form.errors[field.key] : undefined}
+              errorsShown={form.errorsShown}
             />
           ))}
         </CrudForm.Section>

@@ -12,7 +12,29 @@
   },
   "recordForm": {
     "required": "必須項目です",
-    "fixBeforeSave": "必須項目を{{count, number}}件入力すると保存できます"
+    "fixBeforeSave": "必須項目を{{count, number}}件入力すると保存できます",
+    "clear": "クリア",
+    "yes": "はい",
+    "no": "いいえ",
+    "from": "開始",
+    "to": "終了",
+    "peek": "{{target}}を表示",
+    "remove": "外す",
+    "removeRow": "行を削除",
+    "addRow": "行を追加",
+    "addEvidence": "添付",
+    "addEvidenceOf": "{{kind}}を添付",
+    "evidenceMissing": "まだ添付されていません",
+    "notApplicableReason": "該当なしの理由",
+    "otherDetail": "詳細",
+    "errors": {
+      "required": "必須項目です",
+      "rangeOrder": "終了は開始より後にしてください",
+      "noteRequired": "該当なしの理由を入力してください",
+      "detailRequired": "その他の内容を入力してください",
+      "evidenceMissing": "必須の証跡をすべて添付してください",
+      "rowIncomplete": "すべての行の必須項目を入力してください"
+    }
   },
   "recordList": {
     "selected": "件選択",

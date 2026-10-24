@@ -13,7 +13,29 @@
   },
   "recordForm": {
     "required": "Required",
-    "fixBeforeSave": "Fill in {{count, number}} required fields to save"
+    "fixBeforeSave": "Fill in {{count, number}} required fields to save",
+    "clear": "Clear",
+    "yes": "Yes",
+    "no": "No",
+    "from": "From",
+    "to": "To",
+    "peek": "View {{target}}",
+    "remove": "Remove",
+    "removeRow": "Remove row",
+    "addRow": "Add row",
+    "addEvidence": "Attach",
+    "addEvidenceOf": "Attach {{kind}}",
+    "evidenceMissing": "Not attached yet",
+    "notApplicableReason": "Reason it does not apply",
+    "otherDetail": "Details",
+    "errors": {
+      "required": "Required",
+      "rangeOrder": "The end must come after the start",
+      "noteRequired": "Give the reason it does not apply",
+      "detailRequired": "Describe the other choice",
+      "evidenceMissing": "Attach every required item",
+      "rowIncomplete": "Fill in the required fields of every row"
+    }
   },
   "recordList": {
     "selected": "selected",

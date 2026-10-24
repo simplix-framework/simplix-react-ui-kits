@@ -12,7 +12,29 @@
   },
   "recordForm": {
     "required": "필수 항목입니다",
-    "fixBeforeSave": "필수 항목 {{count, number}}개를 입력해야 저장할 수 있습니다"
+    "fixBeforeSave": "필수 항목 {{count, number}}개를 입력해야 저장할 수 있습니다",
+    "clear": "지우기",
+    "yes": "예",
+    "no": "아니요",
+    "from": "시작",
+    "to": "종료",
+    "peek": "{{target}} 보기",
+    "remove": "빼기",
+    "removeRow": "행 삭제",
+    "addRow": "행 추가",
+    "addEvidence": "첨부",
+    "addEvidenceOf": "{{kind}} 첨부",
+    "evidenceMissing": "아직 첨부하지 않았습니다",
+    "notApplicableReason": "해당없음 사유",
+    "otherDetail": "상세 내용",
+    "errors": {
+      "required": "필수 항목입니다",
+      "rangeOrder": "종료가 시작보다 뒤여야 합니다",
+      "noteRequired": "해당없음 사유를 입력해 주세요",
+      "detailRequired": "기타 내용을 입력해 주세요",
+      "evidenceMissing": "필수 증빙을 모두 첨부해 주세요",
+      "rowIncomplete": "모든 행의 필수 항목을 입력해 주세요"
+    }
   },
   "recordList": {
     "selected": "개 선택",
