@@ -5,6 +5,7 @@ import {
   Button,
   CrudList,
   Flex,
+  Grid,
   Stack,
   Text,
   ListTotalBadge,
@@ -21,6 +22,7 @@ import { BulkActionBar } from "@simplix-react/ui/interaction";
 import { useReflowFlip } from "../layout/use-reflow-flip";
 import { PACKAGE_NAMESPACE } from "./locales";
 import { recordListStyle } from "./record-list.style";
+import { cardLayout, type CardPlace } from "./record-card";
 import { RecordValueView, type RecordValue } from "./record-value";
 
 /** One column of a {@link RecordList}. */
@@ -39,6 +41,12 @@ export interface RecordColumn<Row> {
   readonly minTableWidth?: number;
   /** Whether the header sorts the rows; on for a column with a field unless said otherwise. */
   readonly sortable?: boolean;
+  /**
+   * Where the value goes when the row is drawn as a card: in the unlabelled badge row under the
+   * title, in the labelled grid, or left off. By default a value drawn as badges joins the badge
+   * row and any other takes the grid.
+   */
+  readonly cardPlace?: CardPlace;
 }
 
 /** A filter the list's filter bar offers. */
@@ -186,6 +194,14 @@ function tableWidth<Row>(columns: readonly RecordColumn<Row>[], actions: number)
   const drawn = columns.filter((column) => column.minTableWidth === undefined);
   const cells = drawn.reduce((sum, column) => sum + (column.width ?? FLUID_COLUMN_MIN), 0);
   return cells + (actions > 0 ? actions * ACTION_WIDTH + ACTION_CELL_INSET : 0);
+}
+
+/** A column's value for one row as a {@link RecordValue}, for the card, which places it by its shape. */
+function valueOf<Row>(column: RecordColumn<Row>, row: Row): RecordValue {
+  if (column.value) return column.value(row);
+  if (!column.field) return null;
+  const raw = (row as Record<string, unknown>)[column.field];
+  return raw === undefined || raw === null ? null : String(raw);
 }
 
 /** What a column shows for one row: its own value, or the field's text. */
@@ -372,21 +388,37 @@ export function RecordList<Row>({
         cardTitle={titleColumn ? ({ row }) => cellOf(titleColumn, row) : undefined}
         cardContent={
           lineColumns.length > 0
-            ? ({ row }) => (
-                <Stack gap="xs">
-                  {lineColumns.map((column) => (
-                    <Flex key={column.key} align="center" gap="sm">
-                      {/* A fixed label measure, so the values line up down the card. */}
-                      <Text as="span" size="caption" tone="muted" className="w-20 shrink-0">
-                        {column.header}
-                      </Text>
-                      <Flex flex minSize align="center">
-                        {cellOf(column, row)}
+            ? ({ row }) => {
+                const layout = cardLayout(
+                  lineColumns.map((column) => ({ key: column.key, header: column.header, place: column.cardPlace, value: valueOf(column, row) })),
+                );
+                return (
+                  <Stack gap="xs">
+                    {layout.badges.length > 0 ? (
+                      <Flex wrap align="center" gap="xs">
+                        {layout.badges.map((badge) => (
+                          <RecordValueView key={badge.key} value={badge.value} />
+                        ))}
                       </Flex>
-                    </Flex>
-                  ))}
-                </Stack>
-              )
+                    ) : null}
+                    {layout.lines.length > 0 ? (
+                      <Grid columns={2} gap="xs">
+                        {layout.lines.map((line) => (
+                          <Flex key={line.key} align="center" gap="sm" minSize>
+                            {/* A fixed label measure, so the values line up down each column of the grid. */}
+                            <Text as="span" size="caption" tone="muted" className="w-16 shrink-0">
+                              {line.header}
+                            </Text>
+                            <Flex flex minSize align="center">
+                              <RecordValueView value={line.value} />
+                            </Flex>
+                          </Flex>
+                        ))}
+                      </Grid>
+                    ) : null}
+                  </Stack>
+                );
+              }
             : undefined
         }
       >
