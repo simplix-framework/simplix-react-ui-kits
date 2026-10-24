@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { createContext, useContext, type ReactNode } from "react";
 import { ListDetail, useCrudNavigation, useCrudPageState, useUIDefaults } from "@simplix-react/ui";
 
 import { ConsolePage } from "./console-page";
@@ -17,6 +17,23 @@ export interface CrudPageNavigation {
   readonly showEdit: (id: string) => void;
   /** Closes the open record back to the list, wherever it is presented. */
   readonly closePanel: () => void;
+}
+
+/** How the record a {@link CrudPage} opened is presented, and how it closes back to the list. */
+export interface CrudPresentation {
+  readonly presentation: CrudPagePresentation;
+  /** Returns to the list, whatever the presentation. */
+  readonly close: () => void;
+}
+
+const CrudPresentationContext = createContext<CrudPresentation | undefined>(undefined);
+
+/**
+ * The presentation of the record being drawn, so one record component can serve every
+ * presentation of the same page. Undefined outside a {@link CrudPage}.
+ */
+export function useCrudPresentation(): CrudPresentation | undefined {
+  return useContext(CrudPresentationContext);
 }
 
 /** Props for {@link CrudPage}. */
@@ -69,6 +86,7 @@ export function CrudPage({
     closePanel: closePanel ?? nav.showList,
   };
   const record = (
+    <CrudPresentationContext.Provider value={{ presentation: shown, close: handed.closePanel }}>
     <ListDetail.ViewSwitch
       state={state}
       fade={fade}
@@ -76,6 +94,7 @@ export function CrudPage({
       renderNew={renderNew ? () => renderNew(handed) : undefined}
       renderEdit={renderEdit ? (id) => renderEdit(id, handed) : undefined}
     />
+    </CrudPresentationContext.Provider>
   );
 
   const body =

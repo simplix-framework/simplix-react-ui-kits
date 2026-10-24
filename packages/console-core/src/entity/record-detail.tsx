@@ -87,6 +87,16 @@ export interface RecordDetailProps {
   /** The record's finishing actions, beside the close control; the last primary one is the main one. */
   readonly actions?: readonly RecordVerb[];
   readonly onClose?: () => void;
+  /** Draws a back control in the footer in place of close, for a record standing as a page. */
+  readonly onBack?: () => void;
+  /** Replaces the name block at the head: a page draws its own fixed head there. */
+  readonly head?: ReactNode;
+  /**
+   * Where the open tab's verbs are drawn. `tab` (the default) puts them at the top of the tab;
+   * `footer` puts them in the command row ahead of the record's actions, so a row too wide for one
+   * line breaks into the tab's verbs above and the record's commands below.
+   */
+  readonly tabVerbs?: "tab" | "footer";
   /** Who made it and when it last changed, at the foot. */
   readonly audit?: { readonly id?: string; readonly createdAt?: string; readonly updatedAt?: string };
   readonly isLoading?: boolean;
@@ -265,11 +275,17 @@ export function RecordDetail({
   verbs,
   actions = [],
   onClose,
+  onBack,
+  head,
+  tabVerbs = "tab",
   audit,
   isLoading,
 }: RecordDetailProps) {
+  const [openTab, setOpenTab] = useState(defaultTab ?? tabs?.[0]?.key ?? "");
+  const verbsInFooter = tabVerbs === "footer";
+  const footerTabVerbs = verbsInFooter ? tabs?.find((tab) => tab.key === openTab)?.verbs : undefined;
   const body = tabs && tabs.length > 0 ? (
-    <Tabs defaultValue={defaultTab ?? tabs[0]?.key}>
+    <Tabs value={openTab} onValueChange={setOpenTab}>
       <TabsList variant="underline">
         {tabs.map((tab) => (
           <CountedTab key={tab.key} value={tab.key} label={tab.label} count={tab.count} />
@@ -285,7 +301,7 @@ export function RecordDetail({
           className="data-[state=active]:animate-in data-[state=active]:fade-in-0 data-[state=active]:slide-in-from-bottom-1"
         >
           <Stack gap="sm">
-            <RecordVerbs verbs={tab.verbs} end />
+            {verbsInFooter ? null : <RecordVerbs verbs={tab.verbs} end />}
             <Content content={tab} count={tab.count} />
           </Stack>
         </TabsContent>
@@ -299,7 +315,7 @@ export function RecordDetail({
     <CrudDetail
       isLoading={isLoading}
       header={
-        <Flex align="center" gap="sm" minSize {...partAttributes(recordHeadStyle, {})}>
+        head ?? <Flex align="center" gap="sm" minSize {...partAttributes(recordHeadStyle, {})}>
           {avatar !== undefined ? <InitialsAvatar name={title} seed={avatar} size="lg" /> : null}
           <Stack gap="none" minSize>
             <Heading level={4}>{title}</Heading>
@@ -311,10 +327,21 @@ export function RecordDetail({
       auditData={audit}
       displayZone="Asia/Seoul"
       footer={
-        <CrudDetail.DefaultActions onClose={onClose}>
-          {actions.map((action) => (
-            <RecordVerbButton key={action.label} verb={action} />
-          ))}
+        <CrudDetail.DefaultActions {...(onBack ? { onBack } : { onClose })}>
+          {footerTabVerbs && footerTabVerbs.length > 0 ? (
+            // Two groups, so the row has one place to break: the open tab's verbs above, the
+            // record's commands below.
+            <Flex gap="xs" wrap justify="end">
+              <RecordVerbs verbs={footerTabVerbs} end />
+              <Flex gap="xs" wrap justify="end">
+                {actions.map((action) => (
+                  <RecordVerbButton key={action.label} verb={action} />
+                ))}
+              </Flex>
+            </Flex>
+          ) : (
+            actions.map((action) => <RecordVerbButton key={action.label} verb={action} />)
+          )}
         </CrudDetail.DefaultActions>
       }
     >
