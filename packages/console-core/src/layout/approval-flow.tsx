@@ -22,6 +22,8 @@ export interface ApprovalStep {
 export interface ApprovalFlowProps {
   /** The chain, in order. */
   readonly steps: readonly ApprovalStep[];
+  /** Along one line (the default) or down a rule, for a side column. */
+  readonly orientation?: "horizontal" | "vertical";
 }
 
 /**
@@ -43,9 +45,9 @@ export interface ApprovalFlowProps {
  * @param props the steps in order
  * @returns the rail
  */
-export function ApprovalFlow({ steps }: ApprovalFlowProps) {
+export function ApprovalFlow({ steps, orientation }: ApprovalFlowProps) {
   const indicator = stepIndicatorOf(steps);
-  return <StepIndicator steps={indicator.steps} currentStep={indicator.currentStep} rejectedStep={indicator.rejectedStep} />;
+  return <StepIndicator steps={indicator.steps} currentStep={indicator.currentStep} rejectedStep={indicator.rejectedStep} orientation={orientation} />;
 }
 
 /**
