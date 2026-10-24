@@ -285,7 +285,7 @@ export function RecordDetail({
           className="data-[state=active]:animate-in data-[state=active]:fade-in-0 data-[state=active]:slide-in-from-bottom-1"
         >
           <Stack gap="sm">
-            <RecordVerbs verbs={tab.verbs} />
+            <RecordVerbs verbs={tab.verbs} end />
             <Content content={tab} count={tab.count} />
           </Stack>
         </TabsContent>

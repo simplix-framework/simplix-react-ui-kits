@@ -979,7 +979,7 @@
     @apply hover:bg-accent;
   }
   :where([data-slot="console-area-tab"])[data-s-console-area-tab] {
-    @apply max-[900px]:px-1.5 focus-visible:outline-none focus-visible:shadow-[var(--focus-halo)];
+    @apply max-[960px]:px-1.5 max-[800px]:px-1 focus-visible:outline-none focus-visible:shadow-[var(--focus-halo)];
   }
   :where([data-slot="console-area-tab"][data-current="false"])[data-s-console-area-tab] {
     @apply hover:text-foreground;
