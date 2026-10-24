@@ -5,7 +5,7 @@ import { ConsolePage } from "./console-page";
 import type { ConsoleSearch, PageSpec } from "./types";
 
 /** Where a {@link CrudPage} opens the record a reader picked. */
-export type CrudPagePresentation = "panel" | "drawer" | "page";
+export type CrudPagePresentation = "panel" | "drawer" | "dialog" | "page";
 
 /** What a {@link CrudPage}'s render functions are handed to move between its views. */
 export interface CrudPageNavigation {
