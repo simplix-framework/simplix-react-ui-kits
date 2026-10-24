@@ -826,7 +826,7 @@
     @apply pt-3 pb-1;
   }
   :where([data-part="console-record-page-flow"])[data-part][data-p-console-record-page-flow] {
-    @apply sticky top-0 rounded-[var(--radius-surface)] border bg-card p-4;
+    @apply sticky top-0 pt-2;
   }
   :where([data-part="console-form-sheet-cell"])[data-part][data-p-console-form-sheet-cell] {
     @apply align-top border;
