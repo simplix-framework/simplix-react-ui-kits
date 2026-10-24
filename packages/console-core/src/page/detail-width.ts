@@ -7,14 +7,15 @@ export const REGULAR_DETAIL_WIDTH = 768;
 export const WIDE_DETAIL_WIDTH = 1040;
 
 /**
- * The widths a record opens at in a drawer. A drawer lies over the list rather than beside it, so
- * it costs the list nothing to be wider, and at the panel's width it reads as a narrow sheet.
+ * The width a record opens at in a drawer, whatever its tabs. A drawer lies over the list, so a
+ * little more than the panel's width reads as a sheet rather than a strip; widened further it
+ * covers the list it was opened from. A tab strip wider than this scrolls with arrows instead.
  */
-export const DRAWER_DETAIL_WIDTH: Readonly<Record<DetailWidth, number>> = { regular: 880, wide: 1040 };
+export const DRAWER_DETAIL_WIDTH = 880;
 
 /** The px a record opens at, by presentation and width; undefined leaves the framework's own. */
 export function detailWidthPx(presentation: string, width: DetailWidth): number | undefined {
-  if (presentation === "drawer") return DRAWER_DETAIL_WIDTH[width];
+  if (presentation === "drawer") return DRAWER_DETAIL_WIDTH;
   return width === "wide" ? WIDE_DETAIL_WIDTH : undefined;
 }
 
