@@ -10,7 +10,7 @@ export const WIDE_DETAIL_WIDTH = 1040;
  * The widths a record opens at in a drawer. A drawer lies over the list rather than beside it, so
  * it costs the list nothing to be wider, and at the panel's width it reads as a narrow sheet.
  */
-export const DRAWER_DETAIL_WIDTH: Readonly<Record<DetailWidth, number>> = { regular: 960, wide: 1200 };
+export const DRAWER_DETAIL_WIDTH: Readonly<Record<DetailWidth, number>> = { regular: 880, wide: 1040 };
 
 /** The px a record opens at, by presentation and width; undefined leaves the framework's own. */
 export function detailWidthPx(presentation: string, width: DetailWidth): number | undefined {

@@ -15,8 +15,8 @@ describe("detailWidthFor", () => {
 
 describe("detailWidthPx", () => {
   it("opens a drawer wider than a panel at both widths", () => {
-    expect(detailWidthPx("drawer", "regular")).toBe(960);
-    expect(detailWidthPx("drawer", "wide")).toBe(1200);
+    expect(detailWidthPx("drawer", "regular")).toBe(880);
+    expect(detailWidthPx("drawer", "wide")).toBe(1040);
   });
   it("leaves a regular panel and dialog at the framework width and widens a wide one", () => {
     expect(detailWidthPx("panel", "regular")).toBeUndefined();
