@@ -108,3 +108,5 @@ export { TimeBasisCards, TimeBasisStrip, zoneToday, type TimeBasis } from "./tim
 export { TargetBar } from "./target-bar";
 export { useOnline } from "@simplix-react/headless";
 export type { TargetBarProps, TargetBarRow } from "./target-bar";
+export { readRuleValue, type RuleData, type RuleStatus, type RuleValueReading } from "./rule-value";
+export { RuleValueText, type RuleValueTextProps } from "./rule-value-text";

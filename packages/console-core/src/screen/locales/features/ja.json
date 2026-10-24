@@ -14,7 +14,20 @@
     "rating": "等級",
     "reason": "根拠",
     "outOfRange": "{{min}}~{{max}} の範囲の点数のみ入力できます",
-    "basis": { "RAW": "原入力", "APPROVED_POLICY": "承認済み方針", "COMMITTEE_RESOLUTION": "委員会決議" },
-    "result": { "PASS": "適合", "FAIL": "不適合", "REVIEW_REQUIRED": "要検討" }
+    "basis": {
+      "RAW": "原入力",
+      "APPROVED_POLICY": "承認済み方針",
+      "COMMITTEE_RESOLUTION": "委員会決議"
+    },
+    "result": {
+      "PASS": "適合",
+      "FAIL": "不適合",
+      "REVIEW_REQUIRED": "要検討"
+    }
+  },
+  "ruleValue": {
+    "held": "解釈保留",
+    "missing": "未確定",
+    "openBasis": "根拠条項を開く"
   }
 }

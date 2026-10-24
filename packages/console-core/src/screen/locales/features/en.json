@@ -14,7 +14,20 @@
     "rating": "Rating",
     "reason": "Reason",
     "outOfRange": "Only scores from {{min}} to {{max}} are accepted",
-    "basis": { "RAW": "Raw entry", "APPROVED_POLICY": "Approved policy", "COMMITTEE_RESOLUTION": "Committee resolution" },
-    "result": { "PASS": "Pass", "FAIL": "Fail", "REVIEW_REQUIRED": "Review required" }
+    "basis": {
+      "RAW": "Raw entry",
+      "APPROVED_POLICY": "Approved policy",
+      "COMMITTEE_RESOLUTION": "Committee resolution"
+    },
+    "result": {
+      "PASS": "Pass",
+      "FAIL": "Fail",
+      "REVIEW_REQUIRED": "Review required"
+    }
+  },
+  "ruleValue": {
+    "held": "Interpretation on hold",
+    "missing": "Not set",
+    "openBasis": "Open the basis clause"
   }
 }
