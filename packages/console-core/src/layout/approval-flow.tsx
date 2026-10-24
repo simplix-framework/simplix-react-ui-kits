@@ -1,8 +1,5 @@
 import type { ReactNode } from "react";
-import { CheckIcon, XIcon } from "lucide-react";
-import { Flex, Stack, Text } from "@simplix-react/ui";
-import { approvalRailStyle, approvalStepStyle } from "./approval-flow.style";
-import { slotAttributes } from "@simplix-react/ui/design";
+import { StepIndicator } from "@simplix-react/ui";
 
 /** Where one step of a chain stands. */
 export type ApprovalStepState = "done" | "now" | "wait" | "reject";
@@ -47,33 +44,31 @@ export interface ApprovalFlowProps {
  * @returns the rail
  */
 export function ApprovalFlow({ steps }: ApprovalFlowProps) {
-  return (
-    // raw layout: a horizontal rail of steps; the framework ships no step-chain primitive
-    <div className="flex flex-wrap" role="list" {...slotAttributes(approvalRailStyle, {})}>
-      {steps.map((step) => (
-        <div
-          key={step.key}
-          role="listitem"
-          className="flex min-w-40 flex-1 items-start"
-          {...slotAttributes(approvalStepStyle, { state: step.state })}
-        >
-          <Flex align="center" justify="center">
-            {step.state === "done" && <CheckIcon className="size-4" aria-hidden />}
-            {step.state === "reject" && <XIcon className="size-4" aria-hidden />}
-          </Flex>
-          <Stack gap="none" minSize>
-            <Text size="sm">{step.label}</Text>
-            <Text as="span" size="caption" tone="muted">
-              {step.who}
-            </Text>
-            {step.at ? (
-              <Text as="span" size="caption" tone="muted">
-                {step.at}
-              </Text>
-            ) : null}
-          </Stack>
-        </div>
-      ))}
-    </div>
-  );
+  const indicator = stepIndicatorOf(steps);
+  return <StepIndicator steps={indicator.steps} currentStep={indicator.currentStep} rejectedStep={indicator.rejectedStep} />;
+}
+
+/**
+ * The framework step indicator's reading of a chain: each step's name over its holder and time,
+ * the step in hand as the current one (every step before it done), and a rejected step marked.
+ * A chain with no step in hand and none waiting is done throughout.
+ */
+export function stepIndicatorOf(steps: readonly ApprovalStep[]): {
+  readonly steps: { title: string; description?: string }[];
+  readonly currentStep: number;
+  readonly rejectedStep?: number;
+} {
+  const text = (node: ReactNode) => (typeof node === "string" || typeof node === "number" ? String(node) : "");
+  const rejected = steps.findIndex((step) => step.state === "reject");
+  const now = steps.findIndex((step) => step.state === "now");
+  const waiting = steps.findIndex((step) => step.state === "wait");
+  const current = rejected >= 0 ? rejected : now >= 0 ? now : waiting >= 0 ? waiting : steps.length;
+  return {
+    steps: steps.map((step) => {
+      const description = [text(step.who), text(step.at)].filter(Boolean).join(" · ");
+      return description ? { title: step.label, description } : { title: step.label };
+    }),
+    currentStep: current,
+    ...(rejected >= 0 ? { rejectedStep: rejected } : {}),
+  };
 }

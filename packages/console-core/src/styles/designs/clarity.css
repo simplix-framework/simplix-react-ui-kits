@@ -103,24 +103,6 @@
   [data-slot="console-user-avatar"][data-slot][data-s-console-user-avatar] {
     @apply rounded-full;
   }
-  [data-slot="console-approval-rail"][data-slot][data-s-console-approval-rail] {
-    @apply gap-2;
-  }
-  [data-slot="console-approval-step"][data-slot][data-s-console-approval-step] {
-    @apply gap-2 rounded-[var(--radius-control)] border px-3 py-2;
-  }
-  [data-slot="console-approval-step"][data-state="done"][data-s-console-approval-step] {
-    @apply border-border bg-[var(--table-head)] text-muted-foreground;
-  }
-  [data-slot="console-approval-step"][data-state="now"][data-s-console-approval-step] {
-    @apply border-primary bg-primary/10 text-foreground;
-  }
-  [data-slot="console-approval-step"][data-state="wait"][data-s-console-approval-step] {
-    @apply border-dashed border-border text-muted-foreground;
-  }
-  [data-slot="console-approval-step"][data-state="reject"][data-s-console-approval-step] {
-    @apply border-destructive bg-destructive/10 text-foreground;
-  }
   [data-slot="console-inert-label"][data-slot][data-s-console-inert-label] {
     @apply gap-2;
   }

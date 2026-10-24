@@ -32,7 +32,9 @@ function BackControl({ back, close }: { readonly back: PageBackTarget; readonly 
   if (link) return <>{link}</>;
   if (!close) return null;
   return (
-    <Button variant="link" size="link" tone="muted" className="self-start" onClick={close}>
+    // A bordered button rather than a quiet link: on a record opened as a page it is the one way
+    // back to the list, and a reader has to find it before anything else on the page.
+    <Button variant="outline" size="sm" className="self-start" onClick={close}>
       <ArrowLeftIcon />
       {back.label}
     </Button>
