@@ -22,8 +22,8 @@ const isBadge = (value: RecordValue) => typeof value === "object" && value !== n
 /**
  * Splits a row's values for its card. A value drawn as badges says what it is by itself, so it
  * joins one unlabelled row under the title; any other value keeps its label and takes a cell of a
- * two-column grid (the full width when its text would wrap in a cell). An empty value is left out, so a card is as tall as what the row has. A column
- * may name its place instead.
+ * two-column grid, or the grid's full width when its text would wrap in a cell. An empty value
+ * is left out, so a card is as tall as what the row has. A column may name its place instead.
  *
  * @param columns the columns after the title column, with each one's value for the row
  */
