@@ -3,15 +3,39 @@ import { defineSlotStyle } from "@simplix-react/ui/design";
 /** The head of a record panel: the person or thing it is, and what it is to the reader. */
 export const recordHeadStyle = defineSlotStyle({
   slot: "console-record-head",
-  base: "",
+  // A part: the head is a `Flex`, which owns `data-slot`.
+  as: "part",
+  base: "gap-3 [&_[data-slot=heading]]:truncate [&>[data-slot=console-initials-avatar]]:shrink-0",
   variants: {},
   defaultVariants: {},
 });
 
-/** The line under the record's name: its role and where it belongs. The classic design leaves it out. */
+/** The line under the record's name: its role and where it belongs, in one truncated line. */
 export const recordHeadSubtitleStyle = defineSlotStyle({
   slot: "console-record-head-subtitle",
-  base: "hidden",
+  base: "block truncate pt-0.5 text-xs text-muted-foreground",
   variants: {},
   defaultVariants: {},
+});
+
+/**
+ * The frame around a sub-list in a detail tab. `compact` is a short list the record carries whole;
+ * `full` is the main list table with its search, sort and pager.
+ */
+export const recordSublistStyle = defineSlotStyle({
+  slot: "console-record-sublist",
+  base: "",
+  variants: {
+    kind: {
+      // The record's own short list: frameless, a 32px head, 10px rows on rules, hover one surface
+      // step and press one more, actions always shown, group rows as small headings, a compact
+      // empty state. Text stays on the body's edge; the hover ground reaches 8px past it.
+      compact:
+        "[&_[data-testid=crud-list]]:gap-0 [&_[data-slot=table-card-frame]]:-mx-2 [&_[data-slot=table-card-frame]]:rounded-none [&_[data-slot=table-card-frame]]:border-0 [&_[data-slot=table-card-frame]]:bg-transparent [&_[data-slot=table-header]]:!bg-transparent [&_[data-slot=table-head]]:!h-8 [&_[data-slot=table-head]]:!bg-transparent [&_th:first-child]:pl-2 [&_td:first-child]:pl-2 [&_th:last-child]:pr-2 [&_td:last-child]:pr-2 [&_[data-slot=table-row]]:cursor-pointer [&_[data-slot=table-row]]:transition-colors [&_[data-slot=table-row]]:duration-[var(--dur-fast)] [&_[data-slot=table-row]:hover]:bg-[var(--surface-2)] [&_[data-slot=table-row]:active]:bg-[var(--surface-3)] [&_[data-slot=table-cell]]:!h-auto [&_[data-slot=table-cell]]:py-2.5 [&_[data-slot=row-actions-strip]]:opacity-100 [&_[data-part=crud-list-group-row]]:cursor-default [&_[data-part=crud-list-group-row]:hover]:bg-transparent [&_[data-part=crud-list-group-row]:active]:bg-transparent [&_[data-part=crud-list-group-cell]]:!h-7 [&_[data-part=crud-list-group-cell]]:bg-transparent [&_[data-part=crud-list-group-cell]]:pt-3 [&_[data-part=crud-list-group-cell]]:pb-1 [&_[data-part=crud-list-empty]]:py-8 [&_[data-part=crud-list-empty]]:gap-1.5",
+      // The main list table as on a list page: one card holding the toolbar, the table and the pager.
+      full:
+        "[&>[data-slot=console-record-list]]:overflow-clip [&>[data-slot=console-record-list]]:rounded-lg [&>[data-slot=console-record-list]]:border [&>[data-slot=console-record-list]]:bg-card [&_[data-testid=crud-list]]:gap-0",
+    },
+  },
+  defaultVariants: { kind: "compact" },
 });

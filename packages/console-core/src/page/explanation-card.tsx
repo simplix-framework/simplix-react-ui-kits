@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
 import { useTranslation } from "@simplix-react/i18n/react";
-import { Flex, Stack, Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@simplix-react/ui";
+import { EmptyValue, Flex, Stack, Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@simplix-react/ui";
 
 import { RecordNote, RecordNotices, RecordVerbButton, type RecordNotice, type RecordVerb } from "../entity/record-blocks";
 import { PACKAGE_NAMESPACE } from "../layout/locales";
@@ -8,7 +8,7 @@ import { SizedHead } from "../layout/sized-head";
 import { TableCard } from "../layout/table-card";
 import { NoticeCard, useNoticeDismissals } from "../notice";
 import { explanationBodyStyle } from "./explanation-card.style";
-import { slotAttributes } from "@simplix-react/ui/design";
+import { partAttributes } from "@simplix-react/ui/design";
 
 /** Props for {@link ExplanationCard}. */
 export interface ExplanationCardProps {
@@ -22,6 +22,7 @@ export interface ExplanationCardProps {
   /** A bounded table: the states, the axes, the kinds the page is about. */
   readonly table?: {
     readonly columns: readonly { readonly header: string; readonly width?: number }[];
+    /** Cell text; an empty string is drawn as the shared empty marker. */
     readonly rows: readonly (readonly string[])[];
   };
   readonly notices?: readonly RecordNotice[];
@@ -70,35 +71,40 @@ export function ExplanationCard({ noticeKey, title, hint, lead, table, notices, 
       onAction={press}
       expanded={isOpen}
       body={
-        <Stack gap="md" {...slotAttributes(explanationBodyStyle, {})}>
+        <Stack gap="md" {...partAttributes(explanationBodyStyle, {})}>
           <RecordNote text={lead} />
           {table ? (
-            <TableCard>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    {table.columns.map((column) =>
-                      column.width ? (
-                        <SizedHead key={column.header} width={column.width}>
-                          {column.header}
-                        </SizedHead>
-                      ) : (
-                        <TableHead key={column.header}>{column.header}</TableHead>
-                      ),
-                    )}
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {table.rows.map((row) => (
-                    <TableRow key={row.join("|")}>
-                      {row.map((cell, index) => (
-                        <TableCell key={`${index}-${cell}`}>{cell}</TableCell>
-                      ))}
+            // A reference table is as wide as what it says, never stretched across the card: a
+            // stretched one hands the spare width to one column, which then reads as a gap.
+            <div className="w-fit max-w-full">
+              <TableCard>
+                <Table className="w-auto">
+                  <TableHeader>
+                    <TableRow>
+                      {table.columns.map((column) =>
+                        column.width ? (
+                          <SizedHead key={column.header} width={column.width}>
+                            {column.header}
+                          </SizedHead>
+                        ) : (
+                          <TableHead key={column.header}>{column.header}</TableHead>
+                        ),
+                      )}
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableCard>
+                  </TableHeader>
+                  <TableBody>
+                    {table.rows.map((row) => (
+                      <TableRow key={row.join("|")}>
+                        {row.map((cell, index) => (
+                          // An empty cell shows the shared empty marker, as every other table does.
+                          <TableCell key={`${index}-${cell}`}>{cell === "" ? <EmptyValue /> : cell}</TableCell>
+                        ))}
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableCard>
+            </div>
           ) : null}
           <RecordNotices notices={notices} />
           <RecordNote text={note} />

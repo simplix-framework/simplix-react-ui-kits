@@ -13,7 +13,7 @@ export const previewTopBarStyle = defineSlotStyle({
 export const previewTopBarRowStyle = defineSlotStyle({
   slot: "console-preview-topbar-row",
   as: "part",
-  base: "min-h-12 px-3",
+  base: "min-h-[52px] gap-5 pl-4 pr-3",
   variants: {},
   defaultVariants: {},
 });
@@ -22,7 +22,8 @@ export const previewTopBarRowStyle = defineSlotStyle({
 export const previewTopBarLeadStyle = defineSlotStyle({
   slot: "console-preview-topbar-lead",
   as: "part",
-  base: "py-1",
+  // Under 900px the brand and the area tabs tighten so the top level stays on one line beside the tools.
+  base: "flex-nowrap gap-5 self-stretch py-0 transition-[gap] duration-[var(--dur-base)] ease-[var(--ease)] max-[900px]:gap-3",
   variants: {},
   defaultVariants: {},
 });
@@ -31,7 +32,8 @@ export const previewTopBarLeadStyle = defineSlotStyle({
 export const previewBrandStyle = defineSlotStyle({
   slot: "console-preview-brand",
   as: "part",
-  base: "",
+  // Below 1180px the brand keeps only its mark.
+  base: "gap-2.5 transition-[gap] duration-[var(--dur-base)] ease-[var(--ease)] max-[1180px]:gap-0 [&_svg]:size-6",
   variants: {},
   defaultVariants: {},
 });
@@ -40,7 +42,8 @@ export const previewBrandStyle = defineSlotStyle({
 export const previewTitleStyle = defineSlotStyle({
   slot: "console-preview-title",
   as: "part",
-  base: "",
+  // The name narrows and fades out below 1180px rather than vanishing, and comes back the same way.
+  base: "max-w-[12em] overflow-clip whitespace-nowrap transition-[max-width,opacity] duration-[var(--dur-base)] ease-[var(--ease)] max-[1180px]:max-w-0 max-[1180px]:opacity-0",
   variants: {},
   defaultVariants: {},
 });
@@ -49,7 +52,7 @@ export const previewTitleStyle = defineSlotStyle({
 export const previewToolsStyle = defineSlotStyle({
   slot: "console-preview-tools",
   as: "part",
-  base: "",
+  base: "gap-0.5",
   variants: {},
   defaultVariants: {},
 });
@@ -58,7 +61,7 @@ export const previewToolsStyle = defineSlotStyle({
 export const previewSettingsStyle = defineSlotStyle({
   slot: "console-preview-settings",
   as: "part",
-  base: "",
+  base: "[&_button]:size-8",
   variants: {},
   defaultVariants: {},
 });
@@ -67,7 +70,8 @@ export const previewSettingsStyle = defineSlotStyle({
 export const previewToolStyle = defineSlotStyle({
   slot: "console-preview-tool",
   as: "part",
-  base: "",
+  // The reader's tools are 32px squares with the shared hover and press.
+  base: "size-8 text-muted-foreground transition-[background-color,color,scale] duration-[var(--dur-fast)] ease-[var(--ease)] hover:bg-accent hover:text-foreground active:scale-[0.98] [&_svg]:duration-[var(--dur-base)] [&_svg]:ease-[var(--ease-spring)]",
   variants: {},
   defaultVariants: {},
 });
@@ -76,7 +80,8 @@ export const previewToolStyle = defineSlotStyle({
 export const previewSiteStyle = defineSlotStyle({
   slot: "console-preview-site",
   as: "part",
-  base: "",
+  // One control with its caret; under 900px the site's name folds away and the mark stays.
+  base: "h-7 gap-1.5 px-2.5 transition-[border-color,gap] duration-[var(--dur-base)] ease-[var(--ease)] max-[900px]:gap-0.5 [&>[data-slot=text]]:transition-[max-width,opacity] [&>[data-slot=text]]:duration-[var(--dur-base)] [&>[data-slot=text]]:ease-[var(--ease)] max-[900px]:[&>[data-slot=text]]:max-w-0! max-[900px]:[&>[data-slot=text]]:opacity-0 [&_[data-slot=button-caret]]:mr-0 [&_[data-slot=button-caret]]:border-0 [&_[data-slot=button-caret]]:pl-0",
   variants: {},
   defaultVariants: {},
 });
@@ -85,7 +90,8 @@ export const previewSiteStyle = defineSlotStyle({
 export const previewAccountStyle = defineSlotStyle({
   slot: "console-preview-account",
   as: "part",
-  base: "",
+  // Below 1281px the account keeps only its avatar.
+  base: "ml-1.5 h-8 gap-2 pl-1 pr-1.5 hover:bg-accent max-[1281px]:[&_[data-part=console-preview-account-name]]:hidden",
   variants: {},
   defaultVariants: {},
 });
@@ -102,7 +108,7 @@ export const previewAccountNameStyle = defineSlotStyle({
 /** The caret after the account's name, which says the control opens a menu. */
 export const previewAccountCaretStyle = defineSlotStyle({
   slot: "console-preview-account-caret",
-  base: "opacity-60",
+  base: "opacity-60 max-[900px]:hidden",
   variants: {},
   defaultVariants: {},
 });
@@ -110,7 +116,7 @@ export const previewAccountCaretStyle = defineSlotStyle({
 /** The signed-in account's initials in a circle. */
 export const previewAvatarStyle = defineSlotStyle({
   slot: "console-preview-avatar",
-  base: "size-6 rounded-full bg-muted text-[10px] font-semibold text-muted-foreground",
+  base: "rounded-full bg-muted text-[10px] font-semibold text-muted-foreground size-[26px]",
   variants: {},
   defaultVariants: {},
 });
@@ -119,7 +125,7 @@ export const previewAvatarStyle = defineSlotStyle({
 export const previewStatusStyle = defineSlotStyle({
   slot: "console-preview-status",
   as: "part",
-  base: "border-t bg-muted/30 px-3",
+  base: "border-t bg-muted/30 gap-4 px-4",
   variants: {},
   defaultVariants: {},
 });

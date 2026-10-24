@@ -41,11 +41,13 @@ export function CountedIconButton({ count, label, onClick, children }: CountedIc
     >
       {children}
       {count > 0 && (
+        // Keyed by the count, so a new arrival remounts the badge and it pops in again.
         <Badge
+          key={count}
           variant="destructive"
           size="sm"
           rounded="full"
-          className="absolute"
+          className="absolute animate-in fade-in-0 slide-in-from-bottom-1"
           {...partAttributes(countedCountStyle, {})}
         >
           {count}

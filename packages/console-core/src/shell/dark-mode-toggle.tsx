@@ -13,6 +13,16 @@ export interface DarkModeToggleProps {
   className?: string;
 }
 
+const ENTER = "size-4 animate-in spin-in-90 zoom-in-75 fade-in-0";
+
+/**
+ * The light/dark glyph: the sun while dark (the way out), the moon while light. Keyed by the scheme,
+ * so the incoming glyph turns in rather than swapping on one frame.
+ */
+export function ThemeGlyph({ dark }: { readonly dark: boolean }) {
+  return dark ? <Sun key="sun" className={ENTER} /> : <Moon key="moon" className={ENTER} />;
+}
+
 /** Switches between the light and dark colour scheme. */
 export function DarkModeToggle({ className }: DarkModeToggleProps) {
   const { isDark, toggleDarkMode } = useTheme();
@@ -26,7 +36,7 @@ export function DarkModeToggle({ className }: DarkModeToggleProps) {
       aria-label={t("theme.darkMode")}
       onClick={toggleDarkMode}
     >
-      {isDark ? <Sun className="size-4" /> : <Moon className="size-4" />}
+      <ThemeGlyph dark={isDark} />
     </Button>
   );
 }

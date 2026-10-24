@@ -54,17 +54,24 @@
 @utility tiles-fold {
   display: grid;
   grid-template-rows: 0fr;
-  transition: grid-template-rows 240ms cubic-bezier(0.22, 1, 0.36, 1);
+  /* A design sets the duration, the curve and how far the closing side fades through these. */
+  transition: grid-template-rows var(--fold-dur, var(--dur-base)) var(--fold-ease, var(--ease));
 
   & > * {
     overflow: hidden;
     /* Without this a grid item refuses to go below its content's height and the fold never
        closes — the row simply stops animating, with nothing on screen saying why. */
     min-height: 0;
+    opacity: var(--fold-fade, 0);
+    transition: opacity var(--fold-dur, var(--dur-base)) var(--fold-ease, var(--ease));
   }
 
   &[data-open='true'] {
     grid-template-rows: 1fr;
+  }
+
+  &[data-open='true'] > * {
+    opacity: 1;
   }
 
   @media (prefers-reduced-motion: reduce) {

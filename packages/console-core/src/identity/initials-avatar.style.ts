@@ -1,14 +1,14 @@
 import { defineSlotStyle } from "@simplix-react/ui/design";
 
 /**
- * A person drawn as the last two letters of their name on a ground tinted by a hue taken from
- * their id. The classic design leaves it out, so a list that asks for it reads as before there.
+ * A person drawn as the last two letters of their name on a round ground tinted by a hue taken from
+ * their id.
  */
 export const initialsAvatarStyle = defineSlotStyle({
   slot: "console-initials-avatar",
-  base: "hidden",
+  base: "inline-grid size-[26px] place-items-center rounded-full bg-[oklch(0.93_0.035_var(--avatar-h))] text-[10.5px] font-semibold tracking-[-0.04em] text-[oklch(0.42_0.08_var(--avatar-h))] dark:bg-[oklch(0.34_0.05_var(--avatar-h))] dark:text-[oklch(0.88_0.05_var(--avatar-h))]",
   variants: {
-    size: { sm: "", lg: "" },
+    size: { sm: "", lg: "size-10 text-[13px]" },
   },
   defaultVariants: { size: "sm" },
 });

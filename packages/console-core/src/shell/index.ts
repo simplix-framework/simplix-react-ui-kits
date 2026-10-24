@@ -2,7 +2,8 @@
 import "./locales";
 
 export { ChromeControlRows, type ChromeControlRowsProps } from "./chrome-control-rows";
-export { DarkModeToggle, type DarkModeToggleProps } from "./dark-mode-toggle";
+export { DarkModeToggle, ThemeGlyph, type DarkModeToggleProps } from "./dark-mode-toggle";
+export { ChromeToolButton, type ChromeToolButtonProps } from "./chrome-tool-button";
 export { LocalePicker, type LocalePickerProps } from "./locale-picker";
 export { COLOR_THEMES, type ColorThemeConfig, useTheme } from "./use-theme";
 export { DisplaySettings } from "./display-settings";

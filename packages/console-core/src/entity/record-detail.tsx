@@ -1,15 +1,30 @@
-import type { ReactNode } from "react";
-import { CrudDetail, DetailFieldWrapper, Flex, Heading, Stack, Tabs, TabsContent, TabsList } from "@simplix-react/ui";
+import { useState, type ReactNode } from "react";
+import {
+  CrudDetail,
+  DetailFieldWrapper,
+  Dialog,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  Flex,
+  Grid,
+  Heading,
+  Stack,
+  Tabs,
+  TabsContent,
+  TabsList,
+} from "@simplix-react/ui";
 
-import { slotAttributes } from "@simplix-react/ui/design";
+import { partAttributes, slotAttributes } from "@simplix-react/ui/design";
 
 import { CopyableDetailField } from "../clipboard/copyable-detail-field";
 import { InitialsAvatar } from "../identity/initials-avatar";
 import { CountedTab } from "../layout/page-tabs";
 import { RecordNote, RecordNotices, RecordVerbButton, RecordVerbs, type RecordNotice, type RecordVerb } from "./record-blocks";
 import { PermissionMatrix, type PermissionMatrixProps } from "./permission-matrix";
-import { recordHeadStyle, recordHeadSubtitleStyle } from "./record-detail.style";
-import { RecordList, RecordListNestingContext, type RecordListProps } from "./record-list";
+import { BoundedDialogContent } from "../layout/bounded-dialog-content";
+import { recordHeadStyle, recordHeadSubtitleStyle, recordSublistStyle } from "./record-detail.style";
+import { RecordList, RecordListNestingContext, type RecordAction, type RecordColumn, type RecordListProps } from "./record-list";
 import { RecordValueView, type RecordValue } from "./record-value";
 
 /** One labelled value of a {@link RecordDetail} section. */
@@ -98,15 +113,126 @@ function Sections({ sections }: { readonly sections?: readonly RecordSection[] }
   );
 }
 
-function Content({ content }: { readonly content: RecordTabContent }): ReactNode {
+/**
+ * The most rows a sub-list may hold and still be drawn compact. Above it, or when the record does
+ * not carry every row its tab counts, the sub-list is the main list table.
+ */
+const COMPACT_LIMIT = 5;
+
+/** Which of the two in-detail list forms a tab's rows take. */
+export function sublistKind(rows: number, count: number | undefined): "compact" | "full" {
+  const complete = count === undefined || count === rows;
+  return complete && rows <= COMPACT_LIMIT ? "compact" : "full";
+}
+
+/** What a compact list leaves out: everything that exists to find a row among many. */
+const COMPACT_FEATURES = { search: false, filters: false, chips: false, sort: false, count: false, pagination: false } as const;
+/** What the main table always carries, whatever the screen asked for. */
+const FULL_FEATURES = { search: true, sort: true, count: true, pagination: true } as const;
+
+/** The value a column draws for a row, as {@link RecordValueView} reads it. */
+function columnValue<Row>(column: RecordColumn<Row>, row: Row): RecordValue {
+  if (column.value) return column.value(row);
+  if (!column.field) return null;
+  const raw = (row as Record<string, unknown>)[column.field];
+  return raw === undefined || raw === null ? null : String(raw);
+}
+
+/** A row's name: the text of its first column. */
+function rowTitle<Row>(columns: readonly RecordColumn<Row>[], row: Row): string {
+  const first = columns[0];
+  if (!first) return "";
+  const value = columnValue(first, row);
+  if (typeof value === "string" || typeof value === "number") return String(value);
+  if (value && "text" in value) return value.text;
+  return first.header;
+}
+
+const DESTRUCTIVE_ACTIONS = new Set(["delete", "cancel"]);
+
+/**
+ * One row of an in-detail list, opened over the record: its first column as the title, every
+ * column as a labelled value, the list's row actions as the dialog's buttons. A row click inside a
+ * detail opens this rather than replacing the panel or leaving the page.
+ */
+function RecordRowDialog<Row>({
+  row,
+  columns,
+  actions,
+  onClose,
+}: {
+  readonly row: Row | null;
+  readonly columns: readonly RecordColumn<Row>[];
+  readonly actions: readonly RecordAction<Row>[];
+  readonly onClose: () => void;
+}) {
+  const verbs = (danger: boolean): RecordVerb[] =>
+    row === null
+      ? []
+      : actions
+          .filter((action) => DESTRUCTIVE_ACTIONS.has(action.type) === danger)
+          .map((action) => ({
+            label: action.label,
+            kind: danger ? "danger" : "plain",
+            disabled: action.disabled?.(row) || undefined,
+            onClick: () => {
+              action.onClick?.(row);
+              onClose();
+            },
+          }));
+  const danger = verbs(true);
+  const plain = verbs(false);
+  return (
+    <Dialog open={row !== null} onOpenChange={(open) => (open ? undefined : onClose())}>
+      {row !== null ? (
+        <BoundedDialogContent width="md" aria-describedby={undefined}>
+          <DialogHeader>
+            <DialogTitle>{rowTitle(columns, row)}</DialogTitle>
+          </DialogHeader>
+          <Grid columns={1} gapY="sm">
+            {columns.map((column) => (
+              <DetailFieldWrapper key={column.key} label={column.header} layout="top">
+                <RecordValueView value={columnValue(column, row)} />
+              </DetailFieldWrapper>
+            ))}
+          </Grid>
+          {danger.length + plain.length > 0 ? (
+            <DialogFooter>
+              <Flex justify="between" gap="sm" wrap flex>
+                <RecordVerbs verbs={danger} />
+                <RecordVerbs verbs={plain} end />
+              </Flex>
+            </DialogFooter>
+          ) : null}
+        </BoundedDialogContent>
+      ) : null}
+    </Dialog>
+  );
+}
+
+/**
+ * A tab's sub-list in one of its two forms (see {@link sublistKind}). Both open a row in
+ * {@link RecordRowDialog}; a screen's own `onRowClick` is not used inside a detail.
+ */
+function SubList({ list, count }: { readonly list: RecordListProps<any>; readonly count: number | undefined }) {
+  const [opened, setOpened] = useState<unknown | null>(null);
+  const kind = sublistKind(list.rows.length, count);
+  const features = kind === "compact" ? { ...list.features, ...COMPACT_FEATURES } : { ...list.features, ...FULL_FEATURES };
+  return (
+    <div {...slotAttributes(recordSublistStyle, { kind })}>
+      <RecordListNestingContext.Provider value={true}>
+        <RecordList {...list} features={features} onRowClick={(row) => setOpened(row)} />
+      </RecordListNestingContext.Provider>
+      <RecordRowDialog row={opened} columns={list.columns} actions={list.actions ?? []} onClose={() => setOpened(null)} />
+    </div>
+  );
+}
+
+function Content({ content, count }: { readonly content: RecordTabContent; readonly count?: number }): ReactNode {
   return (
     <Stack gap="sm">
       <Sections sections={content.sections} />
-      {content.list ? (
-        <RecordListNestingContext.Provider value={true}>
-          <RecordList {...content.list} />
-        </RecordListNestingContext.Provider>
-      ) : null}
+      {content.list ? <SubList list={content.list} count={count} /> : null}
       {content.matrix ? (
         <Stack gap="xs">
           {content.matrix.title ? <Heading level={5}>{content.matrix.title}</Heading> : null}
@@ -150,10 +276,17 @@ export function RecordDetail({
         ))}
       </TabsList>
       {tabs.map((tab) => (
-        <TabsContent key={tab.key} value={tab.key} padded>
+        <TabsContent
+          key={tab.key}
+          value={tab.key}
+          padded
+          // The chosen tab's panel rises in, so switching tabs reads as a change of view rather
+          // than a flash. Entry motion is tw-animate-css, which stays on the element.
+          className="data-[state=active]:animate-in data-[state=active]:fade-in-0 data-[state=active]:slide-in-from-bottom-1"
+        >
           <Stack gap="sm">
             <RecordVerbs verbs={tab.verbs} />
-            <Content content={tab} />
+            <Content content={tab} count={tab.count} />
           </Stack>
         </TabsContent>
       ))}
@@ -166,10 +299,10 @@ export function RecordDetail({
     <CrudDetail
       isLoading={isLoading}
       header={
-        <Flex align="center" gap="sm" minSize {...slotAttributes(recordHeadStyle, {})}>
+        <Flex align="center" gap="sm" minSize {...partAttributes(recordHeadStyle, {})}>
           {avatar !== undefined ? <InitialsAvatar name={title} seed={avatar} size="lg" /> : null}
           <Stack gap="none" minSize>
-            <Heading level={4} tone="muted">{title}</Heading>
+            <Heading level={4}>{title}</Heading>
             {subtitle ? <span {...slotAttributes(recordHeadSubtitleStyle, {})}>{subtitle}</span> : null}
           </Stack>
         </Flex>

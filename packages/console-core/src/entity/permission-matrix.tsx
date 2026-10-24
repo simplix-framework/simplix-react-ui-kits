@@ -29,7 +29,9 @@ export interface PermissionMatrixProps {
 export function PermissionMatrix({ corner, columns, rows, onToggle }: PermissionMatrixProps) {
   return (
     <TableCard>
-      <Table>
+      {/* No cell wraps: a matrix too wide for its card scrolls sideways inside it rather than
+          breaking a header or an area name one character per line. */}
+      <Table className="min-w-max">
         <TableHeader>
           <TableRow>
             <TableHead>{corner}</TableHead>

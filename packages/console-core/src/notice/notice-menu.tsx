@@ -119,7 +119,8 @@ function NoticeKindMenu({ kind, entries }: { readonly kind: DismissibleNoticeKin
           type="button"
           variant="ghost"
           size="icon-sm"
-          className="relative"
+          // Springs in as the card it now holds folds away, so the eye is led to where it went.
+          className="relative animate-in fade-in-0 slide-in-from-bottom-1"
           aria-label={t(hiding ? "notice.openHidden" : "notice.open", { kind: kindLabel })}
         >
           {/* The ring is a sibling rather than a ring on the glyph: an animated `box-shadow` on an

@@ -10,7 +10,7 @@ import { defineSlotStyle } from "@simplix-react/ui/design";
 export const noticeMenuStyle = defineSlotStyle({
   slot: "console-notice-menu",
   as: "part",
-  base: "gap-0.5",
+  base: "gap-0.5 [&>button]:duration-[var(--dur-base)] [&>button]:ease-[var(--ease-spring)]",
   variants: {},
   defaultVariants: {},
 });

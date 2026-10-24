@@ -69,13 +69,13 @@ export function ActionDialog({ title, open, onOpenChange, notices, sections, fie
           <RecordNote text={note} />
         </Stack>
         <DialogFooter>
-          <Flex gap="xs" justify="between" className="w-full">
-            <Flex gap="xs">
+          <Flex gap="sm" justify="between" className="w-full">
+            <Flex gap="sm">
               {leading.map((verb) => (
                 <RecordVerbButton key={verb.label} verb={verb} />
               ))}
             </Flex>
-            <Flex gap="xs">
+            <Flex gap="sm">
               {trailing.map((verb) => (
                 <RecordVerbButton key={verb.label} verb={verb} />
               ))}

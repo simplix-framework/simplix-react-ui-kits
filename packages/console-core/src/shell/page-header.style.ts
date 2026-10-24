@@ -6,7 +6,9 @@ import { defineSlotStyle } from "@simplix-react/ui/design";
 export const pageHeaderStyle = defineSlotStyle({
   slot: "console-page-header",
   as: "part",
-  base: "pb-2 mb-4 border-b rule-shadow",
+  // The header stands on the canvas with no rule under it; the summary's fold control sits at its
+  // right, above the figures.
+  base: "mb-1 border-b-0 pb-0 [&_h1+*]:mt-1.5",
   variants: {},
   defaultVariants: {},
 });

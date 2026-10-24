@@ -10,8 +10,8 @@ import {
   type ButtonProps,
   type IconName,
 } from "@simplix-react/ui";
-import { unbuiltMarkStyle } from "./unbuilt.style";
-import { slotAttributes } from "@simplix-react/ui/design";
+import { unbuiltActionStyle, unbuiltMarkStyle } from "./unbuilt.style";
+import { partAttributes, slotAttributes } from "@simplix-react/ui/design";
 
 /** How loud a control is, in the framework's own words. */
 type ActionVariant = ButtonProps["variant"];
@@ -149,7 +149,14 @@ export function DisabledAction({
     <Tooltip>
       <TooltipTrigger asChild>
         <span className={className ? `inline-flex cursor-default ${className}` : "inline-flex cursor-default"}>
-          <Button variant={variant} size={size} disabled aria-disabled="true" className="w-full">
+          <Button
+            variant={variant}
+            size={size}
+            disabled
+            aria-disabled="true"
+            className="w-full"
+            {...partAttributes(unbuiltActionStyle, {})}
+          >
             {icon && <Icon name={icon} />}
             {label}
             {mark}

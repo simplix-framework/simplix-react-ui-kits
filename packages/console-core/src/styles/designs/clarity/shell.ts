@@ -3,12 +3,17 @@ export const shellSlots: Record<string, string> = {
   // Top bar: a white 52px band, the brand, the area tabs on its full height, the reader's tools.
   "console-preview-topbar": "border-[var(--border)] bg-card",
   "console-preview-topbar-row": "min-h-[52px] gap-5 pl-4 pr-3",
-  "console-preview-topbar-lead": "gap-5 self-stretch py-0",
-  "console-preview-brand": "gap-2.5 [&_svg]:size-6",
-  "console-preview-title": "text-[15px] font-[650] tracking-[-0.02em]",
+  "console-preview-topbar-lead": "flex-nowrap gap-5 self-stretch py-0 transition-[gap] duration-[var(--dur-base)] ease-[var(--ease)] max-[900px]:gap-3",
+  // Below 1180px the brand keeps only its mark; the name narrows and fades out rather than
+  // vanishing, and comes back the same way as the window widens.
+  "console-preview-brand":
+    "gap-2.5 transition-[gap] duration-[var(--dur-base)] ease-[var(--ease)] max-[1180px]:gap-0 [&_svg]:size-6",
+  "console-preview-title":
+    "max-w-[12em] overflow-clip whitespace-nowrap text-[15px] font-[650] tracking-[-0.02em] transition-[max-width,opacity] duration-[var(--dur-base)] ease-[var(--ease)] max-[1180px]:max-w-0 max-[1180px]:opacity-0",
   "console-area-switch": "self-stretch",
+  // Under 900px the tabs tighten so the whole top level still fits one line beside the tools.
   "console-area-tab":
-    "px-3 text-[13.5px] font-medium transition-colors duration-[var(--dur-base)] ease-[var(--ease)]",
+    "px-3 text-[13.5px] font-medium transition-[color,padding,font-size] duration-[var(--dur-base)] ease-[var(--ease)] max-[900px]:px-1.5 max-[900px]:text-[13px] rounded-[var(--radius-control)] focus-visible:outline-none focus-visible:ring-0 focus-visible:shadow-[var(--focus-halo)]",
   "console-area-tab current=true": "text-foreground",
   "console-area-tab current=false": "text-muted-foreground hover:text-foreground",
   "console-area-ink": "mt-px",
@@ -16,18 +21,22 @@ export const shellSlots: Record<string, string> = {
   "console-bar-search":
     "mr-2 h-8 w-[240px] max-w-none gap-2 border-[var(--border)] bg-[var(--surface-2)] pl-2.5 pr-1.5 text-[13.5px] text-muted-foreground hover:border-muted-foreground hover:bg-[var(--surface-2)] max-[1441px]:w-[200px]",
   "console-key-cap": "rounded-[calc(var(--radius-control)-3px)] border-[var(--border-strong)] bg-card font-sans",
-  "console-key-cap onBar=true": "border-[var(--border)] bg-transparent",
+  "console-key-cap onbar=true": "border-[var(--border)] bg-transparent",
   "console-preview-site":
-    "h-7 gap-1.5 border-[var(--border)] bg-[var(--surface-2)] px-2.5 text-[12.5px] font-medium shadow-none hover:border-muted-foreground hover:bg-[var(--surface-2)] [&_[data-slot=button-caret]]:mr-0 [&_[data-slot=button-caret]]:border-0 [&_[data-slot=button-caret]]:pl-0",
+    "h-7 gap-1.5 border-[var(--border)] bg-[var(--surface-2)] px-2.5 text-[12.5px] font-medium shadow-none focus-visible:shadow-[var(--focus-halo)] transition-[border-color,gap] duration-[var(--dur-base)] ease-[var(--ease)] hover:border-muted-foreground hover:bg-[var(--surface-2)] max-[900px]:gap-0.5 [&>[data-slot=text]]:transition-[max-width,opacity] [&>[data-slot=text]]:duration-[var(--dur-base)] [&>[data-slot=text]]:ease-[var(--ease)] max-[900px]:[&>[data-slot=text]]:max-w-0! max-[900px]:[&>[data-slot=text]]:opacity-0 [&_[data-slot=button-caret]]:mr-0 [&_[data-slot=button-caret]]:border-0 [&_[data-slot=button-caret]]:pl-0",
   "console-preview-settings":
     "[&_button]:size-8 [&_button]:text-muted-foreground [&_button:hover]:bg-[var(--hover-bg-strong)] [&_button:hover]:text-foreground",
-  "console-preview-tool": "text-muted-foreground hover:bg-[var(--hover-bg-strong)] hover:text-foreground",
-  "console-counted-button": "text-muted-foreground hover:bg-[var(--hover-bg-strong)] hover:text-foreground",
+  // The reader's tools are 32px squares and take the shared press (0.98).
+  "console-preview-tool":
+    "size-8 text-muted-foreground transition-[background-color,color,scale] duration-[var(--dur-fast)] ease-[var(--ease)] hover:bg-[var(--hover-bg-strong)] hover:text-foreground active:scale-[0.98] [&_svg]:duration-[var(--dur-base)] [&_svg]:ease-[var(--ease-spring)]",
+  "console-counted-button":
+    "size-8 text-muted-foreground transition-[background-color,color,scale] duration-[var(--dur-fast)] ease-[var(--ease)] hover:bg-[var(--hover-bg-strong)] hover:text-foreground active:scale-[0.98]",
+  // The count sits on the glyph's top-right corner, leaving the bell readable under it.
   "console-counted-count":
-    "right-[3px] top-1 h-[15px] min-w-[15px] rounded-full px-1 text-[10px] font-semibold leading-[15px] ring-2 ring-card",
+    "right-0.5 top-0.5 duration-[var(--dur-base)] ease-[var(--ease-spring)] h-[15px] min-w-[15px] rounded-full px-1 text-[10px] font-semibold leading-[15px] shadow-[0_0_0_2px_var(--card)]",
   "console-preview-account":
     "ml-1.5 h-8 gap-2 pl-1 pr-1.5 text-[13.5px] font-[550] hover:bg-[var(--hover-bg-strong)] max-[1281px]:[&_[data-part=console-preview-account-name]]:hidden",
-  "console-preview-account-caret": "text-muted-foreground opacity-100",
+  "console-preview-account-caret": "text-muted-foreground opacity-100 max-[900px]:hidden",
   "console-preview-avatar":
     "size-[26px] bg-[oklch(0.93_0.035_213)] text-[10.5px] font-[650] tracking-[-0.04em] text-[oklch(0.42_0.08_213)] dark:bg-[oklch(0.34_0.05_213)] dark:text-[oklch(0.88_0.05_213)]",
 
@@ -45,7 +54,7 @@ export const shellSlots: Record<string, string> = {
   "console-menu-branch": "gap-px",
   "console-menu-branch ruled=true": "ml-[17px] border-[var(--border)] pl-[9px]",
   "console-menu-row":
-    "min-h-8 gap-2.5 rounded-[var(--radius-control)] px-2.5 py-0 text-[13.5px] text-secondary-foreground transition-colors duration-[var(--dur-fast)] ease-[var(--ease)]",
+    "focus-visible:outline-none focus-visible:ring-0 focus-visible:shadow-[var(--focus-halo)] min-h-8 gap-2.5 rounded-[var(--radius-control)] px-2.5 py-0 text-[13.5px] text-secondary-foreground transition-colors duration-[var(--dur-fast)] ease-[var(--ease)]",
   "console-menu-row kind=branch": "hover:bg-[var(--chrome-sidebar-hover)] hover:text-secondary-foreground",
   "console-menu-row kind=link": "hover:bg-[var(--chrome-sidebar-hover)] hover:text-secondary-foreground",
   "console-menu-row kind=inactive": "text-muted-foreground",
@@ -54,7 +63,18 @@ export const shellSlots: Record<string, string> = {
     "bg-[var(--primary-soft)] font-[550] text-[var(--primary-text)] hover:bg-[var(--primary-soft)] hover:text-[var(--primary-text)]",
   "console-menu-glyph":
     "text-muted-foreground opacity-100 transition-colors [[data-current=true]>&]:text-[var(--primary-text)] [:hover>&]:text-secondary-foreground",
+  // The shared selected indicator: a 2px accent bar at the column's inner edge that slides to the
+  // current row.
+  "console-menu-ink":
+    "start-1 m-0! block w-0.5 rounded-full bg-primary transition-[top,height,opacity] duration-[var(--dur-base)] ease-[var(--ease)]",
   "console-menu-caret": "text-muted-foreground opacity-100 [&_svg]:size-[13px]",
+
+  // Content column: 24px over the header and 32px at the sides on a 1440px measure; under 900px the
+  // sides close to 20px. The padding transitions, so the screen settles into a new width rather
+  // than snapping.
+  "console-content-column":
+    "px-8 pt-6 transition-[padding] duration-[var(--dur-slow)] ease-[var(--ease)] max-[900px]:px-5 max-[900px]:pt-5",
+  "console-content-column-body": "max-w-[1440px] gap-5",
 
   // Status strip: white, 11.5px, a live ticker, readings divided by short rules, the clock.
   "console-preview-status": "gap-4 border-[var(--border)] bg-card px-4",
@@ -66,7 +86,10 @@ export const shellSlots: Record<string, string> = {
   "console-preview-clock": "border-[var(--border)] text-[11.5px]",
 
   // Command palette: a 640px overlay at 12vh, 52px field, grouped results, key hints under it.
-  "console-palette": "rounded-[calc(var(--radius-control)+4px)] border-[var(--border)] bg-popover shadow-[var(--shadow-3)]",
+  "console-palette": "rounded-[var(--radius-overlay)] border-[var(--border)] bg-popover shadow-[var(--shadow-3)]",
+  // Overlays share the overlay radius; focus is the shared halo.
+  "console-menu-flyout": "rounded-[var(--radius-overlay)]",
+  "console-display-settings-theme": "focus-visible:outline-none focus-visible:ring-0 focus-visible:shadow-[var(--focus-halo)]",
   "console-palette-list": "p-1.5",
   "console-palette-esc": "right-4",
   "console-palette-sub": "text-[11.5px]",

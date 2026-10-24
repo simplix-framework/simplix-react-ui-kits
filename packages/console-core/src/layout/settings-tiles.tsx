@@ -1,4 +1,4 @@
-import { type DragEvent, type KeyboardEvent, useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { type CSSProperties, type DragEvent, type KeyboardEvent, useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { useTranslation } from "@simplix-react/i18n/react";
 import {
   cn,
@@ -13,6 +13,7 @@ import {
   type StatusTone,
 } from "@simplix-react/ui";
 import { DigitRoll } from "@simplix-react/ui/interaction";
+import { useReflowFlip } from "./use-reflow-flip";
 import { ArrowRightIcon, ChevronDownIcon, GripVerticalIcon } from "lucide-react";
 
 import { PACKAGE_NAMESPACE } from "./locales";
@@ -32,8 +33,12 @@ import {
   tileStripDividerStyle,
   tileStripDotStyle,
   tileStripInsetStyle,
+  tileBasisStyle,
+  tileStripChipsStyle,
   tileStripStyle,
   tileStyle,
+  tileTickerStyle,
+  tileTrendStyle,
   tileTitleStyle,
 } from "./settings-tiles.style";
 import { NumericText } from "./numeric-text";
@@ -62,6 +67,18 @@ export interface TileTrend {
   readonly direction: TileTrendDirection;
   /** The comparison in the figure's own unit — 「어제보다 2건」 · 「지난달 87%」. */
   readonly text: string;
+}
+
+/**
+ * What a movement means for a figure: a rising count that is already a warning is worse, the same
+ * count falling is better, and a figure in the success tone reads the other way round. A figure with
+ * no tone, or one that did not move, is neither.
+ */
+function verdictOf(tone: StatusTone | undefined, direction: TileTrendDirection): "worse" | "better" | "neutral" {
+  if (direction === "flat") return "neutral";
+  if (tone === "warning" || tone === "danger") return direction === "up" ? "worse" : "better";
+  if (tone === "success") return direction === "up" ? "better" : "worse";
+  return "neutral";
 }
 
 /** The arrow each direction is drawn with. */
@@ -388,27 +405,7 @@ export function SettingsTiles({ tiles, columns = 4, reorderKey, title, loading =
               {/* Folded, every figure as a chip; pressing one unfolds the row. The fold clips its
                   child, so the chips sit in a wrapper of their own. */}
               <div>
-                <div className="flex items-center overflow-x-auto" {...slotAttributes(tileChipsStyle, {})}>
-                  {tiles.map((tile) => (
-                    <button
-                      key={tile.key}
-                      type="button"
-                      tabIndex={collapsed ? 0 : -1}
-                      onClick={toggle}
-                      className="inline-flex shrink-0 items-center"
-                      {...slotAttributes(tileChipStyle, {})}
-                    >
-                      <span>{tile.label}</span>
-                      <NumericText
-                        weight="semibold"
-                        className={cn(tile.tone && STATUS_TONES[tile.tone].icon)}
-                        {...partAttributes(tileChipFigureStyle, { tone: tile.tone ?? "none" })}
-                      >
-                        {tileFigure(tile)}
-                      </NumericText>
-                    </button>
-                  ))}
-                </div>
+                <TileChips tiles={tiles} active={collapsed} onPress={toggle} />
               </div>
             </div>
           </div>
@@ -459,13 +456,18 @@ export function SettingsTiles({ tiles, columns = 4, reorderKey, title, loading =
         {/* Inset from both ends by a hair, so the rule still reads as the wider thing the strip
             came out from under. */}
         <div {...slotAttributes(tileStripInsetStyle, {})}>
-          <TileStrip
-            tiles={tiles}
-            showing={showing}
-            label={t("expand")}
-            onPress={toggle}
-            onHold={setHeld}
-          />
+          <div {...slotAttributes(tileTickerStyle, {})}>
+            <TileStrip
+              tiles={tiles}
+              showing={showing}
+              label={t("expand")}
+              onPress={toggle}
+              onHold={setHeld}
+            />
+          </div>
+          <div {...slotAttributes(tileStripChipsStyle, {})}>
+            <TileChips tiles={tiles} active={collapsed} onPress={toggle} />
+          </div>
         </div>
       </div>
 
@@ -507,6 +509,49 @@ export function SettingsTiles({ tiles, columns = 4, reorderKey, title, loading =
           {collapsed ? t("expand") : t("collapse")}
         </span>
       </button>
+    </div>
+  );
+}
+
+/**
+ * Every figure as a chip, for a folded row; pressing one unfolds the row.
+ *
+ * <p>Each chip carries its position as `--i`, so a design can stagger their arrival.
+ *
+ * @param props the figures, whether the chips are reachable, and what pressing one does
+ * @returns the chips
+ */
+function TileChips({
+  tiles,
+  active,
+  onPress,
+}: {
+  readonly tiles: readonly SettingsTile[];
+  readonly active: boolean;
+  readonly onPress: () => void;
+}) {
+  return (
+    <div className="flex items-center overflow-x-auto" {...slotAttributes(tileChipsStyle, {})}>
+      {tiles.map((tile, index) => (
+        <button
+          key={tile.key}
+          type="button"
+          tabIndex={active ? 0 : -1}
+          onClick={onPress}
+          className="inline-flex shrink-0 items-center"
+          style={{ "--i": index } as CSSProperties}
+          {...slotAttributes(tileChipStyle, {})}
+        >
+          <span>{tile.label}</span>
+          <NumericText
+            weight="semibold"
+            className={cn(tile.tone && STATUS_TONES[tile.tone].icon)}
+            {...partAttributes(tileChipFigureStyle, { tone: tile.tone ?? "none" })}
+          >
+            {tileFigure(tile)}
+          </NumericText>
+        </button>
+      ))}
     </div>
   );
 }
@@ -645,8 +690,13 @@ function TileGrid({
   const [dragging, setDragging] = useState<string | null>(null);
   const [over, setOver] = useState<string | null>(null);
   const ordered = enabled ? order.map((k) => tiles.find((t) => t.key === k)!).filter(Boolean) : tiles;
+  const grid = useRef<HTMLDivElement>(null);
+  // A tile moved to a new place, or a row that wraps when the window narrows, glides there.
+  // Keyed by the order's content: a screen that rebuilds its tiles on every render hands a new
+  // array each time, and a pass on an unchanged order would glide the cards for an unrelated shift.
+  useReflowFlip(grid, "[data-flip-key]", [order.join("\u0000")]);
   return (
-    <Grid columns={columns} gap="md" fit className={className}>
+    <Grid ref={grid} columns={columns} gap="md" fit className={className}>
       {ordered.map((tile) => {
         // The board stacks value → 추이 → 근거, so the comparison takes the card's first line under
         // the value and the basis moves below it. With no comparison the basis keeps that line and
@@ -676,17 +726,22 @@ function TileGrid({
               ) : undefined
             }
             chart={tile.spark}
-            description={trendLine ?? tile.basis}
+            description={
+              tile.trend ? (
+                <>
+                  <span {...partAttributes(tileTrendStyle, { verdict: verdictOf(tile.tone, tile.trend.direction) })}>
+                    {trendLine}
+                  </span>
+                  {tile.basis && <span {...partAttributes(tileBasisStyle, {})}>{tile.basis}</span>}
+                </>
+              ) : (
+                tile.basis
+              )
+            }
             tone={tile.tone}
             highlighted={tile.tone !== undefined && tile.tone !== "success"}
             loading={loading}
-          >
-            {trendLine && tile.basis ? (
-              <Text size="caption" tone="muted">
-                {tile.basis}
-              </Text>
-            ) : null}
-          </StatCard>
+          />
         );
         // The card fills whatever height it is handed, so a tile that is a link needs its anchor
         // to be handed the grid cell's full height rather than shrinking to the text. A tile that
@@ -694,6 +749,7 @@ function TileGrid({
         return (
           <div
             key={tile.key}
+            data-flip-key={tile.key}
             className="group relative h-full"
             {...(enabled
               ? {

@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useMemo, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useMemo, useRef, type ReactNode } from "react";
 import { useTranslation } from "@simplix-react/i18n/react";
 import {
   addToast,
@@ -18,6 +18,7 @@ import {
 import { slotAttributes } from "@simplix-react/ui/design";
 import { BulkActionBar } from "@simplix-react/ui/interaction";
 
+import { useReflowFlip } from "../layout/use-reflow-flip";
 import { PACKAGE_NAMESPACE } from "./locales";
 import { recordListStyle } from "./record-list.style";
 import { RecordValueView, type RecordValue } from "./record-value";
@@ -213,6 +214,10 @@ function filterDef<Row>(filter: RecordFilter<Row>): FilterDef {
   };
 }
 
+/** The toolbar controls that move between rows when the list folds its toolbar. */
+const TOOLBAR_ITEMS =
+  "[data-part=list-total-badge], [data-flip-key=search], [data-slot=crud-filter-bar-trigger], [data-slot=crud-filter-bar-columns-button]";
+
 /**
  * A list of records with everything a console list has: a filter bar with search, filters, a chip
  * row and the count; sortable headers; group headings; row actions; an empty state; and paging.
@@ -242,6 +247,10 @@ export function RecordList<Row>({
 }: RecordListProps<Row>) {
   const { t } = useTranslation(PACKAGE_NAMESPACE + "/features");
   const nested = useContext(RecordListNestingContext);
+  // When the list narrows past the toolbar's fold (or widens back), the count, the search and the
+  // filter controls glide to their new rows instead of jumping.
+  const rootRef = useRef<HTMLDivElement>(null);
+  useReflowFlip(rootRef, TOOLBAR_ITEMS, []);
   const on = (feature: keyof RecordListFeatures) => features[feature] !== false;
   const useRows = useMemo<ListHook<Row>>(() => () => ({ data: [...rows], total: rows.length, isLoading: false, error: null }), [rows]);
   const list = useCrudList(useRows, { stateMode: "client", filterMode: "immediate", defaultPageSize: pageSize });
@@ -263,9 +272,19 @@ export function RecordList<Row>({
     on("chips") && chips ? (
       <CrudList.ChipFilter field={`${chips.field}.${SearchOperator.IN}`} state={list.filters} options={[...chips.options]} />
     ) : null;
-  // A fixed width keeps the search beside the filter control rather than taking the whole row.
+  // A fixed width keeps the search beside the filter control rather than taking the whole row. In a
+  // narrow list (a detail panel, or a list beside one) the toolbar folds: the count keeps the first
+  // row and the search takes the whole second row with its filter and column controls.
+  const filtered = on("filters") && filters.length > 0;
   const search = on("search") ? (
-    <div className="w-60 shrink-0">
+    <div
+      data-flip-key="search"
+      className={
+        filtered
+          ? "w-60 shrink-0 @max-md/record-list:w-auto @max-md/record-list:min-w-0 @max-md/record-list:flex-1"
+          : "w-60 shrink-0 @max-md/record-list:w-auto @max-md/record-list:min-w-0 @max-md/record-list:basis-full"
+      }
+    >
       <CrudList.Search
         value={list.filters.search}
         onChange={list.filters.setSearch}
@@ -284,9 +303,9 @@ export function RecordList<Row>({
   };
 
   return (
-    <div {...slotAttributes(recordListStyle, { nested })}>
+    <div ref={rootRef} className="@container/record-list" {...slotAttributes(recordListStyle, { nested })}>
     <CrudList>
-      {on("filters") && filters.length > 0 ? (
+      {filtered ? (
         <CrudList.FilterBar
           filters={filters.map(filterDef)}
           state={list.filters}
@@ -301,6 +320,7 @@ export function RecordList<Row>({
           }
           trailing={search ?? undefined}
           maxBadges={3}
+          className="@max-md/record-list:[&>[data-slot=crud-filter-bar-trailing]]:ml-0 @max-md/record-list:[&>[data-slot=crud-filter-bar-trailing]]:basis-full @max-md/record-list:[&>[data-slot=crud-filter-bar-trailing]]:flex-nowrap"
         />
       ) : on("count") || leading || chipRow || search ? (
         // No filters to offer: the count, the chips and the search stand on their own row rather
@@ -333,7 +353,11 @@ export function RecordList<Row>({
             : undefined
         }
         actions={rowActions.length > 0 ? rowActions : undefined}
+        // With no rows the table says why: the page's own empty state, or inside a record (where the
+        // list is one part of the panel) the compact sentence centred in the list's place.
+        emptyReason={list.emptyReason}
         emptyState={empty}
+        slots={nested ? { empty: ({ reason }) => <CrudList.Empty reason={reason} /> } : undefined}
         cardBreakpoint={titleColumn ? breakpoint : undefined}
         cardTitle={titleColumn ? ({ row }) => cellOf(titleColumn, row) : undefined}
         cardContent={

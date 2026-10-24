@@ -120,7 +120,7 @@
     "test": "vitest run --passWithNoTests",
     "clean": "rm -rf dist .turbo",
     "design:css": "simplix-design-css --root . --out src/styles/designs/classic.css && simplix-design-css --root . --design-spec src/styles/designs/clarity.spec.ts --out src/styles/designs/clarity.css --compiled src/styles/designs/clarity-stylesheet.ts --tailwind-from ../../../accesscore/simplix-react/apps/storybook --reference src/styles/utilities.css",
-    "design:check": "simplix-design-css --root . --out src/styles/designs/classic.css --check && simplix-design-css --root . --design-spec src/styles/designs/clarity.spec.ts --out src/styles/designs/clarity.css --compiled src/styles/designs/clarity-stylesheet.ts --tailwind-from ../../../accesscore/simplix-react/apps/storybook --reference src/styles/utilities.css --check && simplix-design-coverage src/styles/designs/classic.css src/styles/designs/clarity.css && simplix-design-classes src"
+    "design:check": "simplix-design-css --root . --out src/styles/designs/classic.css --check && simplix-design-css --root . --design-spec src/styles/designs/clarity.spec.ts --out src/styles/designs/clarity.css --compiled src/styles/designs/clarity-stylesheet.ts --tailwind-from ../../../accesscore/simplix-react/apps/storybook --reference src/styles/utilities.css --check && simplix-design-coverage src/styles/designs/classic.css src/styles/designs/clarity.css && simplix-design-classes src && node ../../node_modules/@simplix-react/ui/scripts/check-slot-spread.mjs src"
   },
   "dependencies": {
     "@fontsource/noto-sans-jp": "catalog:",

@@ -6,9 +6,9 @@ export const keyCapStyle = defineSlotStyle({
   base: "h-[18px] min-w-[18px] rounded-sm border bg-muted px-1 font-mono text-[11px] leading-none text-muted-foreground",
   variants: {
     /** A keycap on the top bar, which sits on the bar's own ground rather than on a card. */
-    onBar: { true: "bg-transparent", false: "" },
+    onbar: { true: "bg-transparent", false: "" },
   },
-  defaultVariants: { onBar: false },
+  defaultVariants: { onbar: false },
 });
 
 /**
@@ -17,7 +17,7 @@ export const keyCapStyle = defineSlotStyle({
  */
 export const barSearchStyle = defineSlotStyle({
   slot: "console-bar-search",
-  base: "h-8 w-64 max-w-[40vw] gap-2 rounded-md border border-input bg-background pl-3 pr-1.5 text-sm text-muted-foreground transition-colors hover:bg-accent max-[1281px]:w-8 max-[1281px]:justify-center max-[1281px]:pl-0 max-[1281px]:pr-0 max-[1281px]:[&>kbd]:!hidden max-[1281px]:[&>span]:!hidden",
+  base: "h-8 gap-2 rounded-md border border-input bg-background pl-3 pr-1.5 text-sm text-muted-foreground transition-colors hover:bg-accent max-[1281px]:w-8 max-[1281px]:justify-center max-[1281px]:pl-0 max-[1281px]:pr-0 max-[1281px]:[&>kbd]:!hidden max-[1281px]:[&>span]:!hidden mr-2 w-[240px] max-w-none max-[1441px]:w-[200px]",
   variants: {},
   defaultVariants: {},
 });
@@ -42,7 +42,7 @@ export const paletteStyle = defineSlotStyle({
 /** The Esc keycap at the end of the palette's field, which says how to put it away. */
 export const paletteEscStyle = defineSlotStyle({
   slot: "console-palette-esc",
-  base: "inset-y-0 right-3",
+  base: "inset-y-0 right-4",
   variants: {},
   defaultVariants: {},
 });
@@ -51,7 +51,7 @@ export const paletteEscStyle = defineSlotStyle({
 export const paletteListStyle = defineSlotStyle({
   slot: "console-palette-list",
   as: "part",
-  base: "p-1",
+  base: "p-1.5",
   variants: {},
   defaultVariants: {},
 });
@@ -83,7 +83,7 @@ export const paletteMatchStyle = defineSlotStyle({
 /** The row of key hints under the list. */
 export const paletteFootStyle = defineSlotStyle({
   slot: "console-palette-foot",
-  base: "gap-4 border-t px-3 py-2 text-xs text-muted-foreground",
+  base: "gap-4 border-t py-2 text-xs text-muted-foreground px-3.5",
   variants: {},
   defaultVariants: {},
 });
@@ -91,7 +91,7 @@ export const paletteFootStyle = defineSlotStyle({
 /** One hint in the foot: its keys and what they do. */
 export const paletteHintStyle = defineSlotStyle({
   slot: "console-palette-hint",
-  base: "gap-1",
+  base: "gap-[5px]",
   variants: {},
   defaultVariants: {},
 });

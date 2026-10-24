@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, type ReactNode } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import { ChevronDownIcon, XIcon } from "lucide-react";
 import { useTranslation } from "@simplix-react/i18n/react";
 import { AlertBanner, Button, Flex, Stack, Text } from "@simplix-react/ui";
@@ -141,7 +141,42 @@ export function NoticeCard({
     onAction: actionLabel ? onAction : typeof first?.onAction === "function" ? first.onAction : undefined,
   });
 
-  const hide = useCallback(() => dismissals.hide(noticeKey), [dismissals, noticeKey]);
+  // **Put away by folding, not by vanishing.** Removed on the frame of the press, every row under
+  // the card jumps up by its height. The card first folds its height to nothing (the same fold the
+  // figure row uses, so a design times both alike), and only then is it recorded as hidden.
+  // `open` draws the fold at full height for one frame so the closing has a start to run from.
+  const [leaving, setLeaving] = useState<"no" | "open" | "closing">("no");
+  const fold = useRef<HTMLDivElement>(null);
+  const hide = useCallback(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      dismissals.hide(noticeKey);
+      return;
+    }
+    setLeaving("open");
+  }, [dismissals, noticeKey]);
+  useLayoutEffect(() => {
+    if (leaving !== "open") return;
+    const frame = requestAnimationFrame(() => setLeaving("closing"));
+    return () => cancelAnimationFrame(frame);
+  }, [leaving]);
+  useEffect(() => {
+    if (leaving !== "closing") return;
+    const element = fold.current;
+    const done = () => {
+      setLeaving("no");
+      dismissals.hide(noticeKey);
+    };
+    const onEnd = (event: TransitionEvent) => {
+      if (event.target === element && event.propertyName === "grid-template-rows") done();
+    };
+    element?.addEventListener("transitionend", onEnd);
+    // A design with no fold duration fires no end event.
+    const fallback = window.setTimeout(done, 800);
+    return () => {
+      window.clearTimeout(fallback);
+      element?.removeEventListener("transitionend", onEnd);
+    };
+  }, [leaving, dismissals, noticeKey]);
 
   // **A card brought back has to be brought back where the reader is looking.** The control that
   // restores it is in the page header, and the card itself may sit anywhere below — a thousand
@@ -154,6 +189,9 @@ export function NoticeCard({
   const box = useRef<HTMLDivElement>(null);
   const wasHidden = useRef(false);
   const hiddenNow = dismissals.ready && dismissals.isHidden(noticeKey);
+  // Read during render, before the effect below records the change: true on the one render where a
+  // hidden card comes back, which is when it draws its entrance.
+  const arriving = wasHidden.current && !hiddenNow;
   useEffect(() => {
     if (wasHidden.current && !hiddenNow) {
       box.current?.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -166,9 +204,10 @@ export function NoticeCard({
   // they have already put away — the one outcome this whole mechanism exists to prevent.
   if (!dismissals.ready || dismissals.isHidden(noticeKey)) return null;
 
-  return (
+  const card = (
     <div
       ref={box}
+      className={arriving ? ARRIVING : undefined}
       {...(kind === "help"
         ? slotAttributes(explanationCardStyle, { kind })
         : slotAttributes(noticeCardStyle, { kind }))}
@@ -265,4 +304,14 @@ export function NoticeCard({
     </AlertBanner>
     </div>
   );
+
+  if (leaving === "no") return card;
+  return (
+    <div ref={fold} className="tiles-fold" data-open={leaving === "open" ? "true" : "false"}>
+      <div>{card}</div>
+    </div>
+  );
 }
+
+/** The entrance a card brought back from the header draws. */
+const ARRIVING = "animate-in fade-in-0 slide-in-from-top-1";

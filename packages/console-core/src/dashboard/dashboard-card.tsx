@@ -1,5 +1,7 @@
-import type { ReactNode } from "react";
+import { type ReactNode, useRef } from "react";
 import { slotAttributes } from "@simplix-react/ui/design";
+
+import { useReflowFlip } from "../layout/use-reflow-flip";
 
 import {
   dashboardCardBodyStyle,
@@ -38,8 +40,11 @@ export function DashboardCard({ title, trailing, kind = "chart", children }: Das
 
 /** Cards side by side, two to a row, one to a row on a narrow window. */
 export function DashboardColumns({ children }: { readonly children: ReactNode }) {
+  const columns = useRef<HTMLDivElement>(null);
+  // Crossing the breakpoint stacks the cards or sets them side by side; they glide to the new place.
+  useReflowFlip(columns, ":scope > *", []);
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2" {...slotAttributes(dashboardColumnsStyle, {})}>
+    <div ref={columns} className="grid grid-cols-1 lg:grid-cols-2" {...slotAttributes(dashboardColumnsStyle, {})}>
       {children}
     </div>
   );

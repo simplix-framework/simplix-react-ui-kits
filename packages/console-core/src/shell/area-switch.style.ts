@@ -8,7 +8,8 @@ import { defineSlotStyle } from "@simplix-react/ui/design";
  */
 export const areaTabStyle = defineSlotStyle({
   slot: "console-area-tab",
-  base: "border-b-2 border-transparent px-3 text-sm",
+  // Under 900px the tabs tighten so the whole top level still fits one line beside the tools.
+  base: "border-b-2 border-transparent px-3 text-sm transition-[color,padding,font-size] duration-[var(--dur-base)] ease-[var(--ease)] max-[900px]:px-1.5 rounded-md focus-visible:outline-none focus-visible:shadow-[var(--focus-halo)]",
   variants: {
     current: {
       true: "font-medium",
@@ -22,7 +23,7 @@ export const areaTabStyle = defineSlotStyle({
 export const areaSwitchStyle = defineSlotStyle({
   slot: "console-area-switch",
   as: "part",
-  base: "gap-y-1",
+  base: "gap-y-1 self-stretch",
   variants: {},
   defaultVariants: {},
 });
@@ -33,7 +34,7 @@ export const areaSwitchStyle = defineSlotStyle({
  */
 export const areaInkStyle = defineSlotStyle({
   slot: "console-area-ink",
-  base: "h-0.5 bg-primary [transition:left_var(--dur-slow)_var(--ease),top_var(--dur-slow)_var(--ease),width_var(--dur-slow)_var(--ease)]",
+  base: "h-0.5 bg-primary [transition:left_var(--dur-slow)_var(--ease),top_var(--dur-slow)_var(--ease),width_var(--dur-slow)_var(--ease)] mt-px",
   variants: {},
   defaultVariants: {},
 });

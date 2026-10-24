@@ -114,7 +114,7 @@ export interface ConsoleKeyCapProps {
 /** A key the reader presses, drawn as a keycap. */
 export function ConsoleKeyCap({ children, onBar = false }: ConsoleKeyCapProps) {
   return (
-    <kbd className="inline-grid shrink-0 place-items-center" {...slotAttributes(keyCapStyle, { onBar })}>
+    <kbd className="inline-grid shrink-0 place-items-center" {...slotAttributes(keyCapStyle, { onbar: onBar })}>
       {children}
     </kbd>
   );

@@ -13,7 +13,7 @@ import { defineSlotStyle } from "@simplix-react/ui/design";
 export const menuColumnStyle = defineSlotStyle({
   slot: "console-menu-column",
   as: "part",
-  base: "w-56 border-r bg-muted/30",
+  base: "border-r bg-muted/30 w-60",
   variants: {},
   defaultVariants: {},
 });
@@ -22,7 +22,7 @@ export const menuColumnStyle = defineSlotStyle({
 export const menuRailStyle = defineSlotStyle({
   slot: "console-menu-rail",
   as: "part",
-  base: "w-14 border-r bg-muted/30 py-2",
+  base: "border-r bg-muted/30 w-[60px] pb-0 pt-2",
   variants: {},
   defaultVariants: {},
 });
@@ -31,7 +31,7 @@ export const menuRailStyle = defineSlotStyle({
 export const menuColumnHeadStyle = defineSlotStyle({
   slot: "console-menu-column-head",
   as: "part",
-  base: "border-b px-3 py-2",
+  base: "border-b h-12 py-0 pl-[18px] pr-2.5",
   variants: {},
   defaultVariants: {},
 });
@@ -47,9 +47,15 @@ export const menuGlyphStyle = defineSlotStyle({
 /** Whether a branch is open, said at the end of its row. */
 export const menuCaretStyle = defineSlotStyle({
   slot: "console-menu-caret",
-  base: "opacity-60",
-  variants: {},
-  defaultVariants: {},
+  base: "opacity-60 [&>svg]:transition-transform [&>svg]:duration-[var(--dur-base)] [&>svg]:ease-[var(--ease)] [&_svg]:size-[13px]",
+  variants: {
+    // One chevron pointing across, turned to point down as the branch opens.
+    open: {
+      true: "[&>svg]:rotate-90",
+      false: "",
+    },
+  },
+  defaultVariants: { open: false },
 });
 
 /** The label a row's remaining width goes to. */
@@ -66,9 +72,9 @@ export const menuLabelStyle = defineSlotStyle({
 export const menuBranchStyle = defineSlotStyle({
   slot: "console-menu-branch",
   as: "part",
-  base: "",
+  base: "gap-px",
   variants: {
-    ruled: { true: "ml-4 border-l pl-1.5", false: "" },
+    ruled: { true: "border-l ml-[17px] pl-[9px]", false: "" },
   },
   defaultVariants: { ruled: false },
 });
@@ -83,7 +89,7 @@ export const menuBranchStyle = defineSlotStyle({
  */
 export const menuRowStyle = defineSlotStyle({
   slot: "console-menu-row",
-  base: "gap-1.5 rounded-md px-2 py-1.5 text-sm",
+  base: "rounded-md text-sm min-h-8 gap-2.5 px-2.5 py-0 transition-colors duration-[var(--dur-fast)] ease-[var(--ease)] focus-visible:outline-none focus-visible:shadow-[var(--focus-halo)]",
   variants: {
     kind: {
       branch: "hover:bg-accent",
@@ -106,7 +112,7 @@ export const menuRowStyle = defineSlotStyle({
 export const menuRailRuleStyle = defineSlotStyle({
   slot: "console-menu-rail-rule",
   as: "part",
-  base: "my-1",
+  base: "my-[1.5px]",
   variants: {},
   defaultVariants: {},
 });
@@ -118,7 +124,7 @@ export const menuRailRuleStyle = defineSlotStyle({
 export const menuColumnBodyStyle = defineSlotStyle({
   slot: "console-menu-column-body",
   as: "part",
-  base: "pl-1",
+  base: "gap-0 px-2.5 pb-6 pt-0.5 [&>*]:mt-1.5",
   variants: {},
   defaultVariants: {},
 });
@@ -148,9 +154,32 @@ export const menuFlyoutTitleStyle = defineSlotStyle({
 export const menuRailButtonStyle = defineSlotStyle({
   slot: "console-menu-rail-button",
   as: "part",
-  base: "",
+  base: "size-[38px] [&_svg]:size-[18px]",
   variants: {
     active: { true: "", false: "" },
   },
   defaultVariants: { active: false },
+});
+
+/**
+ * The box the column or the rail stands in. It carries no look of its own; it is what animates the
+ * width when one replaces the other, so the screen beside it widens and narrows instead of jumping.
+ */
+export const menuSlotStyle = defineSlotStyle({
+  slot: "console-menu-slot",
+  base: "flex shrink-0 overflow-clip transition-[width] duration-[var(--dur-slow)] ease-[var(--ease)] [&>*]:shrink-0",
+  variants: {},
+  defaultVariants: {},
+});
+
+/**
+ * The mark beside the row the reader is on, sliding to the new row as the current one changes or as
+ * branches above it open and close. Classic marks the row by its ground alone and draws none.
+ */
+export const menuInkStyle = defineSlotStyle({
+  slot: "console-menu-ink",
+  // The shared selected indicator: a 2px accent bar at the column's inner edge that slides to the current row.
+  base: "start-1 m-0! block w-0.5 rounded-full bg-primary transition-[top,height,opacity] duration-[var(--dur-base)] ease-[var(--ease)]",
+  variants: {},
+  defaultVariants: {},
 });

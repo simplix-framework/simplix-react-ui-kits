@@ -1,6 +1,7 @@
 import { CLARITY_REPLACE, type DesignSpec } from "@simplix-react/ui/design";
 
 import { dashboardSlots } from "./clarity/dashboard";
+import { detailSlots } from "./clarity/detail";
 import { listSlots } from "./clarity/list";
 import { pageSlots } from "./clarity/page";
 import { shellSlots } from "./clarity/shell";
@@ -13,7 +14,7 @@ import { shellSlots } from "./clarity/shell";
 const spec: DesignSpec = {
   id: "clarity",
   replace: CLARITY_REPLACE,
-  slots: { ...shellSlots, ...pageSlots, ...listSlots, ...dashboardSlots },
+  slots: { ...shellSlots, ...pageSlots, ...listSlots, ...dashboardSlots, ...detailSlots },
 };
 
 export default spec;

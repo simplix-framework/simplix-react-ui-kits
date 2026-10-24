@@ -3,7 +3,7 @@ import { defineSlotStyle } from "@simplix-react/ui/design";
 /** The inset that keeps the folded strip a hair narrower than the rule it came out from under. */
 export const tileStripInsetStyle = defineSlotStyle({
   slot: "console-tile-strip-inset",
-  base: "px-3",
+  base: "px-0",
   variants: {},
   defaultVariants: {},
 });
@@ -30,7 +30,7 @@ export const tileRowStyle = defineSlotStyle({
      * What the folding row reaches up under: the distance {@link tileReachStyle} reached up by,
      * paid back so the tiles stand where they would stand unfolded. A titled row reaches nowhere.
      */
-    leads: { rule: "pt-8", lead: "pt-4", none: "" },
+    leads: { rule: "pt-12", lead: "pt-4", none: "" },
   },
   defaultVariants: { leads: "none" },
 });
@@ -43,7 +43,7 @@ export const tileReachStyle = defineSlotStyle({
   slot: "console-tile-reach",
   base: "",
   variants: {
-    leads: { rule: "-mt-8", lead: "-mt-4" },
+    leads: { rule: "-mt-5", lead: "-mt-4" },
   },
   defaultVariants: { leads: "rule" },
 });
@@ -51,12 +51,13 @@ export const tileReachStyle = defineSlotStyle({
 /** The handle hanging off the page rule that folds and unfolds the row. */
 export const tileHandleStyle = defineSlotStyle({
   slot: "console-tile-handle",
-  base: "transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset",
+  base: "transition-colors focus-visible:outline-none focus-visible:shadow-[var(--focus-halo)]",
   variants: {
     /** Hanging off the header's rule, or standing at the right of a titled row's head. */
     placement: {
-      rule: "top-0 under-rule end-6 h-4 w-11 rounded-b-md border border-t-0 bg-card hover:bg-accent/40",
-      head: "ms-auto h-7 gap-1 rounded-md px-2 text-xs text-muted-foreground hover:bg-accent hover:text-foreground",
+      // A quiet labelled button at the right above the figures.
+      rule: "end-0 top-3 h-6 w-auto gap-1 rounded-md border-0 bg-transparent px-2 text-xs text-muted-foreground hover:bg-accent hover:text-foreground",
+      head: "ms-auto h-6 gap-1 rounded-md px-2 text-xs text-muted-foreground hover:bg-accent hover:text-foreground",
     },
   },
   defaultVariants: { placement: "rule" },
@@ -65,9 +66,9 @@ export const tileHandleStyle = defineSlotStyle({
 /** The head over a titled row: its heading, the folded strip and the fold control on one line. */
 export const tileHeadStyle = defineSlotStyle({
   slot: "console-tile-head",
-  base: "min-h-7 gap-3",
+  base: "mt-1 min-h-7 gap-3 transition-[margin] duration-[var(--dur-base)] ease-[var(--ease)]",
   variants: {
-    folded: { true: "", false: "mb-2" },
+    folded: { true: "", false: "mb-2.5" },
   },
   defaultVariants: { folded: false },
 });
@@ -75,7 +76,7 @@ export const tileHeadStyle = defineSlotStyle({
 /** The folded figures in a titled row's head, one chip each. */
 export const tileChipsStyle = defineSlotStyle({
   slot: "console-tile-chips",
-  base: "gap-1.5",
+  base: "gap-1.5 [scrollbar-width:none]",
   variants: {},
   defaultVariants: {},
 });
@@ -83,7 +84,8 @@ export const tileChipsStyle = defineSlotStyle({
 /** One folded figure: its label and the figure. */
 export const tileChipStyle = defineSlotStyle({
   slot: "console-tile-chip",
-  base: "h-7 gap-2 rounded-full border bg-card px-3 text-xs transition-colors hover:bg-accent/40",
+  // Chips arrive one after another (35ms apart through `--i`) and leave together.
+  base: "h-7 gap-2 rounded-full border bg-card px-[11px] text-xs transition-[opacity,translate,border-color,background-color,scale] delay-[calc(var(--i)*35ms+80ms)] duration-[var(--dur-base)] ease-[var(--ease-spring)] hover:bg-accent/40 active:scale-[0.98] [[data-open=false]_&]:translate-y-1 [[data-open=false]_&]:opacity-0 [[data-open=false]_&]:delay-0",
   variants: {},
   defaultVariants: {},
 });
@@ -125,7 +127,7 @@ export const tileHandleLabelStyle = defineSlotStyle({
   base: "",
   variants: {
     /** Named in words beside a titled row's head; under the rule, only to assistive technology. */
-    placement: { rule: "sr-only", head: "whitespace-nowrap" },
+    placement: { rule: "whitespace-nowrap", head: "whitespace-nowrap" },
   },
   defaultVariants: { placement: "rule" },
 });
@@ -133,20 +135,69 @@ export const tileHandleLabelStyle = defineSlotStyle({
 /** The chevron on the handle; it points down when the row is folded and up when it is open. */
 export const tileHandleChevronStyle = defineSlotStyle({
   slot: "console-tile-handle-chevron",
-  base: "text-muted-foreground transition-transform duration-200",
+  base: "text-current transition-transform duration-[var(--dur-base)] ease-[var(--ease)]",
   variants: {
     folded: {
-      true: "group-hover:translate-y-0.5",
-      false: "rotate-180 group-hover:-translate-y-0.5",
+      true: "",
+      false: "rotate-180",
     },
   },
   defaultVariants: { folded: false },
 });
 
+/**
+ * Which shape an untitled row takes folded, as a pair of wrappers a design shows one of: the turning
+ * strip under the rule, or every figure as a chip on the control's line.
+ */
+export const tileTickerStyle = defineSlotStyle({
+  slot: "console-tile-ticker",
+  // Folded, every figure is a chip on the control's line; the turning strip is not drawn.
+  base: "hidden",
+  variants: {},
+  defaultVariants: {},
+});
+
+/** The chips an untitled row folds into, drawn in a design that shows them instead of the strip. */
+export const tileStripChipsStyle = defineSlotStyle({
+  slot: "console-tile-strip-chips",
+  base: "block pt-2.5 pe-32",
+  variants: {},
+  defaultVariants: {},
+});
+
+/**
+ * A tile's comparison, toned by what the movement means for the figure: worse, better or neither.
+ * Classic leaves it in the line's muted ink.
+ */
+export const tileTrendStyle = defineSlotStyle({
+  slot: "console-tile-trend",
+  as: "part",
+  base: "",
+  variants: {
+    // Toned by what the movement means for the figure, never by its direction alone.
+    verdict: {
+      worse: "text-destructive",
+      better: "text-[var(--success)]",
+      neutral: "text-muted-foreground",
+    },
+  },
+  defaultVariants: { verdict: "neutral" },
+});
+
+/** What a tile's figure was read from, after its comparison; classic sets it on a line of its own. */
+export const tileBasisStyle = defineSlotStyle({
+  slot: "console-tile-basis",
+  as: "part",
+  // On the comparison's line.
+  base: "ms-2.5 inline",
+  variants: {},
+  defaultVariants: {},
+});
+
 /** The folded strip: flush against the rule with no top edge of its own. */
 export const tileStripStyle = defineSlotStyle({
   slot: "console-tile-strip",
-  base: "under-rule rounded-b-lg border border-t-0 bg-card ps-3 pe-16 text-start transition-colors hover:bg-accent/40",
+  base: "mt-2 ps-0 pe-32 text-start transition-colors",
   variants: {},
   defaultVariants: {},
 });
@@ -158,7 +209,7 @@ export const tileStripStyle = defineSlotStyle({
  */
 export const tileStripDotStyle = defineSlotStyle({
   slot: "console-tile-strip-dot",
-  base: "size-1 rounded-full transition-all duration-300",
+  base: "size-1 rounded-full transition-all duration-[var(--dur-base)] ease-[var(--ease)]",
   variants: {
     current: { true: "w-3 bg-foreground/50", false: "bg-border" },
   },
@@ -188,7 +239,7 @@ export const tileStyle = defineSlotStyle({
     /** The tile being dragged to a new place. */
     dragging: { true: "opacity-40", false: "" },
     /** The tile a dragged one would land on. */
-    drop: { true: "rounded-lg ring-2 ring-ring", false: "" },
+    drop: { true: "rounded-lg shadow-[var(--focus-halo)]", false: "" },
   },
   defaultVariants: { emphasis: false, dragging: false, drop: false },
 });
@@ -199,7 +250,7 @@ export const tileStyle = defineSlotStyle({
  */
 export const tileGripStyle = defineSlotStyle({
   slot: "console-tile-grip",
-  base: "ms-auto size-5 cursor-grab rounded-sm text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100",
+  base: "ms-auto size-[22px] cursor-grab rounded-sm text-muted-foreground opacity-0 transition-[opacity,background-color,color] duration-[var(--dur-fast)] hover:bg-accent hover:text-foreground group-hover:opacity-100 group-focus-within:opacity-100",
   variants: {},
   defaultVariants: {},
 });
@@ -207,7 +258,8 @@ export const tileGripStyle = defineSlotStyle({
 /** The arrow on a tile that leads to a list, shown while the pointer is on it. */
 export const tileGoStyle = defineSlotStyle({
   slot: "console-tile-go",
-  base: "text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100",
+  // Slides 4px in as it shows.
+  base: "text-muted-foreground opacity-0 -translate-x-1 transition-[opacity,translate] duration-[var(--dur-base)] ease-[var(--ease)] group-hover:opacity-100 group-hover:translate-x-0 group-focus-visible:opacity-100 group-focus-visible:translate-x-0",
   variants: {},
   defaultVariants: {},
 });

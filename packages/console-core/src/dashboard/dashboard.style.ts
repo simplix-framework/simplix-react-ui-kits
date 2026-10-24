@@ -53,7 +53,7 @@ export const dashboardColumnsStyle = defineSlotStyle({
 /** One entry of the day's schedule. */
 export const scheduleRowStyle = defineSlotStyle({
   slot: "schedule-row",
-  base: "h-11 gap-3 rounded-md px-2.5 text-left text-sm transition-colors hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+  base: "h-11 gap-3 rounded-md px-2.5 text-left text-sm transition-colors hover:bg-muted/50 active:bg-muted focus-visible:outline-none focus-visible:shadow-[var(--focus-halo)]",
   variants: {
     past: { true: "text-muted-foreground", false: "" },
   },

@@ -201,12 +201,8 @@ export function DetailPeekDialog({
           <DialogTitle className="min-w-0 break-all">{title}</DialogTitle>
           {description ? <DialogDescription>{description}</DialogDescription> : null}
         </DialogHeader>
-        {/* What the header and the footer leave, rather than a fraction of the window. The panel
-            already caps itself against the viewport, so a second viewport fraction here is a
-            tighter ceiling on the same axis: the record's detail scrolled while the dialog stood
-            in an empty half-window. `vh` besides, which on a phone is the taller of the two
-            measures and puts the footer behind the address bar. */}
-        <Stack className="min-h-0 flex-1 overflow-y-auto">{children}</Stack>
+        {/* The dialog body scrolls between the fixed header and footer and marks its edges. */}
+        <Stack>{children}</Stack>
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             {closeLabel}

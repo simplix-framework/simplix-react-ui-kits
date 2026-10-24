@@ -50,6 +50,8 @@ import {
   ConsoleMenuLinkRow,
   ConsoleMenuRail,
   ConsoleMenuRailButton,
+  ConsoleMenuFold,
+  ConsoleMenuSlot,
 } from "./menu-tree";
 import { useSidebarCollapse } from "./sidebar-collapse";
 import { consoleWindowStyle } from "./console-window.style";
@@ -352,40 +354,43 @@ export function ConsolePreviewWindowChrome({
         helpOpen={manualOpen}
       />
       <Flex gap="none" flex overflow="hidden">
-        {menu.groups.length > 0 &&
-          (collapsed ? (
-            <ConsoleMenuRail
-              label={labels.rail}
-              lead={
-                <Button variant="ghost" size="icon-sm" onClick={toggle} aria-label={labels.expand} title={labels.expand}>
-                  <PanelLeftOpenIcon />
-                </Button>
-              }
-            >
-              {menu.groups.map((group) => (
-                <RailGroup key={group.key} group={group} current={chrome.current} />
-              ))}
-            </ConsoleMenuRail>
-          ) : (
-            <ConsoleMenuColumn
-              label={labels.menu}
-              title={menu.title}
-              action={
-                <Button variant="ghost" size="icon-xs" onClick={toggle} aria-label={labels.collapse} title={labels.collapse}>
-                  <PanelLeftCloseIcon />
-                </Button>
-              }
-            >
-              {menu.groups.map((group) => (
-                <MenuGroup
-                  key={group.key}
-                  group={group}
-                  single={menu.groups.length === 1}
-                  current={chrome.current}
-                />
-              ))}
-            </ConsoleMenuColumn>
-          ))}
+        {menu.groups.length > 0 && (
+          <ConsoleMenuSlot>
+            {collapsed ? (
+              <ConsoleMenuRail
+                label={labels.rail}
+                lead={
+                  <Button variant="ghost" size="icon-sm" onClick={toggle} aria-label={labels.expand} title={labels.expand}>
+                    <PanelLeftOpenIcon />
+                  </Button>
+                }
+              >
+                {menu.groups.map((group) => (
+                  <RailGroup key={group.key} group={group} current={chrome.current} />
+                ))}
+              </ConsoleMenuRail>
+            ) : (
+              <ConsoleMenuColumn
+                label={labels.menu}
+                title={menu.title}
+                action={
+                  <Button variant="ghost" size="icon-xs" onClick={toggle} aria-label={labels.collapse} title={labels.collapse}>
+                    <PanelLeftCloseIcon />
+                  </Button>
+                }
+              >
+                {menu.groups.map((group) => (
+                  <MenuGroup
+                    key={group.key}
+                    group={group}
+                    single={menu.groups.length === 1}
+                    current={chrome.current}
+                  />
+                ))}
+              </ConsoleMenuColumn>
+            )}
+          </ConsoleMenuSlot>
+        )}
         {children}
         {manualOpen && <ManualPanel route={chrome.manualRoute ?? "/"} />}
       </Flex>
@@ -634,13 +639,13 @@ function MenuGroup({
       {single ? null : (
         <ConsoleMenuBranchRow weight="cluster" icon={group.icon} label={group.label} open={open} onToggle={() => setOpen(!open)} />
       )}
-      {(single || open) && (
+      <ConsoleMenuFold open={single || open}>
         <ConsoleMenuBranch ruled={!single}>
           {group.entries.map((entry) => (
             <EntryRow key={entry.key} entry={entry} current={current} />
           ))}
         </ConsoleMenuBranch>
-      )}
+      </ConsoleMenuFold>
     </Stack>
   );
 }
@@ -671,13 +676,13 @@ function EntryRow({ entry, current }: { readonly entry: ConsolePreviewMenuEntry;
     return (
       <Stack gap="xs">
         <ConsoleMenuBranchRow icon={entry.icon} label={entry.label} open={open} onToggle={() => setOpen(!open)} />
-        {open && (
+        <ConsoleMenuFold open={open}>
           <ConsoleMenuBranch ruled>
             {entry.children.map((child) => (
               <EntryRow key={child.key} entry={child} current={current} />
             ))}
           </ConsoleMenuBranch>
-        )}
+        </ConsoleMenuFold>
       </Stack>
     );
   }

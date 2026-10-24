@@ -20,7 +20,7 @@ export const displaySettingsGroupStyle = defineSlotStyle({
 /** A theme as a card: its swatch and its name, pressed while it is the theme in force. */
 export const displaySettingsThemeStyle = defineSlotStyle({
   slot: "console-display-settings-theme",
-  base: "gap-2 rounded-md border px-2 py-1.5 text-xs text-foreground [transition:border-color_var(--dur-fast)_var(--ease),background-color_var(--dur-fast)_var(--ease)] hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+  base: "gap-2 rounded-md border px-2 py-1.5 text-xs text-foreground [transition:border-color_var(--dur-fast)_var(--ease),background-color_var(--dur-fast)_var(--ease)] hover:bg-accent focus-visible:outline-none focus-visible:shadow-[var(--focus-halo)]",
   variants: {
     selected: { true: "border-primary bg-accent font-semibold", false: "border-border" },
   },

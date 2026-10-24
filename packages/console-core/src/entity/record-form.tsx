@@ -1,6 +1,6 @@
 import { useState, type FormEvent, type ReactNode } from "react";
 import { useTranslation } from "@simplix-react/i18n/react";
-import { Button, CrudForm, Flex, FormFields, Heading } from "@simplix-react/ui";
+import { Button, CrudForm, Flex, FormFields, Heading, Stack } from "@simplix-react/ui";
 
 import { RecordNote, RecordNotices, RecordVerbButton, type RecordNotice, type RecordVerb } from "./record-blocks";
 import { PACKAGE_NAMESPACE } from "./locales";
@@ -188,8 +188,9 @@ export function SettingsForm({ sections, notices, note, onSave }: SettingsFormPr
   const [saved, setSaved] = useState(() => initialValues(sections));
   const form = useRecordFormValues(sections);
   const changed = Object.keys(form.values).some((key) => JSON.stringify(form.values[key]) !== JSON.stringify(saved[key]));
+  // Sections stand apart by the form's section gap, as they do in every other form.
   return (
-    <>
+    <Stack gap="md">
       <RecordNotices notices={notices} />
       <RecordFormSections sections={sections} form={form} />
       <RecordNote text={note} />
@@ -215,6 +216,6 @@ export function SettingsForm({ sections, notices, note, onSave }: SettingsFormPr
           </Button>
         </Flex>
       ) : null}
-    </>
+    </Stack>
   );
 }
