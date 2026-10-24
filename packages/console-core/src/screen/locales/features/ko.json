@@ -46,5 +46,19 @@
     "completed": "제출했습니다",
     "pendingSync": "동기화 대기",
     "pendingSyncBody": "연결되면 자동으로 전송합니다"
+  },
+  "formSheet": {
+    "writerOnly": "{{roles}} 입력 칸",
+    "stagePassed": "단계가 지나 잠긴 칸입니다",
+    "held": "해석 보류",
+    "viewForm": "서식",
+    "viewSource": "원문 보기",
+    "print": "인쇄",
+    "sign": "서명",
+    "signTitle": "{{label}} 서명",
+    "version": "제출본 {{version}}",
+    "templateVersion": "서식 {{version}}",
+    "noSource": "원문 쪽 이미지가 없습니다",
+    "sourcePage": "원문 {{page}}쪽"
   }
 }

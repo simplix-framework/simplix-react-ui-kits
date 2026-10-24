@@ -403,6 +403,9 @@
   [data-slot="console-ai-marking-glyph"][data-slot][data-s-console-ai-marking-glyph] {
     @apply mr-1;
   }
+  [data-slot="console-form-sheet-held"][data-slot][data-s-console-form-sheet-held] {
+    @apply text-warning;
+  }
   [data-slot="console-history-dot"][data-slot][data-s-console-history-dot] {
     @apply mt-1.5 rounded-full border-2;
   }
@@ -839,6 +842,15 @@
   }
   :where([data-part="console-explanation-body"])[data-part][data-p-console-explanation-body] {
     @apply pt-3 pb-1;
+  }
+  :where([data-part="console-form-sheet-cell"])[data-part][data-p-console-form-sheet-cell] {
+    @apply align-top border;
+  }
+  :where([data-part="console-form-sheet-cell"][data-part-header="true"])[data-part][data-p-console-form-sheet-cell] {
+    @apply bg-[var(--surface-2)] font-medium;
+  }
+  :where([data-part="console-form-sheet-source-image"])[data-part][data-p-console-form-sheet-source-image] {
+    @apply block w-full object-contain;
   }
   :where([data-part="console-history-lane"])[data-part][data-p-console-history-lane] {
     @apply ml-2 border-l-2;

@@ -46,5 +46,19 @@
     "completed": "Submitted",
     "pendingSync": "Waiting to sync",
     "pendingSyncBody": "It is sent automatically once connected"
+  },
+  "formSheet": {
+    "writerOnly": "{{roles}} cell",
+    "stagePassed": "Locked: its stage has passed",
+    "held": "Interpretation pending",
+    "viewForm": "Form",
+    "viewSource": "View source",
+    "print": "Print",
+    "sign": "Sign",
+    "signTitle": "Sign {{label}}",
+    "version": "Submission {{version}}",
+    "templateVersion": "Template {{version}}",
+    "noSource": "No source page images",
+    "sourcePage": "Source page {{page}}"
   }
 }

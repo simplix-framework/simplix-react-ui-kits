@@ -46,5 +46,19 @@
     "completed": "提出しました",
     "pendingSync": "同期待ち",
     "pendingSyncBody": "接続すると自動で送信します"
+  },
+  "formSheet": {
+    "writerOnly": "{{roles}} 入力欄",
+    "stagePassed": "段階を過ぎたためロックされています",
+    "held": "解釈保留",
+    "viewForm": "書式",
+    "viewSource": "原文を見る",
+    "print": "印刷",
+    "sign": "署名",
+    "signTitle": "{{label}} 署名",
+    "version": "提出版 {{version}}",
+    "templateVersion": "書式 {{version}}",
+    "noSource": "原文ページ画像がありません",
+    "sourcePage": "原文 {{page}} ページ"
   }
 }

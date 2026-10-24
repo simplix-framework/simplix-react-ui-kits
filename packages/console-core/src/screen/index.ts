@@ -63,6 +63,24 @@ export {
   type PrintOverflow,
   type ViewerFit,
 } from "./print-preview";
+export { FormSheet, type FormSheetProps, type FormSheetSourcePage, type FormSheetSubmission } from "./form-sheet";
+export {
+  cellAccess,
+  derivedText,
+  editableCells,
+  hasStagePassed,
+  missingForTransition,
+  sheetBlocks,
+  type DerivedText,
+  type FormSheetBlock,
+  type FormSheetCellAccess,
+  type FormSheetCellMode,
+  type FormSheetCellPlace,
+  type FormSheetContext,
+  type FormSheetDefinition,
+  type FormSheetField,
+  type FormSheetTableRow,
+} from "./form-sheet-model";
 export { ReadOnlyBanner, type ReadOnlyMode } from "./read-only-banner";
 export { Roster, type RosterCell, type RosterCellTone, type RosterColumn, type RosterRow } from "./roster";
 export { ScoreSheet, type ScoreEntryChange, type ScoreSheetProps } from "./score-sheet";

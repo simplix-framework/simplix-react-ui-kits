@@ -1,0 +1,27 @@
+import { defineSlotStyle } from "@simplix-react/ui/design";
+
+/** A derived cell whose value is held: drawn in the warning tone, never as 0. */
+export const formSheetHeldStyle = defineSlotStyle({
+  slot: "console-form-sheet-held",
+  base: "text-warning",
+  variants: {},
+  defaultVariants: {},
+});
+
+/** One cell of a source table, top-aligned so merged cells read like the source. */
+export const formSheetCellStyle = defineSlotStyle({
+  slot: "console-form-sheet-cell",
+  as: "part",
+  base: "align-top border",
+  variants: { header: { true: "bg-muted/50 font-medium", false: "" } },
+  defaultVariants: { header: false },
+});
+
+/** A source page image, fitted to its sheet. */
+export const formSheetSourceImageStyle = defineSlotStyle({
+  slot: "console-form-sheet-source-image",
+  as: "part",
+  base: "block w-full object-contain",
+  variants: {},
+  defaultVariants: {},
+});
