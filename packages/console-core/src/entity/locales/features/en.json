@@ -19,5 +19,17 @@
     "selected": "selected",
     "clearSelection": "Clear selection",
     "undo": "Undo"
+  },
+  "stageGate": {
+    "title": "Left before {{command}}",
+    "summary": "Met {{met, number}} · Unmet {{unmet, number}} · Held {{held, number}}",
+    "item": "{{state}} · {{label}}",
+    "blockedUnmet": "Fill {{count, number}} unmet condition(s) to run this",
+    "blockedHeld": "{{count, number}} condition(s) held for interpretation must be settled to run this",
+    "state": {
+      "met": "Met",
+      "unmet": "Unmet",
+      "held": "Held for interpretation"
+    }
   }
 }

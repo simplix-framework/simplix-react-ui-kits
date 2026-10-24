@@ -18,5 +18,17 @@
     "selected": "件選択",
     "clearSelection": "選択解除",
     "undo": "元に戻す"
+  },
+  "stageGate": {
+    "title": "{{command}}の前に残る条件",
+    "summary": "充足 {{met, number}} · 未充足 {{unmet, number}} · 解釈保留 {{held, number}}",
+    "item": "{{state}} · {{label}}",
+    "blockedUnmet": "未充足の条件 {{count, number}}件を満たすと実行できます",
+    "blockedHeld": "解釈保留の条件 {{count, number}}件が確定すると実行できます",
+    "state": {
+      "met": "充足",
+      "unmet": "未充足",
+      "held": "解釈保留"
+    }
   }
 }

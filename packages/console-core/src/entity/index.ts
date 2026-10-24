@@ -39,3 +39,7 @@ export { RecordForm, RecordFormSections, SettingsForm, useRecordFormValues } fro
 export type { RecordFormField, RecordFormProps, RecordFormSection, RecordOption, SettingsFormProps } from "./record-form";
 export { PermissionMatrix } from "./permission-matrix";
 export type { PermissionCell, PermissionMatrixProps } from "./permission-matrix";
+export { StageGate } from "./stage-gate";
+export type { StageCondition, StageGateProps } from "./stage-gate";
+export { stageGateVerdict } from "./stage-gate-verdict";
+export type { StageConditionState, StageGateVerdict } from "./stage-gate-verdict";
