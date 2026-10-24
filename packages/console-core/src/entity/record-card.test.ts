@@ -30,4 +30,10 @@ describe("cardLayout", () => {
     expect(layout.lines.map((l) => l.key)).toEqual(["t"]);
     expect(layout.badges.map((b) => b.key)).toEqual(["s"]);
   });
+
+  it("gives a long value the card's full width and a short one a grid cell", () => {
+    const lines = cardLayout(columns).lines;
+    expect(lines.find((l) => l.key === "date")?.wide).toBe(false);
+    expect(cardLayout([{ key: "c", header: "계약", value: { link: "가상 협력업체 A · 보일러 정비 용역" } }]).lines[0].wide).toBe(true);
+  });
 });

@@ -404,7 +404,7 @@ export function RecordList<Row>({
                     {layout.lines.length > 0 ? (
                       <Grid columns={2} gap="xs">
                         {layout.lines.map((line) => (
-                          <Flex key={line.key} align="center" gap="sm" minSize>
+                          <Flex key={line.key} align="center" gap="sm" minSize className={line.wide ? "col-span-2" : undefined}>
                             {/* A fixed label measure, so the values line up down each column of the grid. */}
                             <Text as="span" size="caption" tone="muted" className="w-16 shrink-0">
                               {line.header}
