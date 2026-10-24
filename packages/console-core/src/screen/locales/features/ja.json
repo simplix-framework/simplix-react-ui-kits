@@ -1,0 +1,20 @@
+{
+  "scoreSheet": {
+    "category": "分野",
+    "maxScore": "配点",
+    "resolved": "確定点",
+    "action": "確定",
+    "resolve": "確定する",
+    "subtotal": "{{category}} 小計",
+    "total": "合計",
+    "held": "解釈保留",
+    "unresolved": "未確定項目 {{count, number}}",
+    "evidence": "証憑 {{count, number}}件",
+    "score": "点数",
+    "rating": "等級",
+    "reason": "根拠",
+    "outOfRange": "{{min}}~{{max}} の範囲の点数のみ入力できます",
+    "basis": { "RAW": "原入力", "APPROVED_POLICY": "承認済み方針", "COMMITTEE_RESOLUTION": "委員会決議" },
+    "result": { "PASS": "適合", "FAIL": "不適合", "REVIEW_REQUIRED": "要検討" }
+  }
+}

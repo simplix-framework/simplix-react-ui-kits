@@ -65,6 +65,28 @@ export {
 } from "./print-preview";
 export { ReadOnlyBanner, type ReadOnlyMode } from "./read-only-banner";
 export { Roster, type RosterCell, type RosterCellTone, type RosterColumn, type RosterRow } from "./roster";
+export { ScoreSheet, type ScoreEntryChange, type ScoreSheetProps } from "./score-sheet";
+export {
+  evaluatorsOf,
+  figureText,
+  groupByCategory,
+  isScoreInRange,
+  scoreVisibility,
+  subtotalRows,
+  unresolvedCount,
+  type CategoryGroup,
+  type FigureText,
+  type RawScore,
+  type ResolvedBasis,
+  type ResolvedScore,
+  type ScoreCriterion,
+  type ScoreHold,
+  type ScoreResult,
+  type ScoreRule,
+  type ScoreSheetMode,
+  type ScoreTotals,
+  type ScoreVisibility,
+} from "./score-sheet-model";
 export { ScheduleBoard, type NonWorkingDay, type ScheduleEntry } from "./schedule-board";
 export {
   StatuteBasisButton,

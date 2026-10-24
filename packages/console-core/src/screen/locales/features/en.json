@@ -1,0 +1,20 @@
+{
+  "scoreSheet": {
+    "category": "Category",
+    "maxScore": "Max",
+    "resolved": "Resolved",
+    "action": "Resolve",
+    "resolve": "Resolve",
+    "subtotal": "{{category}} subtotal",
+    "total": "Total",
+    "held": "Interpretation on hold",
+    "unresolved": "{{count, number}} items unresolved",
+    "evidence": "{{count, number}} evidence",
+    "score": "Score",
+    "rating": "Rating",
+    "reason": "Reason",
+    "outOfRange": "Only scores from {{min}} to {{max}} are accepted",
+    "basis": { "RAW": "Raw entry", "APPROVED_POLICY": "Approved policy", "COMMITTEE_RESOLUTION": "Committee resolution" },
+    "result": { "PASS": "Pass", "FAIL": "Fail", "REVIEW_REQUIRED": "Review required" }
+  }
+}

@@ -460,6 +460,9 @@
   [data-slot="console-print-warn-mark"][data-slot][data-s-console-print-warn-mark] {
     @apply text-warning;
   }
+  [data-slot="console-score-pending"][data-slot][data-s-console-score-pending] {
+    @apply text-warning;
+  }
   [data-slot="console-search-hit"][data-hit="true"][data-s-console-search-hit] {
     @apply rounded-sm bg-warning/30 px-0.5 font-medium;
   }
@@ -821,6 +824,12 @@
   }
   :where([data-part="console-roster-unassigned"])[data-part][data-p-console-roster-unassigned] {
     @apply text-muted-foreground;
+  }
+  :where([data-part="console-score-summary-row"])[data-part][data-p-console-score-summary-row] {
+    @apply bg-muted/50 font-medium;
+  }
+  :where([data-part="console-score-summary-row"][data-part-total="true"])[data-part][data-p-console-score-summary-row] {
+    @apply border-t-2;
   }
   :where([data-part="console-source-badge"])[data-part][data-p-console-source-badge] {
     @apply gap-1.5;
