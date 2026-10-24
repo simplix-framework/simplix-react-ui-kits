@@ -11,13 +11,20 @@ export const WIDE_DETAIL_WIDTH = 880;
  * little more than the panel's width reads as a sheet rather than a strip; widened further it
  * covers the list it was opened from. A tab strip wider than this scrolls with arrows instead.
  */
-export const DRAWER_DETAIL_WIDTH = 880;
+export const DRAWER_DETAIL_WIDTH = 720;
+
+/**
+ * The width a record opens at beside the list, whatever its tabs: wide enough for a two-column
+ * field grid, narrow enough that the list keeps its table at console widths.
+ */
+export const PANEL_DETAIL_WIDTH = 600;
 
 /** The px a record opens at, by presentation and width; undefined leaves the framework's own. */
 export function detailWidthPx(presentation: string, width: DetailWidth): number | undefined {
   if (presentation === "drawer") return DRAWER_DETAIL_WIDTH;
-  // A panel takes its width from the list beside it, so it stays at the framework's width and lets
-  // a wide tab strip scroll; only a dialog, which covers nothing it needs, opens wider.
+  // A panel takes its width from the list beside it, so it keeps one width and lets a wide tab
+  // strip scroll; only a dialog, which covers nothing it needs, opens wider.
+  if (presentation === "panel") return PANEL_DETAIL_WIDTH;
   return presentation === "dialog" && width === "wide" ? WIDE_DETAIL_WIDTH : undefined;
 }
 

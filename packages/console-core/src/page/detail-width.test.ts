@@ -15,12 +15,12 @@ describe("detailWidthFor", () => {
 
 describe("detailWidthPx", () => {
   it("opens a drawer at one width whatever its tabs", () => {
-    expect(detailWidthPx("drawer", "regular")).toBe(880);
-    expect(detailWidthPx("drawer", "wide")).toBe(880);
+    expect(detailWidthPx("drawer", "regular")).toBe(720);
+    expect(detailWidthPx("drawer", "wide")).toBe(720);
   });
-  it("keeps a panel at the framework width whatever its tabs, and widens only a wide dialog", () => {
-    expect(detailWidthPx("panel", "regular")).toBeUndefined();
-    expect(detailWidthPx("panel", "wide")).toBeUndefined();
+  it("keeps a panel at one width whatever its tabs, and widens only a wide dialog", () => {
+    expect(detailWidthPx("panel", "regular")).toBe(600);
+    expect(detailWidthPx("panel", "wide")).toBe(600);
     expect(detailWidthPx("dialog", "regular")).toBeUndefined();
     expect(detailWidthPx("dialog", "wide")).toBe(880);
   });

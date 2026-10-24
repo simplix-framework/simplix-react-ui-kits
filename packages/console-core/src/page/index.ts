@@ -1,6 +1,6 @@
 export { ConsolePage } from "./console-page";
 export { CrudPage, useCrudPresentation } from "./crud-page";
-export { DRAWER_DETAIL_WIDTH, REGULAR_DETAIL_WIDTH, WIDE_DETAIL_WIDTH, detailWidthFor, detailWidthPx, type DetailWidth } from "./detail-width";
+export { DRAWER_DETAIL_WIDTH, PANEL_DETAIL_WIDTH, REGULAR_DETAIL_WIDTH, WIDE_DETAIL_WIDTH, detailWidthFor, detailWidthPx, type DetailWidth } from "./detail-width";
 export { RecordPage } from "./record-page";
 export type { RecordPageHeader, RecordPageProps } from "./record-page";
 export { PageAction } from "./page-action";
