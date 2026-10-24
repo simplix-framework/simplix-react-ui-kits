@@ -20,6 +20,6 @@ describe("detailWidthPx", () => {
   });
   it("leaves a regular panel and dialog at the framework width and widens a wide one", () => {
     expect(detailWidthPx("panel", "regular")).toBeUndefined();
-    expect(detailWidthPx("dialog", "wide")).toBe(1040);
+    expect(detailWidthPx("dialog", "wide")).toBe(880);
   });
 });

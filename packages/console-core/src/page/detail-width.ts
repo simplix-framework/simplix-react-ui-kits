@@ -4,7 +4,7 @@ export type DetailWidth = "regular" | "wide";
 /** The framework's detail width (ListDetail's DETAIL_PANEL_WIDTH), which a regular record opens at. */
 export const REGULAR_DETAIL_WIDTH = 768;
 /** The width a record opens at when its tab strip or its parts need more than the regular width. */
-export const WIDE_DETAIL_WIDTH = 1040;
+export const WIDE_DETAIL_WIDTH = 880;
 
 /**
  * The width a record opens at in a drawer, whatever its tabs. A drawer lies over the list, so a
