@@ -316,7 +316,7 @@ export function RecordDetail({
   const footerTabVerbs = verbsInFooter ? tabs?.find((tab) => tab.key === openTab)?.verbs : undefined;
   const body = tabs && tabs.length > 0 ? (
     <Tabs value={openTab} onValueChange={setOpenTab}>
-      <TabsList variant="underline">
+      <TabsList variant="underline" scrollArrows>
         {tabs.map((tab) => (
           <CountedTab key={tab.key} value={tab.key} label={tab.label} count={tab.count} />
         ))}

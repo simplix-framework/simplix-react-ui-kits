@@ -2,6 +2,7 @@ import { createContext, useContext, type ReactNode } from "react";
 import { ListDetail, useCrudNavigation, useCrudPageState, useUIDefaults } from "@simplix-react/ui";
 
 import { ConsolePage } from "./console-page";
+import { detailWidthPx, type DetailWidth } from "./detail-width";
 import type { ConsoleSearch, PageSpec } from "./types";
 
 /** Where a {@link CrudPage} opens the record a reader picked. */
@@ -46,6 +47,12 @@ export interface CrudPageProps {
   readonly presentation?: CrudPagePresentation;
   /** A fixed list width in px while a record stands open beside it. */
   readonly listWidth?: number;
+  /**
+   * How wide the record opens, in every presentation but the page: `regular` is the framework's
+   * detail width, `wide` the width a record with many tabs or wide parts needs. Use
+   * {@link detailWidthFor} to choose it from the record's tab labels.
+   */
+  readonly detailWidth?: DetailWidth;
   readonly renderList: (nav: CrudPageNavigation) => ReactNode;
   readonly renderDetail: (id: string, nav: CrudPageNavigation) => ReactNode;
   readonly renderNew?: (nav: CrudPageNavigation) => ReactNode;
@@ -66,6 +73,7 @@ export function CrudPage({
   onNavigate,
   presentation,
   listWidth,
+  detailWidth = "regular",
   renderList,
   renderDetail,
   renderNew,
@@ -105,7 +113,7 @@ export function CrudPage({
         variant={shown}
         activePanel={nav.view === "list" ? "list" : "detail"}
         onClose={nav.showList}
-        {...(listWidth ? { listWidth } : {})}
+        {...(listWidth ? { listWidth } : detailWidthPx(shown, detailWidth) ? { detailWidth: detailWidthPx(shown, detailWidth) } : {})}
       >
         <ListDetail.List>{renderList(handed)}</ListDetail.List>
         <ListDetail.Detail>{record}</ListDetail.Detail>

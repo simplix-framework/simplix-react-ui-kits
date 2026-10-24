@@ -35,14 +35,7 @@ interface PageTabStripProps {
  */
 export function PageTabStrip({ children, fromStart }: PageTabStripProps) {
   return (
-    <TabsList
-      variant="full"
-      className={
-        fromStart
-          ? "max-w-full shrink-0 justify-start overflow-x-auto"
-          : "max-w-full shrink-0 overflow-x-auto"
-      }
-    >
+    <TabsList variant="full" scrollArrows className={fromStart ? "max-w-full shrink-0 justify-start" : "max-w-full shrink-0"}>
       {children}
     </TabsList>
   );
