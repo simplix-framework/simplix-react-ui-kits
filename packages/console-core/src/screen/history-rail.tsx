@@ -76,7 +76,7 @@ const HEADING_TONE: Readonly<Record<HistoryNodeState, "default" | "muted" | "pri
   skip: "muted",
 };
 
-interface HistoryRailProps {
+export interface HistoryRailProps {
   readonly nodes: readonly HistoryNode[];
 }
 

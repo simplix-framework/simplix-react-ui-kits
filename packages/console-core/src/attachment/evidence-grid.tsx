@@ -52,7 +52,7 @@ const KIND_ICON: Readonly<Record<EvidenceKind, IconName>> = {
   signature: "pen-line",
 };
 
-interface EvidenceGridProps {
+export interface EvidenceGridProps {
   /** What the group is called — 현장 사진, 파일과 서명. */
   readonly title?: string;
   readonly items: readonly EvidenceItem[];

@@ -37,7 +37,7 @@ export {
 } from "./edit-conflict";
 export { chipFilterValues } from "@simplix-react/ui";
 export { FeatureLock } from "./feature-lock";
-export { HistoryRail, type HistoryLane, type HistoryNode, type HistoryNodeState } from "./history-rail";
+export { HistoryRail, type HistoryLane, type HistoryNode, type HistoryNodeState, type HistoryRailProps } from "./history-rail";
 export { ImpactAnalysis, type ImpactGroup, type ImpactKind, type ImpactRow } from "./impact-analysis";
 export { JobTray, JobTrayRow, type JobState, type TrayJob } from "./job-tray";
 export {

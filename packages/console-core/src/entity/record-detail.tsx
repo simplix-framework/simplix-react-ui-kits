@@ -26,6 +26,14 @@ import { BoundedDialogContent } from "../layout/bounded-dialog-content";
 import { recordHeadStyle, recordHeadSubtitleStyle, recordSublistStyle } from "./record-detail.style";
 import { RecordList, RecordListNestingContext, type RecordAction, type RecordColumn, type RecordListProps } from "./record-list";
 import { RecordValueView, type RecordValue } from "./record-value";
+import { StageGate, type StageGateProps } from "./stage-gate";
+import { EvidenceGrid, type EvidenceGridProps } from "../attachment/evidence-grid";
+import { ApprovalFlow, type ApprovalFlowProps } from "../layout/approval-flow";
+import { CheckMatrix, type CheckMatrixProps } from "../layout/check-matrix";
+import { MeasurementGrid, type MeasurementGridProps } from "../layout/measurement-grid";
+import { FormSheet, type FormSheetProps } from "../screen/form-sheet";
+import { HistoryRail, type HistoryRailProps } from "../screen/history-rail";
+import { ScoreSheet, type ScoreSheetProps } from "../screen/score-sheet";
 
 /** One labelled value of a {@link RecordDetail} section. */
 export interface RecordField {
@@ -56,6 +64,20 @@ export interface RecordTabContent {
   readonly afterSections?: readonly RecordSection[];
   readonly notices?: readonly RecordNotice[];
   readonly note?: string;
+  /**
+   * The kit's record parts a tab holds without the screen composing them, drawn in this order
+   * above the sections: the approval steps, the gate of the next command, then below the sections
+   * the source form, the measurement grid, the score sheet, the check grid, the evidence and the
+   * record's history.
+   */
+  readonly flow?: ApprovalFlowProps;
+  readonly gate?: StageGateProps;
+  readonly sheet?: FormSheetProps;
+  readonly measurements?: MeasurementGridProps;
+  readonly score?: ScoreSheetProps;
+  readonly checkMatrix?: CheckMatrixProps;
+  readonly evidence?: EvidenceGridProps;
+  readonly history?: HistoryRailProps;
 }
 
 /** One tab of a {@link RecordDetail}. */
@@ -241,7 +263,13 @@ function SubList({ list, count }: { readonly list: RecordListProps<any>; readonl
 function Content({ content, count }: { readonly content: RecordTabContent; readonly count?: number }): ReactNode {
   return (
     <Stack gap="sm">
+      {content.flow ? <ApprovalFlow {...content.flow} /> : null}
+      {content.gate ? <StageGate {...content.gate} /> : null}
       <Sections sections={content.sections} />
+      {content.sheet ? <FormSheet {...content.sheet} /> : null}
+      {content.measurements ? <MeasurementGrid {...content.measurements} /> : null}
+      {content.score ? <ScoreSheet {...content.score} /> : null}
+      {content.checkMatrix ? <CheckMatrix {...content.checkMatrix} /> : null}
       {content.list ? <SubList list={content.list} count={count} /> : null}
       {content.matrix ? (
         <Stack gap="xs">
@@ -250,6 +278,8 @@ function Content({ content, count }: { readonly content: RecordTabContent; reado
         </Stack>
       ) : null}
       <Sections sections={content.afterSections} />
+      {content.evidence ? <EvidenceGrid {...content.evidence} /> : null}
+      {content.history ? <HistoryRail {...content.history} /> : null}
       <RecordNotices notices={content.notices} />
       <RecordNote text={content.note} />
     </Stack>
