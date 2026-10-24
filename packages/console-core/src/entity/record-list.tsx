@@ -45,6 +45,10 @@ export interface RecordColumn<Row> {
 export type RecordFilter<Row> =
   | { readonly kind: "text"; readonly field: keyof Row & string; readonly label: string }
   | { readonly kind: "number"; readonly field: keyof Row & string; readonly label: string }
+  /** A period: rows whose `yyyy-MM-dd` (or ISO date-time) value falls between the picked days. */
+  | { readonly kind: "dateRange"; readonly field: keyof Row & string; readonly label: string; readonly dateOnly?: boolean }
+  /** On or off: rows whose boolean value is true while the toggle is on. */
+  | { readonly kind: "toggle"; readonly field: keyof Row & string; readonly label: string }
   | {
       readonly kind: "choice";
       readonly field: keyof Row & string;
@@ -195,6 +199,12 @@ function cellOf<Row>(column: RecordColumn<Row>, row: Row): ReactNode {
 function filterDef<Row>(filter: RecordFilter<Row>): FilterDef {
   if (filter.kind === "choice") {
     return { type: "faceted", field: filter.field, label: filter.label, options: [...filter.options], multiSelect: true };
+  }
+  if (filter.kind === "dateRange") {
+    return { type: "dateRange", field: filter.field, label: filter.label, dateOnly: filter.dateOnly ?? true };
+  }
+  if (filter.kind === "toggle") {
+    return { type: "toggle", field: filter.field, label: filter.label };
   }
   if (filter.kind === "number") {
     return {
