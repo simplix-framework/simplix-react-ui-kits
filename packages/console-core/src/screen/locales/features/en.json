@@ -29,5 +29,22 @@
     "held": "Interpretation on hold",
     "missing": "Not set",
     "openBasis": "Open the basis clause"
+  },
+  "phoneTask": {
+    "syncPending": "{{count, number}} waiting to sync",
+    "syncPendingBody": "They are sent automatically once connected",
+    "empty": "Nothing to do today",
+    "overdue": "Overdue",
+    "noDue": "No due time",
+    "opens": "Open {{screen}}"
+  },
+  "phoneStep": {
+    "progress": "Step {{index, number}} of {{count, number}}",
+    "back": "Back",
+    "next": "Next",
+    "measurementMissing": "{{count, number}} cells have no reading",
+    "completed": "Submitted",
+    "pendingSync": "Waiting to sync",
+    "pendingSyncBody": "It is sent automatically once connected"
   }
 }

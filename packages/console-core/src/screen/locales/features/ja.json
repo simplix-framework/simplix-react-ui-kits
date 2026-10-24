@@ -29,5 +29,22 @@
     "held": "解釈保留",
     "missing": "未確定",
     "openBasis": "根拠条項を開く"
+  },
+  "phoneTask": {
+    "syncPending": "同期待ち {{count, number}}件",
+    "syncPendingBody": "接続すると自動で送信します",
+    "empty": "今日のタスクはありません",
+    "overdue": "期限切れ",
+    "noDue": "期限なし",
+    "opens": "{{screen}}を開く"
+  },
+  "phoneStep": {
+    "progress": "{{index, number}} / {{count, number}} ステップ",
+    "back": "戻る",
+    "next": "次へ",
+    "measurementMissing": "測定値が未入力のセル {{count, number}}個",
+    "completed": "提出しました",
+    "pendingSync": "同期待ち",
+    "pendingSyncBody": "接続すると自動で送信します"
   }
 }

@@ -68,7 +68,8 @@ export interface ConsolePhoneTab {
   readonly badge?: number;
 }
 
-interface ConsolePhoneShellProps {
+/** Props for {@link ConsolePhoneShell}. */
+export interface ConsolePhoneShellProps {
   /** What the bar at the top says this screen is — the page header's own title. */
   readonly title: ReactNode;
   /** Whether there is somewhere to go back to. */

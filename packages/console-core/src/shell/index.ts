@@ -84,6 +84,7 @@ export {
   PhoneStripScroller,
   TOUCH_TARGET,
   useConsoleOnAPhone,
+  type ConsolePhoneShellProps,
   type ConsolePhoneTab,
 } from "./phone-shell";
 export {

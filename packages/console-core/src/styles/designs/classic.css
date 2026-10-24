@@ -418,6 +418,21 @@
   [data-slot="console-live-notice-action"][data-slot][data-s-console-live-notice-action] {
     @apply ml-auto;
   }
+  [data-slot="console-phone-step-segment"][data-slot][data-s-console-phone-step-segment] {
+    @apply h-1 flex-1 rounded-full;
+  }
+  [data-slot="console-phone-step-segment"][data-state="done"][data-s-console-phone-step-segment] {
+    @apply bg-primary;
+  }
+  [data-slot="console-phone-step-segment"][data-state="current"][data-s-console-phone-step-segment] {
+    @apply bg-primary/60;
+  }
+  [data-slot="console-phone-step-segment"][data-state="upcoming"][data-s-console-phone-step-segment] {
+    @apply bg-muted;
+  }
+  [data-slot="console-phone-task-kind"][data-slot][data-s-console-phone-task-kind] {
+    @apply text-xs font-medium text-muted-foreground;
+  }
   [data-slot="console-plan-mark"][data-slot][data-s-console-plan-mark] {
     @apply rounded-md border px-1.5 py-0.5 text-xs shadow-sm;
   }
@@ -815,6 +830,9 @@
   }
   :where([data-part="console-live-notice"][data-part-action="true"])[data-part][data-p-console-live-notice] {
     @apply rounded-md border border-warning/50;
+  }
+  :where([data-part="console-phone-step-header"])[data-part][data-p-console-phone-step-header] {
+    @apply border-b border-border bg-card px-3 py-2;
   }
   :where([data-part="console-print-sheet-row"])[data-part][data-p-console-print-sheet-row] {
     @apply p-2;

@@ -110,3 +110,24 @@ export { useOnline } from "@simplix-react/headless";
 export type { TargetBarProps, TargetBarRow } from "./target-bar";
 export { readRuleValue, type RuleData, type RuleStatus, type RuleValueReading } from "./rule-value";
 export { RuleValueText, type RuleValueTextProps } from "./rule-value-text";
+export { PhoneTaskList, type PhoneTask, type PhoneTaskListProps } from "./phone-task-list";
+export {
+  PhoneStep,
+  type PhoneStepDefinition,
+  type PhoneStepMeasurement,
+  type PhoneStepProps,
+  type PhoneStepSubmission,
+} from "./phone-step";
+export {
+  firstIncompleteStep,
+  orderTasksByDue,
+  stepErrors,
+  submitOutcome,
+  type OrderableTask,
+  type PhoneStepPhase,
+  type PhoneSubmitOutcome,
+  type StepErrorCode,
+  type StepMeasurementCells,
+  type StepSamples,
+  type ValidatableStep,
+} from "./phone-step-model";

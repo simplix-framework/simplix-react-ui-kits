@@ -29,5 +29,22 @@
     "held": "해석 보류",
     "missing": "미확정",
     "openBasis": "근거 조항 열기"
+  },
+  "phoneTask": {
+    "syncPending": "동기화 대기 {{count, number}}건",
+    "syncPendingBody": "연결되면 자동으로 전송합니다",
+    "empty": "오늘 할 일이 없습니다",
+    "overdue": "기한 지남",
+    "noDue": "기한 없음",
+    "opens": "{{screen}} 열기"
+  },
+  "phoneStep": {
+    "progress": "{{index, number}} / {{count, number}} 단계",
+    "back": "이전",
+    "next": "다음",
+    "measurementMissing": "측정값을 입력하지 않은 칸 {{count, number}}개",
+    "completed": "제출했습니다",
+    "pendingSync": "동기화 대기",
+    "pendingSyncBody": "연결되면 자동으로 전송합니다"
   }
 }
