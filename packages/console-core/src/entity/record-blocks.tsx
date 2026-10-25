@@ -1,4 +1,7 @@
 import { AlertBanner, Button, Flex, Text, type StatusTone } from "@simplix-react/ui";
+import { slotAttributes } from "@simplix-react/ui/design";
+
+import { verbBlockedReasonStyle, verbBlockedStyle } from "./record-blocks.style";
 
 /** A message inside a panel, a form or a dialog: it stays as long as what it explains is on screen. */
 export interface RecordNotice {
@@ -89,9 +92,9 @@ export function RecordVerbButton({ verb }: { readonly verb: RecordVerb }) {
   );
   if (!verb.disabled) return button;
   return (
-    <span data-slot="console-verb-blocked" className="inline-flex max-w-60 flex-col items-stretch gap-0.5" title={verb.disabled}>
+    <span className="inline-flex max-w-60 flex-col items-stretch" title={verb.disabled} {...slotAttributes(verbBlockedStyle, {})}>
       {button}
-      <span className="line-clamp-2 text-left text-xs leading-snug text-muted-foreground">{verb.disabled}</span>
+      <span className="line-clamp-2" {...slotAttributes(verbBlockedReasonStyle, {})}>{verb.disabled}</span>
     </span>
   );
 }

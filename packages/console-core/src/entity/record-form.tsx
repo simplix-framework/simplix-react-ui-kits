@@ -1,10 +1,12 @@
 import { useState, type FormEvent, type ReactNode } from "react";
 import { useTranslation } from "@simplix-react/i18n/react";
 import { Button, CrudForm, Flex, Heading, Stack, Text } from "@simplix-react/ui";
+import { slotAttributes } from "@simplix-react/ui/design";
 
 import { RecordNote, RecordNotices, RecordVerbButton, type RecordNotice, type RecordVerb } from "./record-blocks";
 import { FormErrorSummary } from "./form-error-summary";
 import { PACKAGE_NAMESPACE } from "./locales";
+import { formMoreStyle } from "./record-form.style";
 import { RecordFieldView } from "./record-form-fields";
 import { fieldShown, formFieldErrors, initialFieldValue, requiredProgress } from "./record-form-rules";
 import type { RecordFormSection } from "./record-form-types";
@@ -166,7 +168,7 @@ export function RecordForm({ title, sections, notices, note, submitLabel, onSubm
       {/* Sticks to the foot of the scrolling body while fields remain below it, fading the last
           visible field so the reader can tell the form goes on; at the end it is the room that keeps
           the last field clear of the save bar. */}
-      <div aria-hidden data-form-more className="pointer-events-none sticky bottom-0 h-8 shrink-0 bg-gradient-to-t from-card to-transparent" />
+      <div aria-hidden data-form-more className="pointer-events-none sticky bottom-0 h-8 shrink-0" {...slotAttributes(formMoreStyle, {})} />
     </CrudForm>
   );
 }

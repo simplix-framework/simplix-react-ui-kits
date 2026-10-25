@@ -17,12 +17,12 @@ import {
   type ListHook,
   type RowActionDef,
 } from "@simplix-react/ui";
-import { slotAttributes } from "@simplix-react/ui/design";
+import { partAttributes, slotAttributes } from "@simplix-react/ui/design";
 import { BulkActionBar } from "@simplix-react/ui/interaction";
 
 import { useReflowFlip } from "../layout/use-reflow-flip";
 import { PACKAGE_NAMESPACE } from "./locales";
-import { recordListStyle } from "./record-list.style";
+import { recordListStyle, recordListToolbarStyle } from "./record-list.style";
 import { cardLayout, isBadge, isEmpty, keptColumns, packedLines, wideColumns, type CardPlace } from "./record-card";
 import { RecordValueView, type RecordValue } from "./record-value";
 
@@ -451,7 +451,7 @@ export function RecordList<Row>({
         // than beside a filter control that would open onto nothing.
         // The same inset as the filter bar, so the toolbar's first item lines up with the table's
         // first-column text whatever the toolbar holds.
-        <Flex align="center" gap="sm" wrap justify="between" className="px-3 py-2.5">
+        <Flex align="center" gap="sm" wrap justify="between" {...partAttributes(recordListToolbarStyle, {})}>
           <Flex align="center" gap="sm" wrap>
             {counted ? <ListTotalBadge count={list.pagination.total} /> : null}
             {leading}

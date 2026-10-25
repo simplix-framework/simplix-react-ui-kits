@@ -13,3 +13,12 @@ export const recordListStyle = defineSlotStyle({
   },
   defaultVariants: { nested: false },
 });
+
+/** The toolbar of a list with no filters: the count, the chips and the search, at the table's inset. */
+export const recordListToolbarStyle = defineSlotStyle({
+  slot: "console-record-list-toolbar",
+  as: "part",
+  base: "px-3 py-2.5",
+  variants: {},
+  defaultVariants: {},
+});

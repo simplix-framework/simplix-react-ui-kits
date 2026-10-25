@@ -24,11 +24,14 @@ import {
   type TimeValue,
 } from "@simplix-react/ui";
 
+import { partAttributes, slotAttributes } from "@simplix-react/ui/design";
+
 import { EvidenceGrid } from "../attachment";
 import { useConsoleOnAPhone } from "../shell/phone-shell";
 import { usePeekHost } from "../peek";
 import { EntitySearchCombobox } from "./entity-search-combobox";
 import { PACKAGE_NAMESPACE } from "./locales";
+import { attachmentDropStyle, repeatRowStyle } from "./record-form.style";
 import { disabledReason, emptyRow, validateField, type FieldErrorCode } from "./record-form-rules";
 import type {
   CheckPairValue,
@@ -377,9 +380,8 @@ function AttachmentField({ field, common, value, onChange }: { readonly field: F
           </Grid>
         ) : (
           <div
-            data-slot="console-attachment-drop"
-            data-dragging={dragging || undefined}
-            className="flex w-full flex-wrap items-center justify-between gap-3 rounded-md bg-muted/40 px-4 py-3 outline-1 outline-dashed outline-muted-foreground/40 data-[dragging]:bg-primary/10 data-[dragging]:outline-primary"
+            className="flex w-full flex-wrap items-center justify-between"
+            {...slotAttributes(attachmentDropStyle, { dragging })}
             onDragOver={(event) => { if (common.disabled) return; event.preventDefault(); setDragging(true); }}
             onDragLeave={() => setDragging(false)}
             onDrop={(event) => { event.preventDefault(); setDragging(false); if (!common.disabled) take(event.dataTransfer.files); }}
@@ -540,7 +542,7 @@ function RepeatField({ field, common, errorsShown, value, onChange }: { readonly
     // Rows have no identity of their own until saved; the position is what the reader sees.
     // oxlint-disable-next-line no-array-index-key
     // A ruled row, not a card: the form section is already the frame, and a box per row is a box in a box.
-    <div key={index} data-part="repeat-row" className="border-t border-border pt-3 first:border-t-0 first:pt-0">
+    <div key={index} {...partAttributes(repeatRowStyle, {})}>
       <Flex gap="sm" align="start">
         <Grid columns={Math.min(field.columns.length, 3) as 1 | 2 | 3} gap="sm" className="flex-1">
           {field.columns.map((column) => (
