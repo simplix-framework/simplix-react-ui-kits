@@ -10,14 +10,6 @@ export const presentationGroupStyle = defineSlotStyle({
   defaultVariants: {},
 });
 
-/** The view settings popover. */
-export const presentationPanelStyle = defineSlotStyle({
-  slot: "presentation-panel",
-  base: "w-80 gap-3 p-3",
-  variants: {},
-  defaultVariants: {},
-});
-
 /** The popover's heading. */
 export const presentationTitleStyle = defineSlotStyle({
   slot: "presentation-title",

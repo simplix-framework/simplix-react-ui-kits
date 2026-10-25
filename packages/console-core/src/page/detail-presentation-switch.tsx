@@ -5,7 +5,7 @@ import { slotAttributes } from "@simplix-react/ui/design";
 
 import { PACKAGE_NAMESPACE as LAYOUT_NAMESPACE } from "../layout/locales";
 import type { CrudPagePresentation } from "./crud-page";
-import { presentationChoiceIconStyle, presentationChoiceStyle, presentationGroupStyle, presentationHintStyle, presentationPanelStyle, presentationTitleStyle } from "./detail-presentation-switch.style";
+import { presentationChoiceIconStyle, presentationChoiceStyle, presentationGroupStyle, presentationHintStyle, presentationTitleStyle } from "./detail-presentation-switch.style";
 import { DETAIL_PRESENTATIONS } from "./presentation-memory";
 
 // The buttons use icon-sm because the record detail header resizes every icon-xs button to its
@@ -65,7 +65,7 @@ export function DetailPresentationSwitch({ value, onChange, remember, onRemember
           </TooltipTrigger>
           <TooltipContent>{t("settings")}</TooltipContent>
         </Tooltip>
-        <PopoverContent align="end" className="flex flex-col" {...slotAttributes(presentationPanelStyle, {})}>
+        <PopoverContent align="end" className="flex flex-col">
           <span {...slotAttributes(presentationTitleStyle, {})}>{t("group")}</span>
           <div role="radiogroup" aria-label={t("group")} className="flex flex-col">
             {DETAIL_PRESENTATIONS.map((choice) => {
