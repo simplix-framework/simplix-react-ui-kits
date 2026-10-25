@@ -3,8 +3,14 @@ export type DetailWidth = "regular" | "wide";
 
 /** The framework's detail width (ListDetail's DETAIL_PANEL_WIDTH), which a regular record opens at. */
 export const REGULAR_DETAIL_WIDTH = 768;
+/**
+ * The width a dialog opens a record at. A dialog covers the list rather than sharing the row with
+ * it, so it opens at a reading width of its own instead of the narrow side-panel width the theme
+ * names for `--detail-panel-width`; it shrinks with the viewport below that.
+ */
+export const DIALOG_DETAIL_WIDTH = 960;
 /** The width a dialog opens a record at when its tab strip or its parts need more than the regular width. */
-export const WIDE_DETAIL_WIDTH = 880;
+export const WIDE_DETAIL_WIDTH = 1120;
 
 /**
  * The width a record opens at in a drawer, whatever its tabs. A drawer lies over the list, so a
@@ -25,7 +31,8 @@ export function detailWidthPx(presentation: string, width: DetailWidth): number 
   // A panel takes its width from the list beside it, so it keeps one width and lets a wide tab
   // strip scroll; only a dialog, which covers nothing it needs, opens wider.
   if (presentation === "panel") return PANEL_DETAIL_WIDTH;
-  return presentation === "dialog" && width === "wide" ? WIDE_DETAIL_WIDTH : undefined;
+  if (presentation === "dialog") return width === "wide" ? WIDE_DETAIL_WIDTH : DIALOG_DETAIL_WIDTH;
+  return undefined;
 }
 
 /**

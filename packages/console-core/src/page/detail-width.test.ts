@@ -18,10 +18,10 @@ describe("detailWidthPx", () => {
     expect(detailWidthPx("drawer", "regular")).toBe(720);
     expect(detailWidthPx("drawer", "wide")).toBe(720);
   });
-  it("keeps a panel at one width whatever its tabs, and widens only a wide dialog", () => {
+  it("keeps a panel at one width whatever its tabs, and opens a dialog at its own reading width", () => {
     expect(detailWidthPx("panel", "regular")).toBe(600);
     expect(detailWidthPx("panel", "wide")).toBe(600);
-    expect(detailWidthPx("dialog", "regular")).toBeUndefined();
-    expect(detailWidthPx("dialog", "wide")).toBe(880);
+    expect(detailWidthPx("dialog", "regular")).toBe(960);
+    expect(detailWidthPx("dialog", "wide")).toBe(1120);
   });
 });
