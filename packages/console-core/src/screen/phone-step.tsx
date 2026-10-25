@@ -23,7 +23,14 @@ import {
 } from "../shell/phone-shell";
 import { PACKAGE_NAMESPACE } from "./locales";
 import { stepErrors, submitOutcome, type PhoneStepPhase, type StepSamples } from "./phone-step-model";
-import { phoneStepHeaderStyle, phoneStepSegmentStyle } from "./phone-step.style";
+import {
+  phoneStepDangerStyle,
+  phoneStepHeaderStyle,
+  phoneStepLinkStyle,
+  phoneStepLinkSubStyle,
+  phoneStepSegmentStyle,
+  phoneStepTitleStyle,
+} from "./phone-step.style";
 
 /** A measurement a step takes, drawn as the existing grid with its cells editable. */
 export interface PhoneStepMeasurement extends Omit<MeasurementGridProps, "editable" | "onSampleChange"> {
@@ -126,11 +133,12 @@ function PhoneStepLinks({ links, primaryFirst }: { readonly links: readonly Phon
           key={next.href + next.label}
           asChild
           variant={next.tone === "danger" ? "destructive" : at === 0 && primaryFirst ? "primary" : "outline"}
-          className="h-auto min-h-11 w-full flex-col gap-0 py-2"
+          className="h-auto min-h-11 w-full flex-col"
+          {...partAttributes(phoneStepLinkStyle, {})}
         >
           <a href={next.href}>
             <span>{next.label}</span>
-            {next.sub ? <span className="text-xs font-normal opacity-80">{next.sub}</span> : null}
+            {next.sub ? <span {...slotAttributes(phoneStepLinkSubStyle, {})}>{next.sub}</span> : null}
           </a>
         </PhoneButton>
       ))}
@@ -223,7 +231,7 @@ export function PhoneStep({ shell, steps, primary, onSubmit, offline, back, comp
         <Stack gap="xs" {...partAttributes(phoneStepHeaderStyle, {})}>
           <Flex align="center" justify="between" gap="sm">
             {/* Smaller than a screen title: the step names a part of the task, not the screen. */}
-            <Heading level={2} className="text-xl">
+            <Heading level={2} {...partAttributes(phoneStepTitleStyle, {})}>
               {step.title}
             </Heading>
             <Text as="span" size="caption" tone="muted">
@@ -300,7 +308,8 @@ function PhoneDangerButton({ danger, pressed, onPress }: { readonly danger: Phon
       type="button"
       variant={pressed ? "destructive" : "outline"}
       aria-pressed={pressed}
-      className="min-h-12 w-full border-destructive text-base font-semibold aria-[pressed=false]:text-destructive"
+      className="min-h-12 w-full"
+      {...partAttributes(phoneStepDangerStyle, {})}
       onClick={() => onPress(danger.field, !pressed)}
     >
       {pressed ? danger.pressedLabel : danger.label}

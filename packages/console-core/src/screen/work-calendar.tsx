@@ -12,7 +12,36 @@ import {
   type EventPattern,
 } from "@simplix-react/calendar";
 import { Button, Tooltip, TooltipContent, TooltipTrigger } from "@simplix-react/ui";
+import { partAttributes, slotAttributes } from "@simplix-react/ui/design";
 import { SegmentedControl } from "@simplix-react/ui/interaction";
+
+import {
+  workCalendarAgendaDayStyle,
+  workCalendarCellStyle,
+  workCalendarChipDetailsStyle,
+  workCalendarChipStyle,
+  workCalendarChipTimeStyle,
+  workCalendarChipTitleStyle,
+  workCalendarDayHeadStyle,
+  workCalendarDayNumberStyle,
+  workCalendarDayStyle,
+  workCalendarEmptyStyle,
+  workCalendarGroupStyle,
+  workCalendarLegendBarStyle,
+  workCalendarLegendCaptionStyle,
+  workCalendarLegendEntryStyle,
+  workCalendarLegendStyle,
+  workCalendarLegendSwatchStyle,
+  workCalendarMarksStyle,
+  workCalendarMonthTitleStyle,
+  workCalendarMoreStyle,
+  workCalendarOverlayMarksStyle,
+  workCalendarReadingStyle,
+  workCalendarRuledStyle,
+  workCalendarTitleStyle,
+  workCalendarTodayStyle,
+  workCalendarWarningStyle,
+} from "./work-calendar.style";
 
 /** The views a work calendar offers, in the order its switch draws them. */
 export type WorkCalendarView = "day" | "week" | "month" | "two-month" | "agenda";
@@ -150,14 +179,14 @@ function titleOf(view: WorkCalendarView, date: Date): string {
 function ItemMarks<T>({ item, categories, statuses, primary = false }: { readonly item: WorkCalendarItem<T>; readonly categories: ReadonlyMap<string, WorkCalendarCategory>; readonly statuses: ReadonlyMap<string, WorkCalendarStatus>; readonly primary?: boolean }) {
   const kinds = (primary ? [item.category] : item.categories ?? [item.category]).map((k) => categories.get(k)).filter((c): c is WorkCalendarCategory => Boolean(c));
   return (
-    <span aria-hidden className="inline-flex shrink-0 items-center gap-0.5 [&_svg]:size-3.5">
+    <span aria-hidden className="inline-flex shrink-0 items-center [&_svg]:size-3.5" {...slotAttributes(workCalendarMarksStyle, {})}>
       {kinds.map((c) => (
         <span key={c.key} className="inline-flex">
           {c.icon}
         </span>
       ))}
       <span className="inline-flex">{statuses.get(item.status)?.icon}</span>
-      {item.warning ? <TriangleAlertIcon className="text-[var(--tone-warning)]" /> : null}
+      {item.warning ? <TriangleAlertIcon {...slotAttributes(workCalendarWarningStyle, {})} /> : null}
     </span>
   );
 }
@@ -199,22 +228,17 @@ function ItemChip<T>({
             e.stopPropagation();
             onOpen(item);
           }}
-          className={[
-            "relative flex min-w-0 items-center gap-1 overflow-hidden rounded-[4px] border bg-card pl-2 pr-1 text-left text-[12px] leading-5 hover:bg-muted/60 focus-visible:outline-none focus-visible:shadow-[var(--focus-halo)]",
-            compact ? "w-auto" : "w-full",
-            wide ? "py-1.5 text-[13px]" : "",
-            pattern === "dashed" ? "border-dashed" : "",
-            pattern && pattern !== "dashed" ? patternClass(pattern) : "",
-          ].join(" ")}
+          className={["relative flex min-w-0 items-center overflow-hidden", compact ? "w-auto" : "w-full", pattern && pattern !== "dashed" ? patternClass(pattern) : ""].join(" ")}
+          {...slotAttributes(workCalendarChipStyle, { wide, dashed: pattern === "dashed" })}
         >
           <i aria-hidden className={`absolute inset-y-0 left-0 w-1 ${dotBgClass(color)}`} />
-          {wide ? <span className="w-24 shrink-0 tabular-nums text-muted-foreground">{`${item.start.slice(11)}~${item.end.slice(11)}`}</span> : null}
+          {wide ? <span className="w-24 shrink-0 tabular-nums" {...slotAttributes(workCalendarChipTimeStyle, {})}>{`${item.start.slice(11)}~${item.end.slice(11)}`}</span> : null}
           <ItemMarks item={item} categories={categories} statuses={statuses} primary={compact} />
-          {compact ? null : <span className={`min-w-0 flex-1 truncate ${statuses.get(item.status)?.pattern === "translucent" ? "text-muted-foreground" : "font-medium"}`}>{item.title}</span>}
-          {wide ? <span className="hidden shrink-0 truncate text-muted-foreground md:inline">{item.details.slice(0, 2).join(" · ")}</span> : null}
+          {compact ? null : <span className="min-w-0 flex-1 truncate" {...slotAttributes(workCalendarChipTitleStyle, { quiet: statuses.get(item.status)?.pattern === "translucent" })}>{item.title}</span>}
+          {wide ? <span className="hidden shrink-0 truncate md:inline" {...slotAttributes(workCalendarChipDetailsStyle, {})}>{item.details.slice(0, 2).join(" · ")}</span> : null}
         </button>
       </TooltipTrigger>
-      <TooltipContent className="max-w-72 whitespace-normal break-keep text-xs">
+      <TooltipContent className="max-w-72 whitespace-normal break-keep" {...partAttributes(workCalendarReadingStyle, {})}>
         <b className="block">{first}</b>
         {rest.map((line) => (
           <span key={line} className="block">
@@ -253,8 +277,8 @@ function MonthGrid<T>({
   const single = useMemo(() => items.filter((i) => isSameDay(i.start, i.end)), [items]);
   const multi = useMemo(() => items.filter((i) => !isSameDay(i.start, i.end)), [items]);
   return (
-    <section className="flex min-w-0 flex-col border-t">
-      {titled ? <h3 className="px-1 py-2 text-sm font-semibold">{ym(month)}</h3> : null}
+    <section className="flex min-w-0 flex-col" {...slotAttributes(workCalendarRuledStyle, {})}>
+      {titled ? <h3 {...slotAttributes(workCalendarMonthTitleStyle, {})}>{ym(month)}</h3> : null}
       <CalendarProvider
         key={dayOf(month)}
         items={items}
@@ -266,11 +290,11 @@ function MonthGrid<T>({
         renderDayContent={(_date, inCell) => {
           const shown = compact ? inCell : inCell.slice(0, MONTH_CHIPS);
           return (
-            <div className={compact ? "flex flex-wrap gap-0.5" : "flex flex-col gap-0.5"}>
+            <div className={compact ? "flex flex-wrap" : "flex flex-col"} {...slotAttributes(workCalendarCellStyle, {})}>
               {shown.map((c) => (
                 <ItemChip key={c.id} item={c.payload as WorkCalendarItem<T>} categories={categories} statuses={statuses} onOpen={onOpen} compact={compact} />
               ))}
-              {inCell.length > shown.length ? <span className="px-1 text-[11px] font-semibold text-muted-foreground">{labels.more(inCell.length - shown.length)}</span> : null}
+              {inCell.length > shown.length ? <span {...slotAttributes(workCalendarMoreStyle, {})}>{labels.more(inCell.length - shown.length)}</span> : null}
             </div>
           );
         }}
@@ -303,17 +327,17 @@ function WeekBoard<T>({
 }) {
   const days = Array.from({ length: 7 }, (_, i) => addDays(from, i));
   return (
-    <div className="grid grid-cols-7 border-t">
+    <div className="grid grid-cols-7" {...slotAttributes(workCalendarRuledStyle, {})}>
       {days.map((day) => {
         const key = dayOf(day);
         const own = items.filter((i) => i.start.startsWith(key));
         const isToday = key === today;
         return (
-          <section key={key} aria-label={md(day)} className={`flex min-w-0 flex-col gap-1 border-l px-1.5 pb-3 first:border-l-0 ${isToday ? "bg-[color-mix(in_srgb,var(--series-1)_6%,var(--card))]" : ""}`}>
-            <button type="button" onClick={() => onPickDay(day)} className="flex items-center gap-1.5 rounded-md px-1 py-2 text-left text-[12px] text-muted-foreground hover:bg-muted/60 focus-visible:outline-none focus-visible:shadow-[var(--focus-halo)]">
+          <section key={key} aria-label={md(day)} className="flex min-w-0 flex-col" {...slotAttributes(workCalendarDayStyle, { today: isToday })}>
+            <button type="button" onClick={() => onPickDay(day)} className="flex items-center" {...slotAttributes(workCalendarDayHeadStyle, {})}>
               <span>{WEEKDAYS[day.getDay()]}</span>
-              <span className={`text-[13px] font-semibold ${isToday ? "text-[var(--series-1)]" : "text-foreground"}`}>{day.getDate()}</span>
-              {isToday ? <span className="rounded-full bg-[color-mix(in_srgb,var(--series-1)_14%,var(--card))] px-1.5 text-[11px] text-[var(--series-1)]">{labels.today}</span> : null}
+              <span {...slotAttributes(workCalendarDayNumberStyle, { today: isToday })}>{day.getDate()}</span>
+              {isToday ? <span {...slotAttributes(workCalendarTodayStyle, { place: "week" })}>{labels.today}</span> : null}
             </button>
             {own.map((item) => (
               <ItemChip key={item.id} item={item} categories={categories} statuses={statuses} onOpen={onOpen} />
@@ -370,7 +394,7 @@ export function WorkCalendar<T>({ items, categories, statuses, labels, today, vi
       const first = startOfMonth(at);
       const months = view === "two-month" ? [first, addMonths(first, 1)] : [first];
       return (
-        <div className={`grid gap-3 ${view === "two-month" ? "xl:grid-cols-2" : ""}`}>
+        <div className={view === "two-month" ? "grid xl:grid-cols-2" : "grid"} {...slotAttributes(workCalendarGroupStyle, { gap: "md" })}>
           {months.map((m) => (
             <MonthGrid key={dayOf(m)} month={m} items={calendarItems} highlights={highlights} categories={byCategory} statuses={byStatus} labels={labels} onOpen={open} onPickDay={pickDay} titled={view === "two-month"} compact={view === "two-month"} />
           ))}
@@ -379,22 +403,22 @@ export function WorkCalendar<T>({ items, categories, statuses, labels, today, vi
     }
     if (view === "week") {
       return (
-        <div className="flex flex-col gap-2">
-          {inRange.length === 0 ? <p className="rounded-md bg-muted/50 px-4 py-3 text-center text-sm text-muted-foreground">{labels.empty}</p> : null}
+        <div className="flex flex-col" {...slotAttributes(workCalendarGroupStyle, { gap: "sm" })}>
+          {inRange.length === 0 ? <p {...slotAttributes(workCalendarEmptyStyle, { tall: false })}>{labels.empty}</p> : null}
           <WeekBoard from={from} items={inRange} today={today} categories={byCategory} statuses={byStatus} labels={labels} onOpen={open} onPickDay={pickDay} />
         </div>
       );
     }
     if (view === "agenda") {
-      if (inRange.length === 0) return <p className="rounded-md bg-muted/50 px-4 py-10 text-center text-sm text-muted-foreground">{labels.empty}</p>;
+      if (inRange.length === 0) return <p {...slotAttributes(workCalendarEmptyStyle, { tall: true })}>{labels.empty}</p>;
       const days = [...new Set(inRange.map((i) => i.start.slice(0, 10)))];
       return (
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col" {...slotAttributes(workCalendarGroupStyle, { gap: "md" })}>
           {days.map((day) => (
-            <section key={day} className="flex flex-col gap-1">
-              <h3 className={`flex items-center gap-2 text-[13px] font-semibold ${day === today ? "text-[var(--series-1)]" : ""}`}>
+            <section key={day} className="flex flex-col" {...slotAttributes(workCalendarGroupStyle, { gap: "xs" })}>
+              <h3 className="flex items-center" {...slotAttributes(workCalendarAgendaDayStyle, { today: day === today })}>
                 {md(parseAt(day))}
-                {day === today ? <span className="rounded-full bg-[color-mix(in_srgb,var(--series-1)_14%,var(--card))] px-2 text-[11px]">{labels.today}</span> : null}
+                {day === today ? <span {...slotAttributes(workCalendarTodayStyle, { place: "agenda" })}>{labels.today}</span> : null}
               </h3>
               {inRange
                 .filter((i) => i.start.startsWith(day))
@@ -407,9 +431,9 @@ export function WorkCalendar<T>({ items, categories, statuses, labels, today, vi
       );
     }
     return (
-      <div className="flex flex-col gap-2">
-        {inRange.length === 0 ? <p className="rounded-md bg-muted/50 px-4 py-3 text-center text-sm text-muted-foreground">{labels.empty}</p> : null}
-        <div className="overflow-hidden border-t">
+      <div className="flex flex-col" {...slotAttributes(workCalendarGroupStyle, { gap: "sm" })}>
+        {inRange.length === 0 ? <p {...slotAttributes(workCalendarEmptyStyle, { tall: false })}>{labels.empty}</p> : null}
+        <div className="overflow-hidden" {...slotAttributes(workCalendarRuledStyle, {})}>
           <CalendarProvider
             key={`${view}-${date}`}
             items={calendarItems}
@@ -425,11 +449,11 @@ export function WorkCalendar<T>({ items, categories, statuses, labels, today, vi
               return (
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <span tabIndex={-1} className="inline-flex rounded bg-card/80 px-0.5">
+                    <span tabIndex={-1} className="inline-flex" {...slotAttributes(workCalendarOverlayMarksStyle, {})}>
                       <ItemMarks item={item} categories={byCategory} statuses={byStatus} />
                     </span>
                   </TooltipTrigger>
-                  <TooltipContent className="max-w-72 whitespace-pre-line break-keep text-xs">{readingOf(item, byCategory, byStatus)}</TooltipContent>
+                  <TooltipContent className="max-w-72 whitespace-pre-line break-keep" {...partAttributes(workCalendarReadingStyle, {})}>{readingOf(item, byCategory, byStatus)}</TooltipContent>
                 </Tooltip>
               );
             }}
@@ -442,9 +466,9 @@ export function WorkCalendar<T>({ items, categories, statuses, labels, today, vi
   })();
 
   return (
-    <div className="flex flex-col gap-3">
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <div className="flex flex-wrap items-center gap-2">
+    <div className="flex flex-col" {...slotAttributes(workCalendarGroupStyle, { gap: "md" })}>
+      <div className="flex flex-wrap items-center justify-between" {...slotAttributes(workCalendarGroupStyle, { gap: "sm" })}>
+        <div className="flex flex-wrap items-center" {...slotAttributes(workCalendarGroupStyle, { gap: "sm" })}>
           <Button variant="outline" size="sm" onClick={() => go({ date: today })}>
             {labels.today}
           </Button>
@@ -456,31 +480,31 @@ export function WorkCalendar<T>({ items, categories, statuses, labels, today, vi
               <ChevronRightIcon />
             </Button>
           </span>
-          <h2 className="text-base font-semibold" aria-live="polite">
+          <h2 aria-live="polite" {...slotAttributes(workCalendarTitleStyle, {})}>
             {titleOf(view, at)}
           </h2>
         </div>
         {switcher ?? <SegmentedControl label={labels.viewSwitch} options={VIEWS.map((v) => ({ key: v, label: labels.views[v] }))} value={view} onChange={(v) => go({ view: v })} />}
       </div>
-      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[12px] text-muted-foreground">
-        <span className="font-medium text-foreground">{labels.categoriesCaption}</span>
+      <div className="flex flex-wrap items-center" {...slotAttributes(workCalendarLegendStyle, {})}>
+        <span {...slotAttributes(workCalendarLegendCaptionStyle, {})}>{labels.categoriesCaption}</span>
         {categories.map((c) => (
-          <span key={c.key} className="inline-flex items-center gap-1 [&_svg]:size-3.5">
-            <i aria-hidden className={`h-3 w-1 rounded-sm ${dotBgClass(c.color)}`} />
+          <span key={c.key} className="inline-flex items-center [&_svg]:size-3.5" {...slotAttributes(workCalendarLegendEntryStyle, {})}>
+            <i aria-hidden className={`h-3 w-1 ${dotBgClass(c.color)}`} {...slotAttributes(workCalendarLegendBarStyle, {})} />
             {c.icon}
             {c.label}
           </span>
         ))}
-        <span className="font-medium text-foreground">{labels.statusesCaption}</span>
+        <span {...slotAttributes(workCalendarLegendCaptionStyle, {})}>{labels.statusesCaption}</span>
         {statuses.map((s) => (
-          <span key={s.key} className="inline-flex items-center gap-1 [&_svg]:size-3.5">
-            <i aria-hidden className={`inline-block h-3 w-5 rounded-sm border bg-card ${s.pattern === "dashed" ? "border-dashed" : s.pattern ? patternClass(s.pattern) : ""}`} />
+          <span key={s.key} className="inline-flex items-center [&_svg]:size-3.5" {...slotAttributes(workCalendarLegendEntryStyle, {})}>
+            <i aria-hidden className={`inline-block h-3 w-5 ${s.pattern && s.pattern !== "dashed" ? patternClass(s.pattern) : ""}`} {...slotAttributes(workCalendarLegendSwatchStyle, { dashed: s.pattern === "dashed" })} />
             {s.icon}
             {s.label}
           </span>
         ))}
-        <span className="inline-flex items-center gap-1">
-          <TriangleAlertIcon aria-hidden className="size-3.5 text-[var(--tone-warning)]" />
+        <span className="inline-flex items-center" {...slotAttributes(workCalendarLegendEntryStyle, {})}>
+          <TriangleAlertIcon aria-hidden className="size-3.5" {...slotAttributes(workCalendarWarningStyle, {})} />
           {labels.warning}
         </span>
       </div>

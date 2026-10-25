@@ -47,7 +47,14 @@ import {
   type FormSheetDefinition,
   type FormSheetField,
 } from "./form-sheet-model";
-import { formSheetCellStyle, formSheetHeldStyle, formSheetSourceImageStyle } from "./form-sheet.style";
+import {
+  formSheetCellStyle,
+  formSheetColumnStyle,
+  formSheetDerivedLinkStyle,
+  formSheetHeldStyle,
+  formSheetIndentStyle,
+  formSheetSourceImageStyle,
+} from "./form-sheet.style";
 import { DocumentViewer, PrintSheet, type ViewerFit } from "./print-preview";
 
 /** Which submission and which template version the sheet shows. */
@@ -266,7 +273,7 @@ function ChecksTable({ block, cell, sheet, access }: Omit<LayoutBlockProps, "blo
             <TableRow>
               <TableHead>{block.title ?? ""}</TableHead>
               {columns.map((column) => (
-                <TableHead key={column.key} className={column.tick ? "w-20 text-center" : undefined}>
+                <TableHead key={column.key} className={column.tick ? "w-20" : undefined} {...partAttributes(formSheetColumnStyle, { tick: Boolean(column.tick) })}>
                   {column.label}
                 </TableHead>
               ))}
@@ -282,7 +289,7 @@ function ChecksTable({ block, cell, sheet, access }: Omit<LayoutBlockProps, "blo
                     <Text size="sm">{field.label}</Text>
                   </TableCell>
                   {columns.map((column) => (
-                    <TableCell key={column.key} className={column.tick ? "text-center" : undefined}>
+                    <TableCell key={column.key} {...partAttributes(formSheetColumnStyle, { tick: Boolean(column.tick) })}>
                       <RowColumnInput column={column} value={value} disabled={disabled} label={field.label} onChange={(next) => sheet.onChange(field.sourceId, next)} />
                     </TableCell>
                   ))}
@@ -315,7 +322,7 @@ function ChecksTable({ block, cell, sheet, access }: Omit<LayoutBlockProps, "blo
           <TableRow>
             <TableHead>{itemHead}</TableHead>
             {heads.map((head, at) => (
-              <TableHead key={`${head}-${at}`} className={narrow(at) ? "w-20 text-center" : undefined}>
+              <TableHead key={`${head}-${at}`} className={narrow(at) ? "w-20" : undefined} {...partAttributes(formSheetColumnStyle, { tick: narrow(at) })}>
                 {head}
               </TableHead>
             ))}
@@ -338,7 +345,7 @@ function ChecksTable({ block, cell, sheet, access }: Omit<LayoutBlockProps, "blo
             if (control?.kind === "checkPair") {
               const value = (sheet.values[field.sourceId] ?? {}) as Record<string, unknown> & { performed?: boolean | null; verified?: boolean | null };
               const tick = (side: "performed" | "verified", head: string) => (
-                <TableCell key={side} className="text-center">
+                <TableCell key={side} {...partAttributes(formSheetColumnStyle, { tick: true })}>
                   <Checkbox
                     aria-label={`${field.label} ${head}`}
                     checked={value[side] === true}
@@ -385,7 +392,7 @@ function ChecksTable({ block, cell, sheet, access }: Omit<LayoutBlockProps, "blo
                   </TableCell>
                   {/* One answer column per choice, as the source draws them; choosing one clears the others. */}
                   {choices.map((choice, at) => (
-                    <TableCell key={choice} className="text-center">
+                    <TableCell key={choice} {...partAttributes(formSheetColumnStyle, { tick: true })}>
                       <Checkbox
                         aria-label={`${field.label} ${verdictHeads[at]}`}
                         checked={value.value === choice}
@@ -712,7 +719,7 @@ function LayoutBlock({ block, cell, sheet, access }: LayoutBlockProps) {
  */
 function SourceLine({ text, indented }: { readonly text: string; readonly indented?: boolean }) {
   if (/^\d+[.)]\s/.test(text)) return <Text size="sm" weight="semibold">{text}</Text>;
-  if (/^[①-⑳]/.test(text) || indented) return <Text size="sm" className="pl-4">{text}</Text>;
+  if (/^[①-⑳]/.test(text) || indented) return <Text size="sm" {...partAttributes(formSheetIndentStyle, { depth: "clause" })}>{text}</Text>;
   if (/^※/.test(text)) return <Text size="caption" tone="muted">{text}</Text>;
   return <Text size="sm">{text}</Text>;
 }
@@ -805,7 +812,7 @@ function ItemLabel({ text }: { readonly text: string }) {
     <Stack gap="none">
       <Text size="sm">{head}</Text>
       {criteria.map((criterion, at) => (
-        <Text key={at} size="caption" tone="muted" className="pl-3">
+        <Text key={at} size="caption" tone="muted" {...partAttributes(formSheetIndentStyle, { depth: "note" })}>
           · {criterion}
         </Text>
       ))}
@@ -881,7 +888,7 @@ function SheetCell({ field, access, sheet, required, error }: SheetCellProps) {
         )}
         {/* Where the value is recorded, whether or not it has been yet. */}
         {sheet.derivedLinks?.[field.sourceId] ? (
-          <Button variant="link" size="sm" className="h-auto self-start px-0" onClick={sheet.derivedLinks[field.sourceId]?.onClick}>
+          <Button variant="link" size="sm" className="h-auto self-start" {...partAttributes(formSheetDerivedLinkStyle, {})} onClick={sheet.derivedLinks[field.sourceId]?.onClick}>
             {sheet.derivedLinks[field.sourceId]?.label}
           </Button>
         ) : null}

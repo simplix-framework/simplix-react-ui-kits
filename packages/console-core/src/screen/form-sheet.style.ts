@@ -25,3 +25,30 @@ export const formSheetSourceImageStyle = defineSlotStyle({
   variants: {},
   defaultVariants: {},
 });
+
+/** A column of a source table: a tick column centres its marks. */
+export const formSheetColumnStyle = defineSlotStyle({
+  slot: "console-form-sheet-column",
+  as: "part",
+  base: "",
+  variants: { tick: { true: "text-center", false: "" } },
+  defaultVariants: { tick: false },
+});
+
+/** A source line set in from its list: a numbered clause or an indented line. */
+export const formSheetIndentStyle = defineSlotStyle({
+  slot: "console-form-sheet-indent",
+  as: "part",
+  base: "",
+  variants: { depth: { clause: "pl-4", note: "pl-3" } },
+  defaultVariants: { depth: "clause" },
+});
+
+/** A link to the record a derived value came from, set flush with the value above it. */
+export const formSheetDerivedLinkStyle = defineSlotStyle({
+  slot: "console-form-sheet-derived-link",
+  as: "part",
+  base: "px-0",
+  variants: {},
+  defaultVariants: {},
+});

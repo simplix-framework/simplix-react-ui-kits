@@ -26,3 +26,38 @@ export const phoneTaskKindStyle = defineSlotStyle({
   variants: {},
   defaultVariants: {},
 });
+
+/** A link to the next screen as a full-width button, its second line under its label. */
+export const phoneStepLinkStyle = defineSlotStyle({
+  slot: "console-phone-step-link",
+  as: "part",
+  base: "gap-0 py-2",
+  variants: {},
+  defaultVariants: {},
+});
+
+/** A next-screen link's second line, quieter than its label. */
+export const phoneStepLinkSubStyle = defineSlotStyle({
+  slot: "console-phone-step-link-sub",
+  base: "text-xs font-normal opacity-80",
+  variants: {},
+  defaultVariants: {},
+});
+
+/** A step's title, smaller than a screen title: the step names a part of the task. */
+export const phoneStepTitleStyle = defineSlotStyle({
+  slot: "console-phone-step-title",
+  as: "part",
+  base: "text-xl",
+  variants: {},
+  defaultVariants: {},
+});
+
+/** The danger switch of a step, ruled in the danger tone whether pressed or not. */
+export const phoneStepDangerStyle = defineSlotStyle({
+  slot: "console-phone-step-danger",
+  as: "part",
+  base: "border-destructive text-base font-semibold aria-[pressed=false]:text-destructive",
+  variants: {},
+  defaultVariants: {},
+});
