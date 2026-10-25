@@ -74,6 +74,17 @@ export interface TileTrend {
  * count falling is better, and a figure in the success tone reads the other way round. A figure with
  * no tone, or one that did not move, is neither.
  */
+/** The tone a tile is drawn in: a zero counts nothing to act on, so it is never drawn in a tone. */
+function shownTone(tile: SettingsTile): StatusTone | undefined {
+  return tile.value === 0 || tile.value === "0" ? undefined : tile.tone;
+}
+
+/** The colour a tile's figure takes on a line with no card to tint; none for a toneless tile. */
+function toneIconClass(tile: SettingsTile): string | undefined {
+  const tone = shownTone(tile);
+  return tone ? STATUS_TONES[tone].icon : undefined;
+}
+
 function verdictOf(tone: StatusTone | undefined, direction: TileTrendDirection): "worse" | "better" | "neutral" {
   if (direction === "flat") return "neutral";
   if (tone === "warning" || tone === "danger") return direction === "up" ? "worse" : "better";
@@ -329,11 +340,21 @@ interface SettingsTilesProps {
   readonly title?: string;
   /** Whether the figures are still being read; every tile draws a placeholder for its figure. */
   readonly loading?: boolean;
+  /**
+   * Starts the row folded whatever the console's choice is, as while a record stands open beside
+   * the list and the panel needs the height. Unfolding it then lasts until the record closes and
+   * does not change the console's choice.
+   */
+  readonly folded?: boolean;
 }
 
-export function SettingsTiles({ tiles, columns = 4, reorderKey, title, loading = false }: SettingsTilesProps) {
+export function SettingsTiles({ tiles, columns = 4, reorderKey, title, loading = false, folded = false }: SettingsTilesProps) {
   const { t } = useTranslation(PACKAGE_NAMESPACE + "/tiles");
-  const { collapsed, toggle } = useTilesCollapse();
+  const shared = useTilesCollapse();
+  const [unfolded, setUnfolded] = useState(false);
+  useEffect(() => setUnfolded(false), [folded]);
+  const collapsed = folded ? !unfolded : shared.collapsed;
+  const toggle = folded ? () => setUnfolded((was) => !was) : shared.toggle;
   const header = usePageHeaderState();
   const onAPhone = useMediaQuery(PHONE_WINDOW);
   const stillness = useMediaQuery(REDUCED_MOTION);
@@ -545,8 +566,8 @@ function TileChips({
           <span>{tile.label}</span>
           <NumericText
             weight="semibold"
-            className={cn(tile.tone && STATUS_TONES[tile.tone].icon)}
-            {...partAttributes(tileChipFigureStyle, { tone: tile.tone ?? "none" })}
+            className={toneIconClass(tile)}
+            {...partAttributes(tileChipFigureStyle, { tone: shownTone(tile) ?? "none" })}
           >
             {tileFigure(tile)}
           </NumericText>
@@ -639,7 +660,7 @@ function TileStrip({
         <NumericText
           size="sm"
           weight="semibold"
-          className={cn("shrink-0", tile.tone && STATUS_TONES[tile.tone].icon)}
+          className={cn("shrink-0", toneIconClass(tile))}
         >
           {tileFigure(tile)}
         </NumericText>
@@ -713,6 +734,7 @@ function TileGrid({
           ) : (
             tile.value ?? ABSENT
           );
+        const tone = shownTone(tile);
         const card = (
           <StatCard
             title={tile.label}
@@ -729,7 +751,7 @@ function TileGrid({
             description={
               tile.trend ? (
                 <>
-                  <span {...partAttributes(tileTrendStyle, { verdict: verdictOf(tile.tone, tile.trend.direction) })}>
+                  <span {...partAttributes(tileTrendStyle, { verdict: verdictOf(tone, tile.trend.direction) })}>
                     {trendLine}
                   </span>
                   {tile.basis && <span {...partAttributes(tileBasisStyle, {})}>{tile.basis}</span>}
@@ -738,8 +760,8 @@ function TileGrid({
                 tile.basis
               )
             }
-            tone={tile.tone}
-            highlighted={tile.tone !== undefined && tile.tone !== "success"}
+            tone={tone}
+            highlighted={tone === "warning" || tone === "danger"}
             loading={loading}
           />
         );

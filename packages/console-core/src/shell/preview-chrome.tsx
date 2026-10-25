@@ -624,6 +624,25 @@ function PreviewStatusStrip({
   );
 }
 
+/**
+ * The fold of every branch the reader has toggled, kept for the life of the page.
+ *
+ * <p>A branch that opened only when it held the current screen showed a different column on every
+ * screen, so a destination seen on one screen was missing on the next. Every branch now starts
+ * open, and a fold the reader chose outlives the move to another screen because the chrome is
+ * remounted per screen and this map is not.
+ */
+const branchFolds = new Map<string, boolean>();
+
+function useBranchFold(key: string, forced: boolean): readonly [boolean, () => void] {
+  const [open, setOpen] = useState(() => forced || (branchFolds.get(key) ?? true));
+  const toggle = () => {
+    branchFolds.set(key, !open);
+    setOpen(!open);
+  };
+  return [forced || open, toggle];
+}
+
 function MenuGroup({
   group,
   single,
@@ -633,11 +652,11 @@ function MenuGroup({
   readonly single: boolean;
   readonly current: string | undefined;
 }) {
-  const [open, setOpen] = useState(single || group.entries.some((entry) => holds(entry, current)));
+  const [open, toggle] = useBranchFold(`group:${group.key}`, single);
   return (
     <Stack gap="xs">
       {single ? null : (
-        <ConsoleMenuBranchRow weight="cluster" icon={group.icon} label={group.label} open={open} onToggle={() => setOpen(!open)} />
+        <ConsoleMenuBranchRow weight="cluster" icon={group.icon} label={group.label} open={open} onToggle={toggle} />
       )}
       <ConsoleMenuFold open={single || open}>
         <ConsoleMenuBranch ruled={!single}>
@@ -671,11 +690,11 @@ function RailGroup({ group, current }: { readonly group: ConsolePreviewMenuGroup
 }
 
 function EntryRow({ entry, current }: { readonly entry: ConsolePreviewMenuEntry; readonly current: string | undefined }) {
-  const [open, setOpen] = useState(() => holds(entry, current));
+  const [open, toggle] = useBranchFold(`entry:${entry.key}`, false);
   if (entry.children) {
     return (
       <Stack gap="xs">
-        <ConsoleMenuBranchRow icon={entry.icon} label={entry.label} open={open} onToggle={() => setOpen(!open)} />
+        <ConsoleMenuBranchRow icon={entry.icon} label={entry.label} open={open} onToggle={toggle} />
         <ConsoleMenuFold open={open}>
           <ConsoleMenuBranch ruled>
             {entry.children.map((child) => (

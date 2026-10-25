@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { cellAccess, derivedText, editableCells, hasStagePassed, missingForTransition, sheetBlocks, type FormSheetField } from "./form-sheet-model";
+import { cellAccess, derivedText, editableCells, hasStagePassed, layoutProblems, layoutSections, missingForTransition, sheetBlocks, type FormSheetField } from "./form-sheet-model";
 
 const stages = ["DRAFT", "REQUESTED", "CHECKED", "ISSUED"];
 
@@ -104,5 +104,28 @@ describe("sheetBlocks", () => {
     expect(blocks.map((block) => block.kind)).toEqual(["flow", "table", "flow"]);
     const table = blocks[1];
     expect(table.kind === "table" && table.rows.map((row) => row.cells.map((one) => one.sourceId))).toEqual([["a", "b"], ["c"]]);
+  });
+});
+
+describe("layoutSections", () => {
+  const field = (sourceId: string, mode: FormSheetField["mode"] = "input"): FormSheetField => ({ sourceId, order: Number(sourceId.slice(1)), label: sourceId, mode, stage: null, writerRoles: [] });
+  const base = { title: "t", paper: "A4-portrait" as const, stages: [], fields: [field("f1", "static"), field("f2"), field("f3"), field("f4", "derived")] };
+
+  it("returns null without a layout", () => {
+    expect(layoutSections(base, "rest")).toBeNull();
+  });
+
+  it("resolves cells and puts what the layout leaves out in a last section", () => {
+    const form = { ...base, layout: { sections: [{ title: "a", blocks: [{ kind: "fields" as const, fields: ["f3", "f2"] }] }] } };
+    const sections = layoutSections(form, "rest");
+    expect(sections?.map((s) => s.title)).toEqual(["a", "rest"]);
+    const first = sections?.[0]?.blocks[0];
+    expect(first?.kind === "fields" && first.fields.map((f) => f.sourceId)).toEqual(["f3", "f2"]);
+    expect(layoutProblems(form).missing).toEqual(["f4"]);
+  });
+
+  it("reports unknown and repeated ids", () => {
+    const form = { ...base, layout: { sections: [{ title: "a", blocks: [{ kind: "fields" as const, fields: ["f2", "f2", "f3", "f4", "x"] }] }] } };
+    expect(layoutProblems(form)).toEqual({ unknown: ["x"], repeated: ["f2"], missing: [] });
   });
 });

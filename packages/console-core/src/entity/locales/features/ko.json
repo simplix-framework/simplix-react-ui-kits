@@ -13,6 +13,7 @@
   "recordForm": {
     "required": "필수 항목입니다",
     "fixBeforeSave": "필수 항목 {{count, number}}개를 입력해야 저장할 수 있습니다",
+    "progress": "필수 {{total, number}}칸 중 {{filled, number}}칸 입력",
     "clear": "지우기",
     "yes": "예",
     "no": "아니요",
@@ -34,7 +35,19 @@
       "detailRequired": "기타 내용을 입력해 주세요",
       "evidenceMissing": "필수 증빙을 모두 첨부해 주세요",
       "rowIncomplete": "모든 행의 필수 항목을 입력해 주세요"
-    }
+    },
+    "noEvidence": "첨부한 파일이 없습니다",
+    "chooseFile": "파일 선택",
+    "dropHint": "첨부한 파일이 없습니다. 파일을 이곳에 끌어 놓거나 파일 선택을 누릅니다",
+    "dropMore": "파일을 더 끌어 놓거나 파일 선택을 누릅니다",
+    "takePhoto": "사진 찍기",
+    "pickFromAlbum": "앨범에서 선택",
+    "pickedProvenance": "{{size}} · 저장할 때 업로드합니다",
+    "choosePrompt": "선택해 주세요",
+    "choosePromptWithExamples": "선택해 주세요 (예: {{examples}})",
+    "signer": "서명자: {{signer}}",
+    "signAgain": "다시 쓰기",
+    "fillBeforeSubmit": "필수 항목 {{count, number}}개를 입력해야 합니다"
   },
   "recordList": {
     "selected": "개 선택",

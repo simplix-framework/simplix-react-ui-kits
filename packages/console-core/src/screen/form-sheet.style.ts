@@ -1,9 +1,9 @@
 import { defineSlotStyle } from "@simplix-react/ui/design";
 
-/** A derived cell whose value is held: drawn in the warning tone, never as 0. */
+/** A derived cell whose value is held: neutral with a dashed edge, never a hazard tone and never 0. */
 export const formSheetHeldStyle = defineSlotStyle({
   slot: "console-form-sheet-held",
-  base: "text-warning",
+  base: "inline-block rounded-sm border border-dashed border-muted-foreground/50 px-1.5 text-muted-foreground",
   variants: {},
   defaultVariants: {},
 });

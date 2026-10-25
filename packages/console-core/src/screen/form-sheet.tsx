@@ -1,17 +1,25 @@
-import { useState } from "react";
+import { Fragment, useState, type ReactElement } from "react";
+import { PrinterIcon } from "lucide-react";
+import { SegmentedControl } from "@simplix-react/ui/interaction";
 import { useTranslation } from "@simplix-react/i18n/react";
 import {
   Badge,
   Button,
+  Checkbox,
+  ChoiceChips,
   CrudDetail,
+  Input,
   Dialog,
   DialogHeader,
   DialogTitle,
   Flex,
+  Grid,
   Stack,
   Table,
   TableBody,
   TableCell,
+  TableHead,
+  TableHeader,
   TableRow,
   Text,
   Tooltip,
@@ -22,16 +30,18 @@ import { partAttributes, slotAttributes } from "@simplix-react/ui/design";
 
 import { FormErrorSummary } from "../entity/form-error-summary";
 import { PACKAGE_NAMESPACE as ENTITY_NAMESPACE } from "../entity/locales";
-import { RecordFieldView, signerLabel } from "../entity/record-form-fields";
-import type { RecordFormField, SignatureValue } from "../entity/record-form-types";
+import { RecordFieldView, RowColumnInput, signerLabel } from "../entity/record-form-fields";
+import type { ChoiceDetailValue, RecordFormField, SignatureValue, VerdictChoice, VerdictValue } from "../entity/record-form-types";
 import { BoundedDialogContent } from "../layout/bounded-dialog-content";
 import { TableCard } from "../layout/table-card";
 import { PACKAGE_NAMESPACE } from "./locales";
 import {
   cellAccess,
   derivedText,
+  layoutSections,
   missingForTransition,
   sheetBlocks,
+  type ResolvedLayoutBlock,
   type FormSheetCellAccess,
   type FormSheetContext,
   type FormSheetDefinition,
@@ -78,6 +88,11 @@ export interface FormSheetProps {
   readonly onSign: (sourceId: string) => void;
   /** The submission is submitted or approved and nothing in it changes. */
   readonly readOnly?: boolean;
+  /**
+   * Where a derived cell's value is recorded, by the cell's source id: a link under its note to the
+   * part of the record that holds it (「전기 차단 탭 열기」).
+   */
+  readonly derivedLinks?: Readonly<Record<string, { readonly label: string; readonly onClick: () => void }>>;
 }
 
 type View = "form" | "source";
@@ -98,21 +113,26 @@ export function FormSheet(props: FormSheetProps) {
     <CrudDetail.Section
       title={form.title}
       trailing={
-        <Flex gap="xs" align="center" wrap>
-          <Badge variant="outline">{t("formSheet.version", { version: submission.version })}</Badge>
-          <Badge variant="outline">{submission.status}</Badge>
-          <Badge variant="outline">{t("formSheet.templateVersion", { version: submission.templateVersion })}</Badge>
-          {(["form", "source"] as const).map((one) => (
-            <Button key={one} size="xs" variant={view === one ? "default" : "outline"} onClick={() => setView(one)}>
-              {t(one === "form" ? "formSheet.viewForm" : "formSheet.viewSource")}
-            </Button>
-          ))}
-          <Button size="xs" variant="outline" onClick={() => setPrinting(true)}>
-            {t("formSheet.print")}
+        <Flex gap="xs" align="center">
+          <SegmentedControl
+            label={t("formSheet.viewLabel")}
+            options={[
+              { key: "form", label: t("formSheet.viewForm") },
+              { key: "source", label: t("formSheet.viewSource") },
+            ]}
+            value={view}
+            onChange={setView}
+          />
+          <Button size="icon-sm" variant="ghost" aria-label={t("formSheet.print")} title={t("formSheet.print")} onClick={() => setPrinting(true)}>
+            <PrinterIcon />
           </Button>
         </Flex>
       }
     >
+      {/* What the sheet is, as one quiet line: where it stands, which submission, which revision of the form. */}
+      <Text size="sm" tone="muted" className="col-span-full">
+        {[submission.status, t("formSheet.version", { version: submission.version }), t("formSheet.templateVersion", { version: submission.templateVersion })].join(" · ")}
+      </Text>
       <Stack gap="md" className="col-span-full">
         {view === "form" ? <SheetBody {...props} /> : <SourceView form={form} pages={sourcePages} />}
       </Stack>
@@ -168,9 +188,30 @@ function SheetBody(props: FormSheetProps) {
   const shownErrors = checkedTransition ? Object.fromEntries(Object.entries(errors).map(([key, code]) => [key, t(`recordForm.errors.${code}`)])) : undefined;
   const cell = (field: FormSheetField) => <SheetCell key={field.sourceId} field={field} access={cellAccess(field, context)} sheet={props} required={field.stage === checkedTransition} error={errors[field.sourceId]} />;
 
-  return (
+  const sections = layoutSections(form, t("formSheet.rest", { ns: `${PACKAGE_NAMESPACE}/features` }));
+  const head = (
     <>
       <FormErrorSummary fieldErrors={shownErrors} label={(key) => labels.get(key) ?? key} />
+    </>
+  );
+  if (sections) {
+    return (
+      <>
+        {head}
+        {sections.map((section) => (
+          <Stack key={section.title} gap="sm" data-sheet-section={section.title}>
+            <Text weight="semibold">{section.title}</Text>
+            {section.blocks.map((block, at) => (
+              <LayoutBlock key={at} block={block} cell={(field) => cell(sameAsHeading(field, section.title) ? { ...field, labelHidden: true } : field)} sheet={props} access={(field) => cellAccess(field, context)} />
+            ))}
+          </Stack>
+        ))}
+      </>
+    );
+  }
+  return (
+    <>
+      {head}
       {sheetBlocks(form.fields).map((block) =>
         block.kind === "flow" ? (
           <Stack key={`flow-${block.fields[0]?.sourceId}`} gap="sm">
@@ -198,6 +239,608 @@ function SheetBody(props: FormSheetProps) {
   );
 }
 
+interface LayoutBlockProps {
+  readonly block: ResolvedLayoutBlock;
+  readonly cell: (field: FormSheetField) => ReactElement;
+  readonly sheet: FormSheetProps;
+  readonly access: (field: FormSheetField) => FormSheetCellAccess;
+}
+
+/**
+ * Items answered by the same columns, one row per item, under the source's own column names.
+ *
+ * <p>A two-party check draws a tick under each party (only the side the viewer writes takes input)
+ * and, where the source prints one, a third cell for a count or the item's own name. A verdict draws
+ * its three answers as chips in the source's words and a remark cell when the source has one; a row
+ * the source leaves blank for the filler takes the item's name.
+ */
+function ChecksTable({ block, cell, sheet, access }: Omit<LayoutBlockProps, "block"> & { readonly block: Extract<ResolvedLayoutBlock, { kind: "checks" }> }) {
+  // Items whose answer is a row of the source's own columns (a tick and a remark) are that table.
+  if (block.fields.length > 0 && block.fields.every((field) => field.control?.kind === "row")) {
+    const first = block.fields[0]?.control;
+    const columns = first?.kind === "row" ? first.columns : [];
+    return (
+      <TableCard>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>{block.title ?? ""}</TableHead>
+              {columns.map((column) => (
+                <TableHead key={column.key} className={column.tick ? "w-20 text-center" : undefined}>
+                  {column.label}
+                </TableHead>
+              ))}
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {block.fields.map((field) => {
+              const value = (sheet.values[field.sourceId] ?? {}) as Readonly<Record<string, string>>;
+              const disabled = access(field).kind !== "editable";
+              return (
+                <TableRow key={field.sourceId} data-record-field={field.sourceId}>
+                  <TableCell>
+                    <Text size="sm">{field.label}</Text>
+                  </TableCell>
+                  {columns.map((column) => (
+                    <TableCell key={column.key} className={column.tick ? "text-center" : undefined}>
+                      <RowColumnInput column={column} value={value} disabled={disabled} label={field.label} onChange={(next) => sheet.onChange(field.sourceId, next)} />
+                    </TableCell>
+                  ))}
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
+      </TableCard>
+    );
+  }
+  const pair = block.fields.find((field) => field.control?.kind === "checkPair")?.control;
+  const verdict = block.fields.find((field) => field.control?.kind === "verdict")?.control;
+  const extra = block.fields.flatMap((field) => (field.control?.kind === "checkPair" && field.control.extra ? [field.control.extra] : []))[0];
+  const tickHeads = pair?.kind === "checkPair" ? (block.headers.length >= 2 ? block.headers.slice(0, 2) : [...pair.sideLabels]) : [];
+  const verdictHeads = verdict?.kind === "verdict" ? (block.headers.length >= 3 ? block.headers.slice(0, 3) : [...verdict.labels]) : [];
+  const remarkHead = verdict ? block.headers[3] : undefined;
+  // Rows answered by any other control (a choice among levels, a text) take an item column and an
+  // answer column; heads past the second name the choices the control already shows, so they go.
+  const plainHeads = block.headers.length === 2 ? [block.headers[1] ?? ""] : [""];
+  const heads = pair ? [...tickHeads, ...(extra ? [extra.label] : [])] : verdict ? [...verdictHeads, ...(remarkHead ? [remarkHead] : [])] : plainHeads;
+  const itemHead = block.title ?? (!pair && !verdict ? block.headers[0] : undefined) ?? "";
+  // Tick and answer columns are narrow and centred; a remark or a count takes the rest.
+  const narrow = (at: number) => (pair ? at < 2 : verdict ? at < 3 : false);
+  const span = 1 + heads.length;
+  return (
+    <TableCard>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>{itemHead}</TableHead>
+            {heads.map((head, at) => (
+              <TableHead key={`${head}-${at}`} className={narrow(at) ? "w-20 text-center" : undefined}>
+                {head}
+              </TableHead>
+            ))}
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {block.fields.map((field, index) => {
+            const control = field.control;
+            const open = access(field).kind === "editable";
+            // A sub-group starting here (「차단기」 inside 「특고압설비」) heads its rows with a full-width line.
+            const group = block.groups?.find((one) => one.start === index);
+            const head = group ? (
+              <TableRow key={`group-${index}`}>
+                <TableCell colSpan={span}>
+                  <Text size="sm" weight="semibold">{group.title}</Text>
+                </TableCell>
+              </TableRow>
+            ) : null;
+            const withHead = (row: ReactElement) => (head ? <Fragment key={field.sourceId}>{head}{row}</Fragment> : row);
+            if (control?.kind === "checkPair") {
+              const value = (sheet.values[field.sourceId] ?? {}) as Record<string, unknown> & { performed?: boolean | null; verified?: boolean | null };
+              const tick = (side: "performed" | "verified", head: string) => (
+                <TableCell key={side} className="text-center">
+                  <Checkbox
+                    aria-label={`${field.label} ${head}`}
+                    checked={value[side] === true}
+                    disabled={!open || control.editable !== side}
+                    onCheckedChange={(next) => sheet.onChange(field.sourceId, { ...value, [side]: next === true })}
+                  />
+                </TableCell>
+              );
+              const own = control.extra;
+              return withHead(
+                <TableRow key={field.sourceId} data-record-field={field.sourceId}>
+                  <TableCell>
+                    <ItemLabel text={field.label} />
+                  </TableCell>
+                  {tick("performed", tickHeads[0] ?? "")}
+                  {tick("verified", tickHeads[1] ?? "")}
+                  {extra ? (
+                    <TableCell>
+                      {own ? (
+                        <Input
+                          aria-label={`${field.label} ${own.label}`}
+                          type={own.numeric ? "number" : "text"}
+                          value={String(value[own.key] ?? "")}
+                          disabled={!open || control.editable === "none"}
+                          onChange={(event) => sheet.onChange(field.sourceId, { ...value, [own.key]: own.numeric ? (event.target.value === "" ? null : Number(event.target.value)) : event.target.value })}
+                        />
+                      ) : null}
+                    </TableCell>
+                  ) : null}
+                </TableRow>
+              );
+            }
+            if (control?.kind === "verdict") {
+              const value = (sheet.values[field.sourceId] ?? { value: null }) as VerdictValue;
+              const choices: readonly VerdictChoice[] = ["GOOD", "BAD", "NOT_APPLICABLE"];
+              return withHead(
+                <TableRow key={field.sourceId} data-record-field={field.sourceId}>
+                  <TableCell>
+                    {control.named ? (
+                      <Input aria-label={field.label} placeholder={control.placeholder ?? field.label} value={value.name ?? ""} disabled={!open} onChange={(event) => sheet.onChange(field.sourceId, { ...value, name: event.target.value })} />
+                    ) : (
+                      <ItemLabel text={field.label} />
+                    )}
+                  </TableCell>
+                  {/* One answer column per choice, as the source draws them; choosing one clears the others. */}
+                  {choices.map((choice, at) => (
+                    <TableCell key={choice} className="text-center">
+                      <Checkbox
+                        aria-label={`${field.label} ${verdictHeads[at]}`}
+                        checked={value.value === choice}
+                        disabled={!open}
+                        onCheckedChange={(next) => sheet.onChange(field.sourceId, { ...value, value: next === true ? choice : null })}
+                      />
+                    </TableCell>
+                  ))}
+                  {remarkHead ? (
+                    <TableCell>
+                      <Input aria-label={`${field.label} ${remarkHead}`} value={value.note ?? ""} disabled={!open} onChange={(event) => sheet.onChange(field.sourceId, { ...value, note: event.target.value })} />
+                    </TableCell>
+                  ) : null}
+                </TableRow>
+              );
+            }
+            if (field.mode === "static") {
+              return withHead(
+                <TableRow key={field.sourceId}>
+                  <TableCell colSpan={span}>
+                    <Text size="sm" tone="muted">{field.sourceText || field.label}</Text>
+                  </TableCell>
+                </TableRow>
+              );
+            }
+            return withHead(
+              <TableRow key={field.sourceId}>
+                <TableCell>
+                  <Text size="sm">{field.label}</Text>
+                </TableCell>
+                <TableCell colSpan={span - 1}>{cell({ ...field, labelHidden: true })}</TableCell>
+              </TableRow>
+            );
+          })}
+        </TableBody>
+      </Table>
+    </TableCard>
+  );
+}
+
+/**
+ * A run of signature slots, one row each: who signed and when, the viewer's own slot to sign, or
+ * whose signature it waits for. The count signed out of the slots stands above the table.
+ */
+function SignatureRoster({
+  title,
+  fields,
+  sheet,
+  access,
+  cell,
+}: {
+  readonly title?: string;
+  readonly fields: readonly FormSheetField[];
+  readonly sheet: FormSheetProps;
+  readonly access: (field: FormSheetField) => FormSheetCellAccess;
+  readonly cell: (field: FormSheetField) => ReactElement;
+}) {
+  const { t } = useTranslation(`${PACKAGE_NAMESPACE}/features`);
+  const signedOf = (field: FormSheetField) => {
+    const value = sheet.values[field.sourceId] as SignatureValue | null | undefined;
+    return value && !value.dataUrl ? value : null;
+  };
+  const signed = fields.filter((field) => signedOf(field)).length;
+  return (
+    <Stack gap="xs">
+      <Flex gap="sm" align="center" justify="between">
+        {title ? <Text size="sm" tone="muted">{title}</Text> : <span />}
+        <Badge variant="outline">{t("formSheet.signedCount", { signed, total: fields.length })}</Badge>
+      </Flex>
+      <TableCard>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead />
+              <TableHead>{t("formSheet.signer")}</TableHead>
+              <TableHead>{t("formSheet.signedAt")}</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {fields.map((field) => {
+              const value = signedOf(field);
+              const state = access(field);
+              return (
+                <TableRow key={field.sourceId} data-record-field={field.sourceId}>
+                  <TableCell>
+                    <Text size="sm">{field.label}</Text>
+                  </TableCell>
+                  {value ? (
+                    <>
+                      <TableCell>{signerLabel(value)}</TableCell>
+                      <TableCell>{value.at}</TableCell>
+                    </>
+                  ) : state.kind === "editable" ? (
+                    // The viewer's own slot, signed through the sheet's signature dialog.
+                    <TableCell colSpan={2}>{cell({ ...field, labelHidden: true })}</TableCell>
+                  ) : (
+                    <TableCell colSpan={2}>
+                      <Text size="sm" tone="muted">
+                        {/* The row already names whose signature it is; the cell says only that it waits. */}
+                        {state.kind === "notWriter" ? t("formSheet.awaitingSignature") : "\u00a0"}
+                      </Text>
+                    </TableCell>
+                  )}
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
+      </TableCard>
+    </Stack>
+  );
+}
+
+/** Repeated rows of one source table, drawn as that table: the row's name, then a cell per column. */
+function RowTable({ title, fields, sheet, access }: { readonly title?: string; readonly fields: readonly FormSheetField[]; readonly sheet: FormSheetProps; readonly access: (field: FormSheetField) => FormSheetCellAccess }) {
+  const first = fields[0]?.control;
+  const columns = first?.kind === "row" ? first.columns : [];
+  return (
+    <Stack gap="xs">
+      {title ? <Text size="sm" tone="muted">{title}</Text> : null}
+      <TableCard>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-16" />
+              {columns.map((column) => (
+                <TableHead key={column.key}>{column.label}</TableHead>
+              ))}
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {fields.map((field, at) => {
+              const value = (sheet.values[field.sourceId] ?? {}) as Readonly<Record<string, string>>;
+              const disabled = access(field).kind !== "editable";
+              return (
+                <TableRow key={field.sourceId} data-record-field={field.sourceId}>
+                  <TableCell>
+                    <Text size="caption" tone="muted">{at + 1}</Text>
+                  </TableCell>
+                  {columns.map((column) => (
+                    <TableCell key={column.key}>
+                      <RowColumnInput column={column} value={value} disabled={disabled} label={field.label} onChange={(next) => sheet.onChange(field.sourceId, next)} />
+                    </TableCell>
+                  ))}
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
+      </TableCard>
+    </Stack>
+  );
+}
+
+/** Items a paper form ticks one by one, drawn as chips that are pressed to choose them. */
+function TickChips({
+  title,
+  fields,
+  others = [],
+  sheet,
+  access,
+}: {
+  readonly title?: string;
+  readonly fields: readonly FormSheetField[];
+  /** 「Other」 choices drawn as one more chip; pressed, each opens its detail box under the row. */
+  readonly others?: readonly FormSheetField[];
+  readonly sheet: FormSheetProps;
+  readonly access: (field: FormSheetField) => FormSheetCellAccess;
+}) {
+  const otherValue = (field: FormSheetField) => (sheet.values[field.sourceId] ?? { choice: null }) as ChoiceDetailValue;
+  const otherOn = (field: FormSheetField) => otherValue(field).choice !== null && otherValue(field).choice !== undefined;
+  return (
+    <Stack gap="xs">
+      {title ? <Text size="sm" tone="muted">{title}</Text> : null}
+      <Flex gap="xs" wrap>
+        {fields.map((field) => {
+          const on = sheet.values[field.sourceId] === true;
+          return (
+            <Button
+              key={field.sourceId}
+              size="sm"
+              variant={on ? "default" : "outline"}
+              aria-pressed={on}
+              data-record-field={field.sourceId}
+              disabled={access(field).kind !== "editable"}
+              onClick={() => sheet.onChange(field.sourceId, !on)}
+            >
+              {field.label}
+            </Button>
+          );
+        })}
+        {others.map((field) => {
+          const on = otherOn(field);
+          const control = field.control;
+          const chosen = control?.kind === "choiceWithDetail" ? control.otherValue : "OTHER";
+          return (
+            <Button
+              key={field.sourceId}
+              size="sm"
+              variant={on ? "default" : "outline"}
+              aria-pressed={on}
+              data-record-field={field.sourceId}
+              disabled={access(field).kind !== "editable"}
+              onClick={() => sheet.onChange(field.sourceId, on ? { choice: null } : { ...otherValue(field), choice: chosen })}
+            >
+              {field.label}
+            </Button>
+          );
+        })}
+      </Flex>
+      {others.filter(otherOn).map((field) => (
+        <Input
+          key={field.sourceId}
+          aria-label={field.label}
+          placeholder={field.label}
+          value={otherValue(field).detail ?? ""}
+          disabled={access(field).kind !== "editable"}
+          onChange={(event) => sheet.onChange(field.sourceId, { ...otherValue(field), detail: event.target.value })}
+        />
+      ))}
+    </Stack>
+  );
+}
+
+function LayoutBlock({ block, cell, sheet, access }: LayoutBlockProps) {
+  switch (block.kind) {
+    case "note":
+      return <Text size="sm" tone="muted">{block.text}</Text>;
+    case "static":
+      return (
+        <Stack gap="xs">
+          {block.title ? <Text size="sm" tone="muted">{block.title}</Text> : null}
+          <SourceText lines={block.fields.flatMap((field) => (field.sourceText || field.label).split("\n"))} />
+        </Stack>
+      );
+    case "grid": {
+      // A table of computed cells that all wait on the same other record says so once.
+      const cells = block.rows.flat();
+      const notes = new Set(cells.map((field) => (field.mode === "derived" && sheet.values[field.sourceId] === undefined ? field.derivedNote ?? null : "")));
+      const waiting = notes.size === 1 ? [...notes][0] : null;
+      if (waiting) {
+        return (
+          <Stack gap="xs">
+            {block.title ? <Text size="sm" tone="muted">{block.title}</Text> : null}
+            <Text size="sm" tone="muted">
+              {block.columns.slice(block.leads ? 1 : 0).join(" · ")}: {waiting}
+            </Text>
+          </Stack>
+        );
+      }
+      return (
+        <Stack gap="xs">
+          {block.title ? <Text size="sm" tone="muted">{block.title}</Text> : null}
+          <TableCard>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  {block.columns.map((column) => (
+                    <TableHead key={column}>{column}</TableHead>
+                  ))}
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {block.rows.map((row, at) => (
+                  <TableRow key={row[0]?.sourceId}>
+                    {block.leads ? (
+                      <TableCell>
+                        <Text size="sm">{block.leads[at]}</Text>
+                      </TableCell>
+                    ) : null}
+                    {row.map((field) => (
+                      <TableCell key={field.sourceId}>{cell({ ...field, labelHidden: true })}</TableCell>
+                    ))}
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableCard>
+        </Stack>
+      );
+    }
+    case "checks":
+      return <ChecksTable block={block} cell={cell} sheet={sheet} access={access} />;
+    case "measurements":
+      return (
+        <Stack gap="xs">
+          {block.title || block.headers?.length ? <Text size="sm" tone="muted">{[block.title, ...(block.headers ?? [])].filter(Boolean).join(" · ")}</Text> : null}
+          <Grid columns={3} gap="sm">{block.fields.map(cell)}</Grid>
+        </Stack>
+      );
+    default:
+      if (block.fields.length > 2 && block.fields.every((field) => field.control?.kind === "signature")) return <SignatureRoster title={block.title} fields={block.fields} sheet={sheet} access={access} cell={cell} />;
+      if (block.fields.length > 0 && block.fields.every((field) => field.control?.kind === "row")) return <RowTable title={block.title} fields={block.fields} sheet={sheet} access={access} />;
+      {
+        // Ticked items read as chips; the few other cells of the block (an 「기타」 with its detail) follow them.
+        const ticks = block.fields.filter((field) => field.control?.kind === "tick");
+        if (ticks.length > 1 && ticks.length * 2 > block.fields.length) {
+          // An 「other」 choice with its detail joins the chips; anything else follows them.
+          const others = block.fields.filter((field) => field.control?.kind === "choiceWithDetail");
+          const rest = block.fields.filter((field) => field.control?.kind !== "tick" && field.control?.kind !== "choiceWithDetail");
+          return (
+            <Stack gap="sm">
+              <TickChips title={block.title} fields={ticks} others={others} sheet={sheet} access={access} />
+              {rest.length > 0 ? <Grid columns={2} gap="sm">{rest.map(cell)}</Grid> : null}
+            </Stack>
+          );
+        }
+      }
+      return (
+        <Stack gap="xs">
+          {block.title ? <Text size="sm" tone="muted">{block.title}</Text> : null}
+          <Grid columns={block.columns} gap="sm">
+            {block.fields.map((field) => (block.wide.has(field.sourceId) ? <Stack key={field.sourceId} className="col-span-full">{cell(field)}</Stack> : cell(field)))}
+          </Grid>
+        </Stack>
+      );
+  }
+}
+
+/**
+ * One line of source text read as the source sets it: a numbered clause (「1. 위험성평가」) as a
+ * sub-heading, a circled item (「① 우수」) indented under it, a note (「※ …」) muted, anything else
+ * as body text.
+ */
+function SourceLine({ text, indented }: { readonly text: string; readonly indented?: boolean }) {
+  if (/^\d+[.)]\s/.test(text)) return <Text size="sm" weight="semibold">{text}</Text>;
+  if (/^[①-⑳]/.test(text) || indented) return <Text size="sm" className="pl-4">{text}</Text>;
+  if (/^※/.test(text)) return <Text size="caption" tone="muted">{text}</Text>;
+  return <Text size="sm">{text}</Text>;
+}
+
+/**
+ * Source text of several lines: runs of two or more lines that split into the same number of
+ * 「 · 」-joined cells are a source table (its first line the head); any other line reads as a
+ * {@link SourceLine}.
+ */
+function SourceText({ lines }: { readonly lines: readonly string[] }) {
+  const cellsOf = (line: string) => line.split(" · ");
+  // A line that runs on from a circled item (its second line) keeps the item's indent.
+  const parts: ({ kind: "line"; text: string; indented?: boolean } | { kind: "table"; rows: string[][] })[] = [];
+  for (const line of lines) {
+    const cells = cellsOf(line);
+    const last = parts[parts.length - 1];
+    if (cells.length >= 2 && last?.kind === "table" && last.rows[0]?.length === cells.length) last.rows.push(cells);
+    else if (cells.length >= 2) parts.push({ kind: "table", rows: [cells] });
+    else parts.push({ kind: "line", text: line, indented: last?.kind === "line" && (/^[①-⑳]/.test(last.text) || Boolean(last.indented)) && !/^(\d+[.)]|[①-⑳]|※)/.test(line) });
+  }
+  return (
+    <Stack gap="xs">
+      {parts.map((part, at) =>
+        part.kind === "table" && part.rows.length >= 2 && part.rows.every((row) => row[0] === part.rows[0]?.[0]) ? (
+          // Rows that all open with the same cell (「허가기준」) are that cell's table: it captions the rows.
+          <Stack key={at} gap="xs">
+            <Text size="sm" weight="medium">{part.rows[0]?.[0]}</Text>
+            <TableCard>
+              <Table>
+                <TableBody>
+                  {part.rows.map((row, index) => (
+                    <TableRow key={index}>
+                      {row.slice(1).map((cell, column) => (
+                        <TableCell key={column}>
+                          <Text size="sm">{cell}</Text>
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableCard>
+          </Stack>
+        ) : part.kind === "line" || part.rows.length < 2 ? (
+          <SourceLine key={at} text={part.kind === "line" ? part.text : part.rows[0]?.join(" · ") ?? ""} indented={part.kind === "line" ? part.indented : false} />
+        ) : (
+          <TableCard key={at}>
+            <Table>
+              {/* The first line heads the table only when it reads as column names (short cells);
+                  a first line of content (「상 · 사망 또는 영구적 장해 …」) is a row like the rest. */}
+              {part.rows[0]?.every((cell) => cell.length <= 12) ? (
+                <TableHeader>
+                  <TableRow>
+                    {part.rows[0]?.map((head, column) => <TableHead key={column}>{head}</TableHead>)}
+                  </TableRow>
+                </TableHeader>
+              ) : null}
+              <TableBody>
+                {part.rows.slice(part.rows[0]?.every((cell) => cell.length <= 12) ? 1 : 0).map((row, index) => (
+                  <TableRow key={index}>
+                    {row.map((cell, column) => (
+                      <TableCell key={column}>
+                        <Text size="sm">{cell}</Text>
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableCard>
+        ),
+      )}
+    </Stack>
+  );
+}
+
+/**
+ * An item's name as a checklist row shows it: when the source follows the item with parenthesised
+ * criteria (「화학물질 저장소 … 운영 상태 (표지 부착) (분리보관)」, 「표지 부착 상태 (금지/경고 등)」), the
+ * criteria are listed under the item in small text instead of running on in one line. A parenthesis
+ * inside the item's own words (「가스(산소) 농도」) or a blank to fill (「(　　개소)」) stays where it is.
+ */
+function ItemLabel({ text }: { readonly text: string }) {
+  const trailing = /^(.*?\S)((?:\s+\([^()]+\))+)\s*$/.exec(text);
+  const head = trailing?.[1];
+  const criteria = trailing ? [...(trailing[2] ?? "").matchAll(/\(([^()]+)\)/g)].map((m) => m[1] ?? "") : [];
+  // A blank the form leaves to fill (「(　　개소)」) belongs to the item's own words, not guidance under it.
+  if (!head || criteria.length === 0 || criteria.some((criterion) => /\u3000|\s{2,}/.test(criterion))) return <Text size="sm">{text}</Text>;
+  return (
+    <Stack gap="none">
+      <Text size="sm">{head}</Text>
+      {criteria.map((criterion, at) => (
+        <Text key={at} size="caption" tone="muted" className="pl-3">
+          · {criterion}
+        </Text>
+      ))}
+    </Stack>
+  );
+}
+
+/** Whether a cell's label only repeats the section heading right above it. */
+function sameAsHeading(field: FormSheetField, heading: string): boolean {
+  const norm = (text: string) => text.replace(/[\s·:()\[\]]/g, "");
+  return norm(field.label) === norm(heading);
+}
+
+/** Field kinds whose filled value reads as one line of text. */
+const READ_AS_TEXT: ReadonlySet<string> = new Set(["text", "textarea", "email", "number", "date", "datetime", "time", "month", "range", "select", "reference", "referenceMulti"]);
+
+/** Whether a cell holds nothing: no value, blank text, an empty list or an empty row or period. */
+function isBlankValue(value: unknown): boolean {
+  if (value === null || value === undefined) return true;
+  if (typeof value === "string") return value.trim() === "";
+  if (Array.isArray(value)) return value.length === 0;
+  if (typeof value === "object") return Object.values(value as Record<string, unknown>).every(isBlankValue);
+  return false;
+}
+
+/** A filled value as one line: a period as 「from ~ to」, a list joined; null when the cell is empty. */
+function filledText(value: unknown): string | null {
+  if (value && typeof value === "object" && !Array.isArray(value) && ("from" in value || "to" in value)) {
+    const range = value as { from?: string; to?: string };
+    return range.from || range.to ? `${range.from ?? ""} ~ ${range.to ?? ""}` : null;
+  }
+  const text = derivedText(value);
+  return text.kind === "value" && text.text.trim() ? text.text : null;
+}
+
 interface SheetCellProps {
   readonly field: FormSheetField;
   readonly access: FormSheetCellAccess;
@@ -210,19 +853,81 @@ function SheetCell({ field, access, sheet, required, error }: SheetCellProps) {
   const { t } = useTranslation(`${PACKAGE_NAMESPACE}/features`);
   const value = sheet.values[field.sourceId];
 
-  if (access.kind === "static") return <Text size="sm">{field.sourceText || field.label}</Text>;
+  if (access.kind === "static") {
+    const lines = (field.sourceText || field.label).split("\n");
+    return lines.length === 1 ? <SourceLine text={lines[0] ?? ""} /> : <SourceText lines={lines} />;
+  }
   if (access.kind === "derived") {
     const shown = derivedText(value);
     return (
       <Stack gap="none">
-        <Text size="caption" tone="muted">
-          {field.label}
-        </Text>
-        {shown.kind === "value" ? <Text size="sm">{shown.text}</Text> : <Text size="sm" {...slotAttributes(formSheetHeldStyle, {})}>{t("formSheet.held")}</Text>}
+        {field.labelHidden ? null : (
+          <Text size="caption" tone="muted">
+            {field.label}
+          </Text>
+        )}
+        {shown.kind === "value" ? (
+          <Text size="sm">{shown.text}</Text>
+        ) : value === undefined ? (
+          // Nothing computed yet. Only the field's own note can say what the value is computed from; a
+          // bare 「computed」 tag says nothing a reader can act on, so without a note the cell stays empty.
+          field.derivedNote ? (
+            <Text size="sm" tone="muted">
+              {field.derivedNote}
+            </Text>
+          ) : null
+        ) : (
+          <Text size="sm" {...slotAttributes(formSheetHeldStyle, {})}>{t("formSheet.held")}</Text>
+        )}
+        {/* Where the value is recorded, whether or not it has been yet. */}
+        {sheet.derivedLinks?.[field.sourceId] ? (
+          <Button variant="link" size="sm" className="h-auto self-start px-0" onClick={sheet.derivedLinks[field.sourceId]?.onClick}>
+            {sheet.derivedLinks[field.sourceId]?.label}
+          </Button>
+        ) : null}
       </Stack>
     );
   }
 
+  // An empty cell the viewer cannot fill says who fills it, or that its stage passed it by, rather
+  // than standing as a disabled box that reads as the viewer's to fill. Submitted and printed
+  // sheets keep the blank, as the paper does.
+  if (access.kind !== "editable" && isBlankValue(value) && field.control && field.control.kind !== "checkPair" && field.control.kind !== "tick") {
+    const note =
+      access.kind === "notWriter"
+        ? { text: t("formSheet.pendingBy", { roles: access.roles.map((role) => sheet.roleLabel?.(role) ?? role).join(" · ") }), tone: "muted" as const }
+        : access.kind === "locked" && access.because === "stagePassed"
+          ? { text: t("formSheet.skipped"), tone: "warning" as const }
+          : null;
+    return (
+      <Stack gap="none" data-record-field={field.sourceId} data-cell-state={access.kind}>
+        {field.labelHidden ? null : (
+          <Text size="caption" tone="muted">
+            {field.label}
+          </Text>
+        )}
+        <Text size="sm" tone={note?.tone ?? "muted"}>
+          {note?.text ?? "\u00a0"}
+        </Text>
+      </Stack>
+    );
+  }
+
+  // A filled cell the viewer cannot change reads as its value, the way the record's own fields do;
+  // a disabled box around it would ask for input nobody here can give.
+  const shown = filledText(value);
+  if (access.kind !== "editable" && shown && field.control && READ_AS_TEXT.has(field.control.kind)) {
+    return (
+      <Stack gap="none" data-record-field={field.sourceId}>
+        {field.labelHidden ? null : (
+          <Text size="caption" tone="muted">
+            {field.label}
+          </Text>
+        )}
+        <Text size="sm">{shown}</Text>
+      </Stack>
+    );
+  }
   const disabled: boolean | string =
     access.kind === "editable"
       ? false
@@ -231,8 +936,26 @@ function SheetCell({ field, access, sheet, required, error }: SheetCellProps) {
         : access.kind === "locked" && access.because === "stagePassed"
           ? t("formSheet.stagePassed")
           : true;
-  const control: RecordFormField = { ...(field.control ?? { kind: "text" as const, key: "", label: "" }), key: field.sourceId, label: field.label, required, disabled };
+  const control: RecordFormField = { ...(field.control ?? { kind: "text" as const, key: "", label: "" }), key: field.sourceId, label: field.label, required, disabled, ...(field.labelHidden ? { labelHidden: true } : {}) };
 
+  // A choice among a few words is a row of chips the viewer sees whole, not a list to open.
+  if (control.kind === "select" && control.options.length > 0 && control.options.length <= 6 && access.kind === "editable") {
+    return (
+      <Stack gap="xs" data-record-field={field.sourceId}>
+        {control.labelHidden ? null : (
+          <Text size="sm" weight="medium">
+            {field.label}
+          </Text>
+        )}
+        <ChoiceChips label={field.label} value={typeof value === "string" ? value : null} options={control.options.map((option) => ({ value: option.value, label: option.label }))} onChange={(next) => sheet.onChange(field.sourceId, next)} />
+        {control.hint ? (
+          <Text size="caption" tone="muted">
+            {control.hint}
+          </Text>
+        ) : null}
+      </Stack>
+    );
+  }
   if (control.kind === "signature") return <SignatureCell field={field} control={control} value={value as SignatureValue | null} sheet={sheet} editable={access.kind === "editable"} />;
   return <RecordFieldView field={control} value={value} onChange={(next) => sheet.onChange(field.sourceId, next)} error={error} errorsShown={Boolean(sheet.checkedTransition)} />;
 }
@@ -258,9 +981,11 @@ function SignatureCell({
   if (signed || !editable) {
     const body = (
       <Stack gap="none" data-record-field={field.sourceId}>
-        <Text size="caption" tone="muted">
-          {field.label}
-        </Text>
+        {field.labelHidden ? null : (
+          <Text size="caption" tone="muted">
+            {field.label}
+          </Text>
+        )}
         <Text size="sm">{signed ? `${signerLabel(signed)} · ${signed.at}` : "-"}</Text>
       </Stack>
     );
@@ -275,9 +1000,11 @@ function SignatureCell({
 
   return (
     <Stack gap="xs" data-record-field={field.sourceId}>
-      <Text size="caption" tone="muted">
-        {field.label}
-      </Text>
+      {field.labelHidden ? null : (
+        <Text size="caption" tone="muted">
+          {field.label}
+        </Text>
+      )}
       <Button
         size="sm"
         variant="outline"

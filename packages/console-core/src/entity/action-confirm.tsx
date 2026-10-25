@@ -27,6 +27,8 @@ export interface ActionConfirmConfig<T> {
   readonly onConfirm: (target: T) => void;
   /** Whether it is running now, so the dialog can say so and refuse a second press. */
   readonly running?: boolean;
+  /** Draws the button in the danger tone, for a verb that deletes or takes a record out of use. */
+  readonly destructive?: boolean;
 }
 
 /** What the screen wires: one function for the press, one node to render. */
@@ -70,7 +72,7 @@ export interface ActionConfirm<T> {
  * @returns the press handler and the dialog to render
  */
 export function useActionConfirm<T>(config: ActionConfirmConfig<T>): ActionConfirm<T> {
-  const { title, description, confirmLabel, runningLabel, cancelLabel, onConfirm, running } = config;
+  const { title, description, confirmLabel, runningLabel, cancelLabel, onConfirm, running, destructive } = config;
   // The target lives here rather than in the caller because every one of the eight sites would
   // otherwise hold the same piece of state, and a screen guarding two verbs would hold it twice
   // under two names.
@@ -105,6 +107,7 @@ export function useActionConfirm<T>(config: ActionConfirmConfig<T>): ActionConfi
       confirmLabel={confirmLabel}
       pendingLabel={runningLabel}
       isPending={running}
+      destructive={destructive}
     />
   );
 

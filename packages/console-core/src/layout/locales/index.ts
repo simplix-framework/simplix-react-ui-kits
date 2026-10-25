@@ -22,6 +22,11 @@ const translations = buildModuleTranslations({
       ko: () => import("./flow/ko.json"),
       ja: () => import("./flow/ja.json"),
     },
+    presentation: {
+      en: () => import("./presentation/en.json"),
+      ko: () => import("./presentation/ko.json"),
+      ja: () => import("./presentation/ja.json"),
+    },
     explanation: {
       en: () => import("./explanation/en.json"),
       ko: () => import("./explanation/ko.json"),

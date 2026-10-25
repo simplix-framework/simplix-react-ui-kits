@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
-import { Flex, Tabs, TabsContent, TabsTrigger } from "@simplix-react/ui";
+import { Flex, Tabs, TabsContent, TabsTrigger, Tooltip, TooltipContent, TooltipTrigger } from "@simplix-react/ui";
+import { CircleAlert } from "lucide-react";
 
 import { useGroupedFigure } from "@simplix-react/i18n/react";
 import { NumericText } from "./numeric-text";
@@ -107,6 +108,13 @@ interface CountedTabProps {
    * the list read did, and the two reads disagreeing is the thing to look at.
    */
   readonly count?: number;
+  /**
+   * What the tab still lacks, in the reader's words (「미등록」), drawn after the name as a warning
+   * icon so a record's missing parts are seen without opening every tab.
+   */
+  readonly missing?: string;
+  /** Why the tab cannot be opened yet; set, the tab is drawn disabled with this as its tooltip. */
+  readonly disabled?: string;
 }
 
 /**
@@ -116,12 +124,12 @@ interface CountedTabProps {
  * 「잠긴 계정 2」 is the thing an operator is looking for, and a count only visible after the press
  * makes them press every tab in turn.
  */
-export function CountedTab({ value, label, count }: CountedTabProps) {
+export function CountedTab({ value, label, count, missing, disabled }: CountedTabProps) {
   const grouped = useGroupedFigure();
-  return (
+  const trigger = (
     // `group` is here so the count below can follow the trigger's own state. Nothing else on the
     // trigger uses it, and it costs the strip nothing.
-    <TabsTrigger value={value} className="group">
+    <TabsTrigger value={value} className="group" disabled={Boolean(disabled)} title={disabled}>
       <Flex gap="xs" align="center">
         {label}
         {/* Raised and small, the way a footnote mark is. The count belongs to the name beside it
@@ -155,7 +163,25 @@ export function CountedTab({ value, label, count }: CountedTabProps) {
             {grouped(count)}
           </NumericText>
         )}
+        {missing ? (
+          // Icon only, so the strip keeps its width; the words are the icon's title and its name.
+          <CircleAlert aria-label={missing} role="img" data-tab-missing className="size-3.5 shrink-0 text-amber-500">
+            <title>{missing}</title>
+          </CircleAlert>
+        ) : null}
       </Flex>
     </TabsTrigger>
+  );
+  if (!disabled) return trigger;
+  // A disabled trigger takes no pointer, so the reason hangs on a wrapper that does.
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <span className="inline-flex" tabIndex={0} data-tab-disabled-reason={disabled}>
+          {trigger}
+        </span>
+      </TooltipTrigger>
+      <TooltipContent>{disabled}</TooltipContent>
+    </Tooltip>
   );
 }

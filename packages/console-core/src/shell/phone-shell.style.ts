@@ -17,13 +17,16 @@ export const phoneTabbarStyle = defineSlotStyle({
   defaultVariants: {},
 });
 
-/** One entry of the phone's tab bar; the current one is in the primary colour and an unbuilt one is dimmed. */
+/**
+ * One entry of the phone's tab bar; the current one is in the primary colour. An unbuilt one keeps
+ * its label's contrast (4.5:1 at least, read in daylight on a site) and says why in its tooltip.
+ */
 export const phoneTabStyle = defineSlotStyle({
   slot: "console-phone-tab",
   base: "gap-0.5 py-1.5",
   variants: {
-    active: { true: "text-primary", false: "text-muted-foreground" },
-    unbuilt: { true: "opacity-50", false: "" },
+    active: { true: "text-[var(--primary-text,color-mix(in_oklab,var(--primary)_70%,black))]", false: "text-muted-foreground" },
+    unbuilt: { true: "cursor-not-allowed disabled:opacity-100", false: "" },
   },
   defaultVariants: { active: false, unbuilt: false },
 });
@@ -74,11 +77,15 @@ export const phoneRowButtonStyle = defineSlotStyle({
   defaultVariants: { accent: false },
 });
 
-/** A phone screen's own padded body: the gutter between the chrome and the content. */
+/**
+ * A phone screen's own padded body: the gutter between the chrome and the content. Inputs inside it
+ * are 48px tall for a thumb, and a small control (a clear button, a check box) keeps its drawn size
+ * but answers a 44px square around it.
+ */
 export const phoneScreenBodyStyle = defineSlotStyle({
   slot: "console-phone-screen-body",
   as: "part",
-  base: "p-3",
+  base: "p-3 [&_[data-slot=input]]:h-12 [&_[data-slot=field-select-trigger]]:h-12 [&_[data-slot=date-picker-trigger]]:h-12 [&_textarea]:min-h-24 [&_[data-slot=field-clear-button]]:relative [&_[data-slot=field-clear-button]]:after:absolute [&_[data-slot=field-clear-button]]:after:-inset-3 [&_[data-slot=field-clear-button]]:after:content-[''] [&_[role=checkbox]]:relative [&_[role=checkbox]]:after:absolute [&_[role=checkbox]]:after:-inset-3.5 [&_[role=checkbox]]:after:content-['']",
   variants: {},
   defaultVariants: {},
 });

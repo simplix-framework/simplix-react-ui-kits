@@ -25,6 +25,8 @@ interface EntitySearchComboboxProps {
   suffixControl?: React.ReactNode;
   /** Layout class merged onto the field, e.g. a grid span in a two-column form. */
   className?: string;
+  /** `hidden` names the field for assistive technology only, as every other form field takes it. */
+  layout?: "hidden";
 }
 
 /**
@@ -38,7 +40,7 @@ interface EntitySearchComboboxProps {
  * label resolved whether or not that row is in the latest result page. For a bounded
  * catalogue use {@link EntityCombobox} instead — one request, filtered in the browser.
  */
-export function EntitySearchCombobox({ label, value, onChange, search, error, placeholder, description, required, disabled, suffixControl, className }: EntitySearchComboboxProps) {
+export function EntitySearchCombobox({ label, value, onChange, search, error, placeholder, description, required, disabled, suffixControl, className, layout }: EntitySearchComboboxProps) {
   const { t } = useTranslation("simplix/ui");
 
   return (
@@ -57,6 +59,7 @@ export function EntitySearchCombobox({ label, value, onChange, search, error, pl
       disabled={disabled}
       suffixControl={suffixControl}
       className={className}
+      {...(layout ? { layout } : {})}
       footer={
         search.hasMore ? (
           <Text as="span" size="caption" tone="muted" {...partAttributes(entitySearchMoreStyle, {})}>

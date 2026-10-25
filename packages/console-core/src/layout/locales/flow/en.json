@@ -1,3 +1,9 @@
 {
-  "title": "Progress"
+  "title": "Progress",
+  "state": {
+    "done": "Done",
+    "now": "In progress",
+    "wait": "Waiting",
+    "reject": "Rejected"
+  }
 }

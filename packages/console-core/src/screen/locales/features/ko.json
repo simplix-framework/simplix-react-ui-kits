@@ -12,6 +12,7 @@
     "evidence": "증빙 {{count, number}}건",
     "score": "점수",
     "rating": "등급",
+    "ratingOption": "{{label}}({{score}}점)",
     "reason": "근거",
     "outOfRange": "{{min}}~{{max}} 범위의 점수만 입력할 수 있습니다",
     "basis": {
@@ -35,7 +36,6 @@
     "syncPendingBody": "연결되면 자동으로 전송합니다",
     "empty": "오늘 할 일이 없습니다",
     "overdue": "기한 지남",
-    "noDue": "기한 없음",
     "opens": "{{screen}} 열기"
   },
   "phoneStep": {
@@ -51,14 +51,43 @@
     "writerOnly": "{{roles}} 입력 칸",
     "stagePassed": "단계가 지나 잠긴 칸입니다",
     "held": "해석 보류",
-    "viewForm": "서식",
-    "viewSource": "원문 보기",
+    "viewForm": "항목 보기",
+    "viewSource": "원문 쪽 보기",
     "print": "인쇄",
     "sign": "서명",
     "signTitle": "{{label}} 서명",
     "version": "제출본 {{version}}",
-    "templateVersion": "서식 {{version}}",
+    "templateVersion": "개정 {{version}}",
     "noSource": "원문 쪽 이미지가 없습니다",
-    "sourcePage": "원문 {{page}}쪽"
+    "sourcePage": "원문 {{page}}쪽",
+    "rest": "기타 입력 칸",
+    "signedCount": "서명 {{signed}} / {{total}}",
+    "signer": "서명자",
+    "signedAt": "서명 시각",
+    "pendingBy": "{{roles}} 입력 예정",
+    "skipped": "미입력",
+    "awaitingSignature": "서명 대기",
+    "viewLabel": "보기 방식"
+  },
+  "liveBoard": {
+    "asOfLabel": "기준",
+    "feed": {
+      "connected": "연결됨",
+      "stale": "응답 지연",
+      "disconnected": "연결 끊김"
+    },
+    "every": "자동 갱신 {{seconds, number}}초",
+    "paused": "자동 갱신 멈춤",
+    "pause": "자동 갱신 멈춤",
+    "resume": "자동 갱신 시작",
+    "lostTitle": "{{source}}{{particle}} 연결이 끊겼습니다",
+    "lostBody": "화면의 값은 마지막으로 받은 것이며 지금 상태와 다를 수 있습니다.",
+    "lostBodySince": "마지막 응답 {{at}}. 화면의 값은 그때 것이며, 지금 현장 상태와 다를 수 있습니다.",
+    "openSource": "끊긴 곳 보기",
+    "change": {
+      "new": "새 사건",
+      "changed": "바뀜"
+    },
+    "unread": "읽지 않음"
   }
 }

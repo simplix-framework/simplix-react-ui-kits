@@ -42,12 +42,15 @@ export function initialFieldValue(field: RecordFormField): unknown {
     case "attachment":
       return field.value ?? [];
     case "switch":
+    case "tick":
       return field.value ?? false;
     case "number":
     case "check":
     case "time":
       return field.value ?? null;
     case "range":
+      return field.value ?? {};
+    case "row":
       return field.value ?? {};
     case "signature":
       return field.signer ?? null;
@@ -102,7 +105,9 @@ export function isRangeOutOfOrder(range: RangeValue | null | undefined): boolean
 export function validateField(field: RecordFormField, value: unknown): FieldErrorCode | null {
   const required = Boolean(field.required);
   switch (field.kind) {
+    // An unticked box is an answer, so neither control can be left empty.
     case "switch":
+    case "tick":
       return null;
     case "check":
       return required && (value === null || value === undefined) ? "required" : null;
@@ -157,10 +162,39 @@ export function formFieldErrors(sections: readonly RecordFormSection[], values: 
   const errors: Record<string, FieldErrorCode> = {};
   for (const section of sections)
     for (const field of section.fields) {
+      if (!fieldShown(field, values)) continue;
       const code = validateField(field, values[field.key]);
       if (code) errors[field.key] = code;
     }
   return errors;
+}
+
+/**
+ * How many of the required fields hold an answer, for the count at the head of a form.
+ *
+ * <p>A switch or a tick is always answered, so neither is counted; a disabled field cannot be
+ * filled by the reader, so it is not counted either.
+ */
+export function requiredProgress(sections: readonly RecordFormSection[], values: Readonly<Record<string, unknown>>): { readonly total: number; readonly filled: number } {
+  let total = 0;
+  let filled = 0;
+  for (const section of sections)
+    for (const field of section.fields) {
+      if (!field.required || field.disabled || field.kind === "switch" || field.kind === "tick" || !fieldShown(field, values)) continue;
+      total += 1;
+      if (validateField(field, values[field.key]) === null) filled += 1;
+    }
+  return { total, filled };
+}
+
+/**
+ * Whether a field is drawn for the values the form holds: always, unless it names another field
+ * whose value must be one of a list ({@link FieldCommon.shownWhen}).
+ */
+export function fieldShown(field: Pick<RecordFormField, "shownWhen">, values: Readonly<Record<string, unknown>>): boolean {
+  if (!field.shownWhen) return true;
+  const value = values[field.shownWhen.field];
+  return (Array.isArray(value) ? value : [value]).some((v) => typeof v === "string" && field.shownWhen?.is.includes(v));
 }
 
 /** The reason a field is disabled, when it was given as a string. */

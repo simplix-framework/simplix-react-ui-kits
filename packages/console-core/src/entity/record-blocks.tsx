@@ -14,7 +14,7 @@ export interface RecordNotice {
 export interface RecordVerb {
   readonly label: string;
   readonly onClick?: () => void;
-  /** The reason it cannot be pressed; set, it is drawn disabled with this as its title. */
+  /** The reason it cannot be pressed; set, it is drawn disabled with this reason written under it. */
   readonly disabled?: string;
   /** `primary` finishes the work, `danger` cannot be taken back lightly, `plain` is anything else. */
   readonly kind?: "primary" | "danger" | "plain" | "quiet";
@@ -74,12 +74,24 @@ export function RecordVerbs({ verbs, end = false }: { readonly verbs?: readonly 
   );
 }
 
-/** One {@link RecordVerb}. */
+/**
+ * One {@link RecordVerb}.
+ *
+ * <p>A disabled verb writes its reason under itself, so the reader learns what is missing without
+ * hovering a control that answers nothing; the full reason stays as the title when the line is cut.
+ */
 export function RecordVerbButton({ verb }: { readonly verb: RecordVerb }) {
   const variant = verb.kind === "primary" ? "primary" : verb.kind === "danger" ? "destructive" : verb.kind === "quiet" ? "ghost" : "outline";
-  return (
+  const button = (
     <Button size="sm" variant={variant} onClick={verb.onClick} disabled={Boolean(verb.disabled)} title={verb.disabled}>
       {verb.label}
     </Button>
+  );
+  if (!verb.disabled) return button;
+  return (
+    <span data-slot="console-verb-blocked" className="inline-flex max-w-60 flex-col items-stretch gap-0.5" title={verb.disabled}>
+      {button}
+      <span className="line-clamp-2 text-left text-xs leading-snug text-muted-foreground">{verb.disabled}</span>
+    </span>
   );
 }

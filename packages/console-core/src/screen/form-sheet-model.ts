@@ -38,6 +38,13 @@ export interface FormSheetField {
   readonly control?: RecordFormField;
   /** The cell's place in a source table, where the source draws it inside one. */
   readonly cell?: FormSheetCellPlace;
+  /**
+   * For a derived cell, where its value comes from while it has none (「가스 측정에서 입력합니다」);
+   * a computed cell without it reads as computed automatically.
+   */
+  readonly derivedNote?: string;
+  /** The label is for assistive technology only; the heading right above already says it. */
+  readonly labelHidden?: boolean;
   /** The 1-based source page the cell is printed on. */
   readonly page?: number;
 }
@@ -53,6 +60,133 @@ export interface FormSheetDefinition {
    */
   readonly stages: readonly string[];
   readonly fields: readonly FormSheetField[];
+  /**
+   * How the form is laid out for entry on screen: sections in the source's order, each grouping
+   * the cells the source groups. Without it the cells are drawn in source order.
+   */
+  readonly layout?: FormSheetLayout;
+}
+
+/** A block of a web entry layout; `fields` name cells by sourceId. */
+export type FormSheetLayoutBlock =
+  /** Inputs in a grid of 1 to 3 columns; `wide` cells take the whole row. */
+  | { readonly kind: "fields"; readonly title?: string; readonly columns?: 1 | 2 | 3; readonly fields: readonly string[]; readonly wide?: readonly string[] }
+  /** Items answered by the same columns, under the source's column names. */
+  | {
+      readonly kind: "checks";
+      readonly title?: string;
+      readonly headers?: readonly string[];
+      readonly fields: readonly string[];
+      /** Sub-groups of one table: each group's name and the index of its first row. */
+      readonly groups?: readonly { readonly title: string; readonly start: number }[];
+    }
+  | { readonly kind: "measurements"; readonly title?: string; readonly headers?: readonly string[]; readonly fields: readonly string[] }
+  /** Source text the viewer reads and does not enter. */
+  | { readonly kind: "static"; readonly title?: string; readonly fields: readonly string[] }
+  /** An instruction the source prints that no cell carries. */
+  | { readonly kind: "note"; readonly text: string }
+  /** The same cells repeated per person or per line, drawn as a table: a row per entry, a column per cell. */
+  | {
+      readonly kind: "grid";
+      readonly title?: string;
+      readonly columns: readonly string[];
+      readonly rows: readonly (readonly string[])[];
+      /** Each row's name in the first column (「작성자」, 「확인자」), when the first column names rows. */
+      readonly leads?: readonly string[];
+    };
+
+/** One section of a web entry layout. */
+export interface FormSheetLayoutSection {
+  readonly title: string;
+  readonly blocks: readonly FormSheetLayoutBlock[];
+}
+
+/** A source form laid out for entry on screen. */
+export interface FormSheetLayout {
+  readonly sections: readonly FormSheetLayoutSection[];
+}
+
+/** A layout block with its cells resolved. */
+export type ResolvedLayoutBlock =
+  | { readonly kind: "fields"; readonly title?: string; readonly columns: 1 | 2 | 3; readonly fields: readonly FormSheetField[]; readonly wide: ReadonlySet<string> }
+  | { readonly kind: "checks"; readonly title?: string; readonly headers: readonly string[]; readonly fields: readonly FormSheetField[]; readonly groups?: readonly { readonly title: string; readonly start: number }[] }
+  | { readonly kind: "measurements"; readonly title?: string; readonly headers?: readonly string[]; readonly fields: readonly FormSheetField[] }
+  | { readonly kind: "static"; readonly title?: string; readonly fields: readonly FormSheetField[] }
+  | { readonly kind: "note"; readonly text: string }
+  | { readonly kind: "grid"; readonly title?: string; readonly columns: readonly string[]; readonly rows: readonly (readonly FormSheetField[])[]; readonly leads?: readonly string[] };
+
+/** A layout section with its blocks resolved. */
+export interface ResolvedLayoutSection {
+  readonly title: string;
+  readonly blocks: readonly ResolvedLayoutBlock[];
+}
+
+/** What is wrong with a layout against its form's cells. */
+export interface LayoutProblems {
+  /** sourceIds the layout names that the form does not have. */
+  readonly unknown: readonly string[];
+  /** sourceIds the layout names more than once. */
+  readonly repeated: readonly string[];
+  /** Input and derived cells the layout leaves out. */
+  readonly missing: readonly string[];
+}
+
+function layoutIds(layout: FormSheetLayout): string[] {
+  return layout.sections.flatMap((section) => section.blocks.flatMap((block) => (block.kind === "note" ? [] : block.kind === "grid" ? block.rows.flat() : block.fields)));
+}
+
+/**
+ * Checks a layout against its form: every input and derived cell placed exactly once, no unknown id.
+ *
+ * @param form - The form, with its layout.
+ * @returns The problems found; all empty for a sound layout or a form without one.
+ */
+export function layoutProblems(form: FormSheetDefinition): LayoutProblems {
+  if (!form.layout) return { unknown: [], repeated: [], missing: [] };
+  const ids = layoutIds(form.layout);
+  const known = new Set(form.fields.map((field) => field.sourceId));
+  const placed = new Set(ids);
+  return {
+    unknown: ids.filter((id) => !known.has(id)),
+    repeated: [...new Set(ids.filter((id, at) => ids.indexOf(id) !== at))],
+    missing: sortByOrder(form.fields).filter((field) => field.mode !== "static" && !placed.has(field.sourceId)).map((field) => field.sourceId),
+  };
+}
+
+/**
+ * The form's layout with its cells resolved. A cell the layout leaves out is never lost: input and
+ * derived cells it misses are drawn in a last section titled `rest`.
+ *
+ * @param form - The form, with its layout.
+ * @param rest - The title of the section holding cells the layout leaves out.
+ * @returns The sections to draw, or null for a form without a layout.
+ */
+export function layoutSections(form: FormSheetDefinition, rest: string): readonly ResolvedLayoutSection[] | null {
+  if (!form.layout) return null;
+  const byId = new Map(form.fields.map((field) => [field.sourceId, field]));
+  const pick = (ids: readonly string[]) => ids.flatMap((id) => byId.get(id) ?? []);
+  const sections: ResolvedLayoutSection[] = form.layout.sections.map((section) => ({
+    title: section.title,
+    blocks: section.blocks.map((block): ResolvedLayoutBlock => {
+      switch (block.kind) {
+        case "fields":
+          return { kind: "fields", title: block.title, columns: block.columns ?? 2, fields: pick(block.fields), wide: new Set(block.wide ?? []) };
+        case "checks":
+          return { kind: "checks", title: block.title, headers: block.headers ?? [], fields: pick(block.fields), groups: block.groups };
+        case "note":
+          return block;
+        case "grid":
+          return { kind: "grid", title: block.title, columns: block.columns, rows: block.rows.map((row) => pick(row)), leads: block.leads };
+        case "measurements":
+          return { kind: "measurements", title: block.title, headers: block.headers, fields: pick(block.fields) };
+        default:
+          return { kind: block.kind, title: block.title, fields: pick(block.fields) };
+      }
+    }),
+  }));
+  const missing = layoutProblems(form).missing.flatMap((id) => byId.get(id) ?? []);
+  if (missing.length > 0) sections.push({ title: rest, blocks: [{ kind: "fields", columns: 2, fields: missing, wide: new Set() }] });
+  return sections;
 }
 
 /** What the viewer can do with one cell. */

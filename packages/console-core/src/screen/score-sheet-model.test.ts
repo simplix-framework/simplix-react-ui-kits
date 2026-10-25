@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { figureText, isScoreInRange, scoreVisibility, subtotalRows, type ScoreCriterion } from "./score-sheet-model";
+import { figureText, isScoreInRange, ratingOf, scoreVisibility, subtotalRows, type ScoreCriterion } from "./score-sheet-model";
 
 const criteria: ScoreCriterion[] = [
   { key: "a1", categoryPath: ["A"], cells: ["item a1"], scoreRuleKey: "r10" },
@@ -77,5 +77,16 @@ describe("subtotalRows", () => {
   it("treats a category the server did not list as not computed", () => {
     const rows = subtotalRows(criteria, { categories: {}, total: null, result: null }, [{ conflictKey: "c", label: "held" }], []);
     expect(rows.map((r) => r.figure.kind)).toEqual(["held", "held"]);
+  });
+});
+
+describe("ratingOf", () => {
+  const rule = { min: 0, max: 100, ratings: [{ label: "우수", score: 90 }, { label: "보통", score: 80 }] };
+  it("returns the grade a label names", () => {
+    expect(ratingOf(rule, "보통")).toEqual({ label: "보통", score: 80 });
+  });
+  it("returns nothing for a label outside the table or a rule without one", () => {
+    expect(ratingOf(rule, "불량")).toBeUndefined();
+    expect(ratingOf({ min: 0, max: 10 }, "우수")).toBeUndefined();
   });
 });

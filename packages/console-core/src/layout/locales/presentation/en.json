@@ -1,0 +1,12 @@
+{
+  "group": "Detail view",
+  "settings": "View settings",
+  "choice": {
+    "panel": { "label": "Side panel", "hint": "Read a record beside the list while scanning it" },
+    "drawer": { "label": "Right drawer", "hint": "Open a record over the list for a quick check" },
+    "dialog": { "label": "Dialog", "hint": "Focus on one record at a time" },
+    "page": { "label": "Full page", "hint": "Read a record with many tabs and fields at full width" }
+  },
+  "remember": "Remember in this browser",
+  "rememberHint": "On, the next visit opens the same way; off, the choice lasts for this visit only"
+}

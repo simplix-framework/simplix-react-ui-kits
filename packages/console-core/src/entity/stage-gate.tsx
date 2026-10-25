@@ -27,9 +27,9 @@ export interface StageGateProps {
 
 const CONDITION_TONE: Record<StageConditionState, RecordNotice["tone"]> = {
   met: "success",
-  unmet: "info",
-  // The same warning tone as an interpretation-held card, so a held rule reads the same everywhere.
-  held: "warning",
+  unmet: "warning",
+  // Pending, not a hazard: a held condition waits on an interpretation and is drawn in the info tone.
+  held: "info",
 };
 
 /**
@@ -38,7 +38,7 @@ const CONDITION_TONE: Record<StageConditionState, RecordNotice["tone"]> = {
  *
  * <p><b>Met, unmet and held are three facts.</b> An unmet condition is work somebody can do now,
  * so it carries the link to where it is done; a held one waits on an interpretation, so it is drawn
- * in the warning tone and offers no link. Both keep the command disabled (see
+ * in the info tone (pending, never a hazard) and offers no link. Both keep the command disabled (see
  * {@link stageGateVerdict}). Once everything is met the list folds away and only the command stays.
  */
 export function StageGate({ command, conditions }: StageGateProps) {

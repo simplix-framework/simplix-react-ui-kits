@@ -1,5 +1,5 @@
-import type { ReactNode } from "react";
-import { EmptyValue, Flex, StatusBadge, Text, type StatusTone } from "@simplix-react/ui";
+import type { MouseEvent, ReactNode } from "react";
+import { Button, EmptyValue, Flex, StatusBadge, Text, type StatusTone } from "@simplix-react/ui";
 
 import { InitialsAvatar } from "../identity/initials-avatar";
 
@@ -12,8 +12,8 @@ export interface RecordBadge {
 /**
  * What one cell or one detail field shows, declared rather than drawn.
  *
- * <p>Text; text over a quieter second line; one or more badges; text that opens the record it
- * names. Nothing is the kit's empty mark, so a screen never draws its own placeholder.
+ * <p>Text; text over a quieter second line; one or more badges; the name of another record. Nothing
+ * is the kit's empty mark, so a screen never draws its own placeholder.
  */
 export type RecordValue =
   | string
@@ -29,7 +29,13 @@ export type RecordValue =
     }
   | { readonly badge: RecordBadge }
   | { readonly badges: readonly RecordBadge[] }
-  | { readonly link: string };
+  /**
+   * The name of another record. It is drawn in body colour: a name that carries no way to open its
+   * record must not look pressable, and inside a clickable row it would compete with the row press.
+   * With `onClick` or `href` it is drawn as a link that opens that record; the press does not reach
+   * the row beneath it.
+   */
+  | { readonly link: string; readonly onClick?: () => void; readonly href?: string; readonly badge?: RecordBadge };
 
 /** Draws a {@link RecordValue}. */
 export function RecordValueView({ value }: { readonly value: RecordValue }): ReactNode {
@@ -37,14 +43,40 @@ export function RecordValueView({ value }: { readonly value: RecordValue }): Rea
   if (typeof value === "string" || typeof value === "number") return <>{value}</>;
   if ("badges" in value) {
     return (
-      <Flex gap="xs" wrap>
+      // Badges wrap one by one inside the column; a badge's own words never break or ellipsize.
+      <Flex gap="xs" wrap className="[&>*]:whitespace-nowrap">
         {value.badges.map((badge) => (
           <StatusBadge key={badge.label} tone={badge.tone ?? "neutral"} label={badge.label} />
         ))}
       </Flex>
     );
   }
-  if ("link" in value) return <Text tone="primary">{value.link}</Text>;
+  if ("link" in value) {
+    // A badge beside the name says something about that record (out of use), not about this one.
+    if (value.badge) {
+      const { badge, ...name } = value;
+      return (
+        <Flex align="center" gap="xs">
+          <RecordValueView value={name} />
+          <StatusBadge tone={badge.tone ?? "neutral"} label={badge.label} />
+        </Flex>
+      );
+    }
+    if (!value.onClick && !value.href) return <>{value.link}</>;
+    const { onClick, href } = value;
+    const press = (event: MouseEvent) => {
+      event.stopPropagation();
+      if (onClick) {
+        event.preventDefault();
+        onClick();
+      }
+    };
+    return (
+      <Button variant="link" size="link" asChild={href !== undefined} onClick={press}>
+        {href !== undefined ? <a href={href}>{value.link}</a> : value.link}
+      </Button>
+    );
+  }
   if ("text" in value) {
     const lines = (
       <Flex direction="column" gap="none" minSize>
@@ -67,5 +99,9 @@ export function RecordValueView({ value }: { readonly value: RecordValue }): Rea
       </Flex>
     );
   }
-  return <StatusBadge tone={value.badge.tone ?? "neutral"} label={value.badge.label} />;
+  return (
+    <span className="whitespace-nowrap">
+      <StatusBadge tone={value.badge.tone ?? "neutral"} label={value.badge.label} />
+    </span>
+  );
 }

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { EntitySearch } from "@simplix-react/ui";
 
-import { emptyRow, formFieldErrors, initialFieldValue, isRangeOutOfOrder, validateField } from "./record-form-rules";
+import { emptyRow, fieldShown, formFieldErrors, initialFieldValue, isRangeOutOfOrder, requiredProgress, validateField } from "./record-form-rules";
 import type { RecordFormField } from "./record-form-types";
 
 const base = { key: "k", label: "L", required: true } as const;
@@ -86,5 +86,17 @@ describe("initial values", () => {
   it("formFieldErrors keys refused fields in drawing order", () => {
     const sections = [{ key: "s", fields: [{ ...base, key: "b", kind: "text" } as RecordFormField, { ...base, key: "a", kind: "check" } as RecordFormField] }];
     expect(Object.keys(formFieldErrors(sections, { b: "", a: null }))).toEqual(["b", "a"]);
+  });
+});
+
+describe("fieldShown", () => {
+  const reason = { key: "reason", label: "적용 제외 사유", kind: "text" as const, required: true, shownWhen: { field: "decision", is: ["허가 제외"] } };
+  const sections = [{ key: "s", title: "", fields: [{ key: "decision", label: "판정", kind: "text" as const, required: true }, reason] }];
+  it("asks for a field only while the field it names holds one of its values", () => {
+    expect(fieldShown(reason, { decision: "허가 필요" })).toBe(false);
+    expect(fieldShown(reason, { decision: "허가 제외" })).toBe(true);
+    expect(formFieldErrors(sections, { decision: "허가 필요" })).toEqual({});
+    expect(Object.keys(formFieldErrors(sections, { decision: "허가 제외" }))).toEqual(["reason"]);
+    expect(requiredProgress(sections, { decision: "허가 필요" })).toEqual({ total: 1, filled: 1 });
   });
 });

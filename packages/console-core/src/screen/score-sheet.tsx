@@ -3,7 +3,7 @@ import { Badge, Button, EmptyValue, Stack, StatusBadge, Table, TableBody, TableC
 import { partAttributes, slotAttributes } from "@simplix-react/ui/design";
 import { Fragment } from "react";
 
-import { RecordFormSections, useRecordFormValues, type RecordFormSection } from "../entity/record-form";
+import { RecordFormSections, useRecordFormValues, type RecordFormField, type RecordFormSection } from "../entity/record-form";
 import { NumericText } from "../layout/numeric-text";
 import { TableCard } from "../layout/table-card";
 import { PACKAGE_NAMESPACE } from "./locales";
@@ -11,6 +11,7 @@ import {
   evaluatorsOf,
   figureText,
   isScoreInRange,
+  ratingOf,
   scoreVisibility,
   subtotalRows,
   type FigureText,
@@ -128,6 +129,25 @@ function EntrySections({ criteria, raw, rules, viewer, onEntryChange }: {
   const sections: RecordFormSection[] = criteria.map((criterion) => {
     const own = raw.find((r) => r.criterionKey === criterion.key && r.evaluator === viewer);
     const rule = rules[criterion.scoreRuleKey];
+    const reason: RecordFormField = { kind: "textarea", key: `${criterion.key}::reason`, label: t("scoreSheet.reason"), value: own?.reason ?? "" };
+    if (rule?.ratings && rule.ratings.length > 0) {
+      // A graded item takes one choice; the score is the chosen grade's, so it is never typed.
+      return {
+        key: criterion.key,
+        title: criterion.cells.join(" · "),
+        columns: 1,
+        fields: [
+          {
+            kind: "radio",
+            key: `${criterion.key}::grade`,
+            label: t("scoreSheet.rating"),
+            value: own?.rating ?? "",
+            options: rule.ratings.map((rating) => ({ value: rating.label, label: t("scoreSheet.ratingOption", { label: rating.label, score: rating.score }) })),
+          },
+          reason,
+        ],
+      };
+    }
     return {
       key: criterion.key,
       title: criterion.cells.join(" · "),
@@ -144,7 +164,7 @@ function EntrySections({ criteria, raw, rules, viewer, onEntryChange }: {
           disabled: rule === undefined,
         },
         { kind: "text", key: `${criterion.key}::rating`, label: t("scoreSheet.rating"), value: own?.rating ?? "" },
-        { kind: "textarea", key: `${criterion.key}::reason`, label: t("scoreSheet.reason"), value: own?.reason ?? "" },
+        reason,
       ],
     };
   });
@@ -154,6 +174,14 @@ function EntrySections({ criteria, raw, rules, viewer, onEntryChange }: {
     set: (key: string, value: unknown) => {
       const [criterionKey = "", field] = key.split("::");
       const criterion = criteria.find((c) => c.key === criterionKey);
+      if (field === "grade") {
+        const label = typeof value === "string" ? value : "";
+        const rating = criterion ? ratingOf(rules[criterion.scoreRuleKey], label) : undefined;
+        if (!rating) return;
+        base.set(key, label);
+        onEntryChange?.({ criterionKey, rating: rating.label, score: rating.score });
+        return;
+      }
       if (field === "score") {
         const score = typeof value === "number" ? value : null;
         // Rejected rather than clamped: a clamped score is one the evaluator never entered.

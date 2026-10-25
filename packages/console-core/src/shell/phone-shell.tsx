@@ -64,6 +64,11 @@ export interface ConsolePhoneTab {
    * thing, and one that is there and inactive teaches that it cannot do it yet.
    */
   readonly to?: string;
+  /**
+   * A plain address to leave for, where no router is mounted (a preview). Used when `to` is
+   * absent; an entry with neither is drawn inactive.
+   */
+  readonly href?: string;
   /** How many are waiting behind it, drawn as a count on the glyph. */
   readonly badge?: number;
 }
@@ -176,6 +181,19 @@ function PhoneTab({ tab, active }: { readonly tab: ConsolePhoneTab; readonly act
     </>
   );
   const shape = cn("flex flex-1 flex-col items-center justify-center", TOUCH_TARGET);
+
+  if (!tab.to && tab.href) {
+    return (
+      <a
+        href={tab.href}
+        aria-current={active ? "page" : undefined}
+        className={shape}
+        {...slotAttributes(phoneTabStyle, { active, unbuilt: false })}
+      >
+        {body}
+      </a>
+    );
+  }
 
   if (!tab.to) {
     return (

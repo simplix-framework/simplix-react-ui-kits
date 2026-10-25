@@ -233,7 +233,8 @@ export const tileStripDividerStyle = defineSlotStyle({
  */
 export const tileStyle = defineSlotStyle({
   slot: "console-tile",
-  base: "",
+  // A tile holds one figure: it is as tall as its lines, never a fixed card height.
+  base: "[&_[data-slot=stat-card]]:min-h-0",
   variants: {
     emphasis: { true: "", false: "" },
     /** The tile being dragged to a new place. */
@@ -258,8 +259,9 @@ export const tileGripStyle = defineSlotStyle({
 /** The arrow on a tile that leads to a list, shown while the pointer is on it. */
 export const tileGoStyle = defineSlotStyle({
   slot: "console-tile-go",
-  // Slides 4px in as it shows.
-  base: "text-muted-foreground opacity-0 -translate-x-1 transition-[opacity,translate] duration-[var(--dur-base)] ease-[var(--ease)] group-hover:opacity-100 group-hover:translate-x-0 group-focus-visible:opacity-100 group-focus-visible:translate-x-0",
+  // Always shown, so a tile that leads somewhere reads as pressable before the pointer finds it;
+  // it steps 2px on toward the press.
+  base: "text-muted-foreground transition-[color,translate] duration-[var(--dur-base)] ease-[var(--ease)] group-hover:translate-x-0.5 group-hover:text-foreground group-focus-visible:translate-x-0.5 group-focus-visible:text-foreground",
   variants: {},
   defaultVariants: {},
 });

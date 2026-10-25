@@ -12,6 +12,7 @@
     "evidence": "{{count, number}} evidence",
     "score": "Score",
     "rating": "Rating",
+    "ratingOption": "{{label}} ({{score}})",
     "reason": "Reason",
     "outOfRange": "Only scores from {{min}} to {{max}} are accepted",
     "basis": {
@@ -35,7 +36,6 @@
     "syncPendingBody": "They are sent automatically once connected",
     "empty": "Nothing to do today",
     "overdue": "Overdue",
-    "noDue": "No due time",
     "opens": "Open {{screen}}"
   },
   "phoneStep": {
@@ -57,8 +57,37 @@
     "sign": "Sign",
     "signTitle": "Sign {{label}}",
     "version": "Submission {{version}}",
-    "templateVersion": "Template {{version}}",
+    "templateVersion": "Revision {{version}}",
     "noSource": "No source page images",
-    "sourcePage": "Source page {{page}}"
+    "sourcePage": "Source page {{page}}",
+    "rest": "Other fields",
+    "signedCount": "Signed {{signed}} / {{total}}",
+    "signer": "Signer",
+    "signedAt": "Signed at",
+    "pendingBy": "To be entered by {{roles}}",
+    "skipped": "Passed without entry",
+    "awaitingSignature": "Awaiting signature",
+    "viewLabel": "View"
+  },
+  "liveBoard": {
+    "asOfLabel": "as of",
+    "feed": {
+      "connected": "Connected",
+      "stale": "Delayed",
+      "disconnected": "Disconnected"
+    },
+    "every": "Refreshing every {{seconds, number}}s",
+    "paused": "Auto-refresh paused",
+    "pause": "Pause auto-refresh",
+    "resume": "Resume auto-refresh",
+    "lostTitle": "Lost the connection to {{source}}{{particle}}",
+    "lostBody": "What is on screen is the last value received and may differ from the site right now.",
+    "lostBodySince": "Last answered at {{at}}. What is on screen is from then and may differ from the site right now.",
+    "openSource": "Open what stopped answering",
+    "change": {
+      "new": "New",
+      "changed": "Changed"
+    },
+    "unread": "Unread"
   }
 }

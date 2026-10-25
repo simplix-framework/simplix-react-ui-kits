@@ -5,6 +5,7 @@ import { AlertBanner, Badge, Button, Flex, Stack, Text } from "@simplix-react/ui
 
 import { KOREAN_PARTICLES, localeParticle } from "../i18n";
 import { ActionButton, type ActionOrUnbuilt } from "../notice";
+import { PACKAGE_NAMESPACE } from "./locales";
 import { liveNoticeActionStyle, liveNoticeStyle } from "./live-board.style";
 import { partAttributes, slotAttributes } from "@simplix-react/ui/design";
 
@@ -65,7 +66,7 @@ export function LiveBoardStatus({
   openStalledSourceLabel,
   stalledSince,
 }: LiveBoardStatusProps) {
-  const { t, locale } = useTranslation("common");
+  const { t, locale } = useTranslation(`${PACKAGE_NAMESPACE}/features`);
 
   return (
     <Stack gap="sm">
@@ -84,7 +85,8 @@ export function LiveBoardStatus({
           <Text size="caption" tone="muted">
             {t("liveBoard.asOfLabel")}
           </Text>
-          <Badge variant={feed === "connected" ? "outline" : "default"}>{t(`liveBoard.feed.${feed}`)}</Badge>
+          {/* A feed that stopped answering is a warning, never the primary (healthy-looking) fill. */}
+          <Badge variant={feed === "connected" ? "outline" : feed === "stale" ? "warning" : "destructive"}>{t(`liveBoard.feed.${feed}`)}</Badge>
           <Text size="caption" tone="muted">
             {refreshing && everySeconds !== undefined
               ? t("liveBoard.every", { seconds: everySeconds })
@@ -139,7 +141,7 @@ interface LiveRowMarkProps {
  * <p>Renders nothing for an unchanged row — a mark on every row is a mark on none.
  */
 export function LiveRowMark({ change }: LiveRowMarkProps) {
-  const { t } = useTranslation("common");
+  const { t } = useTranslation(`${PACKAGE_NAMESPACE}/features`);
   if (change === "unchanged") return null;
   return <Badge variant={change === "new" ? "default" : "outline"}>{t(`liveBoard.change.${change}`)}</Badge>;
 }
@@ -169,7 +171,7 @@ export interface LiveNotice {
  * a person goes past with the rest.
  */
 export function LiveTicker({ notices }: { readonly notices: readonly LiveNotice[] }) {
-  const { t } = useTranslation("common");
+  const { t } = useTranslation(`${PACKAGE_NAMESPACE}/features`);
 
   return (
     <Stack gap="xs">

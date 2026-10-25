@@ -45,6 +45,8 @@ export const matrixCellStyle = defineSlotStyle({
       warning: "bg-warning/15",
       danger: "bg-destructive/15",
       muted: "bg-muted/40",
+      // Awaiting an interpretation: neutral with a dashed inner edge, so it never reads as a hazard.
+      pending: "bg-muted/30 outline-1 outline-dashed -outline-offset-4 outline-muted-foreground/50 text-muted-foreground",
     },
     marked: { true: "bg-warning/5", false: "" },
   },

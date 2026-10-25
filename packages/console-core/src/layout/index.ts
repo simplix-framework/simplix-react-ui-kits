@@ -58,7 +58,7 @@ export type {
   WordingButtonGrade,
 } from "./message-preview";
 export type { MatrixCell, MatrixCellTone, MatrixProps, MatrixRow } from "./matrix";
-export type { ApprovalFlowProps, ApprovalStep, ApprovalStepState } from "./approval-flow";
+export type { ApprovalFlowProps, ApprovalStep, ApprovalStepAction, ApprovalStepState } from "./approval-flow";
 export { usePeekTarget } from "./use-peek-target";
 export { useScrollEndRoom } from "./use-scroll-end-room";
 export type { PeekTargetController } from "./use-peek-target";

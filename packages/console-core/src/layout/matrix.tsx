@@ -4,7 +4,7 @@ import { matrixCellStyle, matrixCornerStyle, matrixFrameStyle, matrixHeadStyle, 
 import { slotAttributes } from "@simplix-react/ui/design";
 
 /** How one cell of the matrix is tinted, where it is tinted at all. */
-export type MatrixCellTone = "warning" | "danger" | "muted";
+export type MatrixCellTone = "warning" | "danger" | "muted" | "pending";
 
 /** One cell — what it holds, and whether it needs a reader's attention. */
 export interface MatrixCell {

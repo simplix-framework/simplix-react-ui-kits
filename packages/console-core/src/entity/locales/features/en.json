@@ -14,6 +14,7 @@
   "recordForm": {
     "required": "Required",
     "fixBeforeSave": "Fill in {{count, number}} required fields to save",
+    "progress": "{{filled, number}} of {{total, number}} required fields filled",
     "clear": "Clear",
     "yes": "Yes",
     "no": "No",
@@ -35,7 +36,19 @@
       "detailRequired": "Describe the other choice",
       "evidenceMissing": "Attach every required item",
       "rowIncomplete": "Fill in the required fields of every row"
-    }
+    },
+    "noEvidence": "No file attached",
+    "chooseFile": "Choose file",
+    "dropHint": "No files attached. Drop files here or choose a file",
+    "dropMore": "Drop more files here or choose a file",
+    "takePhoto": "Take photo",
+    "pickFromAlbum": "Choose from album",
+    "pickedProvenance": "{{size}} · uploads when saved",
+    "choosePrompt": "Select",
+    "choosePromptWithExamples": "Select (e.g. {{examples}})",
+    "signer": "Signer: {{signer}}",
+    "signAgain": "Sign again",
+    "fillBeforeSubmit": "Fill in {{count, number}} required field(s) first"
   },
   "recordList": {
     "selected": "selected",

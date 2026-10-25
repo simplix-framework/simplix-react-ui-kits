@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from "react";
+import { useId, useState, type ReactNode } from "react";
 import {
   CrudDetail,
   DetailFieldWrapper,
@@ -7,7 +7,10 @@ import {
   DialogHeader,
   DialogTitle,
   Flex,
+  Label,
+  Switch,
   Grid,
+  EmptyState,
   Heading,
   Stack,
   Tabs,
@@ -25,7 +28,7 @@ import { PermissionMatrix, type PermissionMatrixProps } from "./permission-matri
 import { BoundedDialogContent } from "../layout/bounded-dialog-content";
 import { recordHeadStyle, recordHeadSubtitleStyle, recordSublistStyle } from "./record-detail.style";
 import { RecordList, RecordListNestingContext, type RecordAction, type RecordColumn, type RecordListProps } from "./record-list";
-import { RecordValueView, type RecordValue } from "./record-value";
+import { RecordValueView, type RecordBadge, type RecordValue } from "./record-value";
 import { StageGate, type StageGateProps } from "./stage-gate";
 import { EvidenceGrid, type EvidenceGridProps } from "../attachment/evidence-grid";
 import { ApprovalFlow, type ApprovalFlowProps } from "../layout/approval-flow";
@@ -34,6 +37,8 @@ import { MeasurementGrid, type MeasurementGridProps } from "../layout/measuremen
 import { FormSheet, type FormSheetProps } from "../screen/form-sheet";
 import { HistoryRail, type HistoryRailProps } from "../screen/history-rail";
 import { ScoreSheet, type ScoreSheetProps } from "../screen/score-sheet";
+import { useCrudPresentation } from "../page/crud-page";
+import { DetailPresentationSwitch, type DetailPresentationSwitchProps } from "../page/detail-presentation-switch";
 
 /** One labelled value of a {@link RecordDetail} section. */
 export interface RecordField {
@@ -54,10 +59,17 @@ export interface RecordSection {
 
 /** What a tab of a {@link RecordDetail} holds, drawn top to bottom. */
 export interface RecordTabContent {
+  /**
+   * What the tab says while nothing is registered on it: what is missing and the verb that
+   * registers it, drawn in the body instead of an empty list or a blank panel.
+   */
+  readonly empty?: { readonly title: string; readonly description?: string; readonly action?: RecordVerb };
   readonly sections?: readonly RecordSection[];
   /** A sub-collection, drawn with every list feature unless the tab turns one off. */
   // The rows of a sub-list are the screen's own type, so the tab carries them untyped.
   readonly list?: RecordListProps<any>;
+  /** The list's own heading, where the tab's sections above it are about something else (「협조 요청」 under 「작업 전 논의」). */
+  readonly listTitle?: string;
   /** What a role may do, by area and action, under the sections. */
   readonly matrix?: PermissionMatrixProps & { readonly title?: string };
   /** Sections drawn after the matrix: what the matrix alone cannot say. */
@@ -85,8 +97,29 @@ export interface RecordTab extends RecordTabContent {
   readonly key: string;
   readonly label: string;
   readonly count?: number;
+  /** What the tab still lacks (「미등록」); see {@link CountedTab}. */
+  readonly missing?: string;
+  /** Why the tab cannot be opened yet; see {@link CountedTab}. */
+  readonly disabled?: string;
   /** The tab's own verbs, which change with the open tab. */
   readonly verbs?: readonly RecordVerb[];
+}
+
+/** A switch drawn at the end of a record's tab strip. */
+export interface RecordTabToggle {
+  readonly label: string;
+  readonly on: boolean;
+  readonly onChange: (on: boolean) => void;
+}
+
+function TabToggle({ toggle }: { readonly toggle: RecordTabToggle }) {
+  const id = useId();
+  return (
+    <Flex align="center" gap="xs" className="shrink-0">
+      <Switch id={id} checked={toggle.on} onCheckedChange={(on) => toggle.onChange(on === true)} />
+      <Label htmlFor={id}>{toggle.label}</Label>
+    </Flex>
+  );
 }
 
 /** Props for {@link RecordDetail}. */
@@ -97,6 +130,11 @@ export interface RecordDetailProps {
   readonly subtitle?: string;
   /** Draws the person the record is beside the name, tinted by this seed (their id). */
   readonly avatar?: string;
+  /**
+   * Where the record stands, as a badge beside its name, so a reader who opened it from a list
+   * card keeps the state the card showed.
+   */
+  readonly status?: RecordBadge;
   /** The tabs; the first is open. A record with no tabs passes `sections` instead. */
   readonly tabs?: readonly RecordTab[];
   readonly sections?: readonly RecordSection[];
@@ -119,6 +157,8 @@ export interface RecordDetailProps {
    * line breaks into the tab's verbs above and the record's commands below.
    */
   readonly tabVerbs?: "tab" | "footer";
+  /** A switch at the end of the tab strip that changes which tabs are drawn (a 「고급 보기」). */
+  readonly tabToggle?: RecordTabToggle;
   /** Who made it and when it last changed, at the foot. */
   readonly audit?: { readonly id?: string; readonly createdAt?: string; readonly updatedAt?: string };
   readonly isLoading?: boolean;
@@ -149,7 +189,7 @@ function Sections({ sections }: { readonly sections?: readonly RecordSection[] }
  * The most rows a sub-list may hold and still be drawn compact. Above it, or when the record does
  * not carry every row its tab counts, the sub-list is the main list table.
  */
-const COMPACT_LIMIT = 5;
+const COMPACT_LIMIT = 12;
 
 /** Which of the two in-detail list forms a tab's rows take. */
 export function sublistKind(rows: number, count: number | undefined): "compact" | "full" {
@@ -260,7 +300,39 @@ function SubList({ list, count }: { readonly list: RecordListProps<any>; readonl
   );
 }
 
+/** Whether a tab holds anything to read besides its notices. */
+function holdsContent(content: RecordTabContent): boolean {
+  return Boolean(
+    content.sections?.length ||
+      content.afterSections?.length ||
+      content.sheet ||
+      content.measurements ||
+      content.score ||
+      content.checkMatrix ||
+      content.matrix ||
+      content.evidence ||
+      content.history ||
+      (content.list && content.list.rows.length > 0),
+  );
+}
+
 function Content({ content, count }: { readonly content: RecordTabContent; readonly count?: number }): ReactNode {
+  if (content.empty && !holdsContent(content)) {
+    const action = content.empty.action;
+    return (
+      <Stack gap="sm">
+        {content.flow ? <ApprovalFlow {...content.flow} /> : null}
+        {content.gate ? <StageGate {...content.gate} /> : null}
+        <EmptyState
+          size="sm"
+          title={content.empty.title}
+          description={content.empty.description}
+          action={action ? <RecordVerbButton verb={{ kind: "primary", ...action }} /> : undefined}
+        />
+        <RecordNotices notices={content.notices} />
+      </Stack>
+    );
+  }
   return (
     <Stack gap="sm">
       {content.flow ? <ApprovalFlow {...content.flow} /> : null}
@@ -270,7 +342,16 @@ function Content({ content, count }: { readonly content: RecordTabContent; reado
       {content.measurements ? <MeasurementGrid {...content.measurements} /> : null}
       {content.score ? <ScoreSheet {...content.score} /> : null}
       {content.checkMatrix ? <CheckMatrix {...content.checkMatrix} /> : null}
-      {content.list ? <SubList list={content.list} count={count} /> : null}
+      {content.list ? (
+        content.listTitle ? (
+          <Stack gap="xs">
+            <Heading level={5}>{content.listTitle}</Heading>
+            <SubList list={content.list} count={count} />
+          </Stack>
+        ) : (
+          <SubList list={content.list} count={count} />
+        )
+      ) : null}
       {content.matrix ? (
         <Stack gap="xs">
           {content.matrix.title ? <Heading level={5}>{content.matrix.title}</Heading> : null}
@@ -286,6 +367,18 @@ function Content({ content, count }: { readonly content: RecordTabContent; reado
   );
 }
 
+
+/** The record's head with the presentation switch at its top right, when the page offers one. */
+function withPresentationSwitch(head: ReactNode, presentationSwitch: DetailPresentationSwitchProps | undefined): ReactNode {
+  if (!presentationSwitch) return head;
+  return (
+    <Flex align="start" justify="between" gap="sm" flex minSize>
+      {head}
+      <DetailPresentationSwitch {...presentationSwitch} />
+    </Flex>
+  );
+}
+
 /**
  * One record, read: its name, its tabs (each with its own verbs), its sections of labelled values,
  * sub-lists with every list feature, the reading verbs, the audit line and the finishing actions.
@@ -297,6 +390,7 @@ export function RecordDetail({
   title,
   subtitle,
   avatar,
+  status,
   tabs,
   sections,
   notices,
@@ -308,19 +402,34 @@ export function RecordDetail({
   onBack,
   head,
   tabVerbs = "tab",
+  tabToggle,
   audit,
   isLoading,
 }: RecordDetailProps) {
   const [openTab, setOpenTab] = useState(defaultTab ?? tabs?.[0]?.key ?? "");
+  const presentationSwitch = useCrudPresentation()?.presentationSwitch;
+  const tabsTrailing = tabToggle ? <TabToggle toggle={tabToggle} /> : null;
   const verbsInFooter = tabVerbs === "footer";
   const footerTabVerbs = verbsInFooter ? tabs?.find((tab) => tab.key === openTab)?.verbs : undefined;
-  const body = tabs && tabs.length > 0 ? (
+  // One tab is no choice: its content is drawn on its own, with no strip naming it.
+  const only = tabs && tabs.length === 1 ? tabs[0] : undefined;
+  const body = only ? (
+    <Stack gap="sm">
+      {tabsTrailing ? <Flex justify="end">{tabsTrailing}</Flex> : null}
+      {verbsInFooter ? null : <RecordVerbs verbs={only.verbs} end />}
+      <Content content={only} count={only.count} />
+    </Stack>
+  ) : tabs && tabs.length > 0 ? (
     <Tabs value={openTab} onValueChange={setOpenTab}>
-      <TabsList variant="underline" scrollArrows>
-        {tabs.map((tab) => (
-          <CountedTab key={tab.key} value={tab.key} label={tab.label} count={tab.count} />
-        ))}
-      </TabsList>
+      {/* The strip wraps onto a second line rather than hiding tabs behind a scroll arrow. */}
+      <Flex align="center" justify="between" gap="sm" wrap>
+        <TabsList variant="underline" className="h-auto flex-wrap">
+          {tabs.map((tab) => (
+            <CountedTab key={tab.key} value={tab.key} label={tab.label} count={tab.count} missing={tab.missing} disabled={tab.disabled} />
+          ))}
+        </TabsList>
+        {tabsTrailing}
+      </Flex>
       {tabs.map((tab) => (
         <TabsContent
           key={tab.key}
@@ -338,21 +447,28 @@ export function RecordDetail({
       ))}
     </Tabs>
   ) : (
-    <Content content={{ sections, notices, note }} />
+    <Stack gap="sm">
+      {tabsTrailing ? <Flex justify="end">{tabsTrailing}</Flex> : null}
+      <Content content={{ sections, notices, note }} />
+    </Stack>
   );
 
   return (
     <CrudDetail
       isLoading={isLoading}
-      header={
+      header={withPresentationSwitch(
         head ?? <Flex align="center" gap="sm" minSize {...partAttributes(recordHeadStyle, {})}>
           {avatar !== undefined ? <InitialsAvatar name={title} seed={avatar} size="lg" /> : null}
           <Stack gap="none" minSize>
-            <Heading level={4}>{title}</Heading>
+            <Flex align="center" gap="sm" wrap minSize>
+              <Heading level={4}>{title}</Heading>
+              {status ? <RecordValueView value={{ badge: status }} /> : null}
+            </Flex>
             {subtitle ? <span {...slotAttributes(recordHeadSubtitleStyle, {})}>{subtitle}</span> : null}
           </Stack>
-        </Flex>
-      }
+        </Flex>,
+        presentationSwitch,
+      )}
       onClose={onClose}
       auditData={audit}
       displayZone="Asia/Seoul"

@@ -58,6 +58,22 @@ export interface ScoreRule {
   readonly min: number;
   readonly max: number;
   readonly step?: number;
+  /**
+   * The grades an item under this rule is scored by, best first. Given, the evaluator picks one
+   * grade and the score is that grade's; no number is typed.
+   */
+  readonly ratings?: readonly ScoreRating[];
+}
+
+/** One grade of a rule's grade table and the score it gives. */
+export interface ScoreRating {
+  readonly label: string;
+  readonly score: number;
+}
+
+/** The grade of a rule's table that a chosen label names, if the table has it. */
+export function ratingOf(rule: ScoreRule | undefined, label: string): ScoreRating | undefined {
+  return rule?.ratings?.find((rating) => rating.label === label);
 }
 
 /** Which parts of the sheet a viewer sees. */

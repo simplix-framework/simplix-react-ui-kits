@@ -32,9 +32,13 @@ export interface PhoneTask {
   readonly badge?: RecordBadge;
   /** Whether it is finished; a row not finished is accented. */
   readonly done?: boolean;
-  /** The name of the screen the row opens, such as 「서명」. */
-  readonly opens: string;
-  readonly onOpen: () => void;
+  /**
+   * The name of the screen the row opens, such as 「서명」. Absent for a row that only states a fact
+   * (a qualification and its expiry on a profile): it is drawn read-only, with its due date only
+   * when it has one.
+   */
+  readonly opens?: string;
+  readonly onOpen?: () => void;
 }
 
 /** Props for {@link PhoneTaskList}. */
@@ -48,6 +52,8 @@ export interface PhoneTaskListProps {
   /** What the empty list says, in place of the generic line. */
   readonly emptyTitle?: string;
   readonly emptyBody?: string;
+  /** The site's clock the time left counts from (RFC 3339 or a Date); the wall clock when absent. */
+  readonly now?: string | Date;
 }
 
 /**
@@ -57,7 +63,7 @@ export interface PhoneTaskListProps {
  * due, where it stands and the screen it opens. Work submitted offline and not yet sent is counted
  * at the top, so a worker does not leave the site believing it was delivered.
  */
-export function PhoneTaskList({ shell, tasks, syncPending, emptyTitle, emptyBody }: PhoneTaskListProps) {
+export function PhoneTaskList({ shell, tasks, syncPending, emptyTitle, emptyBody, now }: PhoneTaskListProps) {
   const { t } = useTranslation(PACKAGE_NAMESPACE + "/features");
   const ordered = orderTasksByDue(tasks);
   return (
@@ -71,33 +77,49 @@ export function PhoneTaskList({ shell, tasks, syncPending, emptyTitle, emptyBody
             {ordered.length === 0 ? (
               <PhoneEmptyState title={emptyTitle ?? t("phoneTask.empty")} body={emptyBody} />
             ) : (
-              ordered.map((task) => (
-                <PhoneRowButton key={task.key} accent={!task.done} onPress={task.onOpen}>
-                  <Flex align="center" gap="sm">
-                    <Stack gap="none" className="min-w-0 flex-1">
-                      <span {...slotAttributes(phoneTaskKindStyle, {})}>{task.kind}</span>
-                      <Text weight="medium" className="truncate">
-                        {task.title}
+              ordered.map((task) => {
+                const facts = (
+                  <Stack gap="none" className="min-w-0 flex-1">
+                    <span {...slotAttributes(phoneTaskKindStyle, {})}>{task.kind}</span>
+                    <Text weight="medium" className="truncate">
+                      {task.title}
+                    </Text>
+                    {task.subtitle && (
+                      <Text size="caption" tone="muted" className="truncate">
+                        {task.subtitle}
                       </Text>
-                      {task.subtitle && (
-                        <Text size="caption" tone="muted" className="truncate">
-                          {task.subtitle}
-                        </Text>
-                      )}
-                      <Flex align="center" gap="xs" wrap>
-                        <RemainingText value={task.due} fallback={<Text as="span" size="sm" tone="muted">{t("phoneTask.noDue")}</Text>} passedLabel={<Text as="span" size="sm" tone="destructive">{t("phoneTask.overdue")}</Text>} />
-                        {task.badge && <StatusBadge tone={task.badge.tone ?? "neutral"} label={task.badge.label} />}
-                      </Flex>
-                    </Stack>
-                    <Flex align="center" gap="none" shrink={false}>
-                      <Text as="span" size="caption" tone="primary">
-                        {t("phoneTask.opens", { screen: task.opens })}
-                      </Text>
-                      <ChevronRightIcon className="size-4" aria-hidden />
+                    )}
+                    <Flex align="center" gap="xs" wrap>
+                      {/* Time left only for a row that has a deadline; a notice or a fact has none to show. */}
+                      {task.due ? <RemainingText value={task.due} now={now} passedLabel={<Text as="span" size="sm" tone="destructive">{t("phoneTask.overdue")}</Text>} /> : null}
+                      {task.badge && <StatusBadge tone={task.badge.tone ?? "neutral"} label={task.badge.label} />}
                     </Flex>
-                  </Flex>
-                </PhoneRowButton>
-              ))
+                  </Stack>
+                );
+                if (!task.opens || !task.onOpen) {
+                  // A fact, not a task: no action, no accent.
+                  return (
+                    <PhoneScreenBody key={task.key}>
+                      <Flex align="center" gap="sm">
+                        {facts}
+                      </Flex>
+                    </PhoneScreenBody>
+                  );
+                }
+                return (
+                  <PhoneRowButton key={task.key} accent={!task.done} onPress={task.onOpen}>
+                    <Flex align="center" gap="sm">
+                      {facts}
+                      <Flex align="center" gap="none" shrink={false}>
+                        <Text as="span" size="caption" tone="primary">
+                          {t("phoneTask.opens", { screen: task.opens })}
+                        </Text>
+                        <ChevronRightIcon className="size-4" aria-hidden />
+                      </Flex>
+                    </Flex>
+                  </PhoneRowButton>
+                );
+              })
             )}
           </PhoneScreenBody>
         </PhoneScrollArea>

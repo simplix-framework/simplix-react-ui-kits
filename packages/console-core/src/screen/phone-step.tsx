@@ -44,6 +44,27 @@ export interface PhoneStepDefinition {
   readonly sections?: readonly RecordFormSection[];
   /** The step's measurement, when the step is one. */
   readonly measurement?: PhoneStepMeasurement;
+  /** A grave request the step offers apart from its fields, drawn as a large red button. */
+  readonly danger?: PhoneStepDanger;
+  /**
+   * Where the worker can go from the step instead of finishing it (「작업중지 요청」 from an unsafe
+   * reading, 「출조 기록」 for those inside), drawn under the step's content.
+   */
+  readonly links?: readonly PhoneStepNext[];
+}
+
+/**
+ * A grave request inside a step (「작업중지 요청」), drawn as its own red button at least 48px tall
+ * rather than as one check among the fields, so it is found at a glance and pressed with a gloved
+ * hand. Pressing it sets the boolean value `field` in the submission; pressing again clears it.
+ */
+export interface PhoneStepDanger {
+  /** The submission value the button sets; not also listed among the step's fields. */
+  readonly field: string;
+  /** What the button says before it is pressed, such as 「작업중지 요청」. */
+  readonly label: string;
+  /** What it says once pressed, such as 「작업중지 요청함 · 취소하려면 다시 누르세요」. */
+  readonly pressedLabel: string;
 }
 
 /** What a submitted stepped input hands back. */
@@ -72,6 +93,49 @@ export interface PhoneStepProps {
   readonly back?: () => void;
   /** What the completed screen says, in place of the generic line. */
   readonly completedTitle?: string;
+  /** What the worker does now, under the completed screen's title (「작업을 멈추고 현장 확인을 기다리세요」). */
+  readonly completedBody?: string;
+  /**
+   * Where the worker goes from the completed screen: the next thing to do, and the way back to the
+   * day's list. The first is drawn as the primary button. A plain address, for a host without a router.
+   */
+  readonly completedActions?: readonly PhoneStepNext[];
+  /**
+   * Where the input opens: a step's index (a story showing the signing step), or `done` for the
+   * completed screen. The first step when absent.
+   */
+  readonly startAt?: number | "done";
+}
+
+/** A way on from the completed screen. */
+export interface PhoneStepNext {
+  readonly label: string;
+  readonly href: string;
+  /** A line under the label: what the next thing is (「15:00 밀폐공간 특별교육 서명」). */
+  readonly sub?: string;
+  /** A way on that stops or escapes work (「작업중지 요청」), drawn in the danger tone. */
+  readonly tone?: "danger";
+}
+
+/** Ways on from a step or the completed screen, each a thumb-sized link; the first is primary when asked. */
+function PhoneStepLinks({ links, primaryFirst }: { readonly links: readonly PhoneStepNext[]; readonly primaryFirst: boolean }) {
+  return (
+    <Stack gap="sm">
+      {links.map((next, at) => (
+        <PhoneButton
+          key={next.href + next.label}
+          asChild
+          variant={next.tone === "danger" ? "destructive" : at === 0 && primaryFirst ? "primary" : "outline"}
+          className="h-auto min-h-11 w-full flex-col gap-0 py-2"
+        >
+          <a href={next.href}>
+            <span>{next.label}</span>
+            {next.sub ? <span className="text-xs font-normal opacity-80">{next.sub}</span> : null}
+          </a>
+        </PhoneButton>
+      ))}
+    </Stack>
+  );
 }
 
 function initialSamples(steps: readonly PhoneStepDefinition[]): StepSamples {
@@ -88,12 +152,12 @@ function initialSamples(steps: readonly PhoneStepDefinition[]): StepSamples {
  * <p><b>Offline is not a failure.</b> A submit made offline completes on screen with a
  * 「동기화 대기」 badge, so the worker knows it is kept and not yet sent.
  */
-export function PhoneStep({ shell, steps, primary, onSubmit, offline, back, completedTitle }: PhoneStepProps) {
+export function PhoneStep({ shell, steps, primary, onSubmit, offline, back, completedTitle, completedBody, completedActions = [], startAt }: PhoneStepProps) {
   const { t } = useTranslation(PACKAGE_NAMESPACE + "/features");
   const allSections = steps.flatMap((step) => step.sections ?? []);
   const form = useRecordFormValues(allSections);
   const [samples, setSamples] = useState<StepSamples>(() => initialSamples(steps));
-  const [phase, setPhase] = useState<PhoneStepPhase>({ kind: "editing", index: 0 });
+  const [phase, setPhase] = useState<PhoneStepPhase>(startAt === "done" ? { kind: "completed" } : { kind: "editing", index: startAt ?? 0 });
   const [shown, setShown] = useState<ReadonlySet<number>>(new Set());
 
   if (phase.kind !== "editing") {
@@ -101,12 +165,16 @@ export function PhoneStep({ shell, steps, primary, onSubmit, offline, back, comp
       <ConsolePhoneShell {...shell}>
         <PhoneScreenColumn>
           <PhoneScreenBody>
-            <PhoneEmptyState title={completedTitle ?? t("phoneStep.completed")} body={phase.kind === "pendingSync" ? t("phoneStep.pendingSyncBody") : undefined} />
+            <PhoneEmptyState
+              title={completedTitle ?? t("phoneStep.completed")}
+              body={[completedBody, phase.kind === "pendingSync" ? t("phoneStep.pendingSyncBody") : undefined].filter(Boolean).join(" ") || undefined}
+            />
             {phase.kind === "pendingSync" && (
               <Flex justify="center">
                 <StatusBadge tone="warning" label={t("phoneStep.pendingSync")} />
               </Flex>
             )}
+            {completedActions.length > 0 && <PhoneStepLinks links={completedActions} primaryFirst />}
           </PhoneScreenBody>
         </PhoneScreenColumn>
       </ConsolePhoneShell>
@@ -154,7 +222,8 @@ export function PhoneStep({ shell, steps, primary, onSubmit, offline, back, comp
       <PhoneScreenColumn>
         <Stack gap="xs" {...partAttributes(phoneStepHeaderStyle, {})}>
           <Flex align="center" justify="between" gap="sm">
-            <Heading level={2}>
+            {/* Smaller than a screen title: the step names a part of the task, not the screen. */}
+            <Heading level={2} className="text-xl">
               {step.title}
             </Heading>
             <Text as="span" size="caption" tone="muted">
@@ -183,8 +252,10 @@ export function PhoneStep({ shell, steps, primary, onSubmit, offline, back, comp
                 ))}
               </Stack>
             ))}
+            {step.links && step.links.length > 0 && <PhoneStepLinks links={step.links} primaryFirst={false} />}
             {step.evidence && <EvidenceGrid {...step.evidence} />}
-            {step.sections && step.sections.length > 0 && <RecordFormSections sections={step.sections} form={stepForm} />}
+            {step.danger && <PhoneDangerButton danger={step.danger} pressed={form.values[step.danger.field] === true} onPress={form.set} />}
+            {step.sections && step.sections.length > 0 && <RecordFormSections sections={step.sections} form={stepForm} flat />}
             {step.measurement && (
               <>
                 {errorsShown && missingCells > 0 && <AlertBanner tone="danger" bordered title={t("phoneStep.measurementMissing", { count: missingCells })} />}
@@ -219,5 +290,20 @@ export function PhoneStep({ shell, steps, primary, onSubmit, offline, back, comp
         </PhoneActionBar>
       </PhoneScreenColumn>
     </ConsolePhoneShell>
+  );
+}
+
+/** A step's grave request as a large red button; pressed, it fills red and says so. */
+function PhoneDangerButton({ danger, pressed, onPress }: { readonly danger: PhoneStepDanger; readonly pressed: boolean; readonly onPress: (field: string, value: boolean) => void }) {
+  return (
+    <PhoneButton
+      type="button"
+      variant={pressed ? "destructive" : "outline"}
+      aria-pressed={pressed}
+      className="min-h-12 w-full border-destructive text-base font-semibold aria-[pressed=false]:text-destructive"
+      onClick={() => onPress(danger.field, !pressed)}
+    >
+      {pressed ? danger.pressedLabel : danger.label}
+    </PhoneButton>
   );
 }

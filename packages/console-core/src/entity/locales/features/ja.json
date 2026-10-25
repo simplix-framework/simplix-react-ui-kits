@@ -13,6 +13,7 @@
   "recordForm": {
     "required": "必須項目です",
     "fixBeforeSave": "必須項目を{{count, number}}件入力すると保存できます",
+    "progress": "必須 {{total, number}}項目中 {{filled, number}}項目入力済み",
     "clear": "クリア",
     "yes": "はい",
     "no": "いいえ",
@@ -34,7 +35,19 @@
       "detailRequired": "その他の内容を入力してください",
       "evidenceMissing": "必須の証跡をすべて添付してください",
       "rowIncomplete": "すべての行の必須項目を入力してください"
-    }
+    },
+    "noEvidence": "添付ファイルはありません",
+    "chooseFile": "ファイルを選択",
+    "dropHint": "添付ファイルはありません。ここにドロップするか、ファイルを選択します",
+    "dropMore": "さらにドロップするか、ファイルを選択します",
+    "takePhoto": "写真を撮る",
+    "pickFromAlbum": "アルバムから選択",
+    "pickedProvenance": "{{size}} · 保存時にアップロードします",
+    "choosePrompt": "選択してください",
+    "choosePromptWithExamples": "選択してください (例: {{examples}})",
+    "signer": "署名者: {{signer}}",
+    "signAgain": "書き直す",
+    "fillBeforeSubmit": "必須項目を{{count, number}}件入力してください"
   },
   "recordList": {
     "selected": "件選択",

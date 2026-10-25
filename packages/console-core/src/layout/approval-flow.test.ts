@@ -14,7 +14,10 @@ describe("stepIndicatorOf", () => {
   it("reads a chain with nothing in hand or waiting as done throughout", () => {
     expect(stepIndicatorOf([step("신청", "done"), step("검사", "done")]).currentStep).toBe(2);
   });
-  it("carries the holder and the time as the second line", () => {
-    expect(stepIndicatorOf([{ ...step("검사", "now", "가상 담당자"), at: "10:20" }]).steps[0]).toEqual({ title: "검사", description: "가상 담당자 · 10:20" });
+  it("keeps the time as the second line and draws the holder in the step's detail", () => {
+    const shown = stepIndicatorOf([{ ...step("검사", "now", "가상 담당자"), at: "10:20" }]).steps[0];
+    expect(shown?.title).toBe("검사");
+    expect(shown?.description).toBe("10:20");
+    expect(shown?.detail).toBeTruthy();
   });
 });

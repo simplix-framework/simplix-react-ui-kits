@@ -4,6 +4,7 @@ import {
   addToast,
   Button,
   CrudList,
+  EmptyState,
   Flex,
   Grid,
   Stack,
@@ -22,7 +23,7 @@ import { BulkActionBar } from "@simplix-react/ui/interaction";
 import { useReflowFlip } from "../layout/use-reflow-flip";
 import { PACKAGE_NAMESPACE } from "./locales";
 import { recordListStyle } from "./record-list.style";
-import { cardLayout, type CardPlace } from "./record-card";
+import { cardLayout, isBadge, isEmpty, keptColumns, packedLines, wideColumns, type CardPlace } from "./record-card";
 import { RecordValueView, type RecordValue } from "./record-value";
 
 /** One column of a {@link RecordList}. */
@@ -35,8 +36,16 @@ export interface RecordColumn<Row> {
   readonly field?: keyof Row & string;
   /** What the cell shows when it is more than the field's text: a second line, a badge, a link. */
   readonly value?: (row: Row) => RecordValue;
-  /** A fixed width in px; the column fills what is left when absent. */
+  /** A fixed width in px, for a value of known size: a time, an identifier, a status. */
   readonly width?: number;
+  /**
+   * A floor in px for free text (a title, a reason, a summary): the column never draws narrower and
+   * takes the table's spare width, so the key text gets the room a short column would waste.
+   * Ignored when {@link width} is set.
+   */
+  readonly minWidth?: number;
+  /** Lets the cell's text wrap onto more lines instead of being cut, for long text: a clause, a scope. */
+  readonly wrap?: boolean;
   /** The width the table needs before this column is drawn; it is dropped from a narrow pane. */
   readonly minTableWidth?: number;
   /** Whether the header sorts the rows; on for a column with a field unless said otherwise. */
@@ -47,6 +56,12 @@ export interface RecordColumn<Row> {
    * row and any other takes the grid.
    */
   readonly cardPlace?: CardPlace;
+  /**
+   * Whether a card whose own value is empty keeps this column's cell when other cards fill it.
+   * Default true; false for a column drawn only on some rows (a due date on open rows only), whose
+   * absence is the point rather than a gap.
+   */
+  readonly cardKeep?: boolean;
 }
 
 /** A filter the list's filter bar offers. */
@@ -71,6 +86,11 @@ export interface RecordAction<Row> {
   readonly onClick?: (row: Row) => void;
   /** Rows the action is drawn for but cannot run on, with the reason a reader hovers to see. */
   readonly disabled?: (row: Row) => string | false | undefined;
+  /**
+   * Draws the action as a button carrying its label rather than its type's icon, for a verb whose
+   * label an icon cannot say (「이 항목 확정」). Any labelled action draws every action labelled.
+   */
+  readonly labelled?: boolean;
 }
 
 /** What a bulk action reports once it has run: what changed, and how to take it back. */
@@ -120,7 +140,8 @@ export const RecordListNestingContext = createContext(false);
 
 /**
  * The list's features. Every one is on; a screen turns one off by naming it, so no list on any
- * screen goes without search, filters, sorting or paging by accident.
+ * screen goes without search, filters, sorting or paging by accident. The row count never turns
+ * one off: the toolbar and the pager stay put as the reader moves between tabs.
  */
 export interface RecordListFeatures {
   readonly search?: boolean;
@@ -129,7 +150,11 @@ export interface RecordListFeatures {
   readonly sort?: boolean;
   readonly groups?: boolean;
   readonly rowActions?: boolean;
-  readonly count?: boolean;
+  /**
+   * The count of rows. `"filtered"` draws it only while a search or a filter narrows the rows, for
+   * a list whose tab already carries the same total; the screen says so, the list never decides it.
+   */
+  readonly count?: boolean | "filtered";
   readonly pagination?: boolean;
 }
 
@@ -186,14 +211,34 @@ const FLUID_COLUMN_MIN = 200;
 const ACTION_WIDTH = 36;
 const ACTION_CELL_INSET = 24;
 
+/** Per character and per button inset of a labelled row action, for the action column's width. */
+const LABEL_CHAR_WIDTH = 13;
+const LABEL_BUTTON_INSET = 20;
+const LABEL_GAP = 8;
+
+/**
+ * Whether the row actions must carry their labels. An icon stands for the action's type, so two
+ * actions of one type would draw the same icon for different verbs; then, or when an action asks
+ * for its label, every action is a labelled button instead.
+ */
+export function actionsNeedLabels(actions: readonly { readonly type: string; readonly labelled?: boolean }[]): boolean {
+  return actions.some((action) => action.labelled) || new Set(actions.map((action) => action.type)).size < actions.length;
+}
+
+/** The action column's width when every action is a labelled button. */
+function labelledActionWidth(labels: readonly string[]): number {
+  const buttons = labels.reduce((sum, label) => sum + label.length * LABEL_CHAR_WIDTH + LABEL_BUTTON_INSET, 0);
+  return buttons + Math.max(labels.length - 1, 0) * LABEL_GAP + ACTION_CELL_INSET;
+}
+
 /**
  * The width a table needs to hold every column it always draws, which is where a row stops fitting
  * on one line and a card reads better.
  */
-function tableWidth<Row>(columns: readonly RecordColumn<Row>[], actions: number): number {
+function tableWidth<Row>(columns: readonly RecordColumn<Row>[], actionCell: number): number {
   const drawn = columns.filter((column) => column.minTableWidth === undefined);
-  const cells = drawn.reduce((sum, column) => sum + (column.width ?? FLUID_COLUMN_MIN), 0);
-  return cells + (actions > 0 ? actions * ACTION_WIDTH + ACTION_CELL_INSET : 0);
+  const cells = drawn.reduce((sum, column) => sum + (column.width ?? column.minWidth ?? FLUID_COLUMN_MIN), 0);
+  return cells + actionCell;
 }
 
 /** A column's value for one row as a {@link RecordValue}, for the card, which places it by its shape. */
@@ -210,6 +255,16 @@ function cellOf<Row>(column: RecordColumn<Row>, row: Row): ReactNode {
   if (!column.field) return null;
   const raw = (row as Record<string, unknown>)[column.field];
   return raw === undefined || raw === null ? null : String(raw);
+}
+
+/**
+ * A cell inside a table column. A fluid column's content fills the cell so its spare width shows;
+ * a wrapping one breaks onto more lines, any other ellipsizes at the column's edge.
+ */
+function cellIn<Row>(column: RecordColumn<Row>, row: Row): ReactNode {
+  if (column.wrap) return <div className="whitespace-normal break-words">{cellOf(column, row)}</div>;
+  if (column.minWidth !== undefined) return <div className="block truncate">{cellOf(column, row)}</div>;
+  return cellOf(column, row);
 }
 
 function filterDef<Row>(filter: RecordFilter<Row>): FilterDef {
@@ -239,6 +294,7 @@ function filterDef<Row>(filter: RecordFilter<Row>): FilterDef {
     defaultOperator: SearchOperator.CONTAINS,
   };
 }
+
 
 /** The toolbar controls that move between rows when the list folds its toolbar. */
 const TOOLBAR_ITEMS =
@@ -281,6 +337,8 @@ export function RecordList<Row>({
   const useRows = useMemo<ListHook<Row>>(() => () => ({ data: [...rows], total: rows.length, isLoading: false, error: null }), [rows]);
   const list = useCrudList(useRows, { stateMode: "client", filterMode: "immediate", defaultPageSize: pageSize });
 
+  const counted = features.count === "filtered" ? list.pagination.total < rows.length : on("count");
+
   const rowActions: RowActionDef<Row>[] = on("rowActions")
     ? actions.map((action) => ({
         type: action.type,
@@ -291,23 +349,62 @@ export function RecordList<Row>({
       }))
     : [];
 
+  // Judged on the actions as given, which still carry whether one asks for its label.
+  const labelled = rowActions.length > 0 && actionsNeedLabels(actions);
+  const actionCell =
+    rowActions.length === 0 ? 0 : labelled ? labelledActionWidth(rowActions.map((action) => action.label ?? "")) : rowActions.length * ACTION_WIDTH + ACTION_CELL_INSET;
+
   const [titleColumn, ...lineColumns] = columns;
-  const breakpoint = cardBreakpoint === false ? undefined : cardBreakpoint ?? tableWidth(columns, rowActions.length);
+  // Decided over the page's rows, so a label holds the same cell on every card.
+  const wideCards = wideColumns(
+    lineColumns.map((column) => column.key),
+    list.data,
+    (key, row) => {
+      const column = lineColumns.find((one) => one.key === key);
+      return column ? valueOf(column, row) : null;
+    },
+  );
+  // A labelled column some card fills keeps its cell on every card.
+  const keptCards = keptColumns(
+    lineColumns.filter((column) => column.cardKeep !== false).map((column) => column.key),
+    list.data,
+    (key, row) => {
+      const column = lineColumns.find((one) => one.key === key);
+      return column ? valueOf(column, row) : null;
+    },
+    nested,
+  );
+  // A list whose labelled values are all short sets them in one line from the left on every card.
+  const packedCards =
+    !nested &&
+    wideCards.size === 0 &&
+    packedLines(
+      lineColumns
+        .filter((column) => column.cardPlace !== "hidden" && column.cardPlace !== "badges" && list.data.some((row) => { const value = valueOf(column, row); return !isEmpty(value) && !isBadge(value); }))
+        .map((column) => column.key),
+      list.data,
+      (key, row) => {
+        const column = lineColumns.find((one) => one.key === key);
+        return column ? valueOf(column, row) : null;
+      },
+    );
+  const breakpoint = cardBreakpoint === false ? undefined : cardBreakpoint ?? tableWidth(columns, actionCell);
 
   const chipRow =
     on("chips") && chips ? (
       <CrudList.ChipFilter field={`${chips.field}.${SearchOperator.IN}`} state={list.filters} options={[...chips.options]} />
     ) : null;
-  // A fixed width keeps the search beside the filter control rather than taking the whole row. In a
-  // narrow list (a detail panel, or a list beside one) the toolbar folds: the count keeps the first
-  // row and the search takes the whole second row with its filter and column controls.
+  // Beside a filter control the search starts narrow and grows to its full width, so a list beside a
+  // detail panel keeps the count, the chips, the search and the filter on one row instead of wrapping
+  // at the search's full width. Below the toolbar's fold the count keeps the first row and the search
+  // takes the whole second row with its filter and column controls.
   const filtered = on("filters") && filters.length > 0;
   const search = on("search") ? (
     <div
       data-flip-key="search"
       className={
         filtered
-          ? "w-60 shrink-0 @max-md/record-list:w-auto @max-md/record-list:min-w-0 @max-md/record-list:flex-1"
+          ? "min-w-0 max-w-60 flex-1 basis-28 @max-md/record-list:max-w-none"
           : "w-60 shrink-0 @max-md/record-list:w-auto @max-md/record-list:min-w-0 @max-md/record-list:basis-full"
       }
     >
@@ -329,13 +426,14 @@ export function RecordList<Row>({
   };
 
   return (
-    <div ref={rootRef} className="@container/record-list" {...slotAttributes(recordListStyle, { nested })}>
+    // `data-pager="off"` marks a pager the caller turned off, so a check can tell it from a lost one.
+    <div ref={rootRef} className="@container/record-list" data-pager={on("pagination") ? undefined : "off"} {...slotAttributes(recordListStyle, { nested })}>
     <CrudList>
       {filtered ? (
         <CrudList.FilterBar
           filters={filters.map(filterDef)}
           state={list.filters}
-          count={on("count") ? list.pagination.total : undefined}
+          count={counted ? list.pagination.total : undefined}
           leading={
             leading || chipRow ? (
               <>
@@ -346,14 +444,16 @@ export function RecordList<Row>({
           }
           trailing={search ?? undefined}
           maxBadges={3}
-          className="@max-md/record-list:[&>[data-slot=crud-filter-bar-trailing]]:ml-0 @max-md/record-list:[&>[data-slot=crud-filter-bar-trailing]]:basis-full @max-md/record-list:[&>[data-slot=crud-filter-bar-trailing]]:flex-nowrap"
+          className="[&>[data-slot=crud-filter-bar-trailing]]:min-w-0 [&>[data-slot=crud-filter-bar-trailing]]:flex-1 [&>[data-slot=crud-filter-bar-trailing]]:basis-48 [&>[data-slot=crud-filter-bar-trailing]]:justify-end @max-md/record-list:[&>[data-slot=crud-filter-bar-trailing]]:ml-0 @max-md/record-list:[&>[data-slot=crud-filter-bar-trailing]]:basis-full @max-md/record-list:[&>[data-slot=crud-filter-bar-trailing]]:flex-nowrap"
         />
-      ) : on("count") || leading || chipRow || search ? (
+      ) : counted || leading || chipRow || search ? (
         // No filters to offer: the count, the chips and the search stand on their own row rather
         // than beside a filter control that would open onto nothing.
-        <Flex align="center" gap="sm" wrap justify="between">
+        // The same inset as the filter bar, so the toolbar's first item lines up with the table's
+        // first-column text whatever the toolbar holds.
+        <Flex align="center" gap="sm" wrap justify="between" className="px-3 py-2.5">
           <Flex align="center" gap="sm" wrap>
-            {on("count") ? <ListTotalBadge count={list.pagination.total} /> : null}
+            {counted ? <ListTotalBadge count={list.pagination.total} /> : null}
             {leading}
             {chipRow}
           </Flex>
@@ -379,18 +479,36 @@ export function RecordList<Row>({
             : undefined
         }
         actions={rowActions.length > 0 ? rowActions : undefined}
+        actionVariant={labelled ? "outline" : undefined}
+        actionColumnWidth={labelled ? actionCell : undefined}
         // With no rows the table says why: the page's own empty state, or inside a record (where the
         // list is one part of the panel) the compact sentence centred in the list's place.
         emptyReason={list.emptyReason}
         emptyState={empty}
-        slots={nested ? { empty: ({ reason }) => <CrudList.Empty reason={reason} /> } : undefined}
+        slots={nested ? { empty: ({ reason }) => (empty && reason === "no-data" ? <EmptyState size="sm" title={empty.title} description={empty.description} /> : <CrudList.Empty reason={reason} />) } : undefined}
         cardBreakpoint={titleColumn ? breakpoint : undefined}
-        cardTitle={titleColumn ? ({ row }) => cellOf(titleColumn, row) : undefined}
+        // A list inside a record has no table head above its cards, so there every value carries its
+        // column header (「차수 1」) rather than standing bare.
+        cardTitle={
+          titleColumn
+            ? ({ row }) =>
+                nested ? (
+                  <Flex align="center" gap="sm" minSize>
+                    <Text as="span" size="caption" tone="muted" className="w-16 shrink-0">
+                      {titleColumn.header}
+                    </Text>
+                    {cellOf(titleColumn, row)}
+                  </Flex>
+                ) : (
+                  cellOf(titleColumn, row)
+                )
+            : undefined
+        }
         cardContent={
           lineColumns.length > 0
             ? ({ row }) => {
                 const layout = cardLayout(
-                  lineColumns.map((column) => ({ key: column.key, header: column.header, place: column.cardPlace, value: valueOf(column, row) })),
+                  lineColumns.map((column) => ({ key: column.key, header: column.header, place: nested ? "lines" : column.cardPlace, value: valueOf(column, row), wide: wideCards.has(column.key), keep: !packedCards && keptCards.has(column.key) })),
                 );
                 return (
                   <Stack gap="xs">
@@ -401,7 +519,18 @@ export function RecordList<Row>({
                         ))}
                       </Flex>
                     ) : null}
-                    {layout.lines.length > 0 ? (
+                    {layout.lines.length > 0 && packedCards ? (
+                      <Flex wrap align="center" gap="md">
+                        {layout.lines.map((line) => (
+                          <Flex key={line.key} align="center" gap="xs">
+                            <Text as="span" size="caption" tone="muted">
+                              {line.header}
+                            </Text>
+                            <RecordValueView value={line.value} />
+                          </Flex>
+                        ))}
+                      </Flex>
+                    ) : layout.lines.length > 0 ? (
                       <Grid columns={2} gap="xs">
                         {layout.lines.map((line) => (
                           <Flex key={line.key} align="center" gap="sm" minSize className={line.wide ? "col-span-2" : undefined}>
@@ -428,10 +557,11 @@ export function RecordList<Row>({
             field={column.field}
             header={column.header}
             width={column.width}
+            minWidth={column.width === undefined ? column.minWidth : undefined}
             minTableWidth={column.minTableWidth}
             sortable={on("sort") && column.field !== undefined && column.sortable !== false}
           >
-            {column.value ? ({ row }) => cellOf(column, row) : undefined}
+            {column.value || column.wrap || column.minWidth !== undefined ? ({ row }) => cellIn(column, row) : undefined}
           </CrudList.Column>
         ))}
       </CrudList.Table>

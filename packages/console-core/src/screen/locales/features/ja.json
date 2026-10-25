@@ -12,6 +12,7 @@
     "evidence": "証憑 {{count, number}}件",
     "score": "点数",
     "rating": "等級",
+    "ratingOption": "{{label}}（{{score}}点）",
     "reason": "根拠",
     "outOfRange": "{{min}}~{{max}} の範囲の点数のみ入力できます",
     "basis": {
@@ -35,7 +36,6 @@
     "syncPendingBody": "接続すると自動で送信します",
     "empty": "今日のタスクはありません",
     "overdue": "期限切れ",
-    "noDue": "期限なし",
     "opens": "{{screen}}を開く"
   },
   "phoneStep": {
@@ -57,8 +57,37 @@
     "sign": "署名",
     "signTitle": "{{label}} 署名",
     "version": "提出版 {{version}}",
-    "templateVersion": "書式 {{version}}",
+    "templateVersion": "改訂 {{version}}",
     "noSource": "原文ページ画像がありません",
-    "sourcePage": "原文 {{page}} ページ"
+    "sourcePage": "原文 {{page}} ページ",
+    "rest": "その他の入力欄",
+    "signedCount": "署名 {{signed}} / {{total}}",
+    "signer": "署名者",
+    "signedAt": "署名時刻",
+    "pendingBy": "{{roles}}が入力予定",
+    "skipped": "未入力のまま通過",
+    "awaitingSignature": "署名待ち",
+    "viewLabel": "表示"
+  },
+  "liveBoard": {
+    "asOfLabel": "基準",
+    "feed": {
+      "connected": "接続中",
+      "stale": "応答遅延",
+      "disconnected": "接続切断"
+    },
+    "every": "自動更新 {{seconds, number}}秒",
+    "paused": "自動更新停止",
+    "pause": "自動更新を止める",
+    "resume": "自動更新を始める",
+    "lostTitle": "{{source}}{{particle}}との接続が切れました",
+    "lostBody": "画面の値は最後に受け取ったものであり、現在の状態と異なることがあります。",
+    "lostBodySince": "最終応答 {{at}}。画面の値はその時点のもので、現在の現場の状態と異なることがあります。",
+    "openSource": "切れたものを見る",
+    "change": {
+      "new": "新規",
+      "changed": "変更"
+    },
+    "unread": "未読"
   }
 }

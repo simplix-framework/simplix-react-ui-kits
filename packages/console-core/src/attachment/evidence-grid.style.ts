@@ -1,10 +1,13 @@
 import { defineSlotStyle } from "@simplix-react/ui/design";
 
-/** The card one piece of evidence is drawn on, at a tighter inset than a card's default. */
+/**
+ * The tile one piece of evidence is drawn on, at a tighter inset than a card's default. It is set on
+ * a soft ground with no edge, because the grid always sits inside a framed form or detail panel.
+ */
 export const evidenceBodyStyle = defineSlotStyle({
   slot: "console-evidence-body",
   as: "part",
-  base: "p-3",
+  base: "p-3 border-0 bg-[var(--surface-2)] shadow-none",
   variants: {},
   defaultVariants: {},
 });

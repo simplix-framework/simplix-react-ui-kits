@@ -27,8 +27,10 @@ export interface MeasurementAnalyte {
   readonly label: string;
   /** The unit a reading is given in. */
   readonly unit: string;
-  /** The rule keys the verdicts for this row came from, shown under the label. */
+  /** The rule keys the verdicts for this row came from; looked up, never shown to the reader. */
   readonly ruleKeys: readonly string[];
+  /** The limit in the reader's words (「18% 이상 23.5% 미만」), shown under the label. */
+  readonly limit?: string;
 }
 
 /** One position column, in the order the form fixes. */
@@ -62,6 +64,11 @@ export interface MeasurementGridProps {
   readonly verdicts: Readonly<Record<string, MeasurementVerdict>>;
   /** When the next measurement is due (an RFC 3339 instant). */
   readonly nextDueAt?: string;
+  /**
+   * The instant the next-due line counts from (an RFC 3339 instant or a Date), so a screen on a
+   * site's clock reads 「20분 후」 rather than counting from the device's clock. Absent, the device's.
+   */
+  readonly now?: string | Date;
   /** Whether the measurement interval is held for interpretation; shows the hold instead of a time. */
   readonly intervalHeld?: boolean;
   /** Which layer set the rules behind the verdicts, drawn beside the next-due line. */
@@ -76,7 +83,8 @@ export interface MeasurementGridProps {
  * One measurement event as a substance by position grid, with a verdict in every measured cell.
  *
  * <p><b>Held is never drawn as safe.</b> A reading the rule could not settle, or one no verdict has
- * reached, is tinted as a warning and labelled as held; only a settled safe verdict is drawn plain.
+ * reached, is drawn in the neutral pending tone and labelled as held; only a settled safe verdict is
+ * drawn plain, and only a settled unsafe one is drawn in danger.
  *
  * <p><b>A blank cell is not zero.</b> It is drawn as not measured, and it counts toward no verdict.
  *
@@ -89,6 +97,7 @@ export function MeasurementGrid({
   measurement,
   verdicts,
   nextDueAt,
+  now,
   intervalHeld = false,
   ruleSource,
   editable,
@@ -113,9 +122,9 @@ export function MeasurementGrid({
         <Text as="span" size="sm">
           {analyte.label} ({analyte.unit})
         </Text>
-        {analyte.ruleKeys.length > 0 ? (
+        {analyte.limit ? (
           <Text as="span" size="caption" tone="muted">
-            {analyte.ruleKeys.join(" · ")}
+            {analyte.limit}
           </Text>
         ) : null}
       </Stack>
@@ -154,7 +163,7 @@ export function MeasurementGrid({
         </Text>
       );
       if (state.kind === "held") {
-        return { value: reading, note: t("measurement.held"), tone: "warning" };
+        return { value: reading, note: t("measurement.held"), tone: "pending" };
       }
       return state.verdict === "UNSAFE"
         ? { value: reading, note: t("measurement.unsafe"), tone: "danger" }
@@ -189,7 +198,7 @@ export function MeasurementGrid({
           ) : due.kind === "none" ? (
             t("measurement.nextDueNone")
           ) : (
-            <RemainingText value={due.at} passedLabel={t("measurement.duePassed")} />
+            <RemainingText value={due.at} passedLabel={t("measurement.duePassed")} now={now} />
           )}
         </LabelledValue>
         {ruleSource ? <SourceBadge {...ruleSource} /> : null}

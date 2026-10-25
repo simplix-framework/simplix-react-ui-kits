@@ -1,12 +1,12 @@
 import { useState, type FormEvent, type ReactNode } from "react";
 import { useTranslation } from "@simplix-react/i18n/react";
-import { Button, CrudForm, Flex, Heading, Stack } from "@simplix-react/ui";
+import { Button, CrudForm, Flex, Heading, Stack, Text } from "@simplix-react/ui";
 
 import { RecordNote, RecordNotices, RecordVerbButton, type RecordNotice, type RecordVerb } from "./record-blocks";
 import { FormErrorSummary } from "./form-error-summary";
 import { PACKAGE_NAMESPACE } from "./locales";
 import { RecordFieldView } from "./record-form-fields";
-import { formFieldErrors, initialFieldValue } from "./record-form-rules";
+import { fieldShown, formFieldErrors, initialFieldValue, requiredProgress } from "./record-form-rules";
 import type { RecordFormSection } from "./record-form-types";
 
 export type { RecordFormField, RecordFormSection, RecordOption } from "./record-form-types";
@@ -57,7 +57,16 @@ export function useRecordFormValues(sections: readonly RecordFormSection[]) {
 }
 
 /** Draws form sections against their values; for a form inside something else (a dialog). */
-export function RecordFormSections({ sections, form }: { readonly sections: readonly RecordFormSection[]; readonly form: ReturnType<typeof useRecordFormValues> }) {
+export function RecordFormSections({
+  sections,
+  form,
+  flat = false,
+}: {
+  readonly sections: readonly RecordFormSection[];
+  readonly form: ReturnType<typeof useRecordFormValues>;
+  /** Draws the sections without their card, for a surface that is already one: a dialog, a panel. */
+  readonly flat?: boolean;
+}) {
   const fieldLabels = new Map(sections.flatMap((section) => section.fields).map((field) => [field.key, field.label]));
   const { t } = useTranslation(PACKAGE_NAMESPACE + "/features");
   const shownErrors = form.errorsShown ? Object.fromEntries(Object.entries(form.errors).map(([key, code]) => [key, t(`recordForm.errors.${code}`)])) : undefined;
@@ -65,8 +74,8 @@ export function RecordFormSections({ sections, form }: { readonly sections: read
     <>
       <FormErrorSummary fieldErrors={shownErrors} label={(key) => fieldLabels.get(key) ?? key} />
       {sections.map((section) => (
-        <CrudForm.Section key={section.key} title={section.title} layout={section.columns === 2 ? "two-column" : "single-column"}>
-          {section.fields.map((field) => (
+        <CrudForm.Section key={section.key} title={section.title} variant={flat ? "flat" : undefined} layout={section.columns === 2 ? "two-column" : "single-column"}>
+          {section.fields.filter((field) => fieldShown(field, form.values)).map((field) => (
             <RecordFieldView
               key={field.key}
               field={field}
@@ -105,7 +114,9 @@ export interface RecordFormProps {
  */
 export function RecordForm({ title, sections, notices, note, submitLabel, onSubmit, onCancel, actions = [], children }: RecordFormProps) {
   const { t: tUi } = useTranslation("simplix/ui");
+  const { t } = useTranslation(PACKAGE_NAMESPACE + "/features");
   const form = useRecordFormValues(sections);
+  const progress = requiredProgress(sections, form.values);
   const submit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (form.missing.length > 0) {
@@ -119,7 +130,18 @@ export function RecordForm({ title, sections, notices, note, submitLabel, onSubm
       variant="panel"
       onSubmit={submit}
       onClose={onCancel}
-      header={<Heading level={4} tone="muted">{title}</Heading>}
+      header={
+        // How many required fields are answered, so a reader who sees the first few fields of a long
+        // form knows how much is still below.
+        <Stack gap="none" minSize>
+          <Heading level={4}>{title}</Heading>
+          {progress.total > 0 ? (
+            <Text as="span" size="caption" tone="muted" aria-live="polite" data-form-progress>
+              {t("recordForm.progress", { total: progress.total, filled: progress.filled })}
+            </Text>
+          ) : null}
+        </Stack>
+      }
       footer={
         <CrudForm.Actions spread={Boolean(onCancel)}>
           {onCancel ? (
@@ -136,10 +158,15 @@ export function RecordForm({ title, sections, notices, note, submitLabel, onSubm
         </CrudForm.Actions>
       }
     >
+      {/* Notices come first: a reason the form cannot go through is read before any field is filled. */}
+      <RecordNotices notices={notices} />
       <RecordFormSections sections={sections} form={form} />
       {children}
-      <RecordNotices notices={notices} />
       <RecordNote text={note} />
+      {/* Sticks to the foot of the scrolling body while fields remain below it, fading the last
+          visible field so the reader can tell the form goes on; at the end it is the room that keeps
+          the last field clear of the save bar. */}
+      <div aria-hidden data-form-more className="pointer-events-none sticky bottom-0 h-8 shrink-0 bg-gradient-to-t from-card to-transparent" />
     </CrudForm>
   );
 }

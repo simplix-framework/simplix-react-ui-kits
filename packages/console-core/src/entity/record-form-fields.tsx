@@ -1,13 +1,15 @@
-import { CalendarIcon, EyeIcon, PlusIcon, Trash2Icon, XIcon } from "lucide-react";
+import { CalendarIcon, CameraIcon, EyeIcon, ImageIcon, PlusIcon, Trash2Icon, UploadIcon, XIcon } from "lucide-react";
 import { useRef, useState, type ReactNode } from "react";
 import { useTranslation } from "@simplix-react/i18n/react";
 import {
   Badge,
   Button,
+  Checkbox,
   Calendar,
-  Card,
+  EmptyValue,
   FieldWrapper,
   Flex,
+  Input,
   FormFields,
   Grid,
   Popover,
@@ -23,6 +25,7 @@ import {
 } from "@simplix-react/ui";
 
 import { EvidenceGrid } from "../attachment";
+import { useConsoleOnAPhone } from "../shell/phone-shell";
 import { usePeekHost } from "../peek";
 import { EntitySearchCombobox } from "./entity-search-combobox";
 import { PACKAGE_NAMESPACE } from "./locales";
@@ -33,6 +36,7 @@ import type {
   FieldEvidence,
   RangeValue,
   RecordFormField,
+  RecordRowColumn,
   SignatureValue,
   VerdictChoice,
   VerdictValue,
@@ -96,18 +100,30 @@ export function RecordFieldView(props: RecordFieldViewProps) {
   );
 }
 
+/** The prompt an empty select shows when the field names none: what to do, and the first choices as examples. */
+function choicePrompt(t: (key: string, options?: Record<string, string>) => string, options: readonly { readonly label: string }[]): string {
+  const examples = options.slice(0, 2).map((option) => option.label).join(", ");
+  return examples ? t("recordForm.choosePromptWithExamples", { examples }) : t("recordForm.choosePrompt");
+}
+
 function FieldBody({ field, value, onChange, error, errorsShown }: RecordFieldViewProps) {
   const { t } = useTranslation(PACKAGE_NAMESPACE + "/features");
   const message = error ? t(`recordForm.errors.${error}`) : undefined;
   const disabled = Boolean(field.disabled);
-  const common = { label: field.label, description: field.hint, required: field.required, disabled, error: message };
+  const common = { label: field.label, description: field.hint, required: field.required, disabled, error: message, ...(field.labelHidden ? { layout: "hidden" as const } : {}) };
   switch (field.kind) {
     case "number":
       return <FormFields.NumberField {...common} value={(value as number | null) ?? null} onChange={onChange} suffix={field.unit} min={field.min} max={field.max} placeholder={field.placeholder} />;
-    case "select":
-      return <FormFields.SelectField {...common} value={value as string} onChange={onChange} options={[...field.options]} placeholder={field.placeholder} />;
+    case "select": {
+      // The chosen option's meaning reads under the field; before a choice the field's own hint does.
+      const chosen = field.options.find((option) => option.value === value)?.description;
+      const options = field.options.map(({ value: optionValue, label }) => ({ value: optionValue, label }));
+      return <FormFields.SelectField {...common} description={chosen ?? common.description} value={value as string} onChange={onChange} options={options} placeholder={field.placeholder ?? choicePrompt(t, field.options)} />;
+    }
+    case "radio":
+      return <FormFields.RadioGroupField {...common} direction="row" value={(value as string) ?? ""} onChange={onChange} options={[...field.options]} />;
     case "multi":
-      return <FormFields.MultiSelectField {...common} value={[...((value as string[]) ?? [])]} onChange={onChange} options={[...field.options]} placeholder={field.placeholder} />;
+      return <FormFields.MultiSelectField {...common} value={[...((value as string[]) ?? [])]} onChange={onChange} options={[...field.options]} placeholder={field.placeholder ?? choicePrompt(t, field.options)} />;
     case "date":
       return <FormFields.DateField {...common} value={(value as string) || null} onChange={(next) => onChange(formatLocalDate(next ?? undefined) ?? "")} placeholder={field.placeholder} />;
     case "switch":
@@ -128,6 +144,10 @@ function FieldBody({ field, value, onChange, error, errorsShown }: RecordFieldVi
       return <MonthField common={common} value={(value as string) ?? ""} onChange={onChange} placeholder={field.placeholder} />;
     case "range":
       return <RangeField field={field} common={common} value={(value ?? {}) as RangeValue} onChange={onChange} />;
+    case "row":
+      return <RowCells columns={field.columns} value={(value ?? {}) as Readonly<Record<string, string>>} disabled={Boolean(field.disabled)} label={field.label} onChange={onChange} />;
+    case "tick":
+      return <FormFields.CheckboxField {...common} value={value === true} onChange={(next) => onChange(next)} />;
     case "check":
       return (
         <FormFields.RadioGroupField
@@ -266,9 +286,12 @@ function ReferenceMultiField({ field, common, value, onChange }: { readonly fiel
           {value.map((id) => (
             <Badge key={id} variant="secondary">
               {names.current.get(id) ?? id}
-              <Button type="button" size="icon-xs" variant="ghost" disabled={common.disabled} aria-label={t("recordForm.remove")} onClick={() => onChange(value.filter((other) => other !== id))}>
-                <XIcon />
-              </Button>
+              {/* A locked list offers no remove control at all, rather than one that does nothing. */}
+              {common.disabled ? null : (
+                <Button type="button" size="icon-xs" variant="ghost" aria-label={t("recordForm.remove")} onClick={() => onChange(value.filter((other) => other !== id))}>
+                  <XIcon />
+                </Button>
+              )}
             </Badge>
           ))}
         </Flex>
@@ -277,19 +300,60 @@ function ReferenceMultiField({ field, common, value, onChange }: { readonly fiel
   );
 }
 
+/** A file picked or dropped into an attachment field, as the evidence it becomes once saved. */
+function pickedEvidence(file: File, index: number, evidenceKind: string | undefined, provenance: string): FieldEvidence {
+  return {
+    id: `picked:${Date.now()}:${index}:${file.name}`,
+    kind: file.type.startsWith("image/") ? "photo" : "file",
+    label: file.name,
+    provenance,
+    state: "pendingSync",
+    ...(evidenceKind ? { evidenceKind } : {}),
+  };
+}
+
+function fileSize(bytes: number): string {
+  return bytes >= 1024 * 1024 ? `${(bytes / (1024 * 1024)).toFixed(1)}MB` : `${Math.max(1, Math.round(bytes / 1024))}KB`;
+}
+
+/**
+ * An attachment field: what it holds, and always a way to add to it.
+ *
+ * <p>A field with an `onAdd` capture keeps one button per requested kind; any other field takes
+ * files from a picker or a drop on the full-width zone, and holds them as waiting to upload until
+ * the record is saved. On a phone the zone gives way to a camera and an album button, each tall
+ * enough for a thumb.
+ */
 function AttachmentField({ field, common, value, onChange }: { readonly field: FieldOf<"attachment">; readonly common: Common; readonly value: readonly FieldEvidence[]; readonly onChange: (value: unknown) => void }) {
   const { t } = useTranslation(PACKAGE_NAMESPACE + "/features");
-  const absent = field.evidenceKinds.filter((kind) => !value.some((item) => item.evidenceKind === kind && item.state !== "missing"));
+  const onAPhone = useConsoleOnAPhone();
+  const fileInput = useRef<HTMLInputElement>(null);
+  const cameraInput = useRef<HTMLInputElement>(null);
+  const [dragging, setDragging] = useState(false);
+  // Only a required field draws its missing kinds as slots to fill; an optional one that holds
+  // nothing says so in a line, so 「필수」 never stands on a field nobody has to fill.
+  const absent = field.required ? field.evidenceKinds.filter((kind) => !value.some((item) => item.evidenceKind === kind && item.state !== "missing")) : [];
   const slots: FieldEvidence[] = absent.map((kind) => ({ id: `missing:${kind}`, kind: "file", label: kind, provenance: t("recordForm.evidenceMissing"), state: "missing", evidenceKind: kind }));
   const add = async (kind: string) => {
     const item = await field.onAdd?.(kind);
     if (item) onChange([...value, item]);
   };
+  const take = (files: FileList | null) => {
+    if (!files || files.length === 0) return;
+    const kind = absent[0] ?? field.evidenceKinds[0];
+    onChange([...value, ...Array.from(files).map((file, index) => pickedEvidence(file, index, kind, t("recordForm.pickedProvenance", { size: fileSize(file.size) })))]);
+  };
   const addable = field.evidenceKinds.length > 0 ? field.evidenceKinds : [""];
+  const pickers = (
+    <>
+      <input ref={fileInput} type="file" multiple hidden disabled={common.disabled} onChange={(event) => { take(event.currentTarget.files); event.currentTarget.value = ""; }} />
+      <input ref={cameraInput} type="file" accept="image/*" capture="environment" hidden disabled={common.disabled} onChange={(event) => { take(event.currentTarget.files); event.currentTarget.value = ""; }} />
+    </>
+  );
   return (
     <FieldWrapper {...common}>
       <Stack gap="sm">
-        <EvidenceGrid items={[...value, ...slots]} />
+        {value.length + slots.length > 0 ? <EvidenceGrid items={[...value, ...slots]} /> : null}
         {field.onAdd ? (
           <Flex gap="xs" wrap>
             {addable.map((kind) => (
@@ -299,7 +363,37 @@ function AttachmentField({ field, common, value, onChange }: { readonly field: F
               </Button>
             ))}
           </Flex>
-        ) : null}
+        ) : onAPhone ? (
+          <Grid columns={2} gap="sm">
+            {pickers}
+            <Button type="button" variant="outline" className="h-12" disabled={common.disabled} onClick={() => cameraInput.current?.click()}>
+              <CameraIcon />
+              {t("recordForm.takePhoto")}
+            </Button>
+            <Button type="button" variant="outline" className="h-12" disabled={common.disabled} onClick={() => fileInput.current?.click()}>
+              <ImageIcon />
+              {t("recordForm.pickFromAlbum")}
+            </Button>
+          </Grid>
+        ) : (
+          <div
+            data-slot="console-attachment-drop"
+            data-dragging={dragging || undefined}
+            className="flex w-full flex-wrap items-center justify-between gap-3 rounded-md bg-muted/40 px-4 py-3 outline-1 outline-dashed outline-muted-foreground/40 data-[dragging]:bg-primary/10 data-[dragging]:outline-primary"
+            onDragOver={(event) => { if (common.disabled) return; event.preventDefault(); setDragging(true); }}
+            onDragLeave={() => setDragging(false)}
+            onDrop={(event) => { event.preventDefault(); setDragging(false); if (!common.disabled) take(event.dataTransfer.files); }}
+          >
+            {pickers}
+            <Text size="sm" tone="muted">
+              {value.length > 0 ? t("recordForm.dropMore") : t("recordForm.dropHint")}
+            </Text>
+            <Button type="button" size="sm" variant="outline" disabled={common.disabled} onClick={() => fileInput.current?.click()}>
+              <UploadIcon />
+              {t("recordForm.chooseFile")}
+            </Button>
+          </div>
+        )}
       </Stack>
     </FieldWrapper>
   );
@@ -310,21 +404,58 @@ export function signerLabel(signature: Pick<SignatureValue, "name" | "acting">):
   return signature.acting === "DELEGATED" ? `代 ${signature.name}` : signature.name;
 }
 
+/**
+ * A signature field: what is being signed and by whom, written above the pad, and a text control to
+ * start the pad again.
+ *
+ * <p>The role is plain text beside the signer, never a chip that reads as a button. Starting again
+ * remounts the pad, which is the one way to empty it from outside.
+ */
 function SignatureField({ field, common, value, onChange }: { readonly field: FieldOf<"signature">; readonly common: Common; readonly value: SignatureValue | null; readonly onChange: (value: unknown) => void }) {
+  const { t } = useTranslation(PACKAGE_NAMESPACE + "/features");
+  const [round, setRound] = useState(0);
   const given = value && !value.dataUrl ? value : null;
+  const signer = [field.signerName, field.role].filter(Boolean).join(" · ");
   return (
-    <FieldWrapper {...common} labelExtra={<Badge variant="outline">{field.role}</Badge>}>
-      {given ? (
-        <Text size="sm">
-          {signerLabel(given)} · {given.at}
-        </Text>
-      ) : (
-        <SignaturePad
-          mode="drawn"
-          disabled={common.disabled}
-          onChange={(dataUrl) => onChange(dataUrl ? { name: field.signerName ?? "", at: new Date().toISOString(), acting: "SELF", dataUrl } satisfies SignatureValue : null)}
-        />
-      )}
+    <FieldWrapper {...common}>
+      <Stack gap="xs">
+        {field.statement ? <Text size="sm">{field.statement}</Text> : null}
+        {signer ? (
+          <Text size="sm" tone="muted">
+            {t("recordForm.signer", { signer })}
+          </Text>
+        ) : null}
+        {given ? (
+          <Text size="sm">
+            {signerLabel(given)} · {given.at}
+          </Text>
+        ) : (
+          <>
+            <SignaturePad
+              key={round}
+              mode="drawn"
+              disabled={common.disabled}
+              className="[&_[data-slot=signature-pad-clear]]:hidden"
+              onChange={(dataUrl) => onChange(dataUrl ? { name: field.signerName ?? "", at: new Date().toISOString(), acting: "SELF", dataUrl } satisfies SignatureValue : null)}
+            />
+            {common.disabled ? null : (
+              <Flex justify="end">
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="min-h-11 min-w-11"
+                  onClick={() => {
+                    setRound((n) => n + 1);
+                    onChange(null);
+                  }}
+                >
+                  {t("recordForm.signAgain")}
+                </Button>
+              </Flex>
+            )}
+          </>
+        )}
+      </Stack>
     </FieldWrapper>
   );
 }
@@ -408,7 +539,8 @@ function RepeatField({ field, common, errorsShown, value, onChange }: { readonly
   const rows: ReactNode[] = value.map((row, index) => (
     // Rows have no identity of their own until saved; the position is what the reader sees.
     // oxlint-disable-next-line no-array-index-key
-    <Card key={index}>
+    // A ruled row, not a card: the form section is already the frame, and a box per row is a box in a box.
+    <div key={index} data-part="repeat-row" className="border-t border-border pt-3 first:border-t-0 first:pt-0">
       <Flex gap="sm" align="start">
         <Grid columns={Math.min(field.columns.length, 3) as 1 | 2 | 3} gap="sm" className="flex-1">
           {field.columns.map((column) => (
@@ -426,7 +558,7 @@ function RepeatField({ field, common, errorsShown, value, onChange }: { readonly
           <Trash2Icon />
         </Button>
       </Flex>
-    </Card>
+    </div>
   ));
   return (
     <FieldWrapper {...common} error={common.error && value.length === 0 ? common.error : undefined}>
@@ -440,5 +572,81 @@ function RepeatField({ field, common, errorsShown, value, onChange }: { readonly
         </Flex>
       </Stack>
     </FieldWrapper>
+  );
+}
+
+/** What one column of a repeated row needs to draw its control. */
+interface RowColumnProps {
+  readonly column: RecordRowColumn;
+  readonly value: Readonly<Record<string, string>>;
+  readonly disabled: boolean;
+  readonly label: string;
+  readonly onChange: (next: Readonly<Record<string, string>>) => void;
+}
+
+/**
+ * One column of a repeated source row: a text box for a free column, a row of choices for a column
+ * answered by a few words (상 · 중 · 하).
+ */
+export function RowColumnInput({ column, value, disabled, label, onChange }: RowColumnProps) {
+  if (column.readOnly) {
+    const text = value[column.key];
+    return text ? (
+      <Text aria-label={`${label} ${column.label}`} className="whitespace-nowrap">
+        {text}
+      </Text>
+    ) : (
+      <EmptyValue />
+    );
+  }
+  if (column.tick) {
+    return (
+      <Checkbox
+        aria-label={`${label} ${column.label}`}
+        checked={value[column.key] === "true"}
+        disabled={disabled}
+        onCheckedChange={(next) => onChange({ ...value, [column.key]: next === true ? "true" : "" })}
+      />
+    );
+  }
+  if (column.options?.length) {
+    return (
+      <Flex gap="none" role="radiogroup" aria-label={`${label} ${column.label}`}>
+        {column.options.map((option) => (
+          <Button
+            key={option.value}
+            size="xs"
+            variant={value[column.key] === option.value ? "default" : "outline"}
+            role="radio"
+            aria-checked={value[column.key] === option.value}
+            disabled={disabled}
+            onClick={() => onChange({ ...value, [column.key]: option.value })}
+          >
+            {option.label}
+          </Button>
+        ))}
+      </Flex>
+    );
+  }
+  return (
+    <Input
+      aria-label={`${label} ${column.label}`}
+      // A free cell keeps room for a date or a total beside wide choice columns.
+      className="min-w-28"
+      value={value[column.key] ?? ""}
+      disabled={disabled}
+      onChange={(event) => onChange({ ...value, [column.key]: event.target.value })}
+    />
+  );
+}
+
+/** The cells of one repeated source row side by side, for a row drawn outside its table. */
+export function RowCells({ columns, ...rest }: Omit<RowColumnProps, "column"> & { readonly columns: readonly RecordRowColumn[] }) {
+  return (
+    <Flex gap="xs" align="center">
+      {columns.map((column) => (
+        <RowColumnInput key={column.key} column={column} {...rest} />
+      ))}
+    </Flex>
   );
 }

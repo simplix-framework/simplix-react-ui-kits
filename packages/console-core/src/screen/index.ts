@@ -80,6 +80,14 @@ export {
   type FormSheetDefinition,
   type FormSheetField,
   type FormSheetTableRow,
+  layoutProblems,
+  layoutSections,
+  type FormSheetLayout,
+  type FormSheetLayoutBlock,
+  type FormSheetLayoutSection,
+  type LayoutProblems,
+  type ResolvedLayoutBlock,
+  type ResolvedLayoutSection,
 } from "./form-sheet-model";
 export { ReadOnlyBanner, type ReadOnlyMode } from "./read-only-banner";
 export { Roster, type RosterCell, type RosterCellTone, type RosterColumn, type RosterRow } from "./roster";
@@ -106,6 +114,7 @@ export {
   type ScoreVisibility,
 } from "./score-sheet-model";
 export { ScheduleBoard, type NonWorkingDay, type ScheduleEntry } from "./schedule-board";
+export { WorkCalendar, type WorkCalendarCategory, type WorkCalendarItem, type WorkCalendarLabels, type WorkCalendarProps, type WorkCalendarStatus, type WorkCalendarView } from "./work-calendar";
 export {
   StatuteBasisButton,
   StatuteBasisDialog,
@@ -131,8 +140,10 @@ export { RuleValueText, type RuleValueTextProps } from "./rule-value-text";
 export { PhoneTaskList, type PhoneTask, type PhoneTaskListProps } from "./phone-task-list";
 export {
   PhoneStep,
+  type PhoneStepDanger,
   type PhoneStepDefinition,
   type PhoneStepMeasurement,
+  type PhoneStepNext,
   type PhoneStepProps,
   type PhoneStepSubmission,
 } from "./phone-step";

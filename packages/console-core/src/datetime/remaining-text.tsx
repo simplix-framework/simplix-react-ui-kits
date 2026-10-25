@@ -10,6 +10,8 @@ export interface RemainingTextProps {
   fallback?: ReactNode;
   /** Rendered once the deadline is behind us, instead of an elapsed count. */
   passedLabel?: ReactNode;
+  /** The instant counted from (the site's clock, an RFC 3339 string or a Date). Defaults to the wall clock. */
+  now?: string | Date;
 }
 
 /**
@@ -31,10 +33,13 @@ export interface RemainingTextProps {
  * <RemainingText value={order.dueAt} passedLabel={t("order.deadlinePassed")} />
  * ```
  */
-export function RemainingText({ value, fallback = null, passedLabel }: RemainingTextProps) {
+export function RemainingText({ value, fallback = null, passedLabel, now }: RemainingTextProps) {
   const locale = useLocale();
   const at = value ? parseRfc3339(value) : null;
   if (!at || Number.isNaN(at.getTime())) return <>{fallback}</>;
-  if (passedLabel != null && at.getTime() <= Date.now()) return <>{passedLabel}</>;
-  return <Text as="span" size="sm">{formatRelativeTime(at, locale)}</Text>;
+  const from = now === undefined ? Date.now() : (typeof now === "string" ? parseRfc3339(now) : now)?.getTime() ?? Number.NaN;
+  if (Number.isNaN(from)) throw new Error(`RemainingText: unparseable now ${String(now)}`);
+  if (passedLabel != null && at.getTime() <= from) return <>{passedLabel}</>;
+  // The formatter counts from the wall clock, so the deadline moves by the gap between the two clocks.
+  return <Text as="span" size="sm">{formatRelativeTime(new Date(at.getTime() + Date.now() - from), locale)}</Text>;
 }
