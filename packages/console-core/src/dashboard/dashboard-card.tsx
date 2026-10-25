@@ -20,13 +20,17 @@ export interface DashboardCardProps {
   readonly trailing?: ReactNode;
   /** `chart` pads for a plot, `list` for rows that carry their own padding. */
   readonly kind?: "chart" | "list";
+  /** `full` takes the whole row of a {@link DashboardColumns}, for a block read across. */
+  readonly span?: "half" | "full";
+  /** Words a screen reader hears for the card, when the title alone does not say whose figures they are. */
+  readonly description?: string;
   readonly children: ReactNode;
 }
 
 /** A dashboard card: a heading row with a legend or context at its right, over a chart or a list. */
-export function DashboardCard({ title, trailing, kind = "chart", children }: DashboardCardProps) {
+export function DashboardCard({ title, trailing, kind = "chart", span = "half", description, children }: DashboardCardProps) {
   return (
-    <section {...slotAttributes(dashboardCardStyle, {})}>
+    <section aria-label={description ? `${title}, ${description}` : undefined} className={span === "full" ? "lg:col-span-2" : undefined} {...slotAttributes(dashboardCardStyle, {})}>
       <div className="flex flex-wrap items-center justify-between" {...slotAttributes(dashboardCardHeadStyle, {})}>
         <h3 {...slotAttributes(dashboardCardTitleStyle, {})}>{title}</h3>
         {typeof trailing === "string" ? <span {...slotAttributes(dashboardCardMetaStyle, {})}>{trailing}</span> : trailing}
