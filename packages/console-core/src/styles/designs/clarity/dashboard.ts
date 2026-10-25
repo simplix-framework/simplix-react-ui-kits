@@ -10,5 +10,8 @@ export const dashboardSlots: Record<string, string> = {
   "schedule-task past=true": "font-[450]",
   "schedule-zone": "text-[12.5px]",
   "schedule-go": "text-[var(--muted-2)]",
+  "task-sub": "text-[12.5px]",
+  "task-due": "text-[12.5px]",
+  "task-empty": "text-[12.5px]",
   "schedule-now": "text-[var(--destructive-text)]",
 };
