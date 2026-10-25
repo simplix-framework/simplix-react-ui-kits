@@ -4,6 +4,7 @@ import { dashboardSlots } from "./clarity/dashboard";
 import { detailSlots } from "./clarity/detail";
 import { listSlots } from "./clarity/list";
 import { pageSlots } from "./clarity/page";
+import { screenSlots } from "./clarity/screen";
 import { shellSlots } from "./clarity/shell";
 
 /**
@@ -14,7 +15,7 @@ import { shellSlots } from "./clarity/shell";
 const spec: DesignSpec = {
   id: "clarity",
   replace: CLARITY_REPLACE,
-  slots: { ...shellSlots, ...pageSlots, ...listSlots, ...dashboardSlots, ...detailSlots },
+  slots: { ...shellSlots, ...pageSlots, ...listSlots, ...dashboardSlots, ...detailSlots, ...screenSlots },
 };
 
 export default spec;
