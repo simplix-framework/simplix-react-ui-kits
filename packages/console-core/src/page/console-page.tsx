@@ -109,6 +109,7 @@ export function ConsolePage({
         reorderKey={spec.tilesReorderKey}
         title={spec.tilesTitle}
         loading={spec.tilesLoading}
+        folded={search.id !== undefined}
       />
     ) : null,
   );

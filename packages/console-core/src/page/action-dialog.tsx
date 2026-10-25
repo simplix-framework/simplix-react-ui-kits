@@ -1,5 +1,7 @@
+import { useTranslation } from "@simplix-react/i18n/react";
 import { Button, CrudDetail, DetailFieldWrapper, Dialog, DialogFooter, DialogHeader, DialogTitle, Flex, Stack, Stepline } from "@simplix-react/ui";
 
+import { PACKAGE_NAMESPACE } from "../entity/locales";
 import { RecordNote, RecordNotices, RecordVerbButton, type RecordNotice, type RecordVerb } from "../entity/record-blocks";
 import type { RecordSection } from "../entity/record-detail";
 import { RecordFormSections, useRecordFormValues, type RecordFormSection } from "../entity/record-form";
@@ -34,9 +36,13 @@ export interface ActionDialogProps {
    * The button that finishes the dialog, drawn last: it checks the required fields and hands the
    * entered values over, and the dialog closes when it returns.
    */
+  /** The word on the button that closes without acting; the default is the common 「취소」, which a cancel command's own label would echo. */
+  readonly closeLabel?: string;
   readonly submit?: {
     readonly label: string;
     readonly kind?: "primary" | "danger";
+    /** Why the decision cannot be made yet, beyond an empty required field; drawn under the button. */
+    readonly disabled?: string;
     readonly onSubmit: (values: Readonly<Record<string, unknown>>) => void;
   };
 }
@@ -44,9 +50,16 @@ export interface ActionDialogProps {
 /**
  * A decision on a request: what was asked, what the decider sets, where it stands, and the verbs
  * that refuse or grant it.
+ *
+ * <p>The foot always offers 「취소」 first, so leaving without deciding never means pressing the
+ * main button. The main button is named by the command it runs (`submit.label`), and while a
+ * required field is empty, or the caller gives a reason, it is drawn disabled with the reason under it.
  */
-export function ActionDialog({ title, open, onOpenChange, notices, sections, fields = [], steps, note, leading = [], trailing = [], submit }: ActionDialogProps) {
+export function ActionDialog({ title, open, onOpenChange, notices, sections, fields = [], steps, note, leading = [], trailing = [], submit, closeLabel }: ActionDialogProps) {
+  const { t } = useTranslation(`${PACKAGE_NAMESPACE}/features`);
+  const { t: tUi } = useTranslation("simplix/ui");
   const form = useRecordFormValues(fields);
+  const blocked = submit?.disabled ?? (form.missing.length > 0 ? t("recordForm.fillBeforeSubmit", { count: form.missing.length }) : undefined);
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <BoundedDialogContent width="lg">
@@ -64,36 +77,36 @@ export function ActionDialog({ title, open, onOpenChange, notices, sections, fie
               ))}
             </CrudDetail.Section>
           ))}
-          {fields.length > 0 ? <RecordFormSections sections={fields} form={form} /> : null}
+          {fields.length > 0 ? <RecordFormSections sections={fields} form={form} flat /> : null}
           {steps ? <Stepline items={steps.items.map((step) => ({ key: step.key, label: step.label }))} current={steps.current} completedKeys={steps.done ? [...steps.done] : undefined} /> : null}
           <RecordNote text={note} />
         </Stack>
         <DialogFooter>
           <Flex gap="sm" justify="between" className="w-full">
-            <Flex gap="sm">
+            <Flex gap="sm" align="start">
+              <Button size="sm" variant="outline" onClick={() => onOpenChange(false)}>
+                {closeLabel ?? tUi("common.cancel")}
+              </Button>
               {leading.map((verb) => (
                 <RecordVerbButton key={verb.label} verb={verb} />
               ))}
             </Flex>
-            <Flex gap="sm">
+            <Flex gap="sm" align="start">
               {trailing.map((verb) => (
                 <RecordVerbButton key={verb.label} verb={verb} />
               ))}
               {submit ? (
-                <Button
-                  size="sm"
-                  variant={submit.kind === "danger" ? "destructive" : "primary"}
-                  onClick={() => {
-                    if (form.missing.length > 0) {
-                      form.showErrors();
-                      return;
-                    }
-                    submit.onSubmit(form.values);
-                    onOpenChange(false);
+                <RecordVerbButton
+                  verb={{
+                    label: submit.label,
+                    kind: submit.kind === "danger" ? "danger" : "primary",
+                    disabled: blocked,
+                    onClick: () => {
+                      submit.onSubmit(form.values);
+                      onOpenChange(false);
+                    },
                   }}
-                >
-                  {submit.label}
-                </Button>
+                />
               ) : null}
             </Flex>
           </Flex>

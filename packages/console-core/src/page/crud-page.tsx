@@ -2,6 +2,7 @@ import { createContext, useContext, type ReactNode } from "react";
 import { ListDetail, useCrudNavigation, useCrudPageState, useUIDefaults } from "@simplix-react/ui";
 
 import { ConsolePage } from "./console-page";
+import type { DetailPresentationSwitchProps } from "./detail-presentation-switch";
 import { detailWidthPx, type DetailWidth } from "./detail-width";
 import type { ConsoleSearch, PageSpec } from "./types";
 
@@ -25,6 +26,8 @@ export interface CrudPresentation {
   readonly presentation: CrudPagePresentation;
   /** Returns to the list, whatever the presentation. */
   readonly close: () => void;
+  /** The reader's switch between presentations, drawn at the top right of the record's head. */
+  readonly presentationSwitch?: DetailPresentationSwitchProps;
 }
 
 const CrudPresentationContext = createContext<CrudPresentation | undefined>(undefined);
@@ -45,6 +48,12 @@ export interface CrudPageProps {
   readonly onNavigate: (search: ConsoleSearch) => void;
   /** Where a picked record opens; the installation's `UIProvider` default when absent. */
   readonly presentation?: CrudPagePresentation;
+  /**
+   * Lets the reader switch the presentation from the record's head. The page draws the switch and
+   * keeps no choice: `value` and `onChange` come from whatever holds the setting, `remember` from
+   * {@link useDetailPresentationMemory} or the product's own preference store.
+   */
+  readonly presentationSwitch?: DetailPresentationSwitchProps;
   /** A fixed list width in px while a record stands open beside it. */
   readonly listWidth?: number;
   /**
@@ -72,6 +81,7 @@ export function CrudPage({
   search,
   onNavigate,
   presentation,
+  presentationSwitch,
   listWidth,
   detailWidth = "regular",
   renderList,
@@ -94,7 +104,7 @@ export function CrudPage({
     closePanel: closePanel ?? nav.showList,
   };
   const record = (
-    <CrudPresentationContext.Provider value={{ presentation: shown, close: handed.closePanel }}>
+    <CrudPresentationContext.Provider value={{ presentation: shown, close: handed.closePanel, presentationSwitch }}>
     <ListDetail.ViewSwitch
       state={state}
       fade={fade}
@@ -120,5 +130,9 @@ export function CrudPage({
       </ListDetail>
     );
 
-  return <ConsolePage spec={{ ...spec, body }} search={search} onNavigate={onNavigate} />;
+  // A record opened in the list's place is the page: its own identifier is the heading and the way
+  // back names the list, so the list's title, figures, tabs and create action are not drawn over it.
+  const recordAsPage = shown === "page" && nav.view === "detail";
+  const pageSpec = recordAsPage ? { title: "", layout: spec.layout, width: spec.width } : spec;
+  return <ConsolePage spec={{ ...pageSpec, body }} search={search} onNavigate={onNavigate} />;
 }

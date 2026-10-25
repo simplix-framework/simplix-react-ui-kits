@@ -53,7 +53,8 @@ function Head({ header, back, close, flow = true }: { readonly header: RecordPag
     <Stack gap="xs" minSize flex>
       {back ? <BackControl back={back} close={close} /> : null}
       <Flex align="center" gap="sm" wrap minSize>
-        <Heading level={4}>{header.title}</Heading>
+        {/* As a page the record's identifier is the page's heading; in a panel it heads the panel. */}
+        <Heading level={back ? 1 : 4}>{header.title}</Heading>
         {header.badges.length > 0 ? <RecordValueView value={{ badges: header.badges }} /> : null}
       </Flex>
       {header.subtitle ? (
@@ -74,7 +75,7 @@ function Head({ header, back, close, flow = true }: { readonly header: RecordPag
  * <p><b>One component for every presentation of the same record.</b> Inside a {@link CrudPage}
  * presented as a panel, drawer or dialog it draws the plain {@link RecordDetail} with the same
  * head and closes the way that presentation closes; only as a page (or outside a CrudPage) does it
- * add the back control and move the open tab's verbs into the command row, which breaks into the
+ * draw the identifier as the page's heading under one back control naming the list, and move the open tab's verbs into the command row, which breaks into the
  * tab's verbs above and the record's commands below when one line will not hold them.
  */
 export function RecordPage({ header, detail, back }: RecordPageProps) {
@@ -85,7 +86,8 @@ export function RecordPage({ header, detail, back }: RecordPageProps) {
     return <RecordDetail {...detail} head={<Head header={header} />} onClose={crud.close} />;
   }
   const record = (
-    <RecordDetail {...detail} head={<Head header={header} back={back} close={crud?.close} flow={false} />} onBack={crud?.close} tabVerbs="footer" />
+    // The way back is drawn once, over the heading; the footer carries the record's commands only.
+    <RecordDetail {...detail} head={<Head header={header} back={back} close={crud?.close} flow={false} />} tabVerbs="footer" />
   );
   return (
     <PageBackProvider value={back}>

@@ -25,3 +25,15 @@ export type {
   PageTabSpec,
   UsePageBlocks,
 } from "./types";
+export { DetailPresentationSwitch } from "./detail-presentation-switch";
+export type { DetailPresentationSwitchProps } from "./detail-presentation-switch";
+export {
+  DETAIL_PRESENTATIONS,
+  DETAIL_PRESENTATION_STORAGE_KEY,
+  forgetRememberedPresentation,
+  memoryPresentationStorage,
+  readRememberedPresentation,
+  useDetailPresentationMemory,
+  writeRememberedPresentation,
+} from "./presentation-memory";
+export type { DetailPresentationMemory, DetailPresentationMemoryOptions, PresentationStorage } from "./presentation-memory";
