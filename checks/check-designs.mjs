@@ -15,7 +15,12 @@ import { KIT_ROOT } from "../lib/kit-root.mjs";
 const args = parseArgs(process.argv.slice(2));
 const extra = (args["design-dirs"] ?? process.env.KIT_DESIGN_DIRS ?? "").split(":").filter(Boolean).map((d) => resolve(d));
 const designs = loadDesigns([join(KIT_ROOT, "designs"), ...extra]);
-const { uiSrc } = locateFramework({ framework: args.framework, libraryRoot: KIT_ROOT });
+// The framework comes from --framework, then SIMPLIX_FRAMEWORK, then the `framework` the mockup root
+// names in mockup.config.json (resolved from that root), and only then the packages installed here.
+const configPath = resolve("mockup.config.json");
+const configured = existsSync(configPath) ? JSON.parse(readFileSync(configPath, "utf8")).framework : undefined;
+const framework = args.framework ?? process.env.SIMPLIX_FRAMEWORK ?? (configured ? resolve(configured) : undefined);
+const { uiSrc } = locateFramework({ framework, libraryRoot: KIT_ROOT });
 const presets = new Set(listFiles(join(uiSrc, "theme", "presets"), (r, isDir) => !isDir && r.endsWith(".css")).map((f) => basename(f, ".css")));
 const allowedKeys = new Set(["name", "description", "base", "colorTheme", "overrides"]);
 const problems = [];
