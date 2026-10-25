@@ -25,9 +25,17 @@ const problems = [];
 // `catalog:` and `workspace:` hand the version to the workspace the root lives in, which pins it for
 // the product; every other pin is exact and compared with the framework below.
 const delegated = (version) => version.startsWith("catalog:") || version.startsWith("workspace:");
+const localLinks = new Set();
+for (const [name, version] of Object.entries(pins)) {
+  if (!version.startsWith("link:")) continue;
+  const file = resolve(root, version.slice(5), "package.json");
+  if (!existsSync(file)) problems.push(`${name}: local package is missing at ${file}`);
+  else if (JSON.parse(readFileSync(file, "utf8")).name !== name) problems.push(`${name}: local package name does not match`);
+  else localLinks.add(name);
+}
 let catalogued = 0;
 for (const [name, version] of Object.entries(pins)) {
-  if (name.startsWith(FRAMEWORK_SCOPE)) continue;
+  if (localLinks.has(name) || name.startsWith(FRAMEWORK_SCOPE)) continue;
   if (delegated(version)) {
     catalogued++;
     continue;
@@ -66,7 +74,7 @@ for (const line of importers.split("\n")) {
 let compared = 0;
 for (const [lib, version] of Object.entries(pins)) {
   const versions = resolved.get(lib);
-  if (!versions || lib.startsWith(FRAMEWORK_SCOPE) || delegated(version)) continue;
+  if (!versions || localLinks.has(lib) || lib.startsWith(FRAMEWORK_SCOPE) || delegated(version)) continue;
   compared++;
   if (!versions.has(version)) problems.push(`${lib}@${version} ≠ framework ${[...versions].join(", ")}`);
 }
