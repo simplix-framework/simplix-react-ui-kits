@@ -108,8 +108,9 @@ export const scheduleRowStyle = defineSlotStyle({
   base: "min-h-11 gap-3 rounded-md px-2.5 py-2 text-left text-sm transition-colors hover:bg-muted/50 active:bg-muted focus-visible:outline-none focus-visible:shadow-[var(--focus-halo)]",
   variants: {
     past: { true: "text-muted-foreground", false: "" },
+    dense: { true: "py-1.5", false: "" },
   },
-  defaultVariants: { past: false },
+  defaultVariants: { past: false, dense: false },
 });
 
 /** The entry's start time. */
@@ -182,6 +183,14 @@ export const taskDueStyle = defineSlotStyle({
 export const taskEmptyStyle = defineSlotStyle({
   slot: "task-empty",
   base: "px-2.5 py-3 text-sm text-muted-foreground",
+  variants: {},
+  defaultVariants: {},
+});
+
+/** A task's badge over its due date, at the row's end. */
+export const taskSideStyle = defineSlotStyle({
+  slot: "task-side",
+  base: "gap-0.5",
   variants: {},
   defaultVariants: {},
 });

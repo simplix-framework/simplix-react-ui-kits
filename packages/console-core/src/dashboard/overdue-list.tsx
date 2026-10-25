@@ -4,7 +4,15 @@ import { slotAttributes } from "@simplix-react/ui/design";
 
 import { type MarkTone, markColor, useMarkTip } from "./chart-tip";
 import { scheduleGoStyle, taskSubStyle, taskTitleStyle } from "./dashboard.style";
-import { chartEmptyStyle, overdueAgeStyle, overdueRowStyle, stageCountStyle } from "./chart.style";
+import {
+  chartEmptyStyle,
+  overdueAgeCellStyle,
+  overdueAgeLabelStyle,
+  overdueAgeStyle,
+  overdueRowStyle,
+  overdueUnitStyle,
+  stageCountStyle,
+} from "./chart.style";
 import { useDrawn } from "./stage-flow-bar";
 
 /** One stalled stage: how many items wait past their deadline, and how long the oldest has waited. */
@@ -69,13 +77,13 @@ export function OverdueList({ entries, unit = "건", emptyLabel }: OverdueListPr
               </span>
             ) : null}
           </span>
-          <span className="flex flex-col gap-1">
+          <span className="flex flex-col" {...slotAttributes(overdueAgeCellStyle, {})}>
             <i aria-hidden style={{ width: drawn ? `${Math.max(6, (e.ageDays / longest) * 100)}%` : 0 }} {...slotAttributes(overdueAgeStyle, {})} />
-            <span className="text-[12px] tabular-nums text-muted-foreground">{e.ageLabel}</span>
+            <span className="tabular-nums" {...slotAttributes(overdueAgeLabelStyle, {})}>{e.ageLabel}</span>
           </span>
-          <span className="min-w-8 text-right" {...slotAttributes(stageCountStyle, {})}>
+          <span className="min-w-8" {...slotAttributes(stageCountStyle, { align: "end" })}>
             {e.count}
-            <span className="ml-0.5 text-[12px] font-normal text-muted-foreground">{unit}</span>
+            <span {...slotAttributes(overdueUnitStyle, {})}>{unit}</span>
           </span>
           {e.onClick ? <ChevronRightIcon aria-hidden className="size-3.5" {...slotAttributes(scheduleGoStyle, {})} /> : <span aria-hidden />}
         </button>

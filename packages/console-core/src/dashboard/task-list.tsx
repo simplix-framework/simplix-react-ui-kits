@@ -2,14 +2,7 @@ import { ChevronRightIcon } from "lucide-react";
 import { StatusBadge, type StatusTone } from "@simplix-react/ui";
 import { slotAttributes } from "@simplix-react/ui/design";
 
-import {
-  scheduleGoStyle,
-  scheduleRowStyle,
-  taskDueStyle,
-  taskEmptyStyle,
-  taskSubStyle,
-  taskTitleStyle,
-} from "./dashboard.style";
+import { scheduleGoStyle, scheduleRowStyle, taskDueStyle, taskEmptyStyle, taskSideStyle, taskSubStyle, taskTitleStyle } from "./dashboard.style";
 
 /** One thing to handle, as a dashboard card lists it. */
 export interface TaskEntry {
@@ -46,8 +39,8 @@ export function DashboardTaskList({ entries, emptyLabel }: DashboardTaskListProp
           key={entry.key}
           type="button"
           onClick={entry.onClick}
-          className="group grid h-auto min-h-11 grid-cols-[minmax(0,1fr)_auto_16px] items-center py-1.5"
-          {...slotAttributes(scheduleRowStyle, {})}
+          className="group grid h-auto min-h-11 grid-cols-[minmax(0,1fr)_auto_16px] items-center"
+          {...slotAttributes(scheduleRowStyle, { dense: true })}
         >
           <span className="flex min-w-0 flex-col">
             <span className="truncate" {...slotAttributes(taskTitleStyle, {})}>
@@ -59,7 +52,7 @@ export function DashboardTaskList({ entries, emptyLabel }: DashboardTaskListProp
               </span>
             ) : null}
           </span>
-          <span className="flex flex-col items-end gap-0.5">
+          <span className="flex flex-col items-end" {...slotAttributes(taskSideStyle, {})}>
             {entry.badge ? <StatusBadge tone={entry.badge.tone ?? "neutral"} label={entry.badge.label} appearance="filled" /> : null}
             {entry.due ? <span {...slotAttributes(taskDueStyle, {})}>{entry.due}</span> : null}
           </span>

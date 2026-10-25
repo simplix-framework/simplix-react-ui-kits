@@ -5,8 +5,11 @@ import { type MarkTone, markColor, useMarkTip } from "./chart-tip";
 import { stageSpans } from "./chart-model";
 import {
   chartEmptyStyle,
+  chartStackStyle,
   stageCountStyle,
   stageKeyStyle,
+  stageLegendStyle,
+  stageNoteStyle,
   stageSegmentStyle,
   stageSwatchStyle,
   stageTrackStyle,
@@ -76,14 +79,14 @@ export function StageFlowBar({ label, stages, unit = "건", emptyLabel, compact 
         {unit} / {total}
         {unit}
       </span>
-      {s.note ? <span className="text-muted-foreground">{s.note}</span> : null}
+      {s.note ? <span {...slotAttributes(stageNoteStyle, {})}>{s.note}</span> : null}
     </span>
   );
   const summary = `${label} ${total}${unit}: ${stages.map((s) => `${s.label} ${s.value}${unit}`).join(", ")}`;
 
   if (total === 0) return <p {...slotAttributes(chartEmptyStyle, {})}>{emptyLabel}</p>;
   return (
-    <div ref={box} className="relative flex flex-col gap-2">
+    <div ref={box} className="relative flex flex-col" {...slotAttributes(chartStackStyle, {})}>
       <div role="group" aria-label={summary} className="relative w-full" {...slotAttributes(stageTrackStyle, {})}>
         {stages.map((s, i) => {
           const span = spans.get(s.key);
@@ -111,7 +114,7 @@ export function StageFlowBar({ label, stages, unit = "건", emptyLabel, compact 
         })}
       </div>
       {compact ? null : (
-        <div className="flex flex-wrap items-center gap-x-1 gap-y-0.5">
+        <div className="flex flex-wrap items-center" {...slotAttributes(stageLegendStyle, {})}>
           {stages.map((s, i) => (
             <button
               key={s.key}

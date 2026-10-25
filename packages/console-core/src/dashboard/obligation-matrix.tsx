@@ -4,7 +4,19 @@ import { slotAttributes } from "@simplix-react/ui/design";
 
 import { useMarkTip } from "./chart-tip";
 import { scheduleGoStyle } from "./dashboard.style";
-import { chartEmptyStyle, matrixCellStyle, matrixIconStyle, riskHeadStyle, riskNameStyle, riskRowStyle } from "./chart.style";
+import {
+  chartEmptyStyle,
+  chartStackStyle,
+  matrixCellStyle,
+  matrixIconStyle,
+  matrixLegendEntryStyle,
+  matrixLegendStyle,
+  riskColumnHeadStyle,
+  riskHeadStyle,
+  riskNameStyle,
+  riskRowStyle,
+  riskSubStyle,
+} from "./chart.style";
 
 /** Where one duty stands for one row. */
 export type ObligationState = "done" | "due" | "overdue" | "none";
@@ -58,25 +70,25 @@ export function ObligationMatrix({ label, nameLabel, columns, rows, emptyLabel, 
   if (rows.length === 0) return <p {...slotAttributes(chartEmptyStyle, {})}>{emptyLabel}</p>;
   const grid = { gridTemplateColumns: `${nameWidth} ${columns.map(() => "minmax(72px,1fr)").join(" ")}` };
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col" {...slotAttributes(chartStackStyle, {})}>
       <div ref={box} role="table" aria-label={label} className="relative flex flex-col">
-        <div role="row" className="grid items-end gap-x-1" style={grid} {...slotAttributes(riskHeadStyle, {})}>
+        <div role="row" className="grid items-end" style={grid} {...slotAttributes(riskHeadStyle, {})}>
           <span role="columnheader">
             <span className="sr-only">{nameLabel}</span>
           </span>
           {columns.map((c) => (
-            <span key={c.key} role="columnheader" className="truncate text-center">
+            <span key={c.key} role="columnheader" className="truncate" {...slotAttributes(riskColumnHeadStyle, {})}>
               {c.label}
             </span>
           ))}
         </div>
         {rows.map((row) => (
-          <div key={row.key} role="row" className="grid items-center gap-x-1" style={grid} {...slotAttributes(riskRowStyle, {})}>
+          <div key={row.key} role="row" className="grid items-center" style={grid} {...slotAttributes(riskRowStyle, {})}>
             <span role="rowheader" className="min-w-0">
               <button type="button" onClick={row.onClick} className="group flex w-full items-center" {...slotAttributes(riskNameStyle, {})}>
                 <span className="flex min-w-0 flex-col">
                   <span className="truncate">{row.name}</span>
-                  {row.sub ? <span className="truncate text-[12px] font-normal text-muted-foreground">{row.sub}</span> : null}
+                  {row.sub ? <span className="truncate" {...slotAttributes(riskSubStyle, {})}>{row.sub}</span> : null}
                 </span>
                 <ChevronRightIcon aria-hidden className="size-3.5 shrink-0" {...slotAttributes(scheduleGoStyle, {})} />
               </button>
@@ -105,11 +117,11 @@ export function ObligationMatrix({ label, nameLabel, columns, rows, emptyLabel, 
         ))}
         {node}
       </div>
-      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 px-1 text-[12px] text-muted-foreground" aria-hidden>
+      <div className="flex flex-wrap items-center" aria-hidden {...slotAttributes(matrixLegendStyle, {})}>
         {(["done", "due", "overdue", "none"] as const).map((state) => {
           const Icon = ICON[state];
           return (
-            <span key={state} className="inline-flex items-center gap-1">
+            <span key={state} className="inline-flex items-center" {...slotAttributes(matrixLegendEntryStyle, {})}>
               <Icon {...slotAttributes(matrixIconStyle, { state })} />
               {stateLabels[state]}
             </span>

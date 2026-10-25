@@ -3,7 +3,7 @@ import { slotAttributes } from "@simplix-react/ui/design";
 
 import { markColor, useMarkTip } from "./chart-tip";
 import { ringDash, ringReading } from "./chart-model";
-import { ringFiguresStyle, ringFillStyle, ringLabelStyle, ringPercentStyle, ringStyle, ringTrackStyle } from "./chart.style";
+import { ringFiguresStyle, ringFillStyle, ringLabelStyle, ringNoteStyle, ringPercentStyle, ringStyle, ringTrackStyle } from "./chart.style";
 import { useDrawn } from "./stage-flow-bar";
 
 /** Props for {@link ProgressRing}. */
@@ -81,7 +81,7 @@ export function ProgressRing({ label, done, due, unit = "건", basis, noneLabel 
             {label}
           </span>
           <span {...slotAttributes(ringFiguresStyle, {})}>{figures}</span>
-          {note ? <span className="text-[12px] font-medium text-[var(--destructive-text,var(--destructive))]">{note}</span> : null}
+          {note ? <span {...slotAttributes(ringNoteStyle, {})}>{note}</span> : null}
         </span>
       </button>
       {node}

@@ -5,7 +5,18 @@ import { slotAttributes } from "@simplix-react/ui/design";
 import { type MarkTone, markColor, useMarkTip } from "./chart-tip";
 import { heatStep } from "./chart-model";
 import { scheduleGoStyle } from "./dashboard.style";
-import { chartEmptyStyle, riskCellStyle, riskHeadStyle, riskLevelStyle, riskNameStyle, riskRowStyle, riskTextStyle } from "./chart.style";
+import {
+  chartEmptyStyle,
+  riskCellStyle,
+  riskColumnHeadStyle,
+  riskHeadStyle,
+  riskHeatCellStyle,
+  riskLevelStyle,
+  riskNameStyle,
+  riskRowStyle,
+  riskSubStyle,
+  riskTextStyle,
+} from "./chart.style";
 
 /** A column of a risk table: a count shaded by heat, or a line of text such as a grade. */
 export interface RiskColumn {
@@ -76,7 +87,7 @@ export function RiskRows({ label, columns, rows, emptyLabel, nameLabel, unit = "
           <span className="sr-only">{nameLabel}</span>
         </span>
         {columns.map((c) => (
-          <span key={c.key} role="columnheader" className="truncate text-center">
+          <span key={c.key} role="columnheader" className="truncate" {...slotAttributes(riskColumnHeadStyle, {})}>
             {c.label}
           </span>
         ))}
@@ -88,7 +99,7 @@ export function RiskRows({ label, columns, rows, emptyLabel, nameLabel, unit = "
               <i aria-hidden {...slotAttributes(riskLevelStyle, { level: row.level })} />
               <span className="flex min-w-0 flex-col">
                 <span className="truncate">{row.name}</span>
-                {row.sub ? <span className="truncate text-[12px] font-normal text-muted-foreground">{row.sub}</span> : null}
+                {row.sub ? <span className="truncate" {...slotAttributes(riskSubStyle, {})}>{row.sub}</span> : null}
               </span>
               <ChevronRightIcon aria-hidden className="size-3.5 shrink-0" {...slotAttributes(scheduleGoStyle, {})} />
             </button>
@@ -104,7 +115,7 @@ export function RiskRows({ label, columns, rows, emptyLabel, nameLabel, unit = "
             const value = (cell?.value as number | undefined) ?? 0;
             const heat = String(heatStep(value, max[c.key])) as "0" | "1" | "2" | "3" | "4";
             return (
-              <span key={c.key} role="cell" className="px-0.5">
+              <span key={c.key} role="cell" {...slotAttributes(riskHeatCellStyle, {})}>
                 <button
                   type="button"
                   disabled={value === 0 || !cell?.onClick}

@@ -3,7 +3,16 @@ import { slotAttributes } from "@simplix-react/ui/design";
 
 import { type MarkTone, markColor } from "./chart-tip";
 import { useDrawn } from "./stage-flow-bar";
-import { chartEmptyStyle, meterFillStyle, meterRowStyle, meterTrackStyle } from "./chart.style";
+import {
+  chartEmptyStyle,
+  meterFiguresStyle,
+  meterFillStyle,
+  meterLabelStyle,
+  meterRowStyle,
+  meterShareStyle,
+  meterSubStyle,
+  meterTrackStyle,
+} from "./chart.style";
 
 /** One measured row: how much of a whole is used, such as a contract's budget executed. */
 export interface MeterEntry {
@@ -44,12 +53,12 @@ export function MeterList({ label, entries, emptyLabel, unit = "", format = (n) 
         const body = (
           <>
             <span className="flex min-w-0 flex-col">
-              <span className="truncate text-[13px] font-medium">{e.label}</span>
-              {e.sub ? <span className="truncate text-[12px] text-muted-foreground">{e.sub}</span> : null}
+              <span className="truncate" {...slotAttributes(meterLabelStyle, {})}>{e.label}</span>
+              {e.sub ? <span className="truncate" {...slotAttributes(meterSubStyle, {})}>{e.sub}</span> : null}
             </span>
-            <span className="flex flex-col items-end text-right tabular-nums">
-              <b className="text-[13px]">{share}%</b>
-              <span className="text-[12px] text-muted-foreground">
+            <span className="flex flex-col items-end tabular-nums" {...slotAttributes(meterFiguresStyle, {})}>
+              <b {...slotAttributes(meterShareStyle, {})}>{share}%</b>
+              <span {...slotAttributes(meterSubStyle, {})}>
                 {format(e.value)}
                 {unit} / {format(e.total)}
                 {unit}

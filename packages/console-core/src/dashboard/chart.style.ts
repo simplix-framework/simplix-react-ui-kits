@@ -80,8 +80,8 @@ export const stageSwatchStyle = defineSlotStyle({
 export const stageCountStyle = defineSlotStyle({
   slot: "stage-count",
   base: "font-semibold tabular-nums",
-  variants: {},
-  defaultVariants: {},
+  variants: { align: { start: "", end: "text-right" } },
+  defaultVariants: { align: "start" },
 });
 
 /** A progress ring with its figures, as one control. */
@@ -312,6 +312,174 @@ export const meterTrackStyle = defineSlotStyle({
 export const meterFillStyle = defineSlotStyle({
   slot: "meter-fill",
   base: "absolute inset-y-0 left-0 rounded-full bg-[var(--mark)] [transition:width_var(--dur-slow)_var(--ease)]",
+  variants: {},
+  defaultVariants: {},
+});
+
+/** A chart over its legend. */
+export const chartStackStyle = defineSlotStyle({
+  slot: "chart-stack",
+  base: "gap-2",
+  variants: {},
+  defaultVariants: {},
+});
+
+/** A figure's value and its unit, on one baseline. */
+export const figureReadingStyle = defineSlotStyle({
+  slot: "figure-reading",
+  base: "gap-0.5",
+  variants: {},
+  defaultVariants: {},
+});
+
+/** The unit after a figure's value. */
+export const figureUnitStyle = defineSlotStyle({
+  slot: "figure-unit",
+  base: "text-[13px] text-muted-foreground",
+  variants: {},
+  defaultVariants: {},
+});
+
+/** A figure's line: the reading, what trails it and its action. */
+export const figureRowStyle = defineSlotStyle({
+  slot: "figure-row",
+  base: "gap-x-4 gap-y-1",
+  variants: {},
+  defaultVariants: {},
+});
+
+/** A figure that opens nothing, at the inset a figure button has. */
+export const figureStaticStyle = defineSlotStyle({
+  slot: "figure-static",
+  base: "gap-2 px-1 py-0.5",
+  variants: {},
+  defaultVariants: {},
+});
+
+/** Stand-in shapes in a block's place while its data is on the way. */
+export const dashboardSkeletonStyle = defineSlotStyle({
+  slot: "dashboard-skeleton",
+  base: "gap-2.5 px-1 py-1.5",
+  variants: {},
+  defaultVariants: {},
+});
+
+/** A meter's name. */
+export const meterLabelStyle = defineSlotStyle({
+  slot: "meter-label",
+  base: "text-[13px] font-medium",
+  variants: {},
+  defaultVariants: {},
+});
+
+/** A meter's second line, and the count under its share. */
+export const meterSubStyle = defineSlotStyle({
+  slot: "meter-sub",
+  base: "text-[12px] text-muted-foreground",
+  variants: {},
+  defaultVariants: {},
+});
+
+/** A meter's share over its count, set to the right. */
+export const meterFiguresStyle = defineSlotStyle({
+  slot: "meter-figures",
+  base: "text-right",
+  variants: {},
+  defaultVariants: {},
+});
+
+/** A meter's share. */
+export const meterShareStyle = defineSlotStyle({
+  slot: "meter-share",
+  base: "text-[13px]",
+  variants: {},
+  defaultVariants: {},
+});
+
+/** A risk or obligation table's column name. */
+export const riskColumnHeadStyle = defineSlotStyle({
+  slot: "risk-column-head",
+  base: "text-center",
+  variants: {},
+  defaultVariants: {},
+});
+
+/** A risk or obligation row's second line. */
+export const riskSubStyle = defineSlotStyle({
+  slot: "risk-sub",
+  base: "text-[12px] font-normal text-muted-foreground",
+  variants: {},
+  defaultVariants: {},
+});
+
+/** A heat cell of a risk table, inset from its neighbours. */
+export const riskHeatCellStyle = defineSlotStyle({
+  slot: "risk-heat-cell",
+  base: "px-0.5",
+  variants: {},
+  defaultVariants: {},
+});
+
+/** The legend under an obligation matrix. */
+export const matrixLegendStyle = defineSlotStyle({
+  slot: "matrix-legend",
+  base: "gap-x-3 gap-y-1 px-1 text-[12px] text-muted-foreground",
+  variants: {},
+  defaultVariants: {},
+});
+
+/** One state of the matrix legend: its icon and its name. */
+export const matrixLegendEntryStyle = defineSlotStyle({
+  slot: "matrix-legend-entry",
+  base: "gap-1",
+  variants: {},
+  defaultVariants: {},
+});
+
+/** An overdue row's age bar over its words. */
+export const overdueAgeCellStyle = defineSlotStyle({
+  slot: "overdue-age-cell",
+  base: "gap-1",
+  variants: {},
+  defaultVariants: {},
+});
+
+/** How long an overdue item has waited. */
+export const overdueAgeLabelStyle = defineSlotStyle({
+  slot: "overdue-age-label",
+  base: "text-[12px] text-muted-foreground",
+  variants: {},
+  defaultVariants: {},
+});
+
+/** The unit after an overdue row's count. */
+export const overdueUnitStyle = defineSlotStyle({
+  slot: "overdue-unit",
+  base: "ml-0.5 text-[12px] font-normal text-muted-foreground",
+  variants: {},
+  defaultVariants: {},
+});
+
+/** A warning under a progress ring's figures. */
+export const ringNoteStyle = defineSlotStyle({
+  slot: "ring-note",
+  base: "text-[12px] font-medium text-[var(--destructive-text,var(--destructive))]",
+  variants: {},
+  defaultVariants: {},
+});
+
+/** A stage's note in the legend. */
+export const stageNoteStyle = defineSlotStyle({
+  slot: "stage-note",
+  base: "text-muted-foreground",
+  variants: {},
+  defaultVariants: {},
+});
+
+/** The legend under a stage bar. */
+export const stageLegendStyle = defineSlotStyle({
+  slot: "stage-legend",
+  base: "gap-x-1 gap-y-0.5",
   variants: {},
   defaultVariants: {},
 });
