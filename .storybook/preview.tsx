@@ -7,7 +7,7 @@ import { UIProvider } from "@simplix-react/ui";
 import { kitDesign, withKitDesign } from "../storybook/design-decorator";
 
 const withDetailPresentation: Decorator = (Story, context) => (
-  <UIProvider defaults={{ detailPresentation: context.globals.detailPresentation === "drawer" ? "drawer" : "panel" }}>
+  <UIProvider defaults={{ detailPresentation: context.globals.detailPresentation === "page" || !context.globals.detailPresentation ? "panel" : context.globals.detailPresentation }}>
     <Story />
   </UIProvider>
 );

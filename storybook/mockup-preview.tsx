@@ -1,14 +1,16 @@
 // Storybook preview for a mockup root: the framework's providers, the active kit design, and a
-// toolbar of global settings (detail presentation, colour theme, mode, frame, locale) that applies to
-// every screen at once.
+// toolbar of global settings (detail presentation, design, colour theme, card fill, density, mode,
+// frame, locale) that applies to every screen at once.
 import type { Decorator, Preview } from "@storybook/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useEffect, type ReactNode } from "react";
 import { MemoryRouter } from "react-router-dom";
+import { useGlobals } from "storybook/preview-api";
 import { THEMES } from "@simplix-react/headless";
 import { createI18nConfig, type LocaleCode } from "@simplix-react/i18n";
 import { I18nProvider } from "@simplix-react/i18n/react";
-import { UIProvider } from "@simplix-react/ui";
+import { TooltipProvider, UIProvider } from "@simplix-react/ui";
+import { DESIGNS as FRAMEWORK_DESIGNS, type Design } from "@simplix-react/ui/design";
 import design from "virtual:kit-design";
 import { type DetailPresentation, type FrameMode, type MockupSettings, MockupSettingsContext } from "./mockup-settings";
 
@@ -26,15 +28,24 @@ export interface MockupPreviewConfig {
    * (the product values the kit reads, the page frame the shell would draw).
    */
   decorators?: Decorator[];
+  /**
+   * The designs the toolbar offers, the first being the default. A UI kit that adds its own
+   * design stylesheets passes its list; the framework's designs otherwise.
+   */
+  designs?: readonly Design[];
+  /** The colour preset a screen opens with; the active kit design's own when absent. */
+  colorTheme?: string;
 }
 
 const DETAIL_ITEMS: { value: DetailPresentation; title: string }[] = [
   { value: "panel", title: "Detail: side panel" },
   { value: "drawer", title: "Detail: right drawer" },
+  { value: "dialog", title: "Detail: dialog" },
   { value: "page", title: "Detail: page" },
 ];
 
 export function createMockupPreview(config: MockupPreviewConfig): Preview {
+  const DESIGNS = config.designs ?? FRAMEWORK_DESIGNS;
   if (config.locales.length === 0) throw new Error("mockup preview needs at least one locale");
   const { adapter, i18nReady } = createI18nConfig({
     defaultLocale: config.locales[0],
@@ -51,8 +62,11 @@ export function createMockupPreview(config: MockupPreviewConfig): Preview {
   }
 
   const withMockupSettings: Decorator = (Story, context) => {
+    // The toolbar's global is the one owner of the setting; a screen's switch writes the same global.
+    const [, updateGlobals] = useGlobals();
     const settings: MockupSettings = {
       detailPresentation: context.globals.detailPresentation,
+      setDetailPresentation: (value) => updateGlobals({ detailPresentation: value }),
       colorTheme: context.globals.colorTheme,
       mode: context.globals.mode === "dark" ? "dark" : "light",
       locale: context.globals.locale,
@@ -65,18 +79,32 @@ export function createMockupPreview(config: MockupPreviewConfig): Preview {
     if (settings.colorTheme === "default") delete html.dataset.colorTheme;
     else html.dataset.colorTheme = settings.colorTheme;
     html.classList.toggle("dark", settings.mode === "dark");
+    // The card fill the toolbar names, else the one the colour theme names; plain is no attribute.
+    const fill = context.globals.fill === "theme"
+      ? (THEMES.find((t) => t.value === settings.colorTheme)?.fill ?? "plain")
+      : context.globals.fill;
+    if (!fill || fill === "plain") delete html.dataset.fill;
+    else html.dataset.fill = fill;
+    const uiDesign = DESIGNS.find((d) => d.id === context.globals.uiDesign) ?? DESIGNS[0];
+    const density = context.globals.density === "theme" ? undefined : context.globals.density;
     // A page-presented detail is a screen's own layout; the framework default stays a panel.
-    const frameworkPresentation = settings.detailPresentation === "drawer" ? "drawer" : "panel";
+    const frameworkPresentation = settings.detailPresentation === "page" ? "panel" : settings.detailPresentation;
     return (
       <MockupSettingsContext.Provider value={settings}>
         <I18nProvider adapter={adapter}>
           <LocaleSync locale={settings.locale}>
             <QueryClientProvider client={queryClient}>
               <MemoryRouter>
-                <UIProvider defaults={{ detailPresentation: frameworkPresentation }}>
-                  <div className="bg-background text-foreground" style={{ minHeight: "100vh" }}>
-                    <Story />
-                  </div>
+                <UIProvider
+                  design={uiDesign}
+                  defaults={{ detailPresentation: frameworkPresentation, ...(density ? { density } : {}) }}
+                >
+                  {/* The providers a console screen sits in (ConsoleProviders), so a tooltip a screen draws has one. */}
+                  <TooltipProvider>
+                    <div className="bg-background text-foreground" style={{ minHeight: "100vh" }}>
+                      <Story />
+                    </div>
+                  </TooltipProvider>
                 </UIProvider>
               </MemoryRouter>
             </QueryClientProvider>
@@ -92,6 +120,28 @@ export function createMockupPreview(config: MockupPreviewConfig): Preview {
       detailPresentation: {
         description: "Where a list screen opens a record",
         toolbar: { title: "Detail", icon: "sidebaralt", items: DETAIL_ITEMS, dynamicTitle: true },
+      },
+      uiDesign: {
+        description: "Design: how every slot is drawn",
+        toolbar: { title: "Design", icon: "component", items: DESIGNS.map((d) => ({ value: d.id, title: `Design: ${d.id}` })), dynamicTitle: true },
+      },
+      fill: {
+        description: "Card fill",
+        toolbar: {
+          title: "Fill",
+          icon: "contrast",
+          items: ["theme", "plain", "outline", "raised", "tint", "lead"].map((f) => ({ value: f, title: f === "theme" ? "Fill: theme's own" : `Fill: ${f}` })),
+          dynamicTitle: true,
+        },
+      },
+      density: {
+        description: "Row density",
+        toolbar: {
+          title: "Density",
+          icon: "listunordered",
+          items: ["theme", "compact", "default", "comfortable"].map((d) => ({ value: d, title: d === "theme" ? "Density: design's own" : `Density: ${d}` })),
+          dynamicTitle: true,
+        },
       },
       colorTheme: {
         description: "Colour theme",
@@ -128,7 +178,10 @@ export function createMockupPreview(config: MockupPreviewConfig): Preview {
     },
     initialGlobals: {
       detailPresentation: config.detailPresentation ?? "panel",
-      colorTheme: design.colorTheme,
+      colorTheme: config.colorTheme ?? design.colorTheme,
+      uiDesign: DESIGNS[0].id,
+      fill: "theme",
+      density: "theme",
       mode: "light",
       locale: config.locales[0],
       frame: config.frame ?? "full",

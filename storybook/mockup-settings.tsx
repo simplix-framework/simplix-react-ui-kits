@@ -5,11 +5,13 @@ import { createContext, useContext } from "react";
 export type FrameMode = "full" | "content";
 
 /** Where a list screen opens the record a reader picked. */
-export type DetailPresentation = "panel" | "drawer" | "page";
+export type DetailPresentation = "panel" | "drawer" | "dialog" | "page";
 
 export interface MockupSettings {
-  /** `panel` and `drawer` are the framework's installation default (UIProvider defaults); `page` is a screen's own variant. */
+  /** `panel`, `drawer` and `dialog` are the framework's installation default (UIProvider defaults); `page` is a screen's own variant. */
   detailPresentation: DetailPresentation;
+  /** Sets the detail presentation for every screen, as the toolbar does; a screen's own switch writes through it. */
+  setDetailPresentation: (value: DetailPresentation) => void;
   colorTheme: string;
   mode: "light" | "dark";
   locale: string;
