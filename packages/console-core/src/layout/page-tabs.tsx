@@ -4,8 +4,8 @@ import { CircleAlert } from "lucide-react";
 
 import { useGroupedFigure } from "@simplix-react/i18n/react";
 import { NumericText } from "./numeric-text";
-import { countedTabCountStyle, pageTabPanelStyle, pageTabsStyle } from "./page-tabs.style";
-import { partAttributes } from "@simplix-react/ui/design";
+import { countedTabCountStyle, pageTabMissingStyle, pageTabPanelStyle, pageTabsStyle } from "./page-tabs.style";
+import { partAttributes, slotAttributes } from "@simplix-react/ui/design";
 
 interface PageTabsProps {
   /** Which tab is on. */
@@ -165,7 +165,7 @@ export function CountedTab({ value, label, count, missing, disabled }: CountedTa
         )}
         {missing ? (
           // Icon only, so the strip keeps its width; the words are the icon's title and its name.
-          <CircleAlert aria-label={missing} role="img" data-tab-missing className="size-3.5 shrink-0 text-amber-500">
+          <CircleAlert aria-label={missing} role="img" data-tab-missing className="size-3.5 shrink-0" {...slotAttributes(pageTabMissingStyle, {})}>
             <title>{missing}</title>
           </CircleAlert>
         ) : null}

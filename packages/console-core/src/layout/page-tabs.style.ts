@@ -30,3 +30,11 @@ export const countedTabCountStyle = defineSlotStyle({
   variants: {},
   defaultVariants: {},
 });
+
+/** The mark beside a tab's label that says something on the tab is still missing. */
+export const pageTabMissingStyle = defineSlotStyle({
+  slot: "console-page-tab-missing",
+  base: "text-amber-500",
+  variants: {},
+  defaultVariants: {},
+});

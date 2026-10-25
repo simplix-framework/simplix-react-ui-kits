@@ -2,10 +2,20 @@ import type { ReactNode } from "react";
 import { useTranslation } from "@simplix-react/i18n/react";
 import { Button, Flex, Stack, StepIndicator, Text } from "@simplix-react/ui";
 import { Check, UserRound, X } from "lucide-react";
+import { partAttributes, slotAttributes } from "@simplix-react/ui/design";
 
 
 import { UserAvatar } from "../identity/user-avatar";
 import { PACKAGE_NAMESPACE } from "./locales";
+import {
+  approvalActionsStyle,
+  approvalAvatarStyle,
+  approvalHolderStandInStyle,
+  approvalMarkerStyle,
+  approvalRuleStyle,
+  approvalStepStyle,
+  approvalStepsStyle,
+} from "./approval-flow.style";
 
 /** Where one step of a chain stands. */
 export type ApprovalStepState = "done" | "now" | "wait" | "reject";
@@ -104,9 +114,9 @@ function stepDetail(step: ApprovalStep): ReactNode {
     <Stack gap="xs" data-approval-step={step.key} data-state={step.state}>
       {typeof step.who === "string" ? (
         <Flex gap="xs" align="center">
-          {step.avatar ? <UserAvatar name={step.who} src={step.avatar} decorative className="size-6 rounded-full" /> : (
+          {step.avatar ? <UserAvatar name={step.who} src={step.avatar} decorative className="size-6" {...partAttributes(approvalAvatarStyle, {})} /> : (
             // raw layout: a round frame around the stand-in icon, the shape a photo takes.
-            <span aria-hidden className="inline-flex size-6 shrink-0 items-center justify-center overflow-hidden rounded-full border border-border bg-muted text-muted-foreground">
+            <span aria-hidden className="inline-flex size-6 shrink-0 items-center justify-center overflow-hidden" {...slotAttributes(approvalHolderStandInStyle, {})}>
               <UserRound className="size-4" />
             </span>
           )}
@@ -141,13 +151,6 @@ function stepDetail(step: ApprovalStep): ReactNode {
 /** The step's state as a word beside its name, coloured only where it matters. */
 const STATE_TONE = { done: "muted", now: "primary", wait: "muted", reject: "destructive" } as const;
 
-const STATE_MARKER = {
-  done: "bg-primary text-primary-foreground",
-  now: "bg-primary text-primary-foreground ring-4 ring-primary/15",
-  wait: "border border-border bg-background text-muted-foreground",
-  reject: "bg-destructive text-destructive-foreground",
-} as const;
-
 /** Whether a step names a holder of its own, rather than repeating its own name or naming nobody. */
 function holderOf(step: ApprovalStep): ReactNode {
   if (step.who == null || step.who === "") return null;
@@ -166,7 +169,7 @@ function holderOf(step: ApprovalStep): ReactNode {
 function ApprovalSteps({ steps }: { readonly steps: readonly ApprovalStep[] }) {
   const { t } = useTranslation(`${PACKAGE_NAMESPACE}/flow`);
   return (
-    <ol className="flex flex-col pb-10" data-slot="console-approval-steps">
+    <ol className="flex flex-col" {...slotAttributes(approvalStepsStyle, {})}>
       {steps.map((step, index) => {
         const holder = holderOf(step);
         const last = index === steps.length - 1;
@@ -174,16 +177,16 @@ function ApprovalSteps({ steps }: { readonly steps: readonly ApprovalStep[] }) {
           <li
             key={step.key}
             data-approval-step={step.key}
-            data-state={step.state}
             aria-current={step.state === "now" ? "step" : undefined}
-            className={`relative flex gap-3 rounded-md px-2 py-1.5 ${step.state === "now" ? "bg-primary/5" : ""}`}
+            className="relative flex"
+            {...slotAttributes(approvalStepStyle, { state: step.state })}
           >
             {last ? null : (
               // raw layout: the rule joining this marker to the next.
-              <span aria-hidden className={`absolute left-[19px] top-8 bottom-[-6px] w-px ${step.state === "done" ? "bg-primary" : "bg-border"}`} />
+              <span aria-hidden className="absolute left-[19px] top-8 bottom-[-6px] w-px" {...slotAttributes(approvalRuleStyle, { done: step.state === "done" })} />
             )}
             {/* raw layout: the round step marker. */}
-            <span className={`relative z-[1] mt-0.5 inline-flex size-6 shrink-0 items-center justify-center rounded-full text-xs font-semibold ${STATE_MARKER[step.state]}`}>
+            <span className="relative z-[1] inline-flex size-6 shrink-0 items-center justify-center" {...slotAttributes(approvalMarkerStyle, { state: step.state })}>
               {step.state === "done" ? <Check className="size-3.5" /> : step.state === "reject" ? <X className="size-3.5" /> : index + 1}
             </span>
             <Stack gap="none" className="min-w-0 flex-1">
@@ -216,7 +219,7 @@ function ApprovalSteps({ steps }: { readonly steps: readonly ApprovalStep[] }) {
                 </Text>
               ) : null}
               {step.state === "now" && step.actions?.length ? (
-                <Flex gap="xs" className="mt-1">
+                <Flex gap="xs" {...partAttributes(approvalActionsStyle, {})}>
                   {step.actions.map((action, at) => (
                     <Button key={action.label} size="xs" variant={at === 0 ? "default" : "outline"} onClick={action.onClick}>
                       {action.label}
