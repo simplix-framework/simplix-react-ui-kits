@@ -486,7 +486,13 @@ export function RecordDetail({
               </Flex>
             </Flex>
           ) : (
-            actions.map((action) => <RecordVerbButton key={action.label} verb={action} />)
+            // One group, so the footer row keeps the commands together at its end rather than
+            // spreading each one across the row.
+            <Flex gap="xs" wrap justify="end">
+              {actions.map((action) => (
+                <RecordVerbButton key={action.label} verb={action} />
+              ))}
+            </Flex>
           )}
         </CrudDetail.DefaultActions>
       }
