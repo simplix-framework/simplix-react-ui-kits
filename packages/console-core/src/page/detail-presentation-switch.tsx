@@ -1,3 +1,4 @@
+import type { FocusEvent } from "react";
 import { AppWindowIcon, Columns2Icon, Maximize2Icon, PanelRightIcon, Settings2Icon, type LucideIcon } from "lucide-react";
 import { useTranslation } from "@simplix-react/i18n/react";
 import { Button, Popover, PopoverContent, PopoverTrigger, SettingSwitch, Tooltip, TooltipContent, TooltipTrigger } from "@simplix-react/ui";
@@ -30,6 +31,22 @@ export interface DetailPresentationSwitchProps {
   readonly defaultSettingsOpen?: boolean;
 }
 
+/** Whether the last input was a key press (Tab, arrows), as opposed to a pointer. */
+let keyboardLast = false;
+if (typeof document !== "undefined") {
+  document.addEventListener("keydown", () => (keyboardLast = true), true);
+  document.addEventListener("pointerdown", () => (keyboardLast = false), true);
+}
+
+/**
+ * Keeps a tooltip shut when focus arrives without the keyboard: a drawer or a dialog moves focus
+ * to its first control as it opens, and the tooltip would otherwise open each time the record does.
+ * Browsers mark that programmatic focus `:focus-visible` too, so the last input decides instead.
+ */
+function keyboardFocusOnly(event: FocusEvent<HTMLElement>): void {
+  if (!keyboardLast) event.preventDefault();
+}
+
 /**
  * The record's presentation, switched from the record's own head: one small group of icon buttons,
  * one per presentation, the one in use pressed, and a settings button at its end whose popover
@@ -45,7 +62,7 @@ export function DetailPresentationSwitch({ value, onChange, remember, onRemember
         const label = t(`choice.${choice}.label`);
         return (
           <Tooltip key={choice}>
-            <TooltipTrigger asChild>
+            <TooltipTrigger asChild onFocus={keyboardFocusOnly}>
               <Button type="button" variant="outline" size="icon-sm" aria-label={label} aria-pressed={value === choice} onClick={() => onChange(choice)}>
                 <Icon className="size-3.5" aria-hidden />
               </Button>
@@ -56,7 +73,7 @@ export function DetailPresentationSwitch({ value, onChange, remember, onRemember
       })}
       <Popover defaultOpen={defaultSettingsOpen}>
         <Tooltip>
-          <TooltipTrigger asChild>
+          <TooltipTrigger asChild onFocus={keyboardFocusOnly}>
             <PopoverTrigger asChild>
               <Button type="button" variant="outline" size="icon-sm" aria-label={t("settings")}>
                 <Settings2Icon className="size-3.5" aria-hidden />
