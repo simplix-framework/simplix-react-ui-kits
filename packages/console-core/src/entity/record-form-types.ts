@@ -104,6 +104,11 @@ export type RecordFormField =
   | ({ readonly kind: "radio"; readonly value?: string; readonly options: readonly RecordOption[] } & FieldCommon)
   | ({ readonly kind: "multi"; readonly value?: readonly string[]; readonly options: readonly RecordOption[] } & FieldCommon)
   | ({ readonly kind: "date"; readonly value?: string } & FieldCommon)
+  /**
+   * A one-time code of `length` digits, one box per digit. `invalid` marks the whole group as
+   * refused with that message, for a code the server rejected (the form cannot know it is wrong).
+   */
+  | ({ readonly kind: "otp"; readonly value?: string; readonly length: number; readonly invalid?: string } & FieldCommon)
   | ({ readonly kind: "switch"; readonly value?: boolean } & FieldCommon)
   /** An absolute instant entered in the record's own time zone (an IANA id). */
   | ({ readonly kind: "datetime"; readonly value?: string; readonly zone: string } & FieldCommon)

@@ -47,7 +47,8 @@
     "choosePromptWithExamples": "選択してください (例: {{examples}})",
     "signer": "署名者: {{signer}}",
     "signAgain": "書き直す",
-    "fillBeforeSubmit": "必須項目を{{count, number}}件入力してください"
+    "fillBeforeSubmit": "必須項目を{{count, number}}件入力してください",
+    "otpDigit": "{{count, number}}桁中{{index, number}}桁目"
   },
   "recordList": {
     "selected": "件選択",

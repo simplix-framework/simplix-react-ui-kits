@@ -31,7 +31,8 @@ import { useConsoleOnAPhone } from "../shell/phone-shell";
 import { usePeekHost } from "../peek";
 import { EntitySearchCombobox } from "./entity-search-combobox";
 import { PACKAGE_NAMESPACE } from "./locales";
-import { attachmentDropStyle, repeatRowStyle } from "./record-form.style";
+import { attachmentDropStyle, otpDigitStyle, otpGroupStyle, repeatRowStyle } from "./record-form.style";
+import { otpBackspace, otpInsert, otpMove } from "./record-form-otp";
 import { disabledReason, emptyRow, validateField, type FieldErrorCode } from "./record-form-rules";
 import type {
   CheckPairValue,
@@ -143,6 +144,8 @@ function FieldBody({ field, value, onChange, error, errorsShown }: RecordFieldVi
       ) : undefined;
       return <FormFields.TimeField {...common} value={parseTime(value as string | null)} onChange={(next) => onChange(`${pad(next.hours)}:${pad(next.minutes)}`)} suffixControl={clear} />;
     }
+    case "otp":
+      return <OtpField field={field} common={{ ...common, error: field.invalid ?? common.error }} value={(value as string) ?? ""} onChange={onChange} />;
     case "month":
       return <MonthField common={common} value={(value as string) ?? ""} onChange={onChange} placeholder={field.placeholder} />;
     case "range":
@@ -220,6 +223,71 @@ function MonthField({ common, value, onChange, placeholder }: { readonly common:
             />
           </PopoverContent>
         </Popover>
+      )}
+    </FieldWrapper>
+  );
+}
+
+/**
+ * A one-time code as one box per digit. The boxes form one group named by the field's label; each
+ * box is named by its position. Typing moves on, Backspace moves back, the arrows move between
+ * boxes, and a pasted code fills every box.
+ */
+function OtpField({ field, common, value, onChange }: { readonly field: FieldOf<"otp">; readonly common: Common; readonly value: string; readonly onChange: (value: unknown) => void }) {
+  const { t } = useTranslation(PACKAGE_NAMESPACE + "/features");
+  const boxes = useRef<(HTMLInputElement | null)[]>([]);
+  const focus = (index: number) => {
+    const box = boxes.current[index];
+    box?.focus();
+    box?.select();
+  };
+  const apply = (edit: { readonly code: string; readonly focus: number } | null) => {
+    if (!edit) return;
+    onChange(edit.code);
+    // At once, not on the next frame: a fast typist's next key must land in the next box.
+    focus(edit.focus);
+  };
+  const invalid = Boolean(common.error);
+  return (
+    <FieldWrapper {...common}>
+      {(control) => (
+        <div role="group" aria-labelledby={control.labelId} aria-invalid={invalid || undefined} data-invalid={invalid || undefined} {...slotAttributes(otpGroupStyle, {})}>
+          {Array.from({ length: field.length }, (_, index) => (
+            <Input
+              key={index}
+              ref={(element: HTMLInputElement | null) => {
+                boxes.current[index] = element;
+              }}
+              id={index === 0 ? control.id : undefined}
+              value={value[index] ?? ""}
+              inputMode="numeric"
+              pattern="[0-9]*"
+              maxLength={1}
+              autoComplete={index === 0 ? "one-time-code" : "off"}
+              disabled={common.disabled}
+              aria-invalid={invalid || undefined}
+              aria-label={t("recordForm.otpDigit", { index: index + 1, count: field.length })}
+              onFocus={(event) => event.currentTarget.select()}
+              onChange={(event) => apply(otpInsert(value, index, event.currentTarget.value.slice(-1) || "", field.length))}
+              onPaste={(event) => {
+                event.preventDefault();
+                apply(otpInsert(value, index, event.clipboardData.getData("text"), field.length));
+              }}
+              onKeyDown={(event) => {
+                if (event.key === "Backspace") {
+                  event.preventDefault();
+                  apply(otpBackspace(value, index));
+                  return;
+                }
+                const next = otpMove(event.key, index, field.length);
+                if (next === null) return;
+                event.preventDefault();
+                focus(next);
+              }}
+              {...partAttributes(otpDigitStyle, {})}
+            />
+          ))}
+        </div>
       )}
     </FieldWrapper>
   );

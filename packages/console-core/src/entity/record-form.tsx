@@ -1,4 +1,4 @@
-import { useState, type FormEvent, type ReactNode } from "react";
+import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { useTranslation } from "@simplix-react/i18n/react";
 import { Button, CrudForm, Flex, Heading, Stack, Text } from "@simplix-react/ui";
 import { slotAttributes } from "@simplix-react/ui/design";
@@ -165,12 +165,36 @@ export function RecordForm({ title, sections, notices, note, submitLabel, onSubm
       <RecordFormSections sections={sections} form={form} />
       {children}
       <RecordNote text={note} />
-      {/* Sticks to the foot of the scrolling body while fields remain below it, fading the last
-          visible field so the reader can tell the form goes on; at the end it is the room that keeps
-          the last field clear of the save bar. */}
-      <div aria-hidden data-form-more className="pointer-events-none sticky bottom-0 h-8 shrink-0" {...slotAttributes(formMoreStyle, {})} />
+      <FormMore />
     </CrudForm>
   );
+}
+
+/**
+ * Sticks to the foot of the scrolling body while fields remain below it, fading the last visible
+ * field so the reader can tell the form goes on; at the end it is the room that keeps the last
+ * field clear of the save bar. The fade is painted only while the body overflows below, since
+ * with nothing under it a fade only shows its own colour against whatever surface the form is on.
+ */
+function FormMore() {
+  const ref = useRef<HTMLDivElement | null>(null);
+  const [overflow, setOverflow] = useState(false);
+  useEffect(() => {
+    const body = ref.current?.closest<HTMLElement>("[data-crud-slot=body]");
+    if (!body) return;
+    // One pixel of slack: fractional layout leaves scrollHeight a subpixel past the box.
+    const measure = () => setOverflow(body.scrollTop + body.clientHeight < body.scrollHeight - 1);
+    measure();
+    body.addEventListener("scroll", measure, { passive: true });
+    const observer = typeof ResizeObserver === "undefined" ? null : new ResizeObserver(measure);
+    observer?.observe(body);
+    if (body.firstElementChild) observer?.observe(body.firstElementChild);
+    return () => {
+      body.removeEventListener("scroll", measure);
+      observer?.disconnect();
+    };
+  }, []);
+  return <div ref={ref} aria-hidden data-form-more className="pointer-events-none sticky bottom-0 h-8 shrink-0" {...slotAttributes(formMoreStyle, { overflow })} />;
 }
 
 /** Props for {@link SettingsForm}. */

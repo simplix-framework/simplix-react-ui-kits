@@ -48,7 +48,8 @@
     "choosePromptWithExamples": "Select (e.g. {{examples}})",
     "signer": "Signer: {{signer}}",
     "signAgain": "Sign again",
-    "fillBeforeSubmit": "Fill in {{count, number}} required field(s) first"
+    "fillBeforeSubmit": "Fill in {{count, number}} required field(s) first",
+    "otpDigit": "Digit {{index, number}} of {{count, number}}"
   },
   "recordList": {
     "selected": "selected",

@@ -141,6 +141,9 @@ export function validateField(field: RecordFormField, value: unknown): FieldErro
       if (choice.choice === field.otherValue && blank(choice.detail)) return "detailRequired";
       return required && blank(choice.choice) ? "required" : null;
     }
+    case "otp":
+      // A partial code is as unusable as none, so a required code asks for every digit.
+      return required && String(value ?? "").length !== field.length ? "required" : null;
     case "repeat": {
       const rows = (value ?? []) as readonly Record<string, unknown>[];
       if (required && rows.length === 0) return "required";

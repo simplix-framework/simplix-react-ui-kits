@@ -47,7 +47,8 @@
     "choosePromptWithExamples": "선택해 주세요 (예: {{examples}})",
     "signer": "서명자: {{signer}}",
     "signAgain": "다시 쓰기",
-    "fillBeforeSubmit": "필수 항목 {{count, number}}개를 입력해야 합니다"
+    "fillBeforeSubmit": "필수 항목 {{count, number}}개를 입력해야 합니다",
+    "otpDigit": "{{count, number}}자리 중 {{index, number}}번째 숫자"
   },
   "recordList": {
     "selected": "개 선택",
