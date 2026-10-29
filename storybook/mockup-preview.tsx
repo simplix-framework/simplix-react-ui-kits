@@ -116,36 +116,36 @@ export function createMockupPreview(config: MockupPreviewConfig): Preview {
 
   return {
     parameters: { layout: "fullscreen" },
+    // Settings that name long values draw as icons only (the value shows in the menu and the
+    // tooltip), so the toolbar stays one row beside the addons; mode and locale keep short labels.
     globalTypes: {
       detailPresentation: {
         description: "Where a list screen opens a record",
-        toolbar: { title: "Detail", icon: "sidebaralt", items: DETAIL_ITEMS, dynamicTitle: true },
+        toolbar: { icon: "sidebaralt", items: DETAIL_ITEMS, dynamicTitle: false },
       },
       uiDesign: {
         description: "Design: how every slot is drawn",
-        toolbar: { title: "Design", icon: "component", items: DESIGNS.map((d) => ({ value: d.id, title: `Design: ${d.id}` })), dynamicTitle: true },
+        toolbar: { icon: "component", items: DESIGNS.map((d) => ({ value: d.id, title: `Design: ${d.id}` })), dynamicTitle: false },
       },
       fill: {
         description: "Card fill",
         toolbar: {
-          title: "Fill",
           icon: "contrast",
           items: ["theme", "plain", "outline", "raised", "tint", "lead"].map((f) => ({ value: f, title: f === "theme" ? "Fill: theme's own" : `Fill: ${f}` })),
-          dynamicTitle: true,
+          dynamicTitle: false,
         },
       },
       density: {
         description: "Row density",
         toolbar: {
-          title: "Density",
           icon: "listunordered",
           items: ["theme", "compact", "default", "comfortable"].map((d) => ({ value: d, title: d === "theme" ? "Density: design's own" : `Density: ${d}` })),
-          dynamicTitle: true,
+          dynamicTitle: false,
         },
       },
       colorTheme: {
         description: "Colour theme",
-        toolbar: { title: "Theme", icon: "paintbrush", items: THEMES.map((t) => ({ value: t.value, title: t.label })), dynamicTitle: true },
+        toolbar: { icon: "paintbrush", items: THEMES.map((t) => ({ value: t.value, title: t.label })), dynamicTitle: false },
       },
       mode: {
         description: "Light / dark",
@@ -162,13 +162,12 @@ export function createMockupPreview(config: MockupPreviewConfig): Preview {
       frame: {
         description: "The console's window around the screen, or the screen alone",
         toolbar: {
-          title: "Frame",
           icon: "browser",
           items: [
             { value: "full", title: "Frame: full window" },
             { value: "content", title: "Frame: screen only" },
           ],
-          dynamicTitle: true,
+          dynamicTitle: false,
         },
       },
       locale: {
