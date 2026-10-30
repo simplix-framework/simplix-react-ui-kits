@@ -1,5 +1,7 @@
 import { createContext, useContext, type ReactNode } from "react";
-import { ListDetail, useCrudNavigation, useCrudPageState, useUIDefaults } from "@simplix-react/ui";
+import { ListDetail, useCrudNavigation, useCrudPageState, useMediaQuery, useUIDefaults } from "@simplix-react/ui";
+
+import { PHONE_WINDOW } from "../layout/window-size";
 
 import { ConsolePage } from "./console-page";
 import type { DetailPresentationSwitchProps } from "./detail-presentation-switch";
@@ -90,7 +92,11 @@ export function CrudPage({
   renderEdit,
 }: CrudPageProps) {
   const defaults = useUIDefaults();
-  const shown = presentation ?? defaults.detailPresentation;
+  // On a phone the record is the page, whatever the installation or the page chose: there is no
+  // width for the list beside it, and a drawer or a dialog would cover the list while hiding the
+  // way back behind a backdrop.
+  const onAPhone = useMediaQuery(PHONE_WINDOW);
+  const shown = onAPhone ? "page" : (presentation ?? defaults.detailPresentation);
   const nav = useCrudNavigation(search, onNavigate);
   const { state, fade, closePanel } = useCrudPageState(shown, nav);
   const handed: CrudPageNavigation = {

@@ -70,6 +70,8 @@ export {
   ConsoleMenuLinkRow,
   ConsoleMenuRail,
   ConsoleMenuRailButton,
+  ConsoleMenuFold,
+  ConsoleMenuSlot,
   type ConsoleMenuRailButtonProps,
   type ConsoleMenuBranchProps,
   type ConsoleMenuBranchRowProps,
