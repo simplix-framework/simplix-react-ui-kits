@@ -33,7 +33,7 @@ export const previewBrandStyle = defineSlotStyle({
   slot: "console-preview-brand",
   as: "part",
   // Below 1180px the brand keeps only its mark.
-  base: "gap-2.5 transition-[gap] duration-[var(--dur-base)] ease-[var(--ease)] max-[1180px]:gap-0 [&_svg]:size-6",
+  base: "gap-2.5 transition-[gap] duration-[var(--dur-base)] ease-[var(--ease)] max-[1180px]:gap-0 [&_svg]:h-6 [&_svg]:w-auto",
   variants: {},
   defaultVariants: {},
 });

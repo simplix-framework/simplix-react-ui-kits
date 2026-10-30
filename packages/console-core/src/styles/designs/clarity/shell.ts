@@ -7,7 +7,7 @@ export const shellSlots: Record<string, string> = {
   // Below 1180px the brand keeps only its mark; the name narrows and fades out rather than
   // vanishing, and comes back the same way as the window widens.
   "console-preview-brand":
-    "gap-2.5 transition-[gap] duration-[var(--dur-base)] ease-[var(--ease)] max-[1180px]:gap-0 [&_svg]:size-6",
+    "gap-2.5 transition-[gap] duration-[var(--dur-base)] ease-[var(--ease)] max-[1180px]:gap-0 [&_svg]:h-6 [&_svg]:w-auto",
   "console-preview-title":
     "max-w-[12em] overflow-clip whitespace-nowrap text-[15px] font-[650] tracking-[-0.02em] transition-[max-width,opacity] duration-[var(--dur-base)] ease-[var(--ease)] max-[1180px]:max-w-0 max-[1180px]:opacity-0",
   "console-area-switch": "self-stretch",

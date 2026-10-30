@@ -1444,7 +1444,7 @@
     @apply ml-1.5 h-8 gap-2 pl-1 pr-1.5 hover:bg-accent max-[1281px]:[&_[data-part=console-preview-account-name]]:hidden;
   }
   :where([data-part="console-preview-brand"])[data-part][data-p-console-preview-brand] {
-    @apply gap-2.5 transition-[gap] duration-[var(--dur-base)] ease-[var(--ease)] max-[1180px]:gap-0 [&_svg]:size-6;
+    @apply gap-2.5 transition-[gap] duration-[var(--dur-base)] ease-[var(--ease)] max-[1180px]:gap-0 [&_svg]:h-6 [&_svg]:w-auto;
   }
   :where([data-part="console-preview-flyout-title"])[data-part][data-p-console-preview-flyout-title] {
     @apply px-2;
