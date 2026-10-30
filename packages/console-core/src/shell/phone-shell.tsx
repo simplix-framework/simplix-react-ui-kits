@@ -5,6 +5,12 @@ import { useTranslation } from "@simplix-react/i18n/react";
 import {
   Button,
   Flex,
+  Separator,
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
   Icon,
   Text,
   Tooltip,
@@ -71,12 +77,28 @@ export interface ConsolePhoneTab {
   readonly href?: string;
   /** How many are waiting behind it, drawn as a count on the glyph. */
   readonly badge?: number;
+  /**
+   * What pressing it does, for an entry that opens something over the screen rather than leaving
+   * for another one - the full menu, which a bar of four or five entries cannot hold.
+   *
+   * <p>Taken in place of {@link to}: an entry is either a destination or a control, and one that
+   * is both answers a press twice.
+   */
+  readonly onPress?: () => void;
 }
 
 /** Props for {@link ConsolePhoneShell}. */
 export interface ConsolePhoneShellProps {
   /** What the bar at the top says this screen is — the page header's own title. */
   readonly title: ReactNode;
+  /**
+   * The product's mark and name, drawn at the head of the bar on every screen.
+   *
+   * <p>The product supplies it: a phone shows one screen at a time and no menu column, so without
+   * it nothing on the screen says which console this is. The page title keeps the rest of the row
+   * and is cut with an ellipsis rather than pushing the mark off.
+   */
+  readonly brand?: ReactNode;
   /** Whether there is somewhere to go back to. */
   readonly back?: boolean;
   /** The entries along the bottom. */
@@ -101,6 +123,7 @@ export interface ConsolePhoneShellProps {
  */
 export function ConsolePhoneShell({
   title,
+  brand,
   back = false,
   tabs,
   activeTab,
@@ -120,6 +143,7 @@ export function ConsolePhoneShell({
         gap="xs"
         shrink={false}
         role="banner"
+        className={TOUCH_TARGET}
         {...partAttributes(phoneBarStyle, {})}
       >
         {back && (
@@ -136,7 +160,15 @@ export function ConsolePhoneShell({
         {/* One line, cut with an ellipsis rather than wrapped: a title that wraps at a phone's
             width pushes the screen down by as many lines as it takes, and 「알림 센터」 came out
             four lines tall at one character each. */}
-        <Text size="lg" weight="semibold" className="min-w-0 flex-1 truncate">
+        {brand != null && (
+          <>
+            <Flex align="center" shrink={false}>
+              {brand}
+            </Flex>
+            <Separator orientation="vertical" className="h-5" />
+          </>
+        )}
+        <Text size={brand != null ? undefined : "lg"} weight="semibold" className="min-w-0 flex-1 truncate">
           {title}
         </Text>
       </Flex>
@@ -181,6 +213,21 @@ function PhoneTab({ tab, active }: { readonly tab: ConsolePhoneTab; readonly act
     </>
   );
   const shape = cn("flex flex-1 flex-col items-center justify-center", TOUCH_TARGET);
+
+  if (tab.onPress) {
+    return (
+      <button
+        type="button"
+        onClick={tab.onPress}
+        aria-haspopup="dialog"
+        aria-expanded={active}
+        className={shape}
+        {...slotAttributes(phoneTabStyle, { active, unbuilt: false })}
+      >
+        {body}
+      </button>
+    );
+  }
 
   if (!tab.to && tab.href) {
     return (
@@ -355,5 +402,92 @@ export function PhoneRowButton({
     >
       {children}
     </button>
+  );
+}
+
+/** Props for {@link ConsolePhoneMenuSheet}. */
+export interface ConsolePhoneMenuSheetProps {
+  /** Whether the sheet is showing. */
+  readonly open: boolean;
+  /** Opens and closes it; it closes itself when a destination in it is pressed. */
+  readonly onOpenChange: (open: boolean) => void;
+  /** What the sheet is the menu of - the console's own name. */
+  readonly title: ReactNode;
+  /** A line under the title, such as who is signed in. */
+  readonly description?: ReactNode;
+  /** The destinations, as {@link ConsolePhoneMenuSection}s. */
+  readonly children: ReactNode;
+  /**
+   * The window-level controls a phone's bar has no room for: language, colour scheme, the
+   * account and signing out. Drawn under the destinations, at the near end of the reach.
+   */
+  readonly footer?: ReactNode;
+}
+
+/**
+ * Every destination of the console on a phone, over the screen, with the window-level controls
+ * under them.
+ *
+ * <p><b>The bottom bar holds the few destinations used most and one entry that opens this.</b> A
+ * console with seven clusters does not fit five tabs, and a bar that drops the rest teaches the
+ * reader that the phone cannot reach them. Here every cluster is drawn open, one heading each,
+ * because a fold is one more press on the width where presses cost the most.
+ *
+ * <p><b>It closes itself on a destination.</b> A link inside a modal changes the route under it
+ * and leaves the sheet standing over the screen the reader asked for.
+ *
+ * <p><b>Every row is a thumb's height.</b> The menu rows are a pointer's size in the column, and
+ * the same rows are reused here rather than drawn again.
+ */
+export function ConsolePhoneMenuSheet({
+  open,
+  onOpenChange,
+  title,
+  description,
+  children,
+  footer,
+}: ConsolePhoneMenuSheetProps) {
+  return (
+    <Sheet open={open} onOpenChange={onOpenChange}>
+      <SheetContent side="bottom" className="flex max-h-[85dvh] flex-col gap-3 rounded-t-lg px-4 pb-4">
+        <SheetHeader>
+          <SheetTitle>{title}</SheetTitle>
+          {description && <SheetDescription>{description}</SheetDescription>}
+        </SheetHeader>
+        <Stack
+          gap="md"
+          flex
+          minSize
+          overflow="auto"
+          onClickCapture={(event) => {
+            const target = event.target;
+            if (target instanceof Element && target.closest("a[href]")) onOpenChange(false);
+          }}
+        >
+          {children}
+          {footer && <Stack gap="xs">{footer}</Stack>}
+        </Stack>
+      </SheetContent>
+    </Sheet>
+  );
+}
+
+/** One cluster of {@link ConsolePhoneMenuSheet}: its name over its destinations. */
+export function ConsolePhoneMenuSection({
+  title,
+  children,
+}: {
+  readonly title?: ReactNode;
+  readonly children: ReactNode;
+}) {
+  return (
+    <Stack gap="none" className="[&_a]:min-h-11 [&_button]:min-h-11 [&_[aria-disabled]]:min-h-11">
+      {title && (
+        <Text size="caption" tone="muted" weight="medium">
+          {title}
+        </Text>
+      )}
+      {children}
+    </Stack>
   );
 }

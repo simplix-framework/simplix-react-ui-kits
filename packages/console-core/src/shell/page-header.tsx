@@ -45,10 +45,16 @@ export function ConsolePageHeader() {
     // away there had no control to come back from, on the width where a card costs the most. The
     // paragraph above already says why `NoticeMenu` is safe unconditionally: it draws nothing where
     // the screen holds no cards.
+    // The way back stays too: a screen with no menu entry of its own has no tab to return through,
+    // so dropping it here leaves the browser's back as the only way out. The verbs are a thumb's
+    // size, since this is the one row of them the phone draws.
     return (
-      <Flex justify="end" align="center" gap="sm" {...partAttributes(pageHeaderStyle, {})}>
-        <NoticeMenu />
-        {actions}
+      <Flex justify="between" align="center" gap="sm" wrap {...partAttributes(pageHeaderStyle, {})}>
+        <Flex align="center" className="min-w-0">{back}</Flex>
+        <Flex align="center" gap="sm" className="ml-auto [&_button]:min-h-11 [&_button]:min-w-11">
+          <NoticeMenu />
+          {actions}
+        </Flex>
       </Flex>
     );
   }

@@ -85,6 +85,8 @@ export {
 export { AuthLayout } from "./auth-layout";
 export { ConsolePageHeader } from "./page-header";
 export {
+  ConsolePhoneMenuSection,
+  ConsolePhoneMenuSheet,
   ConsolePhoneShell,
   PhoneActionBar,
   PhoneButton,
@@ -96,6 +98,7 @@ export {
   PhoneStripScroller,
   TOUCH_TARGET,
   useConsoleOnAPhone,
+  type ConsolePhoneMenuSheetProps,
   type ConsolePhoneShellProps,
   type ConsolePhoneTab,
 } from "./phone-shell";
