@@ -18,13 +18,13 @@ describe("a RecordValue marked as code", () => {
 });
 
 describe("a RecordValue drawn as a link", () => {
-  it("draws its name in the slot that takes the primary text shade", () => {
+  it("draws its name in the link button, which takes the primary text shade itself", () => {
     const html = renderToStaticMarkup(createElement(RecordValueView, { value: { link: "Credits E2E", onClick: () => {} } }));
-    expect(html).toMatch(/data-slot="console-record-value-link"[^>]*>Credits E2E<\/span>/);
+    expect(html).toMatch(/data-variant="link"[^>]*>Credits E2E<\/button>/);
   });
 
   it("leaves a link with nowhere to go as plain text", () => {
     const html = renderToStaticMarkup(createElement(RecordValueView, { value: { link: "Credits E2E" } }));
-    expect(html).not.toContain("console-record-value-link");
+    expect(html).not.toContain("<button");
   });
 });

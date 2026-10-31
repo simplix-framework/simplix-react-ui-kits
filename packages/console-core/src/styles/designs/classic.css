@@ -379,9 +379,6 @@
   [data-slot="console-record-list"][data-nested="false"][data-s-console-record-list] {
     @apply shrink-0 overflow-clip rounded-lg border bg-card;
   }
-  [data-slot="console-record-value-link"][data-slot][data-s-console-record-value-link] {
-    @apply text-[var(--primary-text,var(--primary))];
-  }
   [data-slot="console-error-glyph"][data-kind="server"][data-s-console-error-glyph] {
     @apply text-red-500;
   }
