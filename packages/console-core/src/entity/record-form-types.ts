@@ -101,7 +101,11 @@ export type RecordFormField =
   /** One text per content language, edited a language at a time; filled when any language is. */
   | ({ readonly kind: "i18nText"; readonly value?: Readonly<Record<string, string>> } & FieldCommon)
   | ({ readonly kind: "number"; readonly value?: number | null; readonly unit?: string; readonly min?: number; readonly max?: number } & FieldCommon)
-  | ({ readonly kind: "select"; readonly value?: string; readonly options: readonly RecordOption[] } & FieldCommon)
+  /**
+   * One choice from a list. `clearable` draws a control that returns an optional field to no value,
+   * which a select otherwise cannot do once something is picked (frontend invariant #75).
+   */
+  | ({ readonly kind: "select"; readonly value?: string; readonly options: readonly RecordOption[]; readonly clearable?: boolean } & FieldCommon)
   /** One choice of a few, every option visible at once as a row of radio buttons. */
   | ({ readonly kind: "radio"; readonly value?: string; readonly options: readonly RecordOption[] } & FieldCommon)
   | ({ readonly kind: "multi"; readonly value?: readonly string[]; readonly options: readonly RecordOption[] } & FieldCommon)

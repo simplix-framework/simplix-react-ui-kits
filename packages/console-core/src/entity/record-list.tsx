@@ -68,7 +68,17 @@ export interface RecordColumn<Row> {
 
 /** A filter the list's filter bar offers. */
 export type RecordFilter<Row> =
-  | { readonly kind: "text"; readonly field: keyof Row & string; readonly label: string }
+  | {
+      readonly kind: "text";
+      readonly field: keyof Row & string;
+      readonly label: string;
+      /**
+       * The operators the endpoint accepts on this field, first one the default. A field the server
+       * matches only whole (an address found through its hash) takes `[EQUALS]`: offered `contains`,
+       * the search answers an empty page and no error. Absent, contains and equals.
+       */
+      readonly operators?: readonly SearchOperator[];
+    }
   | { readonly kind: "number"; readonly field: keyof Row & string; readonly label: string }
   /** A period: rows whose `yyyy-MM-dd` (or ISO date-time) value falls between the picked days. */
   | { readonly kind: "dateRange"; readonly field: keyof Row & string; readonly label: string; readonly dateOnly?: boolean }
@@ -298,12 +308,13 @@ function filterDef<Row>(filter: RecordFilter<Row>): FilterDef {
       defaultOperator: SearchOperator.EQUALS,
     } as FilterDef;
   }
+  const operators = filter.operators && filter.operators.length > 0 ? [...filter.operators] : [SearchOperator.CONTAINS, SearchOperator.EQUALS];
   return {
     type: "text",
     field: filter.field,
     label: filter.label,
-    operators: [SearchOperator.CONTAINS, SearchOperator.EQUALS],
-    defaultOperator: SearchOperator.CONTAINS,
+    operators,
+    defaultOperator: operators[0],
   };
 }
 

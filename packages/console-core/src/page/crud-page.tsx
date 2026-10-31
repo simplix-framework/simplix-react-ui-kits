@@ -110,7 +110,9 @@ export function CrudPage({
     closePanel: closePanel ?? nav.showList,
   };
   const record = (
-    <CrudPresentationContext.Provider value={{ presentation: shown, close: handed.closePanel, presentationSwitch }}>
+    // No switch on a phone: the record is always the page there, so a switch would offer choices
+    // that change nothing and show one of them as chosen while the page is what is drawn.
+    <CrudPresentationContext.Provider value={{ presentation: shown, close: handed.closePanel, presentationSwitch: onAPhone ? undefined : presentationSwitch }}>
     <ListDetail.ViewSwitch
       state={state}
       fade={fade}
