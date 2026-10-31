@@ -5,6 +5,7 @@ packages:
 # workspace resolves `catalog:` from its own catalog instead, so these entries keep the kits
 # buildable on their own and must match what the products pin.
 catalog:
+  '@simplix-react/headless': 0.3.7
   simplix-react: 0.3.7
   simplix-react-ext: 0.3.7
   '@fontsource/noto-sans-jp': ^5.2.9

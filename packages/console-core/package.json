@@ -125,6 +125,7 @@
   "dependencies": {
     "@fontsource/noto-sans-jp": "catalog:",
     "@fontsource/noto-sans-kr": "catalog:",
+    "@simplix-react/headless": "catalog:",
     "lucide-react": "catalog:",
     "react-daum-postcode": "^3.2.0",
     "simplix-react": "catalog:",
@@ -136,7 +137,8 @@
     "react": ">=18.0.0",
     "react-dom": ">=18.0.0",
     "@tanstack/react-query": ">=5.0.0",
-    "@tanstack/react-router": ">=1.0.0"
+    "@tanstack/react-router": ">=1.0.0",
+    "tailwindcss": ">=4.0.0"
   },
   "devDependencies": {
     "@tanstack/react-query": "catalog:",
