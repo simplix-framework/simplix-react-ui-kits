@@ -19,8 +19,9 @@ import type { PageSpec } from "./types";
  * @typeParam TRow a row of the screen's list
  * @typeParam TListProps the props of the screen's generated list
  * @typeParam TDetailProps the props of the screen's generated detail
+ * @typeParam TList the list the generated page builds, as its list hook returns it
  */
-export interface CrudPageBlocks<TRow, TListProps, TDetailProps> {
+export interface CrudPageBlocks<TRow, TListProps, TDetailProps, TList = unknown> {
   /** What the header and the body draw beyond the generated title and create action. */
   readonly spec?: Partial<Omit<PageSpec, "body">>;
   /** The request the list reads with, beyond the reader's own filters. */
@@ -37,6 +38,11 @@ export interface CrudPageBlocks<TRow, TListProps, TDetailProps> {
   readonly detailProps?: (id: string, nav: CrudPageNavigation) => Partial<TDetailProps>;
   /** The room the detail takes beside the list. */
   readonly detailWidth?: DetailWidth;
+  /**
+   * Header actions that read the list, drawn after the generated or stated ones: an
+   * `ExportAction` sends the list's current search, which only the list holds.
+   */
+  readonly headerActions?: (list: TList) => ReactNode;
   /** Dialogs this screen's own actions open, drawn beside the page. */
   readonly dialogs?: ReactNode;
 }

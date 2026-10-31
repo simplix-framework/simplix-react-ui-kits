@@ -34,7 +34,7 @@ export function {{EntityPascal}}CrudPage({ search, onNavigate }: {{EntityPascal}
   const words = useScreenWords("{{entity}}");
   // Every key of the kit's blocks contract is optional here, so a blocks file written before the
   // contract gained a key still compiles.
-  const blocks: ReturnType<typeof usePageBlocks> & CrudPageBlocks<{{EntityPascal}}Row, {{EntityPascal}}ListProps, {{EntityPascal}}DetailProps> = usePageBlocks({ search, onNavigate });
+  const blocks: ReturnType<typeof usePageBlocks> & CrudPageBlocks<{{EntityPascal}}Row, {{EntityPascal}}ListProps, {{EntityPascal}}DetailProps, ReturnType<typeof use{{EntityPascal}}List>> = usePageBlocks({ search, onNavigate });
   const list = use{{EntityPascal}}List(blocks.listParams);
   const presentation = useDetailPresentationSetting();
 {{#if (or hasCreate hasUpdate hasDelete)}}
@@ -64,11 +64,15 @@ export function {{EntityPascal}}CrudPage({ search, onNavigate }: {{EntityPascal}
   });
   const nameOf = (row: { readonly {{#if displayNameField}}{{displayNameField}}{{else}}{{rowIdField}}{{/if}}?: unknown }) => String(row.{{#if displayNameField}}{{displayNameField}}{{else}}{{rowIdField}}{{/if}} ?? "");
 {{/if}}
+  // A blocks file that states the header's actions replaces the generated ones; actions that read
+  // the list (an export bound to its filters) are drawn after whichever stand.
+  const ownActions = blocks.spec && "actions" in blocks.spec ? blocks.spec.actions : {{#if hasCreate}}canCreate ? <PageAction kind="add" label={words.add} onClick={() => onNavigate({ ...search, mode: "new", id: undefined })} /> : undefined{{else}}undefined{{/if}};
+  const listActions = blocks.headerActions?.(list);
 
   return (
     <>
       <CrudPage
-        spec={{ldb}} title: words.plural, description: words.description{{#if hasCreate}}, actions: canCreate ? <PageAction kind="add" label={words.add} onClick={() => onNavigate({ ...search, mode: "new", id: undefined })} /> : undefined{{/if}}, ...blocks.spec {{rdb}}
+        spec={{ldb}} title: words.plural, description: words.description, ...blocks.spec, actions: listActions ? <>{ownActions}{listActions}</> : ownActions {{rdb}}
         search={search}
         onNavigate={onNavigate}
         {...presentation}

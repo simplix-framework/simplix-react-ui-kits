@@ -32,3 +32,17 @@ describe("crud-page.hbs permission gates", () => {
     expect(text).not.toMatch(/\bcan(Create|Delete)\b/);
   });
 });
+
+describe("crud-page.hbs header actions", () => {
+  it("hands the list to the blocks' header actions and draws them after the create action", () => {
+    const text = page({ hasCreate: true, hasUpdate: false, hasDelete: false });
+    expect(text).toContain("const listActions = blocks.headerActions?.(list);");
+    expect(text).toContain("actions: listActions ? <>{ownActions}{listActions}</> : ownActions");
+    expect(text).toMatch(/const ownActions = blocks\.spec && "actions" in blocks\.spec \? blocks\.spec\.actions : canCreate \?/);
+  });
+
+  it("starts from no action where the entity has no create", () => {
+    const text = page({ hasCreate: false, hasUpdate: false, hasDelete: false });
+    expect(text).toContain('const ownActions = blocks.spec && "actions" in blocks.spec ? blocks.spec.actions : undefined;');
+  });
+});

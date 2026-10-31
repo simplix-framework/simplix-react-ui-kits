@@ -1,14 +1,14 @@
 /**
- * What `{{EntityPascal}}CrudPage` does differently from the generated page: the header's actions,
- * tiles and tabs, the list's request and its props, the detail's props, and dialogs. Written by
- * hand and never regenerated.
+ * What `{{EntityPascal}}CrudPage` does differently from the generated page: the header's actions
+ * (and those that read the list), tiles and tabs, the list's request and its props, the detail's
+ * props, and dialogs. Written by hand and never regenerated.
  */
 import type { ConsoleSearch, CrudPageBlocks } from "@simplix-react-ui-kits/console-clarity/page";
 
-import type { {{EntityPascal}}DetailProps, {{EntityPascal}}ListProps, {{EntityPascal}}Row } from "../../widgets/{{entityKebab}}";
+import type { {{EntityPascal}}DetailProps, {{EntityPascal}}ListProps, {{EntityPascal}}Row, use{{EntityPascal}}List } from "../../widgets/{{entityKebab}}";
 
 /** The keys a screen may state, and what each one does, are the kit's `CrudPageBlocks`. */
-export type PageBlocks = CrudPageBlocks<{{EntityPascal}}Row, {{EntityPascal}}ListProps, {{EntityPascal}}DetailProps>;
+export type PageBlocks = CrudPageBlocks<{{EntityPascal}}Row, {{EntityPascal}}ListProps, {{EntityPascal}}DetailProps, ReturnType<typeof use{{EntityPascal}}List>>;
 
 export function usePageBlocks(_page: { readonly search: ConsoleSearch; readonly onNavigate: (search: ConsoleSearch) => void }): PageBlocks {
   return {};
