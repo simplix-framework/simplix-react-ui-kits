@@ -18,6 +18,7 @@ const context = {
   packageName: "@test/domain-product",
   rowIdField: "productId",
   displayNameField: "name",
+  displayNameFields: ["name"],
   fields: [field],
   listFields: [field],
   contractFilters: [{ kind: "choice", field: "name", options: ["a"] }],

@@ -37,6 +37,12 @@ export function render(templateFile: string, context: Record<string, unknown>): 
   engine.registerHelper("eq", (a: unknown, b: unknown) => a === b);
   // The CLI's `or`: true when any argument before Handlebars' trailing options object is.
   engine.registerHelper("or", (...args: unknown[]) => args.slice(0, -1).some(Boolean));
+  // The CLI's `recordName`: one field read as a string, several joined in order by a space.
+  engine.registerHelper("recordName", (target: string, fields: unknown) => {
+    const names = Array.isArray(fields) ? fields.filter((one): one is string => typeof one === "string") : [];
+    if (names.length <= 1) return `String(${target}.${names[0] ?? "id"} ?? "")`;
+    return `[${names.map((name) => `${target}.${name}`).join(", ")}].filter((part) => part != null && part !== "").map(String).join(" ")`;
+  });
   return engine.compile(readFileSync(join(templatesDir, templateFile), "utf-8"), { noEscape: true })(context);
 }
 

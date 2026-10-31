@@ -62,7 +62,12 @@ export function {{EntityPascal}}CrudPage({ search, onNavigate }: {{EntityPascal}
     },
     onDeleted: () => onNavigate({}),
   });
-  const nameOf = (row: { readonly {{#if displayNameField}}{{displayNameField}}{{else}}{{rowIdField}}{{/if}}?: unknown }) => String(row.{{#if displayNameField}}{{displayNameField}}{{else}}{{rowIdField}}{{/if}} ?? "");
+{{#if displayNameField}}
+  // The record's name is every field its entity declares for it, joined in order.
+  const nameOf = (row: { {{#each displayNameFields}}readonly {{this}}?: unknown; {{/each~}} }) => {{recordName "row" displayNameFields}};
+{{else}}
+  const nameOf = (row: { readonly {{rowIdField}}?: unknown }) => String(row.{{rowIdField}} ?? "");
+{{/if}}
 {{/if}}
   // A blocks file that states the header's actions replaces the generated ones; actions that read
   // the list (an export bound to its filters) are drawn after whichever stand.

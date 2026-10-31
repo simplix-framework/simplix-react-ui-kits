@@ -10,6 +10,7 @@ function page(writes: { readonly hasCreate: boolean; readonly hasUpdate: boolean
     entityKebab: "ledger-entry",
     rowIdField: "ledgerEntryId",
     displayNameField: "reason",
+    displayNameFields: ["reason"],
     hookDelete: "useDeleteLedgerEntry",
     accessCreate: "createLedgerEntryAccess",
     accessUpdate: "updateLedgerEntryAccess",
@@ -44,5 +45,22 @@ describe("crud-page.hbs header actions", () => {
   it("starts from no action where the entity has no create", () => {
     const text = page({ hasCreate: false, hasUpdate: false, hasDelete: false });
     expect(text).toContain('const ownActions = blocks.spec && "actions" in blocks.spec ? blocks.spec.actions : undefined;');
+  });
+});
+
+describe("crud-page.hbs record name", () => {
+  it("names the record by every declared field, joined in order", () => {
+    const text = render("crud-page.hbs", {
+      entity: "ledgerEntry",
+      EntityPascal: "LedgerEntry",
+      entityKebab: "ledger-entry",
+      rowIdField: "ledgerEntryId",
+      displayNameField: "reason",
+      displayNameFields: ["reason", "period"],
+      hookDelete: "useDeleteLedgerEntry",
+      accessDelete: "deleteLedgerEntryAccess",
+      hasDelete: true,
+    });
+    expect(text).toContain("const nameOf = (row: { readonly reason?: unknown; readonly period?: unknown; }) => [row.reason, row.period]");
   });
 });

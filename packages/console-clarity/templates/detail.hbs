@@ -146,7 +146,7 @@ export function {{EntityPascal}}Detail(props: {{EntityPascal}}DetailProps) {
 {{else}}
   const tabs = typeof blocks.tabs === "function" ? blocks.tabs([{ key: "overview", label: words.overview, sections: [{ key: "overview", fields: generated }] }]) : blocks.tabs;
 {{/if}}
-  const recordName = record ? String(record.{{#if displayNameField}}{{displayNameField}}{{else}}{{rowIdField}}{{/if}} ?? "") : "";
+  const recordName = record ? {{#if displayNameField}}{{recordName "record" displayNameFields}}{{else}}String(record.{{rowIdField}} ?? ""){{/if}} : "";
   const generatedActions = [
     ...(props.onDelete ? [{ label: words.delete, kind: "danger" as const, onClick: () => props.onDelete?.(recordName) }] : []),
     ...(props.onEdit ? [{ label: words.edit, onClick: props.onEdit }] : []),
@@ -158,7 +158,7 @@ export function {{EntityPascal}}Detail(props: {{EntityPascal}}DetailProps) {
     <>
     <RecordDetail
       isLoading={isLoading}
-      title={blocks.title ?? (record ? String(record.{{#if displayNameField}}{{displayNameField}}{{else}}{{rowIdField}}{{/if}} ?? "") : words.label)}
+      title={blocks.title ?? (record ? recordName : words.label)}
       subtitle={blocks.subtitle}
       status={blocks.status ?? headerStatus}
       notices={[...(isError ? [{ key: "read-failed", tone: "danger" as const, title: words.readFailed }] : []), ...(blocks.notices ?? [])]}

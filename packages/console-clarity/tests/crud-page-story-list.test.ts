@@ -15,6 +15,7 @@ const context = {
   EntityPascal: "Product",
   rowIdField: "productId",
   displayNameField: "name",
+  displayNameFields: ["name"],
   listFields: [field],
   detailFields: [field],
   contractFilters: [

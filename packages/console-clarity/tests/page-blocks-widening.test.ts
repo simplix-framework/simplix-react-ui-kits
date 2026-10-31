@@ -20,6 +20,7 @@ const context = {
   packageName: "@test/domain-product",
   rowIdField: "productId",
   displayNameField: "name",
+  displayNameFields: ["name"],
   hookDelete: "useDeleteProduct",
   accessCreate: "createProductAccess",
   accessUpdate: "updateProductAccess",
