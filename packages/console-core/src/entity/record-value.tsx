@@ -1,7 +1,9 @@
 import type { MouseEvent, ReactNode } from "react";
 import { Button, EmptyValue, Flex, StatusBadge, Text, type StatusTone } from "@simplix-react/ui";
+import { slotAttributes } from "@simplix-react/ui/design";
 
 import { InitialsAvatar } from "../identity/initials-avatar";
+import { recordValueLinkStyle } from "./record-value.style";
 
 /** A badge a value is drawn as: a standing, a role, a period. */
 export interface RecordBadge {
@@ -76,9 +78,10 @@ export function RecordValueView({ value }: { readonly value: RecordValue }): Rea
         onClick();
       }
     };
+    const name = <span {...slotAttributes(recordValueLinkStyle, {})}>{value.link}</span>;
     return (
       <Button variant="link" size="link" asChild={href !== undefined} onClick={press}>
-        {href !== undefined ? <a href={href}>{value.link}</a> : value.link}
+        {href !== undefined ? <a href={href}>{name}</a> : name}
       </Button>
     );
   }
