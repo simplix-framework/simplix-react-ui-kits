@@ -1,10 +1,7 @@
 import {
   BellIcon,
-  ChevronDownIcon,
   CircleHelpIcon,
-  ClockIcon,
   KeyboardIcon,
-  MapPinIcon,
   PanelLeftCloseIcon,
   PanelLeftOpenIcon,
 } from "lucide-react";
@@ -12,34 +9,26 @@ import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { useTranslation } from "@simplix-react/i18n/react";
 import {
   Button,
-  DropdownMenu,
-  DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuTrigger,
   Flex,
-  Heading,
   Popover,
   PopoverTrigger,
   Stack,
-  Text,
 } from "@simplix-react/ui";
-import { partAttributes, slotAttributes } from "@simplix-react/ui/design";
+import { partAttributes } from "@simplix-react/ui/design";
 import { zoneLabel } from "../datetime";
-import { EllipsisText } from "../layout";
 import { ManualPanel, useManualStore } from "../manual";
-import { ConsoleAreaSwitch, type ConsoleArea } from "./area-switch";
+import type { ConsoleArea } from "./area-switch";
 import {
-  ConsoleBarSearch,
   ConsoleCommandPalette,
   ConsoleShortcutList,
   type ConsoleCommand,
   type ConsoleShortcut,
 } from "./command-palette";
 import { useConsole } from "./console-context";
+import { ConsoleStatusStrip, ConsoleTopBar } from "./console-top-bar";
 import { useConsoleHotkeys } from "./console-hotkeys";
-import { CountedIconButton } from "./counted-icon-button";
 import { PACKAGE_NAMESPACE } from "./locales";
 import {
   ConsoleMenuBranch,
@@ -55,29 +44,6 @@ import {
 } from "./menu-tree";
 import { useSidebarCollapse } from "./sidebar-collapse";
 import { consoleWindowStyle } from "./console-window.style";
-import {
-  previewAccountCaretStyle,
-  previewAccountNameStyle,
-  previewAccountStyle,
-  previewAvatarStyle,
-  previewBrandStyle,
-  previewClockStyle,
-  previewFlyoutTitleStyle,
-  previewLiveDotStyle,
-  previewLivePulseStyle,
-  previewSegmentRuleStyle,
-  previewSegmentStyle,
-  previewSettingsStyle,
-  previewSiteStyle,
-  previewStatusStyle,
-  previewTickerStyle,
-  previewTitleStyle,
-  previewToolStyle,
-  previewToolsStyle,
-  previewTopBarLeadStyle,
-  previewTopBarRowStyle,
-  previewTopBarStyle,
-} from "./preview-chrome.style";
 
 /** One destination in the preview's menu. */
 export interface ConsolePreviewMenuEntry {
@@ -151,6 +117,8 @@ export interface ConsolePreviewChrome {
   /** The product mark beside the title. */
   readonly mark?: ReactNode;
   readonly title: ReactNode;
+  /** A short tag after the title saying who the console is for. */
+  readonly badge?: ReactNode;
   readonly areas: readonly ConsoleArea[];
   /** The area the window opens on, which is the one holding the screen. */
   readonly area: string;
@@ -251,6 +219,9 @@ export function ConsolePreviewWindowChrome({
   const [shortcuts, setShortcuts] = useState(false);
   const [bell, setBell] = useState(false);
   const toggleManual = useManualStore((s) => s.toggle);
+  const { displayName, roleName, sites, site, selectSite, siteTimeZone } = useConsole();
+  const zone = site && siteTimeZone ? labels.siteClock(zoneLabel(siteTimeZone, new Date())) : labels.noSite;
+  const clock = useTickingClock(chrome.status?.clockStart);
   const manualOpen = useManualStore((s) => s.open);
 
   const navigate = chrome.navigate ?? ((href: string) => window.location.assign(href));
@@ -343,15 +314,42 @@ export function ConsolePreviewWindowChrome({
 
   return (
     <Flex direction="column" gap="none" className="h-dvh" {...partAttributes(consoleWindowStyle, {})}>
-      <PreviewTopBar
-        chrome={chrome}
+      <ConsoleTopBar
+        mark={chrome.mark}
+        title={chrome.title}
+        badge={chrome.badge}
+        areas={chrome.areas}
         area={area}
         onArea={setArea}
         onSearch={() => setPalette(true)}
-        bell={bell}
-        onBell={setBell}
+        region={{
+          label: labels.site,
+          current: site?.siteName,
+          empty: labels.noSite,
+          items: sites.map((candidate) => ({ key: candidate.siteId, label: candidate.siteName })),
+          onSelect: selectSite,
+        }}
+        notifications={{
+          label: labels.notifications,
+          empty: labels.noNotifications,
+          count: chrome.notificationCount ?? 0,
+          open: bell,
+          onOpenChange: setBell,
+        }}
         onHelp={toggleManual}
         helpOpen={manualOpen}
+        settings={chrome.settings}
+        account={{
+          name: displayName,
+          role: roleName,
+          menu: (
+            <>
+              <DropdownMenuItem disabled>{labels.account}</DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem disabled>{labels.signOut}</DropdownMenuItem>
+            </>
+          ),
+        }}
       />
       <Flex gap="none" flex overflow="hidden">
         {menu.groups.length > 0 && (
@@ -394,232 +392,14 @@ export function ConsolePreviewWindowChrome({
         {children}
         {manualOpen && <ManualPanel route={chrome.manualRoute ?? "/"} />}
       </Flex>
-      <PreviewStatusStrip labels={labels} status={chrome.status} />
+      <ConsoleStatusStrip
+        label={labels.status}
+        ticker={{ text: chrome.status?.ticker?.text ?? labels.quiet, live: chrome.status?.ticker?.live }}
+        segments={[{ label: chrome.status?.shift ? `${zone} · ${chrome.status.shift}` : zone }, ...(chrome.status?.segments ?? [])]}
+        clock={clock}
+      />
       <ConsoleCommandPalette open={palette} onOpenChange={setPalette} commands={commands} />
       <ConsoleShortcutList open={shortcuts} onOpenChange={setShortcuts} shortcuts={shortcutRows} />
-    </Flex>
-  );
-}
-
-/** The two characters an avatar shows: a Korean name's given name, otherwise the first two letters. */
-function initialsOf(name: string): string {
-  const trimmed = name.trim();
-  if (/^[가-힣]{3,}$/.test(trimmed)) return trimmed.slice(1, 3);
-  const words = trimmed.split(/\s+/).filter(Boolean);
-  if (words.length > 1) return (words[0][0] + words[1][0]).toUpperCase();
-  return trimmed.slice(0, 2).toUpperCase();
-}
-
-function PreviewTopBar({
-  chrome,
-  area,
-  onArea,
-  onSearch,
-  bell,
-  onBell,
-  onHelp,
-  helpOpen,
-}: {
-  readonly chrome: ConsolePreviewChrome;
-  readonly area: string;
-  readonly onArea: (area: string) => void;
-  readonly onSearch: () => void;
-  readonly bell: boolean;
-  readonly onBell: (open: boolean) => void;
-  readonly onHelp: () => void;
-  readonly helpOpen: boolean;
-}) {
-  const { labels } = chrome;
-  const { t } = useTranslation(`${PACKAGE_NAMESPACE}/chrome`);
-  const { displayName, roleName, sites, site, selectSite } = useConsole();
-  return (
-    // The bar's height, rule and inset, as the console's own top bar writes them.
-    <Stack gap="none" shrink={false} {...partAttributes(previewTopBarStyle, {})}>
-      <Flex align="center" gap="sm" {...partAttributes(previewTopBarRowStyle, {})}>
-        <Flex align="center" gap="md" flex minSize wrap {...partAttributes(previewTopBarLeadStyle, {})}>
-          <Flex align="center" gap="xs" shrink={false} {...partAttributes(previewBrandStyle, {})}>
-            {chrome.mark}
-            <Heading level={6} {...partAttributes(previewTitleStyle, {})}>
-              {chrome.title}
-            </Heading>
-          </Flex>
-          <ConsoleAreaSwitch areas={chrome.areas} current={area} onSelect={onArea} />
-        </Flex>
-        <Flex align="center" gap="xs" shrink={false} {...partAttributes(previewToolsStyle, {})}>
-          <ConsoleBarSearch onOpen={onSearch} />
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm" dropdown {...partAttributes(previewSiteStyle, {})}>
-                <MapPinIcon size={14} />
-                <EllipsisText maxWidth="md">{site?.siteName ?? labels.noSite}</EllipsisText>
-              </Button>
-            </DropdownMenuTrigger>
-            {/* `DropdownMenuContent` publishes a floor and no width. */}
-            <DropdownMenuContent align="end" className="w-56">
-              <DropdownMenuLabel>{labels.site}</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              {sites.map((candidate) => (
-                <DropdownMenuItem key={candidate.siteId} onSelect={() => selectSite(candidate.siteId)}>
-                  <EllipsisText>{candidate.siteName}</EllipsisText>
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
-          <NotificationsButton
-            label={labels.notifications}
-            empty={labels.noNotifications}
-            count={chrome.notificationCount ?? 0}
-            open={bell}
-            onOpenChange={onBell}
-          />
-          <Button
-            variant="ghost"
-            size="icon-sm"
-            onClick={onHelp}
-            aria-label={t("help")}
-            aria-pressed={helpOpen}
-            title={t("help")}
-            {...partAttributes(previewToolStyle, {})}
-          >
-            <CircleHelpIcon />
-          </Button>
-          <span className="contents" {...partAttributes(previewSettingsStyle, {})}>
-            {chrome.settings}
-          </span>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="sm" {...partAttributes(previewAccountStyle, {})}>
-                <span aria-hidden className="inline-grid shrink-0 place-items-center" {...slotAttributes(previewAvatarStyle, {})}>
-                  {initialsOf(displayName)}
-                </span>
-                <EllipsisText maxWidth="sm" {...partAttributes(previewAccountNameStyle, {})}>
-                  {displayName}
-                </EllipsisText>
-                <ChevronDownIcon aria-hidden className="size-3.5" {...slotAttributes(previewAccountCaretStyle, {})} />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56">
-              <DropdownMenuLabel>
-                <Stack gap="none">
-                  <span>{displayName}</span>
-                  <Text size="caption" tone="muted">
-                    {roleName}
-                  </Text>
-                </Stack>
-              </DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem disabled>{labels.account}</DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem disabled>{labels.signOut}</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </Flex>
-      </Flex>
-    </Stack>
-  );
-}
-
-/** The bell and its count, opening a list that says nothing is waiting: the preview holds no notifications. */
-function NotificationsButton({
-  label,
-  empty,
-  count,
-  open,
-  onOpenChange,
-}: {
-  readonly label: string;
-  readonly empty: string;
-  readonly count: number;
-  readonly open: boolean;
-  readonly onOpenChange: (open: boolean) => void;
-}) {
-  return (
-    <Popover open={open} onOpenChange={onOpenChange}>
-      <PopoverTrigger asChild>
-        <span>
-          <CountedIconButton count={count} label={label} onClick={() => onOpenChange(!open)}>
-            <BellIcon />
-          </CountedIconButton>
-        </span>
-      </PopoverTrigger>
-      <ConsoleMenuFlyout title={label}>
-        <Text size="caption" tone="muted" {...partAttributes(previewFlyoutTitleStyle, {})}>
-          {empty}
-        </Text>
-      </ConsoleMenuFlyout>
-    </Popover>
-  );
-}
-
-/** Seconds since midnight of an `HH:MM:SS` reading. */
-function secondsOf(clock: string): number {
-  const [h = 0, m = 0, s = 0] = clock.split(":").map(Number);
-  return (h * 60 + m) * 60 + s;
-}
-
-/** The workplace's wall clock, ticking each second from the reading the preview opened at. */
-function useTickingClock(start: string | undefined): string | undefined {
-  const [opened] = useState(() => Date.now());
-  const [now, setNow] = useState(opened);
-  useEffect(() => {
-    if (start === undefined) return;
-    const timer = window.setInterval(() => setNow(Date.now()), 1000);
-    return () => window.clearInterval(timer);
-  }, [start]);
-  if (start === undefined) return undefined;
-  const total = secondsOf(start) + Math.floor((now - opened) / 1000);
-  const pad = (n: number) => String(n).padStart(2, "0");
-  return `${pad(Math.floor(total / 3600) % 24)}:${pad(Math.floor(total / 60) % 60)}:${pad(total % 60)}`;
-}
-
-function PreviewStatusStrip({
-  labels,
-  status,
-}: {
-  readonly labels: ConsolePreviewChromeLabels;
-  readonly status: ConsolePreviewStatus | undefined;
-}) {
-  const { site, siteTimeZone } = useConsole();
-  const zone = site && siteTimeZone ? labels.siteClock(zoneLabel(siteTimeZone, new Date())) : labels.noSite;
-  const clock = useTickingClock(status?.clockStart);
-  const ticker = status?.ticker;
-  const live = Boolean(ticker?.live);
-  const segments: ConsolePreviewStatusSegment[] = [
-    { label: status?.shift ? `${zone} · ${status.shift}` : zone },
-    ...(status?.segments ?? []),
-  ];
-  return (
-    // The strip's height, rule, chrome tint and inset, as the console's own strip writes them.
-    <Flex
-      align="center"
-      gap="md"
-      shrink={false}
-      className="h-7 overflow-hidden whitespace-nowrap"
-      aria-label={labels.status}
-      {...partAttributes(previewStatusStyle, {})}
-    >
-      <span className="flex min-w-0 flex-1 items-center" {...slotAttributes(previewTickerStyle, { live })}>
-        {live && (
-          <span aria-hidden className="relative shrink-0" {...slotAttributes(previewLiveDotStyle, {})}>
-            <span className="absolute" {...slotAttributes(previewLivePulseStyle, {})} />
-          </span>
-        )}
-        <span className="truncate">{ticker?.text ?? labels.quiet}</span>
-      </span>
-      <span className="flex shrink-0 items-center">
-        {segments.map((segment, index) => (
-          <span key={segment.label} className="flex items-center">
-            {index > 0 && <span aria-hidden className="inline-block" {...slotAttributes(previewSegmentRuleStyle, {})} />}
-            <span {...slotAttributes(previewSegmentStyle, { tone: segment.tone ?? "plain" })}>{segment.label}</span>
-          </span>
-        ))}
-        {clock && (
-          <span className="flex items-center" {...slotAttributes(previewClockStyle, {})}>
-            <ClockIcon aria-hidden size={12} />
-            <time>{clock}</time>
-          </span>
-        )}
-      </span>
     </Flex>
   );
 }
@@ -707,4 +487,25 @@ function EntryRow({ entry, current }: { readonly entry: ConsolePreviewMenuEntry;
   }
   if (!entry.href) return <ConsoleMenuInactiveRow icon={entry.icon} label={entry.label} />;
   return <ConsoleMenuLinkRow href={entry.href} current={entry.key === current} icon={entry.icon} label={entry.label} />;
+}
+
+/** Seconds since midnight of an `HH:MM:SS` reading. */
+function secondsOf(clock: string): number {
+  const [h = 0, m = 0, s = 0] = clock.split(":").map(Number);
+  return (h * 60 + m) * 60 + s;
+}
+
+/** The workplace's wall clock, ticking each second from the reading the preview opened at. */
+function useTickingClock(start: string | undefined): string | undefined {
+  const [opened] = useState(() => Date.now());
+  const [now, setNow] = useState(opened);
+  useEffect(() => {
+    if (start === undefined) return;
+    const timer = window.setInterval(() => setNow(Date.now()), 1000);
+    return () => window.clearInterval(timer);
+  }, [start]);
+  if (start === undefined) return undefined;
+  const total = secondsOf(start) + Math.floor((now - opened) / 1000);
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${pad(Math.floor(total / 3600) % 24)}:${pad(Math.floor(total / 60) % 60)}:${pad(total % 60)}`;
 }

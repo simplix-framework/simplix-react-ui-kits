@@ -1102,6 +1102,9 @@
   [data-slot="console-preview-avatar"][data-slot][data-s-console-preview-avatar] {
     @apply rounded-full bg-muted text-[10px] font-semibold text-muted-foreground size-[26px];
   }
+  [data-slot="console-preview-badge"][data-slot][data-s-console-preview-badge] {
+    @apply inline-flex shrink-0 items-center rounded-sm border border-border px-1.5 py-px text-[10px] font-semibold uppercase leading-4 tracking-wide text-muted-foreground;
+  }
   [data-slot="console-preview-clock"][data-slot][data-s-console-preview-clock] {
     @apply ml-3 gap-1.5 border-l pl-3 text-xs tabular-nums text-muted-foreground;
   }
@@ -1125,6 +1128,9 @@
   }
   [data-slot="console-preview-ticker"][data-live="true"][data-s-console-preview-ticker] {
     @apply font-medium text-foreground;
+  }
+  [data-slot="console-preview-unbuilt"][data-slot][data-s-console-preview-unbuilt] {
+    @apply inline-flex cursor-default items-center opacity-60;
   }
 }
 @layer utilities {
@@ -1634,6 +1640,9 @@
   }
   :where([data-slot="console-preview-account-caret"])[data-s-console-preview-account-caret] {
     @apply max-[900px]:hidden;
+  }
+  :where([data-slot="console-preview-badge"])[data-s-console-preview-badge] {
+    @apply max-[1180px]:hidden;
   }
   :where([data-slot="console-preview-live-pulse"])[data-s-console-preview-live-pulse] {
     @apply motion-reduce:animate-none;

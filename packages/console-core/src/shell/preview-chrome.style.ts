@@ -39,6 +39,23 @@ export const previewBrandStyle = defineSlotStyle({
 });
 
 /** The product's name beside the mark. */
+/** The short tag after the title saying who the console is for. */
+export const previewBadgeStyle = defineSlotStyle({
+  slot: "console-preview-badge",
+  // Leaves with the title below 1180px, so the narrowed bar keeps only the mark.
+  base: "inline-flex shrink-0 items-center rounded-sm border border-border px-1.5 py-px text-[10px] font-semibold uppercase leading-4 tracking-wide text-muted-foreground max-[1180px]:hidden",
+  variants: {},
+  defaultVariants: {},
+});
+
+/** A bar control with nothing behind it yet: drawn as it will look, and quieter. */
+export const previewUnbuiltStyle = defineSlotStyle({
+  slot: "console-preview-unbuilt",
+  base: "inline-flex cursor-default items-center opacity-60",
+  variants: {},
+  defaultVariants: {},
+});
+
 export const previewTitleStyle = defineSlotStyle({
   slot: "console-preview-title",
   as: "part",

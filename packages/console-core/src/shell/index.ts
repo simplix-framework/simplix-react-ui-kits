@@ -39,6 +39,16 @@ export {
 export { useConsoleHotkeys, CHORD_WINDOW_MS, type ConsoleHotkeyActions } from "./console-hotkeys";
 export { CountedIconButton, type CountedIconButtonProps } from "./counted-icon-button";
 export { ConsoleWindow, type ConsoleWindowProps } from "./console-window";
+export {
+  ConsoleStatusStrip,
+  ConsoleTopBar,
+  type ConsoleStatusSegment,
+  type ConsoleStatusStripProps,
+  type ConsoleTopBarAccount,
+  type ConsoleTopBarNotifications,
+  type ConsoleTopBarProps,
+  type ConsoleTopBarRegion,
+} from "./console-top-bar";
 export { ConsoleContentColumn, type ConsoleContentColumnProps } from "./content-column";
 export { ConsolePreviewFrame, type ConsolePreviewFrameProps } from "./console-preview-frame";
 export type {
