@@ -95,10 +95,9 @@ export const shellSlots: Record<string, string> = {
 
   // Content column: 24px over the header and 32px at the sides on a 1440px measure; under 900px the
   // sides close to 20px. The padding transitions, so the screen settles into a new width rather
-  // than snapping. An unsorted column's arrow keeps 80% of its colour, the lightest that still
-  // reaches 3:1 on the table head in both themes, and 90% under the pointer.
+  // than snapping.
   "console-content-column":
-    "px-8 pt-6 transition-[padding] duration-[var(--dur-slow)] ease-[var(--ease)] max-[900px]:px-5 max-[900px]:pt-5 [&_[data-slot=crud-list-sort-icon][data-sorted=false]]:opacity-80 [&_button:hover_[data-slot=crud-list-sort-icon][data-sorted=false]]:opacity-90",
+    "px-8 pt-6 transition-[padding] duration-[var(--dur-slow)] ease-[var(--ease)] max-[900px]:px-5 max-[900px]:pt-5",
   "console-content-column-body": "max-w-[1440px] gap-5",
 
   // Status strip: white, 11.5px, a live ticker, readings divided by short rules, the clock.

@@ -1,8 +1,9 @@
 import { existsSync, readdirSync, readFileSync } from "node:fs";
-import { dirname, join, relative } from "node:path";
-import { fileURLToPath } from "node:url";
+import { join, relative } from "node:path";
 
 import { describe, expect, it } from "vitest";
+
+import { installedFramework, PACKAGES } from "./installed-framework";
 
 /**
  * The keyboard stays visible under forced colors (Windows High Contrast) in every console part.
@@ -21,8 +22,6 @@ import { describe, expect, it } from "vitest";
  * </ol>
  */
 
-/** The kit's `packages` directory, found from this file rather than from the working directory. */
-const PACKAGES = fileURLToPath(new URL("../../", import.meta.url));
 const APP_CSS = join(PACKAGES, "console-core/src/styles/app.css");
 
 /**
@@ -52,15 +51,6 @@ function kitSources(): string[] {
     if (pkg.isDirectory() && existsSync(join(PACKAGES, pkg.name, "src"))) walk(join(PACKAGES, pkg.name, "src"));
   }
   return out;
-}
-
-/** The installed `@simplix-react/ui`, found by walking up from the kit to the nearest install. */
-function installedFramework(): string {
-  for (let dir = PACKAGES; dir !== dirname(dir); dir = dirname(dir)) {
-    const candidate = join(dir, "node_modules/@simplix-react/ui");
-    if (existsSync(join(candidate, "package.json"))) return candidate;
-  }
-  throw new Error("@simplix-react/ui is not installed above the kit");
 }
 
 /** The clarity design as the page receives it, decoded from its generated module. */
