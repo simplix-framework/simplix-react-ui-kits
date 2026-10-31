@@ -133,7 +133,7 @@ export const previewAccountCaretStyle = defineSlotStyle({
 /** The signed-in account's initials in a circle. */
 export const previewAvatarStyle = defineSlotStyle({
   slot: "console-preview-avatar",
-  base: "rounded-full bg-muted text-(length:--fs-2xs) font-semibold text-muted-foreground size-[26px]",
+  base: "rounded-full bg-muted text-(length:--fs-2xs) leading-(--lh-2xs) font-semibold text-muted-foreground size-[26px]",
   variants: {},
   defaultVariants: {},
 });

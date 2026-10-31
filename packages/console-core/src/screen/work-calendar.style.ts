@@ -27,7 +27,7 @@ export const workCalendarTitleStyle = defineSlotStyle({
 /** The legend under the header: every category and state the items are told apart by. */
 export const workCalendarLegendStyle = defineSlotStyle({
   slot: "work-calendar-legend",
-  base: "gap-x-4 gap-y-1 text-(length:--fs-caption) text-muted-foreground",
+  base: "gap-x-4 gap-y-1 text-(length:--fs-caption) leading-(--lh-caption) text-muted-foreground",
   variants: {},
   defaultVariants: {},
 });
@@ -85,7 +85,7 @@ export const workCalendarChipStyle = defineSlotStyle({
   slot: "work-calendar-chip",
   base: "gap-1 rounded-[4px] border bg-card pl-2 pr-1 text-left text-(length:--fs-caption) leading-5 hover:bg-muted/60 focus-visible:outline-none focus-visible:shadow-[var(--focus-halo)]",
   variants: {
-    wide: { true: "py-1.5 text-(length:--fs-body-sm)", false: "" },
+    wide: { true: "py-1.5 text-(length:--fs-body-sm) leading-(--lh-body-sm)", false: "" },
     dashed: { true: "border-dashed", false: "" },
   },
   defaultVariants: { wide: false, dashed: false },
@@ -143,7 +143,7 @@ export const workCalendarCellStyle = defineSlotStyle({
 /** How many more items a month cell holds than it shows. */
 export const workCalendarMoreStyle = defineSlotStyle({
   slot: "work-calendar-more",
-  base: "px-1 text-(length:--fs-label) font-semibold text-muted-foreground",
+  base: "px-1 text-(length:--fs-label) leading-(--lh-label) font-semibold text-muted-foreground",
   variants: {},
   defaultVariants: {},
 });
@@ -159,7 +159,7 @@ export const workCalendarDayStyle = defineSlotStyle({
 /** A day column's heading, which opens that day. */
 export const workCalendarDayHeadStyle = defineSlotStyle({
   slot: "work-calendar-day-head",
-  base: "gap-1.5 rounded-md px-1 py-2 text-left text-(length:--fs-caption) text-muted-foreground hover:bg-muted/60 focus-visible:outline-none focus-visible:shadow-[var(--focus-halo)]",
+  base: "gap-1.5 rounded-md px-1 py-2 text-left text-(length:--fs-caption) leading-(--lh-caption) text-muted-foreground hover:bg-muted/60 focus-visible:outline-none focus-visible:shadow-[var(--focus-halo)]",
   variants: {},
   defaultVariants: {},
 });
@@ -167,7 +167,7 @@ export const workCalendarDayHeadStyle = defineSlotStyle({
 /** A day column's date, in the accent on the site's day. */
 export const workCalendarDayNumberStyle = defineSlotStyle({
   slot: "work-calendar-day-number",
-  base: "text-(length:--fs-body-sm) font-semibold",
+  base: "text-(length:--fs-body-sm) leading-(--lh-body-sm) font-semibold",
   variants: { today: { true: "text-[var(--series-1)]", false: "text-foreground" } },
   defaultVariants: { today: false },
 });
@@ -175,7 +175,7 @@ export const workCalendarDayNumberStyle = defineSlotStyle({
 /** The pill naming the site's day. */
 export const workCalendarTodayStyle = defineSlotStyle({
   slot: "work-calendar-today",
-  base: "rounded-full bg-[color-mix(in_srgb,var(--series-1)_14%,var(--card))] text-(length:--fs-label) text-[var(--series-1)]",
+  base: "rounded-full bg-[color-mix(in_srgb,var(--series-1)_14%,var(--card))] text-(length:--fs-label) leading-(--lh-label) text-[var(--series-1)]",
   variants: { place: { week: "px-1.5", agenda: "px-2" } },
   defaultVariants: { place: "week" },
 });
@@ -183,7 +183,7 @@ export const workCalendarTodayStyle = defineSlotStyle({
 /** An agenda day's heading, in the accent on the site's day. */
 export const workCalendarAgendaDayStyle = defineSlotStyle({
   slot: "work-calendar-agenda-day",
-  base: "gap-2 text-(length:--fs-body-sm) font-semibold",
+  base: "gap-2 text-(length:--fs-body-sm) leading-(--lh-body-sm) font-semibold",
   variants: { today: { true: "text-[var(--series-1)]", false: "" } },
   defaultVariants: { today: false },
 });

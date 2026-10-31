@@ -1,4 +1,4 @@
-/* The type steps and row height the kit's parts read (`text-(length:--fs-cell)`,
+/* The type steps and row height the kit's parts read (`text-(length:--fs-cell) leading-(--lh-cell)`,
    `font-(--fw-strong)`, `h-(--h-row)`), at the values the kit draws with. A product theme maps
    each onto its own scale; these defaults keep the kit whole on a framework theme that does not
    define them. */

@@ -150,7 +150,7 @@ export const scheduleGoStyle = defineSlotStyle({
 /** The rule at the current time, between what is past and what is still to come. */
 export const scheduleNowStyle = defineSlotStyle({
   slot: "schedule-now",
-  base: "mx-2.5 gap-2.5 text-(length:--fs-label) font-semibold tabular-nums text-destructive after:h-px after:bg-destructive after:opacity-50",
+  base: "mx-2.5 gap-2.5 text-(length:--fs-label) leading-(--lh-label) font-semibold tabular-nums text-destructive after:h-px after:bg-destructive after:opacity-50",
   variants: {},
   defaultVariants: {},
 });
