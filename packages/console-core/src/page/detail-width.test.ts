@@ -14,14 +14,10 @@ describe("detailWidthFor", () => {
 });
 
 describe("detailWidthPx", () => {
-  it("opens a drawer at one width whatever its tabs", () => {
-    expect(detailWidthPx("drawer", "regular")).toBe(720);
-    expect(detailWidthPx("drawer", "wide")).toBe(720);
-  });
-  it("keeps a panel at one width whatever its tabs, and opens a dialog at its own reading width", () => {
-    expect(detailWidthPx("panel", "regular")).toBe(600);
-    expect(detailWidthPx("panel", "wide")).toBe(600);
-    expect(detailWidthPx("dialog", "regular")).toBe(960);
-    expect(detailWidthPx("dialog", "wide")).toBe(1120);
+  it("leaves every presentation at the theme's one detail width, whatever the record's tabs", () => {
+    for (const presentation of ["panel", "drawer", "dialog", "page"]) {
+      expect(detailWidthPx(presentation, "regular"), presentation).toBeUndefined();
+      expect(detailWidthPx(presentation, "wide"), presentation).toBeUndefined();
+    }
   });
 });

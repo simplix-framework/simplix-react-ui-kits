@@ -25,13 +25,14 @@ export const DRAWER_DETAIL_WIDTH = 720;
  */
 export const PANEL_DETAIL_WIDTH = 600;
 
-/** The px a record opens at, by presentation and width; undefined leaves the framework's own. */
-export function detailWidthPx(presentation: string, width: DetailWidth): number | undefined {
-  if (presentation === "drawer") return DRAWER_DETAIL_WIDTH;
-  // A panel takes its width from the list beside it, so it keeps one width and lets a wide tab
-  // strip scroll; only a dialog, which covers nothing it needs, opens wider.
-  if (presentation === "panel") return PANEL_DETAIL_WIDTH;
-  if (presentation === "dialog") return width === "wide" ? WIDE_DETAIL_WIDTH : DIALOG_DETAIL_WIDTH;
+/**
+ * The px a record opens at, by presentation and width: none, in every presentation, so the panel,
+ * the drawer and the dialog all take the theme's `--detail-panel-width` (the design token
+ * `detail-panel`). One record keeps one shape whichever presentation an installation chooses, so
+ * switching it never changes how much of the record fits (frontend invariant #69). A tab strip
+ * wider than that width scrolls with arrows.
+ */
+export function detailWidthPx(_presentation: string, _width: DetailWidth): number | undefined {
   return undefined;
 }
 
