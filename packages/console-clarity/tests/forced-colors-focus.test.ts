@@ -92,7 +92,7 @@ describe("the console keeps focus visible under forced colors", () => {
     const base = readFileSync(join(framework, "dist/theme/base.css"), "utf8").replace(/\/\*[\s\S]*?\*\//g, "");
     const forced = blockAfter(base, /@media\s*\(\s*forced-colors\s*:\s*active\s*\)\s*\{/);
     expect(forced, "the installed @simplix-react/ui has no forced-colors block; build or update it").not.toBeNull();
-    expect(forced).toMatch(/(?:^|[}\s]):focus-visible\s*\{[^}]*outline\s*:\s*\d+px solid (?:Highlight|CanvasText)\s*!important/);
+    expect(forced).toMatch(/(?:^|[}\s]):focus-visible\b[^{]*\{[^}]*outline\s*:\s*\d+px solid (?:Highlight|CanvasText)\s*!important/);
   });
 
   it("declares no important outline, in a part, in a design or in a stylesheet", () => {
