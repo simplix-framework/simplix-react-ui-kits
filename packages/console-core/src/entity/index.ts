@@ -29,7 +29,7 @@ export { RecordList, orderUpdates, useAnnounceOutcome } from "./record-list";
 export type { RecordAction, RecordBulkAction, RecordColumn, RecordFilter, RecordListFeatures, RecordListProps, RecordOutcome, RecordReorder } from "./record-list";
 export { RecordValueView } from "./record-value";
 export type { RecordBadge, RecordValue } from "./record-value";
-export { RecordDetail, RecordTabBody } from "./record-detail";
+export { RecordDetail } from "./record-detail";
 export type { RecordDetailProps, RecordField, RecordSection, RecordTab, RecordTabContent, RecordTabToggle } from "./record-detail";
 export { RecordNote, RecordNotices, RecordVerbButton, RecordVerbs } from "./record-blocks";
 export type { RecordNotice, RecordVerb } from "./record-blocks";
