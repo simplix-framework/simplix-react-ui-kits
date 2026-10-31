@@ -48,6 +48,11 @@ export interface RecordColumn<Row> {
   readonly minWidth?: number;
   /** Lets the cell's text wrap onto more lines instead of being cut, for long text: a clause, a scope. */
   readonly wrap?: boolean;
+  /**
+   * `"end"` sets the header and the cells against the end edge in tabular numerals, for a figure a
+   * reader compares down the column: an amount, a balance, a count. Absent, the start edge.
+   */
+  readonly align?: "start" | "end";
   /** The width the table needs before this column is drawn; it is dropped from a narrow pane. */
   readonly minTableWidth?: number;
   /** Whether the header sorts the rows; on for a column with a field unless said otherwise. */
@@ -686,6 +691,7 @@ export function RecordList<Row>({
             width={column.width}
             minWidth={column.width === undefined ? column.minWidth : undefined}
             minTableWidth={column.minTableWidth}
+            align={column.align}
             sortable={on("sort") && column.field !== undefined && column.sortable !== false}
           >
             {column.value || column.wrap || column.minWidth !== undefined ? ({ row }) => cellIn(column, row) : undefined}

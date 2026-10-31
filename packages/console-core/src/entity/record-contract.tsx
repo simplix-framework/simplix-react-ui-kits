@@ -77,7 +77,7 @@ export interface ContractField {
  * that takes the spare width. One table of numbers for every generated list, so two lists showing
  * the same kinds line up.
  */
-export const CONTRACT_COLUMN_SIZE: Readonly<Record<ContractFieldKind, { readonly width?: number; readonly minWidth?: number; readonly wrap?: boolean }>> = {
+export const CONTRACT_COLUMN_SIZE: Readonly<Record<ContractFieldKind, { readonly width?: number; readonly minWidth?: number; readonly wrap?: boolean; readonly align?: "end" }>> = {
   text: { minWidth: 140 },
   longText: { minWidth: 220, wrap: true },
   email: { minWidth: 200 },
@@ -86,7 +86,8 @@ export const CONTRACT_COLUMN_SIZE: Readonly<Record<ContractFieldKind, { readonly
   date: { width: 128 },
   instant: { width: 176 },
   time: { width: 96 },
-  number: { width: 112 },
+  // A figure is compared down the column, so it sits against the end edge where the place values line up.
+  number: { width: 112, align: "end" },
   reference: { minWidth: 160 },
   i18nText: { minWidth: 140 },
 };
