@@ -88,5 +88,10 @@
     "deleting": "Deleting…",
     "view": "View",
     "readFailed": "This record could not be read. Try again in a moment."
+  },
+  "exportAction": {
+    "label": "Export",
+    "running": "Exporting...",
+    "failed": "The file could not be exported."
   }
 }

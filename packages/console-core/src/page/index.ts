@@ -5,6 +5,8 @@ export { DETAIL_WIDTH_STORAGE_KEY, forgetRememberedWidths, persistWidths, readRe
 export { RecordPage } from "./record-page";
 export type { RecordPageHeader, RecordPageProps } from "./record-page";
 export { PageAction } from "./page-action";
+export { ExportAction, runExport } from "./export-action";
+export type { ExportActionProps } from "./export-action";
 export { ExplanationCard } from "./explanation-card";
 export type { ExplanationCardProps } from "./explanation-card";
 export { ActionDialog } from "./action-dialog";
