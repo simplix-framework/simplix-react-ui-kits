@@ -346,6 +346,15 @@
   [data-slot="console-permission-check"][data-slot][data-s-console-permission-check] {
     @apply text-success;
   }
+  [data-slot="console-record-note-icon"][data-slot][data-s-console-record-note-icon] {
+    @apply mt-px size-4 shrink-0 text-muted-foreground;
+  }
+  [data-slot="console-record-note"][data-slot][data-s-console-record-note] {
+    @apply flex items-start gap-2 text-xs leading-relaxed text-muted-foreground;
+  }
+  [data-slot="console-record-note"][data-framed="true"][data-s-console-record-note] {
+    @apply rounded-lg border border-border bg-muted/40 px-3 py-2.5;
+  }
   [data-slot="console-verb-blocked-reason"][data-slot][data-s-console-verb-blocked-reason] {
     @apply text-left text-xs leading-snug text-muted-foreground;
   }

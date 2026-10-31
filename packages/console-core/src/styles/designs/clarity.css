@@ -346,6 +346,15 @@
   [data-slot="console-permission-check"][data-slot][data-s-console-permission-check] {
     @apply text-success;
   }
+  [data-slot="console-record-note-icon"][data-slot][data-s-console-record-note-icon] {
+    @apply mt-px size-4 shrink-0 text-muted-foreground;
+  }
+  [data-slot="console-record-note"][data-slot][data-s-console-record-note] {
+    @apply flex items-start gap-2 text-[12.5px] text-secondary-foreground;
+  }
+  [data-slot="console-record-note"][data-framed="true"][data-s-console-record-note] {
+    @apply border px-3 py-2.5 rounded-[var(--radius-surface)] border-[var(--border)] bg-[var(--surface-2)];
+  }
   [data-slot="console-verb-blocked-reason"][data-slot][data-s-console-verb-blocked-reason] {
     @apply text-left text-xs leading-snug text-muted-foreground;
   }
@@ -557,10 +566,10 @@
     @apply transition-colors duration-[var(--dur-fast)] ease-[var(--ease)];
   }
   [data-slot="console-tile-handle"][data-placement="rule"][data-s-console-tile-handle] {
-    @apply end-0 top-3 h-6 w-auto gap-1 rounded-[var(--radius-control)] border-0 bg-transparent px-2 text-[12.5px] text-muted-foreground;
+    @apply end-0 top-3 h-6 w-auto gap-1 rounded-[var(--radius-control)] border-0 bg-[var(--surface-2)] px-2 text-[12.5px] text-muted-foreground;
   }
   [data-slot="console-tile-handle"][data-placement="head"][data-s-console-tile-handle] {
-    @apply ms-auto h-6 gap-1 rounded-[var(--radius-control)] px-2 text-[12.5px] text-muted-foreground;
+    @apply ms-auto h-6 gap-1 rounded-[var(--radius-control)] bg-[var(--surface-2)] px-2 text-[12.5px] text-muted-foreground;
   }
   [data-slot="console-tile-head"][data-slot][data-s-console-tile-head] {
     @apply mt-1 min-h-7 gap-3 transition-[margin] duration-[var(--dur-base)] ease-[var(--ease)];
@@ -1303,7 +1312,7 @@
     @apply border-destructive/40 bg-[var(--table-head)];
   }
   :where([data-part="console-notice-action"][data-part-kind="help"])[data-part][data-p-console-notice-action] {
-    @apply gap-1 border-transparent bg-transparent shadow-none focus-visible:shadow-[var(--focus-halo)] hover:bg-[var(--hover-bg-strong)] hover:text-foreground;
+    @apply gap-1 border-transparent bg-[var(--surface-2)] hover:bg-[color-mix(in_oklch,var(--surface-2),var(--foreground)_7%)] shadow-none focus-visible:shadow-[var(--focus-halo)] hover:text-foreground;
   }
   :where([data-part="console-notice-title"])[data-part][data-p-console-notice-title] {
     @apply font-semibold;
@@ -1603,10 +1612,10 @@
     @apply focus-visible:outline-none focus-visible:ring-0 focus-visible:shadow-[var(--focus-halo)];
   }
   :where([data-slot="console-tile-handle"][data-placement="rule"])[data-s-console-tile-handle] {
-    @apply shadow-none! hover:bg-[var(--hover-bg-strong)] hover:text-foreground focus-visible:outline-none focus-visible:ring-0 focus-visible:shadow-[var(--focus-halo)]!;
+    @apply hover:bg-[color-mix(in_oklch,var(--surface-2),var(--foreground)_7%)] shadow-none! hover:text-foreground focus-visible:outline-none focus-visible:ring-0 focus-visible:shadow-[var(--focus-halo)]!;
   }
   :where([data-slot="console-tile-handle"][data-placement="head"])[data-s-console-tile-handle] {
-    @apply hover:bg-[var(--hover-bg-strong)] hover:text-foreground;
+    @apply hover:bg-[color-mix(in_oklch,var(--surface-2),var(--foreground)_7%)] hover:text-foreground;
   }
   :where([data-slot="console-tile-strip"])[data-s-console-tile-strip] {
     @apply shadow-none! hover:bg-transparent;

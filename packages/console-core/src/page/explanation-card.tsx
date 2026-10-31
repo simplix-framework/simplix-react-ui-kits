@@ -72,7 +72,7 @@ export function ExplanationCard({ noticeKey, title, hint, lead, table, notices, 
       expanded={isOpen}
       body={
         <Stack gap="md" {...partAttributes(explanationBodyStyle, {})}>
-          <RecordNote text={lead} />
+          <RecordNote text={lead} plain />
           {table ? (
             // A reference table is as wide as what it says, never stretched across the card: a
             // stretched one hands the spare width to one column, which then reads as a gap.
@@ -107,7 +107,7 @@ export function ExplanationCard({ noticeKey, title, hint, lead, table, notices, 
             </div>
           ) : null}
           <RecordNotices notices={notices} />
-          <RecordNote text={note} />
+          <RecordNote text={note} plain />
           {action ? (
             <Flex justify="end">
               <RecordVerbButton verb={action} />

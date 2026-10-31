@@ -1,7 +1,9 @@
-import { AlertBanner, Button, Flex, Text, type StatusTone } from "@simplix-react/ui";
+import type { ReactNode } from "react";
+import { AlertBanner, Button, Flex, type StatusTone } from "@simplix-react/ui";
+import { InfoIcon } from "lucide-react";
 import { slotAttributes } from "@simplix-react/ui/design";
 
-import { verbBlockedReasonStyle, verbBlockedStyle } from "./record-blocks.style";
+import { recordNoteIconStyle, recordNoteStyle, verbBlockedReasonStyle, verbBlockedStyle } from "./record-blocks.style";
 
 /** A message inside a panel, a form or a dialog: it stays as long as what it explains is on screen. */
 export interface RecordNotice {
@@ -55,13 +57,19 @@ export function RecordNotices({ notices }: { readonly notices?: readonly RecordN
   );
 }
 
-/** A quiet line under a table or a form that says how to read it. */
-export function RecordNote({ text }: { readonly text?: string }) {
+/**
+ * The sentence that says how to read a detail, a form or a dialog, drawn as a card: never bare text
+ * under the rows. `plain` drops the frame and the icon where the note already sits inside a card
+ * (an explanation card's lead); `icon` replaces the default info glyph, `null` draws none.
+ */
+export function RecordNote({ text, plain = false, icon }: { readonly text?: string; readonly plain?: boolean; readonly icon?: ReactNode | null }) {
   if (!text) return null;
+  const glyph = plain || icon === null ? null : (icon ?? <InfoIcon aria-hidden />);
   return (
-    <Text size="caption" tone="muted">
-      {text}
-    </Text>
+    <p {...slotAttributes(recordNoteStyle, { framed: !plain })}>
+      {glyph ? <span className="inline-flex [&>svg]:size-full" {...slotAttributes(recordNoteIconStyle, {})}>{glyph}</span> : null}
+      <span className="min-w-0">{text}</span>
+    </p>
   );
 }
 

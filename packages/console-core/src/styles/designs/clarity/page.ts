@@ -9,12 +9,12 @@ export const pageSlots: Record<string, string> = {
   "console-page-meta": "mt-1.5 flex flex-wrap items-center",
   "console-page-meta-rule": "mx-2.5 inline-block h-[11px] w-px bg-[var(--border-strong)] align-[-1px] text-[0px]",
 
-  // The fold control: a quiet labelled button at the right above the figures, not a tab hanging
+  // The fold control: a labelled button on the neutral ground at the right above the figures, not a tab hanging
   // off a rule.
   "console-tile-handle placement=rule":
-    "end-0 top-3 h-6 w-auto gap-1 rounded-[var(--radius-control)] border-0 bg-transparent px-2 text-[12.5px] text-muted-foreground shadow-none! hover:bg-[var(--hover-bg-strong)] hover:text-foreground focus-visible:outline-none focus-visible:ring-0 focus-visible:shadow-[var(--focus-halo)]!",
+    "end-0 top-3 h-6 w-auto gap-1 rounded-[var(--radius-control)] border-0 bg-[var(--surface-2)] hover:bg-[color-mix(in_oklch,var(--surface-2),var(--foreground)_7%)] px-2 text-[12.5px] text-muted-foreground shadow-none! hover:text-foreground focus-visible:outline-none focus-visible:ring-0 focus-visible:shadow-[var(--focus-halo)]!",
   "console-tile-handle placement=head":
-    "h-6 gap-1 rounded-[var(--radius-control)] px-2 text-[12.5px] text-muted-foreground hover:bg-[var(--hover-bg-strong)] hover:text-foreground",
+    "h-6 gap-1 rounded-[var(--radius-control)] bg-[var(--surface-2)] hover:bg-[color-mix(in_oklch,var(--surface-2),var(--foreground)_7%)] px-2 text-[12.5px] text-muted-foreground hover:text-foreground",
   "console-tile-handle": "focus-visible:outline-none focus-visible:ring-0 focus-visible:shadow-[var(--focus-halo)]",
   "console-tile-handle-label placement=rule": "not-sr-only whitespace-nowrap",
   "console-tile-handle-chevron": "text-current duration-[var(--dur-base)] ease-[var(--ease)]",
@@ -88,7 +88,7 @@ export const pageSlots: Record<string, string> = {
   "console-notice-actions": "mt-3 gap-1.5",
   "console-notice-text kind=help": "flex-row flex-wrap items-baseline gap-x-2.5",
   "console-notice-action kind=help":
-    "gap-1 border-transparent bg-transparent shadow-none focus-visible:shadow-[var(--focus-halo)] hover:bg-[var(--hover-bg-strong)] hover:text-foreground",
+    "gap-1 border-transparent bg-[var(--surface-2)] hover:bg-[color-mix(in_oklch,var(--surface-2),var(--foreground)_7%)] shadow-none focus-visible:shadow-[var(--focus-halo)] hover:text-foreground",
   "console-notice-chevron": "block duration-[var(--dur-base)] ease-[var(--ease)]",
   "console-notice-body": "duration-[var(--dur-base)] ease-[var(--ease)]",
 };

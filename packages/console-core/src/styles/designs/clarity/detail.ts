@@ -14,4 +14,8 @@ export const detailSlots: Record<string, string> = {
   // compact: an 11px head and group headings, hairline rules, a 12.5px empty sentence.
   "console-record-sublist kind=compact":
     "[&_[data-slot=table-head]]:text-[11px] [&_[data-slot=table-head]]:border-[var(--border)] [&_[data-slot=table-row]]:border-[var(--border)] [&_[data-part=crud-list-group-cell]]:text-[11px] [&_[data-part=crud-list-group-cell]]:text-[var(--muted-2)] [&_[data-slot=crud-list-empty-text]]:text-[12.5px]",
+  // The note that explains a detail or a form: a card on the second surface, the hairline and the
+  // surface radius, its sentence at 12.5px.
+  "console-record-note": "text-[12.5px] text-secondary-foreground",
+  "console-record-note framed=true": "rounded-[var(--radius-surface)] border-[var(--border)] bg-[var(--surface-2)]",
 };
