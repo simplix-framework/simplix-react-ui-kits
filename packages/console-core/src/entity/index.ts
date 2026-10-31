@@ -26,7 +26,7 @@ export { paginationHandlers } from "@simplix-react/headless";
 export type { PaginationHandlers } from "@simplix-react/headless";
 export { missingRequired } from "@simplix-react/headless";
 export { RecordList, orderUpdates, useAnnounceOutcome } from "./record-list";
-export type { RecordAction, RecordBulkAction, RecordColumn, RecordFilter, RecordListFeatures, RecordListProps, RecordOutcome, RecordReorder } from "./record-list";
+export type { RecordAction, RecordBulkAction, RecordColumn, RecordFilter, RecordListFeatures, RecordListMore, RecordListProps, RecordOutcome, RecordReorder } from "./record-list";
 export { RecordValueView } from "./record-value";
 export type { RecordBadge, RecordValue } from "./record-value";
 export { RecordDetail, RecordTabBody } from "./record-detail";

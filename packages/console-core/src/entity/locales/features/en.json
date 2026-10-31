@@ -57,7 +57,9 @@
     "clearSelection": "Clear selection",
     "undo": "Undo",
     "reorder": "Reorder",
-    "reorderDone": "Done"
+    "reorderDone": "Done",
+    "more": "Show more",
+    "loadingMore": "Loading…"
   },
   "stageGate": {
     "title": "Left before {{command}}",

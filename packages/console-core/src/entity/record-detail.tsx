@@ -296,8 +296,16 @@ function RecordRowDialog<Row>({
  */
 function SubList({ list, count }: { readonly list: RecordListProps<any>; readonly count: number | undefined }) {
   const [opened, setOpened] = useState<unknown | null>(null);
-  const kind = sublistKind(list.list?.pagination.total ?? list.rows?.length ?? 0, count);
-  const features = kind === "compact" ? { ...list.features, ...COMPACT_FEATURES } : { ...list.features, ...FULL_FEATURES };
+  // A cursor window grows as it is read, so it is the main table from its first page: its shape does
+  // not change under the reader when a press brings the row count past the compact limit.
+  const kind = list.more ? "full" : sublistKind(list.list?.pagination.total ?? list.rows?.length ?? 0, count);
+  // A cursor window holds only the pages read so far, so a search, a sort or a filter over it would
+  // answer for those rows alone: it keeps the features the screen named rather than the main table's.
+  const features = list.more
+    ? list.features
+    : kind === "compact"
+      ? { ...list.features, ...COMPACT_FEATURES }
+      : { ...list.features, ...FULL_FEATURES };
   return (
     <div {...slotAttributes(recordSublistStyle, { kind })}>
       <RecordListNestingContext.Provider value={true}>

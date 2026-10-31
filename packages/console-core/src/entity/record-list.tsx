@@ -234,6 +234,21 @@ export interface RecordListProps<Row> {
    * list returns to the sort and the headings it had.
    */
   readonly reorder?: RecordReorder<Row>;
+  /**
+   * Marks {@link rows} as a window that grows by a cursor the server names rather than a set the
+   * list can count: every loaded row is drawn, the count and the pager are left out (neither has a
+   * total to state), and a 「Show more」 control under the rows reads the next page.
+   */
+  readonly more?: RecordListMore;
+}
+
+/** The cursor half of a {@link RecordList} whose rows arrive a page at a time. */
+export interface RecordListMore {
+  /** Whether the server named a further page. The control is drawn only then. */
+  readonly hasMore: boolean;
+  /** Whether the next page is being read; the control is disabled meanwhile. */
+  readonly loading?: boolean;
+  readonly onMore: () => void;
 }
 
 /** How a {@link RecordList} writes a new order: the field, the row key, and the request. */
@@ -408,6 +423,7 @@ export function RecordList<Row>({
   bulkActions,
   keyboard = false,
   reorder,
+  more,
 }: RecordListProps<Row>) {
   const { t } = useTranslation(PACKAGE_NAMESPACE + "/features");
   const nested = useContext(RecordListNestingContext);
@@ -415,9 +431,11 @@ export function RecordList<Row>({
   // filter controls glide to their new rows instead of jumping.
   const rootRef = useRef<HTMLDivElement>(null);
   useReflowFlip(rootRef, TOOLBAR_ITEMS, []);
-  const on = (feature: keyof RecordListFeatures) => features[feature] !== false;
+  // A cursor window states no total, so neither the count nor the pager has anything true to say.
+  const on = (feature: keyof RecordListFeatures) =>
+    more !== undefined && (feature === "count" || feature === "pagination") ? false : features[feature] !== false;
   const useRows = useMemo<ListHook<Row>>(() => () => ({ data: [...rows], total: rows.length, isLoading: false, error: null }), [rows]);
-  const clientList = useCrudList(useRows, { stateMode: "client", filterMode: "immediate", defaultPageSize: pageSize });
+  const clientList = useCrudList(useRows, { stateMode: "client", filterMode: "immediate", defaultPageSize: more ? Number.MAX_SAFE_INTEGER : pageSize });
   const list = serverList ?? clientList;
   const [arranging, setArranging] = useState(false);
   const arrange = (on: boolean) => {
@@ -683,6 +701,13 @@ export function RecordList<Row>({
           onPageChange={list.pagination.setPage}
           onPageSizeChange={list.pagination.setPageSize}
         />
+      ) : null}
+      {more?.hasMore ? (
+        <Flex justify="center">
+          <Button variant="outline" size="sm" onClick={more.onMore} disabled={more.loading}>
+            {t(more.loading ? "recordList.loadingMore" : "recordList.more")}
+          </Button>
+        </Flex>
       ) : null}
     </CrudList>
     {selectable ? (
