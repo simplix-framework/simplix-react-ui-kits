@@ -1,6 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 
+import { useUIDefaults } from "@simplix-react/ui";
+
 import type { CrudPagePresentation } from "./crud-page";
+import type { DetailPresentationSwitchProps } from "./detail-presentation-switch";
 
 /** Every way a record can be presented, in the order a switch offers them. */
 export const DETAIL_PRESENTATIONS: readonly CrudPagePresentation[] = ["panel", "drawer", "dialog", "page"];
@@ -119,4 +122,24 @@ export function memoryPresentationStorage(initial: Readonly<Record<string, strin
     setItem: (key, value) => void items.set(key, value),
     removeItem: (key) => void items.delete(key),
   };
+}
+
+/** What {@link useDetailPresentationSetting} hands a {@link CrudPage}, to spread onto it. */
+export interface DetailPresentationSetting {
+  /** Where the record opens; undefined leaves it to the installation's default and the phone rule. */
+  readonly presentation: CrudPagePresentation;
+  /** The record head's switch, with the browser's memory of the reader's choice. */
+  readonly presentationSwitch: DetailPresentationSwitchProps;
+}
+
+/**
+ * The reader's detail presentation for one page: it starts from the installation's default
+ * (`UIProvider`'s `detailPresentation`), the record head's switch changes it, and the browser
+ * remembers the choice when the reader asks. Spread the result onto a {@link CrudPage}.
+ */
+export function useDetailPresentationSetting(options: Omit<DetailPresentationMemoryOptions, "value" | "onChange"> = {}): DetailPresentationSetting {
+  const defaults = useUIDefaults();
+  const [presentation, setPresentation] = useState<CrudPagePresentation>(() => readRememberedPresentation(options.storage ?? browserStorage(), options.storageKey) ?? defaults.detailPresentation);
+  const memory = useDetailPresentationMemory({ ...options, value: presentation, onChange: setPresentation });
+  return { presentation, presentationSwitch: { value: presentation, onChange: setPresentation, ...memory } };
 }

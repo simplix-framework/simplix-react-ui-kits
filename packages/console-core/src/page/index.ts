@@ -34,6 +34,7 @@ export {
   memoryPresentationStorage,
   readRememberedPresentation,
   useDetailPresentationMemory,
+  useDetailPresentationSetting,
   writeRememberedPresentation,
 } from "./presentation-memory";
-export type { DetailPresentationMemory, DetailPresentationMemoryOptions, PresentationStorage } from "./presentation-memory";
+export type { DetailPresentationMemory, DetailPresentationMemoryOptions, DetailPresentationSetting, PresentationStorage } from "./presentation-memory";
