@@ -38,6 +38,10 @@ export const shellSlots: Record<string, string> = {
   "console-area-tab current=false": "text-muted-foreground hover:text-foreground",
   "console-area-ink": "mt-px",
   "console-preview-tools": "gap-0.5",
+  // The bar's search drawn before anything stands behind it is a picture of the field, not a disabled
+  // control, so it keeps its text and icon at full strength (4.5:1 and 3:1 need more than a 60% fade
+  // leaves); the other unbuilt controls are disabled buttons and keep the fade.
+  "console-preview-unbuilt": "has-[[data-slot=console-bar-search]]:opacity-100",
   "console-bar-search":
     "mr-2 h-8 w-60 max-w-none gap-2 border-[var(--border)] bg-[var(--surface-2)] pl-2.5 pr-1.5 text-(length:--fs-cell) leading-(--lh-cell) text-muted-foreground hover:border-muted-foreground hover:bg-[var(--surface-2)] max-[1441px]:w-50",
   "console-key-cap": "rounded-[var(--radius-xs)] border-[var(--border-strong)] bg-card font-sans",
@@ -91,9 +95,10 @@ export const shellSlots: Record<string, string> = {
 
   // Content column: 24px over the header and 32px at the sides on a 1440px measure; under 900px the
   // sides close to 20px. The padding transitions, so the screen settles into a new width rather
-  // than snapping.
+  // than snapping. An unsorted column's arrow keeps 80% of its colour, the lightest that still
+  // reaches 3:1 on the table head in both themes, and 90% under the pointer.
   "console-content-column":
-    "px-8 pt-6 transition-[padding] duration-[var(--dur-slow)] ease-[var(--ease)] max-[900px]:px-5 max-[900px]:pt-5",
+    "px-8 pt-6 transition-[padding] duration-[var(--dur-slow)] ease-[var(--ease)] max-[900px]:px-5 max-[900px]:pt-5 [&_[data-slot=crud-list-sort-icon][data-sorted=false]]:opacity-80 [&_button:hover_[data-slot=crud-list-sort-icon][data-sorted=false]]:opacity-90",
   "console-content-column-body": "max-w-[1440px] gap-5",
 
   // Status strip: white, 11.5px, a live ticker, readings divided by short rules, the clock.
