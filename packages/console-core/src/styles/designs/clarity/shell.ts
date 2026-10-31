@@ -1,3 +1,23 @@
+/**
+ * The colours the menu column and the rail hand to the parts drawn inside them.
+ *
+ * <p>Both stand on a ground of their own (`--chrome-sidebar`, and `--chrome-sidebar-hover` under
+ * the pointer), so a product that sets a ground sets the colours that pair with it beside it:
+ * `--chrome-sidebar-foreground` (labels and the heading), `--chrome-sidebar-foreground-muted` (a row
+ * that leads nowhere), `--chrome-sidebar-icon` (marks and carets at rest, the muted foreground when
+ * unset) and `--chrome-sidebar-hover-foreground` (labels and marks on the hover ground, the foreground
+ * when unset). A token the product leaves unset leaves the part on the page's own colour, which is what
+ * the default clarity design draws on its near-white ground.
+ *
+ * <p>The parts read these through variables the column and the rail define rather than through the
+ * tokens themselves, because the same rows also stand in the rail's flyout and in the phone's menu
+ * sheet. Those are drawn on the page's own grounds, where the variables are unset and the rows read the
+ * page's colours; a row reading the tokens directly would draw the column's light-on-dark pair over a
+ * white popover.
+ */
+const MENU_GROUND =
+  "[--menu-fg:var(--chrome-sidebar-foreground)] [--menu-fg-muted:var(--chrome-sidebar-foreground-muted)] [--menu-icon:var(--chrome-sidebar-icon,var(--chrome-sidebar-foreground-muted))] [--menu-hover:var(--chrome-sidebar-hover)] [--menu-hover-fg:var(--chrome-sidebar-hover-foreground,var(--chrome-sidebar-foreground))]";
+
 /** Clarity overrides for the console chrome: top bar, area tabs, menu column, status strip, command palette. */
 export const shellSlots: Record<string, string> = {
   // Top bar: a white 52px band, the brand, the area tabs on its full height, the reader's tools.
@@ -42,32 +62,32 @@ export const shellSlots: Record<string, string> = {
 
   // Menu column: 240px on its own near-white ground, rows that take a soft ground on hover and
   // the accent soft ground where the reader is, a rail of 38px marks when collapsed.
-  "console-menu-column": "w-60 border-[var(--border)] bg-[var(--chrome-sidebar)]",
-  "console-menu-rail": "w-15 border-[var(--border)] bg-[var(--chrome-sidebar)] pb-0 pt-2",
+  "console-menu-column": `w-60 border-[var(--border)] bg-[var(--chrome-sidebar)] ${MENU_GROUND}`,
+  "console-menu-rail": `w-15 border-[var(--border)] bg-[var(--chrome-sidebar)] pb-0 pt-2 ${MENU_GROUND}`,
   "console-menu-rail-rule": "my-[1.5px] bg-transparent",
   "console-menu-rail-button":
-    "size-[38px] border-0 bg-transparent text-muted-foreground shadow-none hover:bg-[var(--chrome-sidebar-hover)] hover:text-foreground [&_[data-slot=console-menu-glyph]]:text-current [&_[data-slot=console-menu-glyph]]:opacity-100 [&_svg]:size-[18px]",
-  "console-menu-rail-button active=true": "bg-[var(--primary-soft)] text-[var(--primary-text)] hover:bg-[var(--primary-soft)]",
+    "size-[38px] border-0 bg-transparent text-[var(--menu-icon,var(--muted-foreground))] shadow-none hover:bg-[var(--menu-hover,var(--hover-bg-strong))] hover:text-[var(--menu-hover-fg,var(--foreground))] [&_[data-slot=console-menu-glyph]]:text-current [&_[data-slot=console-menu-glyph]]:opacity-100 [&_svg]:size-[18px]",
+  "console-menu-rail-button active=true": "bg-[var(--primary-soft)] text-[var(--primary-text)] hover:bg-[var(--primary-soft)] hover:text-[var(--primary-text)]",
   "console-menu-column-head":
-    "h-12 border-0 py-0 pl-[18px] pr-2.5 text-secondary-foreground [&>*:first-child]:text-(length:--fs-cell) leading-(--lh-cell) [&>*:first-child]:font-semibold",
+    "h-12 border-0 py-0 pl-[18px] pr-2.5 text-[var(--menu-fg,var(--secondary-foreground))] [&>*:first-child]:text-[var(--menu-fg,var(--foreground))] [&>*:first-child]:text-(length:--fs-cell) leading-(--lh-cell) [&>*:first-child]:font-semibold",
   "console-menu-column-body": "gap-0 px-2.5 pb-6 pt-0.5 [&>*]:mt-1.5",
   "console-menu-branch": "gap-[var(--menu-branch-gap)]",
   "console-menu-branch ruled=true": "ml-[var(--menu-branch-indent)] border-[var(--border)] pl-[var(--menu-branch-inset)]",
   "console-menu-row":
-    "focus-visible:outline-none focus-visible:ring-0 focus-visible:shadow-[var(--focus-halo)] min-h-8 gap-2.5 rounded-[var(--radius-control)] px-2.5 py-0 text-(length:--fs-cell) leading-(--lh-cell) text-secondary-foreground transition-colors duration-[var(--dur-fast)] ease-[var(--ease)]",
-  "console-menu-row kind=branch": "hover:bg-[var(--chrome-sidebar-hover)] hover:text-secondary-foreground",
-  "console-menu-row kind=link": "hover:bg-[var(--chrome-sidebar-hover)] hover:text-secondary-foreground",
-  "console-menu-row kind=inactive": "text-muted-foreground",
+    "focus-visible:outline-none focus-visible:ring-0 focus-visible:shadow-[var(--focus-halo)] min-h-8 gap-2.5 rounded-[var(--radius-control)] px-2.5 py-0 text-(length:--fs-cell) leading-(--lh-cell) text-[var(--menu-fg,var(--secondary-foreground))] transition-colors duration-[var(--dur-fast)] ease-[var(--ease)]",
+  "console-menu-row kind=branch": "hover:bg-[var(--menu-hover,var(--hover-bg-strong))] hover:text-[var(--menu-hover-fg,var(--secondary-foreground))]",
+  "console-menu-row kind=link": "hover:bg-[var(--menu-hover,var(--hover-bg-strong))] hover:text-[var(--menu-hover-fg,var(--secondary-foreground))]",
+  "console-menu-row kind=inactive": "text-[var(--menu-fg-muted,var(--muted-foreground))]",
   "console-menu-row strong=true": "font-normal",
   "console-menu-row current=true":
     "bg-[var(--primary-soft)] font-(--fw-strong) text-[var(--primary-text)] hover:bg-[var(--primary-soft)] hover:text-[var(--primary-text)]",
   "console-menu-glyph":
-    "text-muted-foreground opacity-100 transition-colors [[data-current=true]>&]:text-[var(--primary-text)] [:hover>&]:text-secondary-foreground",
+    "text-[var(--menu-icon,var(--muted-foreground))] opacity-100 transition-colors [[data-current=true]>&]:text-[var(--primary-text)] [:hover>&]:text-[var(--menu-hover-fg,var(--secondary-foreground))]",
   // The shared selected indicator: a 2px accent bar at the column's inner edge that slides to the
   // current row.
   "console-menu-ink":
     "start-1 m-0! block w-0.5 rounded-full bg-primary transition-[top,height,opacity] duration-[var(--dur-base)] ease-[var(--ease)]",
-  "console-menu-caret": "text-muted-foreground opacity-100 [&_svg]:size-[13px]",
+  "console-menu-caret": "text-[var(--menu-icon,var(--muted-foreground))] opacity-100 [&_svg]:size-[13px]",
 
   // Content column: 24px over the header and 32px at the sides on a 1440px measure; under 900px the
   // sides close to 20px. The padding transitions, so the screen settles into a new width rather
