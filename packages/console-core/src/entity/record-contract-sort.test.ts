@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { sortFieldOf, startingValue, textValueOf } from "./record-contract";
+import { peekTargetOf, sortFieldOf, startingValue, textValueOf } from "./record-contract";
 import { statedOrNothing } from "./screen-words";
 
 describe("a column over a translated name", () => {
@@ -43,5 +43,15 @@ describe("a form field's starting value", () => {
   it("is the record's own value, absent included, for one being edited", () => {
     expect(startingValue(field, { active: false })).toBe(false);
     expect(startingValue(field, {})).toBeUndefined();
+  });
+});
+
+describe("the record a reference opens", () => {
+  it("names the field its value matches where the contract states one", () => {
+    expect(peekTargetOf({ peekBy: "voiceCode" }, "warm-01", "Warm")).toEqual({ id: "warm-01", name: "Warm", by: "voiceCode" });
+  });
+
+  it("is the referenced identifier otherwise", () => {
+    expect(peekTargetOf({}, "u-1", "Kim")).toEqual({ id: "u-1", name: "Kim" });
   });
 });

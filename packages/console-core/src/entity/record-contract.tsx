@@ -9,7 +9,7 @@ import { useEntityTranslation, useI18nEditLanguage, useLocale, useTranslation } 
 import type { EntitySearch, LanguageSelectorPlacement, StatusTone } from "@simplix-react/ui";
 
 import { PACKAGE_NAMESPACE } from "./locales";
-import { usePeekHost } from "../peek";
+import { usePeekHost, type PeekTarget } from "../peek";
 import type { RecordFormField } from "./record-form-types";
 import type { RecordFilter } from "./record-list";
 import type { RecordValue } from "./record-value";
@@ -44,6 +44,11 @@ export interface ContractField {
   readonly options?: readonly string[];
   /** The peek kind a `reference` field opens, which is the referenced entity's name. */
   readonly peekKind?: string;
+  /**
+   * For a `reference` whose value is another field of the referenced entity than its identifier
+   * (SimpliX Meta's `reference.idField`), that field: the peek looks the record up by it.
+   */
+  readonly peekBy?: string;
   /** The field beside a `reference` that carries the referenced record's name, or a dotted path into the nested record. */
   readonly nameField?: string;
   /** The server owns it: drawn in a detail, never edited in a form. */
@@ -72,6 +77,11 @@ export interface ContractField {
   readonly languageSelectorPlacement?: LanguageSelectorPlacement;
   /** The value a new record starts the field with (SimpliX Meta's `defaultValue`). */
   readonly defaultValue?: string | number | boolean;
+}
+
+/** The record a reference opens: its value, its name, and the field the value matches where it is not the identifier. */
+export function peekTargetOf(field: Pick<ContractField, "peekBy">, id: string, name: string | undefined): PeekTarget {
+  return { id, ...(name !== undefined ? { name } : {}), ...(field.peekBy ? { by: field.peekBy } : {}) };
 }
 
 /**
@@ -204,7 +214,7 @@ export function useRecordContract(entity: string, overrides: ContractOverrides =
           const text = typeof name === "string" && name !== "" ? name : String(raw);
           if (!field.peekKind) return { link: text };
           const kind = field.peekKind;
-          return { link: text, onClick: () => peek.open({ kind, target: { id: String(raw), name: text } }) };
+          return { link: text, onClick: () => peek.open({ kind, target: peekTargetOf(field, String(raw), text) }) };
         }
         default:
           return textValueOf(field, raw);

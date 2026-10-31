@@ -12,6 +12,11 @@ import type { PeekRenderProps } from "./peek-context";
 export interface PeekTarget {
   readonly id: string;
   readonly name?: string;
+  /**
+   * The target entity's field `id` is a value of, where it is not the identifier (a voice code
+   * naming a catalogue voice): the dialog looks the record up by that field.
+   */
+  readonly by?: string;
 }
 
 /** Draws one entity's peek dialog. Registered by the app, called by the host. */
