@@ -6,15 +6,19 @@
   "scripts": {
     "build": "pnpm -r build",
     "typecheck": "pnpm -r typecheck",
-    "test": "node scripts/check-declared-imports.mjs --selftest && pnpm -r test",
-    "lint": "node scripts/check-declared-imports.mjs && pnpm -r lint",
+    "test": "node scripts/check-declared-imports.mjs --selftest && node scripts/check-cycles.mjs --test && pnpm -r test",
+    "lint": "node scripts/check-declared-imports.mjs && node scripts/check-cycles.mjs && pnpm -r lint",
     "check:imports": "node scripts/check-declared-imports.mjs",
     "local:link": "SIMPLIX_PROFILE=local pnpm install",
     "local:unlink": "SIMPLIX_PROFILE=registry pnpm install",
-    "local:status": "node .pnpmfile.cjs status"
+    "local:status": "node .pnpmfile.cjs status",
+    "cycles": "node scripts/check-cycles.mjs"
   },
   "simplix": {
     "linkProfile": "registry",
     "frameworkPath": "../simplix-react"
+  },
+  "devDependencies": {
+    "typescript": "catalog:"
   }
 }

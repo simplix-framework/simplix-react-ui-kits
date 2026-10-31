@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { EllipsisText } from "../layout";
+import { EllipsisText } from "../layout/ellipsis-text";
 
 import { Flex, Heading, cn } from "@simplix-react/ui";
 

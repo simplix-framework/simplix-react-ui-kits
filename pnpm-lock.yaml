@@ -136,6 +136,9 @@ importers:
       '@simplix-react/ui':
         specifier: link:/Users/taehwan/Workspace/simplix-react/packages/ui
         version: link:../simplix-react/packages/ui
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
 
   packages/console-clarity:
     dependencies:
