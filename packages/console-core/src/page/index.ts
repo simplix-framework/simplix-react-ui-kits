@@ -10,6 +10,7 @@ export { ActionDialog } from "./action-dialog";
 export type { ActionDialogProps, ActionStep } from "./action-dialog";
 export type { PageActionKind, PageActionProps } from "./page-action";
 export type { CrudPresentation, CrudPageNavigation, CrudPagePresentation, CrudPageProps } from "./crud-page";
+export type { CrudPageBlocks } from "./crud-page-blocks";
 export { PageBackProvider, usePageBackLink } from "./page-back";
 export type { PageBackTarget } from "./page-back";
 export type {

@@ -3,26 +3,12 @@
  * tiles and tabs, the list's request and its props, the detail's props, and dialogs. Written by
  * hand and never regenerated.
  */
-import type { ReactNode } from "react";
-import type { ConsoleSearch, CrudPageNavigation, DetailWidth, PageSpec } from "@simplix-react-ui-kits/console-clarity/page";
+import type { ConsoleSearch, CrudPageBlocks } from "@simplix-react-ui-kits/console-clarity/page";
 
-import type { RecordAction } from "@simplix-react-ui-kits/console-clarity/entity";
 import type { {{EntityPascal}}DetailProps, {{EntityPascal}}ListProps, {{EntityPascal}}Row } from "../../widgets/{{entityKebab}}";
 
-export interface PageBlocks {
-  readonly spec?: Partial<Omit<PageSpec, "body">>;
-  readonly listParams?: Readonly<Record<string, unknown>>;
-  readonly listProps?: (nav: CrudPageNavigation) => Partial<{{EntityPascal}}ListProps>;
-  /** Row actions of this screen's own, drawn between the generated edit and delete. */
-  readonly rowActions?: (nav: CrudPageNavigation) => readonly RecordAction<{{EntityPascal}}Row>[];
-  /** Why a row cannot be deleted (a record the server refuses to remove), drawn on the generated delete. */
-  readonly deleteDisabled?: (row: {{EntityPascal}}Row) => string | false | undefined;
-  /** Why a row cannot be edited (a record the server refuses to change), drawn on the generated edit. */
-  readonly editDisabled?: (row: {{EntityPascal}}Row) => string | false | undefined;
-  readonly detailProps?: (id: string, nav: CrudPageNavigation) => Partial<{{EntityPascal}}DetailProps>;
-  readonly detailWidth?: DetailWidth;
-  readonly dialogs?: ReactNode;
-}
+/** The keys a screen may state, and what each one does, are the kit's `CrudPageBlocks`. */
+export type PageBlocks = CrudPageBlocks<{{EntityPascal}}Row, {{EntityPascal}}ListProps, {{EntityPascal}}DetailProps>;
 
 export function usePageBlocks(_page: { readonly search: ConsoleSearch; readonly onNavigate: (search: ConsoleSearch) => void }): PageBlocks {
   return {};

@@ -5,7 +5,7 @@
  * rewritten on every run while its `@simplix-render` fingerprint matches; what this screen does
  * differently goes in `./page.blocks.tsx`, which the generator writes once and never again.
  */
-import { CrudPage, {{#if hasCreate}}PageAction, {{/if}}type ConsoleSearch, useDetailPresentationSetting } from "@simplix-react-ui-kits/console-clarity/page";
+import { CrudPage, {{#if hasCreate}}PageAction, {{/if}}type ConsoleSearch, type CrudPageBlocks, useDetailPresentationSetting } from "@simplix-react-ui-kits/console-clarity/page";
 import { useAllowed, useScreenWords } from "@simplix-react-ui-kits/console-clarity/entity";
 {{#if hasDelete}}
 import { adaptOrvalDelete, useCrudDeleteWired, useInvalidateEntity } from "@simplix-react/ui";
@@ -21,7 +21,7 @@ import { {{accessUpdate}} } from "{{packageName}}";
 import { {{accessDelete}} } from "{{packageName}}";
 {{/if}}
 
-import { {{EntityPascal}}Detail, {{#if hasForm}}{{EntityPascal}}Form, {{/if}}{{EntityPascal}}List, use{{EntityPascal}}List, type {{EntityPascal}}Row } from "../../widgets/{{entityKebab}}";
+import { {{EntityPascal}}Detail, {{#if hasForm}}{{EntityPascal}}Form, {{/if}}{{EntityPascal}}List, use{{EntityPascal}}List, type {{EntityPascal}}DetailProps, type {{EntityPascal}}ListProps, type {{EntityPascal}}Row } from "../../widgets/{{entityKebab}}";
 import { usePageBlocks } from "./page.blocks";
 
 interface {{EntityPascal}}CrudPageProps {
@@ -32,7 +32,9 @@ interface {{EntityPascal}}CrudPageProps {
 /** {{EntityPascal}}: the list, and the record it opens. */
 export function {{EntityPascal}}CrudPage({ search, onNavigate }: {{EntityPascal}}CrudPageProps) {
   const words = useScreenWords("{{entity}}");
-  const blocks = usePageBlocks({ search, onNavigate });
+  // Every key of the kit's blocks contract is optional here, so a blocks file written before the
+  // contract gained a key still compiles.
+  const blocks: ReturnType<typeof usePageBlocks> & CrudPageBlocks<{{EntityPascal}}Row, {{EntityPascal}}ListProps, {{EntityPascal}}DetailProps> = usePageBlocks({ search, onNavigate });
   const list = use{{EntityPascal}}List(blocks.listParams);
   const presentation = useDetailPresentationSetting();
   // Every control is gated on the rule its endpoint states, so none leads to a call the server refuses.
