@@ -80,7 +80,9 @@ export interface {{EntityPascal}}DetailProps {
 export function {{EntityPascal}}Detail(props: {{EntityPascal}}DetailProps) {
   const words = useScreenWords("{{entity}}");
   const { data, isLoading, isError } = {{hookGet}}(props.{{entity}}Id);
-  const blocks = useDetailBlocks({ record: data ?? undefined, props });
+  // Keys the template gained after a blocks file was written stay optional here, so an older
+  // blocks file that never declared them still compiles.
+  const blocks: ReturnType<typeof useDetailBlocks> & { readonly note?: string } = useDetailBlocks({ record: data ?? undefined, props });
   const record = data ?? undefined;
   const contract = useRecordContract("{{entity}}", blocks.contract);
   const row = record as Readonly<Record<string, unknown>> | undefined;
@@ -148,6 +150,7 @@ export function {{EntityPascal}}Detail(props: {{EntityPascal}}DetailProps) {
       defaultTab={props.initialTab ?? blocks.defaultTab}
       tabs={tabs}
       sections={tabs ? undefined : blocks.sections ?? [{ key: "overview", fields: generated }]}
+      note={blocks.note}
 {{#if hasAuditFields}}
       audit={record ? { id: record.{{rowIdField}} == null ? undefined : String(record.{{rowIdField}}), createdAt: record.createdAt ?? undefined, updatedAt: record.updatedAt ?? undefined } : undefined}
 {{/if}}

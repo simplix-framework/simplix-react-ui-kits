@@ -19,6 +19,11 @@ export interface DetailBlocks {
   /** The tabs, or a function of the generated ones (the overview and a list per holder) that keeps, reorders or adds to them. */
   readonly tabs?: readonly RecordTab[] | ((generated: readonly RecordTab[]) => readonly RecordTab[]);
   readonly sections?: readonly RecordSection[];
+  /**
+   * An explanation of what the record is, drawn as the kit's note card under the fields: a record
+   * without tabs carries it here, a tab carries its own in `note`.
+   */
+  readonly note?: string;
   /** Confirmations this record's own verbs open, rendered beside the detail. */
   readonly dialogs?: ReactNode;
 }

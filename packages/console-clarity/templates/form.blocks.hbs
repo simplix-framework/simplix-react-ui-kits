@@ -9,6 +9,13 @@ export interface FormBlocks {
   readonly sections?: readonly RecordFormSection[];
   readonly notices?: readonly RecordNotice[];
   readonly submitLabel?: string;
+  /** An explanation of what the form decides, drawn as the kit's note card under the fields. */
+  readonly note?: string;
+  /**
+   * What the form says beside a field while it is filled in, from the values as they stand: a clash
+   * with another record, a consequence of the value. Keyed by field; a field absent says nothing.
+   */
+  readonly fieldNotices?: (values: Readonly<Record<string, unknown>>) => Readonly<Record<string, string | undefined>>;
   /** The request from the form's values; on an edit the loaded record goes underneath it. */
   readonly toRequest?: (values: Readonly<Record<string, unknown>>, record?: Readonly<Record<string, unknown>>) => Record<string, unknown>;
 }

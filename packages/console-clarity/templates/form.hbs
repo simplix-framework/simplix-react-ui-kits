@@ -69,13 +69,20 @@ export function {{EntityPascal}}Form(props: {{EntityPascal}}FormProps) {
   const contract = useRecordContract("{{entity}}", preBlocks);
   const row = record as Readonly<Record<string, unknown>> | undefined;
   const generated: RecordFormField[] = {{EntityPascal}}FormFields.map((field) => contract.formField(field, row));
-  const blocks = useFormBlocks({ record, editing, generated });
+  // Keys the template gained after a blocks file was written stay optional here, so an older
+  // blocks file that never declared them still compiles.
+  const blocks: ReturnType<typeof useFormBlocks> & {
+    readonly note?: string;
+    readonly fieldNotices?: (values: Readonly<Record<string, unknown>>) => Readonly<Record<string, string | undefined>>;
+  } = useFormBlocks({ record, editing, generated });
   if (editing && (isLoading || !data)) return <QueryFallback isLoading={isLoading} />;
   return (
     <RecordForm
       title={blocks.title ?? (editing ? words.editTitle : words.add)}
       sections={blocks.sections ?? [{ key: "main", fields: generated }]}
       notices={blocks.notices}
+      note={blocks.note}
+      fieldNotices={blocks.fieldNotices}
       submitLabel={blocks.submitLabel ?? words.save}
       onCancel={props.onCancel}
       onSubmit={async (values) => {

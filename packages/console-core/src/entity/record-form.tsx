@@ -92,6 +92,7 @@ export function RecordFormSections({
   form,
   flat = false,
   refusal,
+  fieldNotices,
 }: {
   readonly sections: readonly RecordFormSection[];
   readonly form: ReturnType<typeof useRecordFormValues>;
@@ -99,7 +100,10 @@ export function RecordFormSections({
   readonly flat?: boolean;
   /** The fields the server refused on the last submit. */
   readonly refusal?: SubmitRefusal;
+  /** What each field says beside it for the values as they stand ({@link RecordFormProps.fieldNotices}). */
+  readonly fieldNotices?: RecordFormProps["fieldNotices"];
 }) {
+  const live = fieldNotices?.(form.values) ?? {};
   const fieldLabels = new Map(sections.flatMap((section) => section.fields).map((field) => [field.key, field.label]));
   const { t } = useTranslation(PACKAGE_NAMESPACE + "/features");
   const shownErrors = form.errorsShown ? Object.fromEntries(Object.entries(form.errors).map(([key, code]) => [key, t(`recordForm.errors.${code}`)])) : undefined;
@@ -115,7 +119,7 @@ export function RecordFormSections({
           {section.fields.filter((field) => fieldShown(field, form.values)).map((field) => (
             <RecordFieldView
               key={field.key}
-              field={field}
+              field={live[field.key] ? { ...field, hint: live[field.key] } : field}
               value={form.values[field.key]}
               onChange={(value) => form.set(field.key, value)}
               error={form.errorsShown ? form.errors[field.key] : undefined}
@@ -148,6 +152,12 @@ export interface RecordFormProps {
   readonly actions?: readonly RecordVerb[];
   /** What the form edits beyond its fields, drawn under them: a permission matrix, a list of rows. */
   readonly children?: ReactNode;
+  /**
+   * What the form says beside a field while it is being filled in, computed from the values as
+   * they stand (a rank another record already holds). It takes the field's hint line while it has
+   * something to say, so it sits where the reader is looking and leaves when the value changes.
+   */
+  readonly fieldNotices?: (values: Readonly<Record<string, unknown>>) => Readonly<Record<string, string | undefined>>;
 }
 
 /**
@@ -155,7 +165,7 @@ export interface RecordFormProps {
  * fields, the messages that explain them, and the finishing verbs. Required fields left empty are
  * marked when the reader tries to finish, and nothing is sent until they are filled.
  */
-export function RecordForm({ title, sections, notices, note, submitLabel, onSubmit, onCancel, actions = [], children }: RecordFormProps) {
+export function RecordForm({ title, sections, notices, note, submitLabel, onSubmit, onCancel, actions = [], children, fieldNotices }: RecordFormProps) {
   const { t: tUi } = useTranslation("simplix/ui");
   const { t } = useTranslation(PACKAGE_NAMESPACE + "/features");
   const form = useRecordFormValues(sections);
@@ -178,8 +188,11 @@ export function RecordForm({ title, sections, notices, note, submitLabel, onSubm
       .finally(() => setPending(false));
   };
   return (
+    // The form checks its own values and says why in the field and the summary, in the reader's
+    // language; the browser's constraint bubble would stop the submit first, in its own.
     <CrudForm
       variant="panel"
+      noValidate
       onSubmit={submit}
       onClose={onCancel}
       header={
@@ -212,7 +225,7 @@ export function RecordForm({ title, sections, notices, note, submitLabel, onSubm
     >
       {/* Notices come first: a reason the form cannot go through is read before any field is filled. */}
       <RecordNotices notices={refusal ? [{ key: "submit-refused", tone: "danger", title: t("recordForm.refused"), body: refusal.message }, ...(notices ?? [])] : notices} />
-      <RecordFormSections sections={sections} form={form} refusal={refusal} />
+      <RecordFormSections sections={sections} form={form} refusal={refusal} fieldNotices={fieldNotices} />
       {children}
       <RecordNote text={note} />
       <FormMore />
