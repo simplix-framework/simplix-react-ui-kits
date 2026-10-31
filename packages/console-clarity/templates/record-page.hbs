@@ -1,0 +1,24 @@
+/**
+ * @simplix-generated page/clarity-record-page
+ *
+ * One record on its own page, laid down from the console-clarity kit's `record-page.hbs`: the
+ * kit's record page, with the way back to the list it belongs to. The record (its head, tabs and
+ * sections) comes from `./page.blocks.tsx`; this file is rewritten while its fingerprint matches.
+ */
+import { useTranslation } from "@simplix-react/i18n/react";
+import { RecordPage } from "@simplix-react-ui-kits/console-clarity/page";
+
+import { usePageBlocks } from "./page.blocks";
+
+/** {{NamePascal}}: one record on its own page. */
+export function {{NamePascal}}Page() {
+  const { t } = useTranslation("{{namespace}}");
+  const blocks = usePageBlocks();
+  return (
+    <RecordPage
+      header={blocks.header ?? { title: t("{{nameCamel}}.title"), badges: [] }}
+      detail={blocks.detail ?? { title: t("{{nameCamel}}.title"), sections: [] }}
+      back={blocks.back}
+    />
+  );
+}

@@ -1,0 +1,29 @@
+/**
+ * @simplix-generated page/clarity-static-page
+ *
+ * A page of text and settings with no list, laid down from the console-clarity kit's
+ * `static-page.hbs`: the console page head and one body. What the page says goes in
+ * `./page.blocks.tsx`; this file is rewritten while its fingerprint matches.
+ */
+import { useTranslation } from "@simplix-react/i18n/react";
+import { ConsolePage } from "@simplix-react-ui-kits/console-clarity/page";
+
+import { usePageBlocks } from "./page.blocks";
+
+/** {{NamePascal}}: one page of content. */
+export function {{NamePascal}}Page() {
+  const { t } = useTranslation("{{namespace}}");
+  const blocks = usePageBlocks();
+  return (
+    <ConsolePage
+      spec={{ldb}}
+        title: t("{{nameCamel}}.title"),
+        description: t("{{nameCamel}}.description"),
+        actions: blocks.action,
+        notice: blocks.notice,
+        tabs: blocks.tabs,
+        body: blocks.body,
+      {{rdb}}
+    />
+  );
+}

@@ -1,0 +1,16 @@
+/**
+ * @simplix-generated page/clarity-error-page
+ *
+ * A failure page, laid down from the console-clarity kit's `error-page.hbs`: one of the kit's
+ * failure pages (not found by default), centred in the content column. Which failure and what it
+ * offers go in `./page.blocks.tsx`; this file is rewritten while its fingerprint matches.
+ */
+import { NotFoundPage } from "@simplix-react-ui-kits/console-clarity/error";
+
+import { usePageBlocks } from "./page.blocks";
+
+/** {{NamePascal}}: a failure page. */
+export function {{NamePascal}}Page() {
+  const blocks = usePageBlocks();
+  return blocks.page ?? <NotFoundPage />;
+}

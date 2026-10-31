@@ -1,0 +1,31 @@
+/**
+ * @simplix-generated page/clarity-dashboard-page
+ *
+ * A page of figures and panels, laid down from the console-clarity kit's `dashboard-page.hbs` the
+ * way the board's dashboard frame composes it: the console page head, then the dashboard columns.
+ * The figures and the cards go in `./page.blocks.tsx`; this file is rewritten while its
+ * fingerprint matches.
+ */
+import { useTranslation } from "@simplix-react/i18n/react";
+import { ConsolePage } from "@simplix-react-ui-kits/console-clarity/page";
+import { DashboardColumns } from "@simplix-react-ui-kits/console-clarity/dashboard";
+
+import { usePageBlocks } from "./page.blocks";
+
+/** {{NamePascal}}: figures and panels. */
+export function {{NamePascal}}Page() {
+  const { t } = useTranslation("{{namespace}}");
+  const blocks = usePageBlocks();
+  return (
+    <ConsolePage
+      spec={{ldb}}
+        title: t("{{nameCamel}}.title"),
+        description: t("{{nameCamel}}.description"),
+        actions: blocks.action,
+        tiles: blocks.tiles,
+        timeRange: blocks.timeRange,
+        body: <DashboardColumns>{blocks.panels}</DashboardColumns>,
+      {{rdb}}
+    />
+  );
+}

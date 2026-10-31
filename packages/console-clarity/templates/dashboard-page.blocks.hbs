@@ -1,0 +1,18 @@
+/**
+ * What `{{NamePascal}}Page` shows: its figure tiles, its period control and its cards
+ * (`DashboardCard` from `@simplix-react-ui-kits/console-clarity/dashboard`). Written by hand and
+ * never regenerated.
+ */
+import type { ReactNode } from "react";
+import type { PageSpec } from "@simplix-react-ui-kits/console-clarity/page";
+
+export interface PageBlocks {
+  readonly tiles?: PageSpec["tiles"];
+  readonly timeRange?: ReactNode;
+  readonly panels?: ReactNode;
+  readonly action?: ReactNode;
+}
+
+export function usePageBlocks(): PageBlocks {
+  return {};
+}

@@ -1,0 +1,115 @@
+/**
+ * @simplix-generated story/clarity-crud-page
+ *
+ * The board frame for {{EntityPascal}}, laid down from the console-clarity kit's
+ * `crud-page.stories.hbs` with the context the screen's own templates read, and rewritten while
+ * its fingerprint matches. Customise it to the frame the screen is measured against; once edited it
+ * is kept, and `simplix generated` lists it.
+ */
+import type { Meta, StoryObj } from "@storybook/react";
+import { useState } from "react";
+import { CrudPage, type ConsoleSearch } from "@simplix-react-ui-kits/console-clarity/page";
+import { RecordDetail, RecordList, useRecordContract, type ContractField } from "@simplix-react-ui-kits/console-clarity/entity";
+import { useOptionalTranslation } from "@simplix-react-ui-kits/console-clarity/i18n";
+import { useMockRecords } from "@simplix-react-ui-kits/console-clarity/mock";
+
+type Row = Readonly<Record<string, unknown>>;
+
+/** The fields a row carries, as the generated list draws them. */
+const COLUMN_FIELDS: readonly ContractField[] = [
+{{#each listFields}}
+{{#unless this.isI18nPair}}
+{{#unless this.baseFieldName}}
+{{#unless this.isSystemField}}
+{{#unless this.isReferenceName}}
+{{#unless this.isAuditField}}
+{{#unless this.isOpaqueId}}
+{{#unless this.hideInList}}
+{{#unless this.isIdentifier}}
+  { name: "{{this.name}}", kind: "{{this.contractKind}}"{{#if this.enumTypeName}}, enumName: "{{this.enumTypeName}}"{{/if}}{{#if this.options.length}}, options: [{{#each this.options}}"{{this}}"{{#unless @last}}, {{/unless}}{{/each}}]{{/if}}{{#if this.peekKind}}, peekKind: "{{this.peekKind}}"{{/if}}{{#if this.nameField}}, nameField: "{{this.nameField}}"{{/if}}{{#if (eq this.sortable true)}}, sortable: true{{/if}}{{#if (eq this.sortable false)}}, sortable: false{{/if}}{{#if this.isIdentifier}}, identifier: true{{/if}} },
+{{/unless}}
+{{/unless}}
+{{/unless}}
+{{/unless}}
+{{/unless}}
+{{/unless}}
+{{/unless}}
+{{/unless}}
+{{/each}}
+];
+
+/** The fields the record shows, as the generated detail draws them. */
+const DETAIL_FIELDS: readonly ContractField[] = [
+{{#each detailFields}}
+{{#unless this.isI18nPair}}
+{{#unless this.baseFieldName}}
+{{#unless this.isSystemField}}
+{{#unless this.isReferenceName}}
+{{#unless this.isAuditField}}
+{{#unless this.isOpaqueId}}
+  { name: "{{this.name}}", kind: "{{this.contractKind}}"{{#if this.enumTypeName}}, enumName: "{{this.enumTypeName}}"{{/if}}{{#if this.options.length}}, options: [{{#each this.options}}"{{this}}"{{#unless @last}}, {{/unless}}{{/each}}]{{/if}}{{#if this.peekKind}}, peekKind: "{{this.peekKind}}"{{/if}}{{#if this.nameField}}, nameField: "{{this.nameField}}"{{/if}}{{#if (eq this.sortable true)}}, sortable: true{{/if}}{{#if (eq this.sortable false)}}, sortable: false{{/if}}{{#if this.isIdentifier}}, identifier: true{{/if}} },
+{{/unless}}
+{{/unless}}
+{{/unless}}
+{{/unless}}
+{{/unless}}
+{{/unless}}
+{{/each}}
+];
+
+/** Sample rows, one value per field by its contract kind. */
+const ROWS: readonly Row[] = {{{fixtureRowsJson}}};
+
+const idOf = (row: Row) => String(row.{{rowIdField}});
+
+interface Args {
+  /** The record standing open when the story starts. */
+  readonly open?: string;
+}
+
+function Screen({ open }: Args) {
+  const { t } = useOptionalTranslation("entity/{{entity}}");
+  const records = useMockRecords(ROWS, idOf);
+  const [search, setSearch] = useState<ConsoleSearch>(open ? { id: open } : {});
+  const contract = useRecordContract("{{entity}}");
+  const columns = contract.columns<Row>(COLUMN_FIELDS);
+  return (
+    <CrudPage
+      spec={{ldb}} title: t("_plural") {{rdb}}
+      search={search}
+      onNavigate={setSearch}
+      renderList={(nav) => (
+        <RecordList<Row>
+          rows={records.rows}
+          rowId={idOf}
+          columns={columns}
+          activeRowId={nav.selectedId}
+          onRowClick={(row) => nav.showDetail(idOf(row))}
+        />
+      )}
+      renderDetail={(id, nav) => {
+        const row = records.find(id);
+        return (
+          <RecordDetail
+            title={row ? String(row.{{#if displayNameField}}{{displayNameField}}{{else}}{{rowIdField}}{{/if}} ?? id) : id}
+            sections={[{ key: "overview", fields: row ? DETAIL_FIELDS.map((field) => contract.detailField(field, row)) : [] }]}
+            onClose={nav.closePanel}
+          />
+        );
+      }}
+    />
+  );
+}
+
+const meta: Meta<typeof Screen> = {
+  title: "Generated/{{EntityPascal}}",
+  component: Screen,
+};
+export default meta;
+type Story = StoryObj<typeof Screen>;
+
+/** The list, nothing open. */
+export const List: Story = {};
+
+/** The first record open. */
+export const Record: Story = { args: { open: idOf(ROWS[0] ?? {}) } };

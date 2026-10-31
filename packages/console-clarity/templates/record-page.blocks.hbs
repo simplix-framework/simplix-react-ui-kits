@@ -1,0 +1,15 @@
+/**
+ * What `{{NamePascal}}Page` shows: the record's head and detail, read from its query, and the list
+ * the page goes back to. Written by hand and never regenerated.
+ */
+import type { PageBackTarget, RecordPageProps } from "@simplix-react-ui-kits/console-clarity/page";
+
+export interface PageBlocks {
+  readonly header?: RecordPageProps["header"];
+  readonly detail?: RecordPageProps["detail"];
+  readonly back: PageBackTarget;
+}
+
+export function usePageBlocks(): PageBlocks {
+  throw new Error("Not implemented: {{NamePascal}}Page names the list it goes back to and the record it reads");
+}

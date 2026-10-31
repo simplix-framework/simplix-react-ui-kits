@@ -1,0 +1,17 @@
+/**
+ * What `{{NamePascal}}Page` shows: its body, and its tabs where the page has sections. Written by
+ * hand and never regenerated.
+ */
+import type { ReactNode } from "react";
+import type { PageSpec } from "@simplix-react-ui-kits/console-clarity/page";
+
+export interface PageBlocks {
+  readonly body?: ReactNode;
+  readonly tabs?: PageSpec["tabs"];
+  readonly notice?: PageSpec["notice"];
+  readonly action?: ReactNode;
+}
+
+export function usePageBlocks(): PageBlocks {
+  return {};
+}

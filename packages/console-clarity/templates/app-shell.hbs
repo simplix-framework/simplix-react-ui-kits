@@ -1,0 +1,212 @@
+/**
+ * @simplix-generated page/clarity-app-shell
+ *
+ * The app's window, laid down once from the console-clarity kit's `app-shell.hbs` and owned by the
+ * app from then on. On a wide window: the top bar, the menu column (folding to a rail) and the
+ * routed screen beside it, and the status strip under them. On a phone: one screen at a time, the
+ * destinations marked as phone tabs along the bottom, and a menu sheet holding every group with
+ * the window-level controls. The menu, the brand, the top-bar controls and the account menu come
+ * from `./root-layout.blocks.tsx`; the screens reached without a session wear `AuthLayout`.
+ */
+import { Outlet, useRouterState } from "@tanstack/react-router";
+import { useState, type ReactNode } from "react";
+import { PanelLeftCloseIcon, PanelLeftOpenIcon } from "lucide-react";
+import { useTranslation } from "@simplix-react/i18n/react";
+import { Button, Flex, PageHeaderProvider, Popover, PopoverTrigger, Stack, usePageHeaderState } from "@simplix-react/ui";
+import { PeekHost } from "@simplix-react-ui-kits/console-clarity/peek";
+import { NoticeRegistryProvider } from "@simplix-react-ui-kits/console-clarity/notice";
+import {
+  AuthLayout,
+  ChromeControlRows,
+  ConsoleContentColumn,
+  ConsoleMenuBranch,
+  ConsoleMenuBranchRow,
+  ConsoleMenuColumn,
+  ConsoleMenuFlyout,
+  ConsoleMenuFold,
+  ConsoleMenuInactiveRow,
+  ConsoleMenuLinkRow,
+  ConsoleMenuRail,
+  ConsoleMenuRailButton,
+  ConsoleMenuSlot,
+  ConsolePhoneMenuSection,
+  ConsolePhoneMenuSheet,
+  ConsolePhoneShell,
+  ConsoleStatusStrip,
+  ConsoleTopBar,
+  type ConsolePhoneTab,
+  ConsoleWindow,
+  useConsoleOnAPhone,
+  useSidebarCollapse,
+} from "@simplix-react-ui-kits/console-clarity/shell";
+
+import { useShellBlocks, type ShellMenuEntry, type ShellMenuGroup } from "./root-layout.blocks";
+
+/** Picks the shell a screen wears: the sign-in shell outside the console, the window inside it. */
+export function RootLayout() {
+  // What the outlet renders, not where the router is heading: the previous route stays on screen
+  // until the next one loads.
+  const route = useRouterState({ select: (s) => s.matches[s.matches.length - 1]?.pathname ?? s.location.pathname });
+  const blocks = useShellBlocks();
+  if (blocks.isOutsideTheConsole(route)) return <AuthLayout />;
+  return (
+    <PeekHost>
+      <PageHeaderProvider>
+        <NoticeRegistryProvider>
+          {blocks.wrap(
+            useConsoleOnAPhone() ? (
+              <PhoneShell route={route}>
+                <Outlet />
+              </PhoneShell>
+            ) : (
+              <WindowShell route={route}>
+                <Outlet />
+              </WindowShell>
+            ),
+          )}
+        </NoticeRegistryProvider>
+      </PageHeaderProvider>
+    </PeekHost>
+  );
+}
+
+interface ShellProps {
+  readonly route: string;
+  readonly children: ReactNode;
+}
+
+function WindowShell({ route, children }: ShellProps) {
+  const { t } = useTranslation("{{namespace}}");
+  const blocks = useShellBlocks();
+  const { collapsed, toggle } = useSidebarCollapse(blocks.namespace);
+  return (
+    <ConsoleWindow>
+      <ConsoleTopBar {...blocks.topBar} mark={blocks.brand.mark} title={blocks.brand.title} badge={blocks.brand.badge} account={blocks.account} />
+      <Flex gap="none" flex overflow="hidden">
+        <ConsoleMenuSlot>
+          {collapsed ? (
+            <ConsoleMenuRail
+              label={t("shell.nav.rail")}
+              lead={
+                <Button variant="ghost" size="icon-sm" onClick={toggle} aria-label={t("shell.nav.expand")} title={t("shell.nav.expand")}>
+                  <PanelLeftOpenIcon />
+                </Button>
+              }
+            >
+              {blocks.menu.map((group) => (
+                <RailGroup key={group.key} group={group} route={route} />
+              ))}
+            </ConsoleMenuRail>
+          ) : (
+            <ConsoleMenuColumn
+              label={t("shell.nav.menu")}
+              title={blocks.menuTitle}
+              action={
+                <Button variant="ghost" size="icon-xs" onClick={toggle} aria-label={t("shell.nav.collapse")} title={t("shell.nav.collapse")}>
+                  <PanelLeftCloseIcon />
+                </Button>
+              }
+            >
+              {blocks.menu.map((group) => (
+                <ColumnGroup key={group.key} group={group} route={route} />
+              ))}
+            </ConsoleMenuColumn>
+          )}
+        </ConsoleMenuSlot>
+        <ConsoleContentColumn>{children}</ConsoleContentColumn>
+      </Flex>
+      {blocks.status ? <ConsoleStatusStrip {...blocks.status} /> : null}
+    </ConsoleWindow>
+  );
+}
+
+/** One group in the expanded column, open while the reader stands inside it. */
+function ColumnGroup({ group, route }: { readonly group: ShellMenuGroup; readonly route: string }) {
+  const [open, setOpen] = useState(() => group.entries.some((entry) => holds(entry, route)));
+  return (
+    <Stack gap="xs">
+      <ConsoleMenuBranchRow weight="cluster" icon={<group.icon aria-hidden />} label={group.label} open={open} onToggle={() => setOpen(!open)} />
+      <ConsoleMenuFold open={open}>
+        <ConsoleMenuBranch ruled>
+          {group.entries.map((entry) => (
+            <EntryRow key={entry.key} entry={entry} route={route} />
+          ))}
+        </ConsoleMenuBranch>
+      </ConsoleMenuFold>
+    </Stack>
+  );
+}
+
+/** One group on the rail: its mark, opening its rows beside the rail on hover or press. */
+function RailGroup({ group, route }: { readonly group: ShellMenuGroup; readonly route: string }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <ConsoleMenuRailButton active={group.entries.some((entry) => holds(entry, route))} label={group.label} onMouseEnter={() => setOpen(true)}>
+          <group.icon aria-hidden />
+        </ConsoleMenuRailButton>
+      </PopoverTrigger>
+      <ConsoleMenuFlyout title={group.label} onMouseLeave={() => setOpen(false)}>
+        {/* A press on a row leaves the screen under the flyout, so the flyout closes with it. */}
+        <Stack gap="xs" onClickCapture={() => setOpen(false)}>
+          {group.entries.map((entry) => (
+            <EntryRow key={entry.key} entry={entry} route={route} />
+          ))}
+        </Stack>
+      </ConsoleMenuFlyout>
+    </Popover>
+  );
+}
+
+/** A destination: a link where the screen exists, an inactive row naming why where it does not. */
+function EntryRow({ entry, route }: { readonly entry: ShellMenuEntry; readonly route: string }) {
+  if (!entry.href) {
+    return <ConsoleMenuInactiveRow icon={<entry.icon aria-hidden />} label={entry.label} aria-description={entry.inactiveReason} />;
+  }
+  return <ConsoleMenuLinkRow icon={<entry.icon aria-hidden />} label={entry.label} href={entry.href} current={holds(entry, route)} />;
+}
+
+function PhoneShell({ route, children }: ShellProps) {
+  const { t } = useTranslation("{{namespace}}");
+  const blocks = useShellBlocks();
+  const header = usePageHeaderState();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const entries = blocks.menu.flatMap((group) => group.entries);
+  const tabs: ConsolePhoneTab[] = entries.flatMap((entry) =>
+    entry.phoneTab && entry.href ? [{ key: entry.key, label: entry.label, icon: entry.phoneTab, to: entry.href }] : [],
+  );
+  tabs.push({ key: "menu", label: t("shell.nav.menu"), icon: "menu", onPress: () => setMenuOpen(true) });
+  const standing = entries.find((entry) => entry.phoneTab && holds(entry, route));
+  return (
+    <ConsolePhoneShell brand={blocks.brand.mark} title={header.title ?? blocks.brand.title} tabs={tabs} activeTab={menuOpen ? "menu" : (standing?.key ?? "")}>
+      <ConsoleContentColumn>{children}</ConsoleContentColumn>
+      <ConsolePhoneMenuSheet
+        open={menuOpen}
+        onOpenChange={setMenuOpen}
+        title={blocks.brand.title}
+        footer={
+          <>
+            <ConsolePhoneMenuSection title={t("shell.nav.settings")}>
+              <ChromeControlRows />
+            </ConsolePhoneMenuSection>
+            {blocks.phoneFooter}
+          </>
+        }
+      >
+        {blocks.menu.map((group) => (
+          <ConsolePhoneMenuSection key={group.key} title={group.label}>
+            {group.entries.map((entry) => (
+              <EntryRow key={entry.key} entry={entry} route={route} />
+            ))}
+          </ConsolePhoneMenuSection>
+        ))}
+      </ConsolePhoneMenuSheet>
+    </ConsolePhoneShell>
+  );
+}
+
+/** Whether the reader is on the destination or somewhere under it. */
+function holds(entry: ShellMenuEntry, route: string): boolean {
+  return entry.href !== undefined && (route === entry.href || route.startsWith(`${entry.href}/`));
+}
