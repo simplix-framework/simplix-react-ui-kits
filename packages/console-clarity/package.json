@@ -151,6 +151,20 @@
     "vitest": "catalog:"
   },
   "simplix": {
-    "templates": "templates"
+    "templates": "templates",
+    "fence": [
+      {
+        "name": "@simplix-react/ui",
+        "importNames": [
+          "CrudList",
+          "ListDetail",
+          "CrudDetail",
+          "CrudForm",
+          "useCrudPageState",
+          "useCrudNavigation"
+        ],
+        "message": "Screens compose the console kit's parts (CrudPage, RecordList, RecordDetail, RecordForm from @simplix-react-ui-kits/console-clarity), never the framework's screen-composition parts directly."
+      }
+    ]
   }
 }
