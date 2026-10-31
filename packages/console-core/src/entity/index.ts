@@ -53,5 +53,5 @@ export type { FieldErrorCode } from "./record-form-rules";
 export type { CheckPairValue, ChoiceDetailValue, FieldCommon, FieldEvidence, RangeValue, RecordFormFieldKind, RecordRowColumn, SignatureActing, SignatureValue, VerdictChoice, VerdictValue } from "./record-form-types";
 export { CONTRACT_COLUMN_SIZE, enumValueOf, fieldEnumsOf, groupedNumber, useRecordContract, valueAtPath } from "./record-contract";
 export { useScreenWords, type ScreenWords } from "./screen-words";
-export { permissionOf, useAllowed, type OperationAccess } from "./allowed";
+export { decideAccess, permissionOf, useAllowed, type OperationAccess, type PermissionTerm } from "./allowed";
 export type { ContractField, ContractFilter, ContractFieldKind, ContractOverrides } from "./record-contract";

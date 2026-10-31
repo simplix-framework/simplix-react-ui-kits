@@ -1,28 +1,71 @@
-import { useCan } from "@simplix-react/access/react";
+import { useCanWith } from "@simplix-react/access/react";
 
-/** What an operation requires of the caller, in the shape SimpliX Meta's access output states it. */
+/** One `hasPermission('<group>', '<action>')` term of an access expression. */
+export interface PermissionTerm {
+  readonly group: string;
+  readonly action: string;
+}
+
+/**
+ * What an operation requires of the caller, in the shape SimpliX Meta's access output states it.
+ *
+ * <p>An expression that is a flat chain of one `operator` also carries its `permissions` terms and
+ * `residual` when a term only the server can decide (a bean call) is left over. Without them the
+ * expression is opaque here.
+ */
 export type OperationAccess =
   | { readonly kind: "permission"; readonly group: string; readonly action: string }
   | { readonly kind: "authenticated" }
   | { readonly kind: "public" }
-  | { readonly kind: "expression"; readonly raw: string };
+  | {
+      readonly kind: "expression";
+      readonly raw: string;
+      readonly operator?: "or" | "and";
+      readonly permissions?: ReadonlyArray<PermissionTerm>;
+      readonly residual?: boolean;
+    };
 
-const HAS_PERMISSION = /hasPermission\(\s*'([^']+)'\s*,\s*'([^']+)'\s*\)/;
+type Can = (action: string, subject: string) => boolean;
 
 /**
- * The permission an operation's rule names, or `undefined` where it names none.
+ * Whether a control leading to the operation is drawn, deciding only what can be decided here.
  *
- * <p>An expression rule is read for its first `hasPermission('<group>', '<action>')` term: an
- * expression that also admits the record's owner admits every holder of that permission, so the
- * term is the floor a control can be gated on. An expression with no such term gates nothing here;
- * the server still refuses the call.
+ * <ul>
+ *   <li>An `or` chain is allowed when one of its permission terms holds. When none holds and a
+ *   residual term is left (an ownership check, say), the control is drawn and the server decides,
+ *   because that term may grant it and hiding a verb the reader is granted is the worse failure.</li>
+ *   <li>An `and` chain needs every permission term; a residual term there can only narrow, and the
+ *   server decides it.</li>
+ *   <li>An expression without terms is opaque: the control is drawn and the server decides.</li>
+ * </ul>
  */
-export function permissionOf(rule: OperationAccess | undefined): { readonly group: string; readonly action: string } | undefined {
+export function decideAccess(rule: OperationAccess | undefined, can: Can): boolean {
+  if (!rule) return true;
+  if (rule.kind === "permission") return can(rule.action, rule.group);
+  if (rule.kind !== "expression") return true;
+  const terms = rule.permissions ?? [];
+  if (rule.operator === "or") {
+    return terms.some((term) => can(term.action, term.group)) || rule.residual !== false;
+  }
+  if (rule.operator === "and") return terms.every((term) => can(term.action, term.group));
+  return true;
+}
+
+/**
+ * The one permission a route can be guarded on, or `undefined` where the rule names none.
+ *
+ * <p>Only a rule that stands or falls with a single permission names one: the permission itself,
+ * an `and` chain's sole term, or an `or` chain whose sole term has nothing beside it. An `or` chain
+ * with a residual term may admit a reader without the permission, so it guards nothing here.
+ */
+export function permissionOf(rule: OperationAccess | undefined): PermissionTerm | undefined {
   if (!rule) return undefined;
   if (rule.kind === "permission") return { group: rule.group, action: rule.action };
   if (rule.kind !== "expression") return undefined;
-  const match = HAS_PERMISSION.exec(rule.raw);
-  return match ? { group: match[1] ?? "", action: match[2] ?? "" } : undefined;
+  const terms = rule.permissions ?? [];
+  if (terms.length !== 1) return undefined;
+  if (rule.operator === "and" || (rule.operator === "or" && rule.residual === false)) return terms[0];
+  return undefined;
 }
 
 /**
@@ -31,7 +74,5 @@ export function permissionOf(rule: OperationAccess | undefined): { readonly grou
  * the server enforces and never on a group typed into the screen.
  */
 export function useAllowed(rule: OperationAccess | undefined): boolean {
-  const permission = permissionOf(rule);
-  const allowed = useCan(permission?.action ?? "view", permission?.group ?? "");
-  return permission ? allowed : true;
+  return useCanWith((can) => decideAccess(rule, can));
 }
