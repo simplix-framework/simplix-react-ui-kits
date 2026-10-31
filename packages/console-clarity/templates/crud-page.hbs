@@ -71,7 +71,7 @@ export function {{EntityPascal}}CrudPage({ search, onNavigate }: {{EntityPascal}
             actions={[
               { type: "view", label: words.view, onClick: (row) => nav.showDetail(String(row.{{rowIdField}})) },
 {{#if hasUpdate}}
-              ...(canEdit ? [{ type: "edit" as const, label: words.edit, onClick: (row: {{EntityPascal}}Row) => nav.showEdit(String(row.{{rowIdField}})) }] : []),
+              ...(canEdit ? [{ type: "edit" as const, label: words.edit, disabled: blocks.editDisabled, onClick: (row: {{EntityPascal}}Row) => nav.showEdit(String(row.{{rowIdField}})) }] : []),
 {{/if}}
               ...(blocks.rowActions?.(nav) ?? []),
 {{#if hasDelete}}
