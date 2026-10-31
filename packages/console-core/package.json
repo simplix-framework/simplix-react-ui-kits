@@ -13,97 +13,97 @@
   "exports": {
     "./api": {
       "source": "./src/api/index.ts",
-      "types": "./dist/api/index.d.ts",
+      "types": "./src/api/index.ts",
       "import": "./dist/api/index.js"
     },
     "./attachment": {
       "source": "./src/attachment/index.ts",
-      "types": "./dist/attachment/index.d.ts",
+      "types": "./src/attachment/index.ts",
       "import": "./dist/attachment/index.js"
     },
     "./badge": {
       "source": "./src/badge/index.tsx",
-      "types": "./dist/badge/index.d.ts",
+      "types": "./src/badge/index.tsx",
       "import": "./dist/badge/index.js"
     },
     "./clipboard": {
       "source": "./src/clipboard/index.ts",
-      "types": "./dist/clipboard/index.d.ts",
+      "types": "./src/clipboard/index.ts",
       "import": "./dist/clipboard/index.js"
     },
     "./clipboard/fallback": {
       "source": "./src/clipboard/fallback.ts",
-      "types": "./dist/clipboard/fallback.d.ts",
+      "types": "./src/clipboard/fallback.ts",
       "import": "./dist/clipboard/fallback.js"
     },
     "./dashboard": {
       "source": "./src/dashboard/index.ts",
-      "types": "./dist/dashboard/index.d.ts",
+      "types": "./src/dashboard/index.ts",
       "import": "./dist/dashboard/index.js"
     },
     "./datetime": {
       "source": "./src/datetime/index.ts",
-      "types": "./dist/datetime/index.d.ts",
+      "types": "./src/datetime/index.ts",
       "import": "./dist/datetime/index.js"
     },
     "./entity": {
       "source": "./src/entity/index.ts",
-      "types": "./dist/entity/index.d.ts",
+      "types": "./src/entity/index.ts",
       "import": "./dist/entity/index.js"
     },
     "./error": {
       "source": "./src/error/index.ts",
-      "types": "./dist/error/index.d.ts",
+      "types": "./src/error/index.ts",
       "import": "./dist/error/index.js"
     },
     "./i18n": {
       "source": "./src/i18n/index.ts",
-      "types": "./dist/i18n/index.d.ts",
+      "types": "./src/i18n/index.ts",
       "import": "./dist/i18n/index.js"
     },
     "./identity": {
       "source": "./src/identity/index.ts",
-      "types": "./dist/identity/index.d.ts",
+      "types": "./src/identity/index.ts",
       "import": "./dist/identity/index.js"
     },
     "./layout": {
       "source": "./src/layout/index.ts",
-      "types": "./dist/layout/index.d.ts",
+      "types": "./src/layout/index.ts",
       "import": "./dist/layout/index.js"
     },
     "./manual": {
       "source": "./src/manual/index.ts",
-      "types": "./dist/manual/index.d.ts",
+      "types": "./src/manual/index.ts",
       "import": "./dist/manual/index.js"
     },
     "./mock": {
       "source": "./src/mock/index.ts",
-      "types": "./dist/mock/index.d.ts",
+      "types": "./src/mock/index.ts",
       "import": "./dist/mock/index.js"
     },
     "./notice": {
       "source": "./src/notice/index.ts",
-      "types": "./dist/notice/index.d.ts",
+      "types": "./src/notice/index.ts",
       "import": "./dist/notice/index.js"
     },
     "./page": {
       "source": "./src/page/index.ts",
-      "types": "./dist/page/index.d.ts",
+      "types": "./src/page/index.ts",
       "import": "./dist/page/index.js"
     },
     "./peek": {
       "source": "./src/peek/index.ts",
-      "types": "./dist/peek/index.d.ts",
+      "types": "./src/peek/index.ts",
       "import": "./dist/peek/index.js"
     },
     "./screen": {
       "source": "./src/screen/index.ts",
-      "types": "./dist/screen/index.d.ts",
+      "types": "./src/screen/index.ts",
       "import": "./dist/screen/index.js"
     },
     "./shell": {
       "source": "./src/shell/index.ts",
-      "types": "./dist/shell/index.d.ts",
+      "types": "./src/shell/index.ts",
       "import": "./dist/shell/index.js"
     },
     "./styles/*": "./src/styles/*"
