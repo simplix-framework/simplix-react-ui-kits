@@ -79,7 +79,7 @@ export function {{EntityPascal}}CrudPage({ search, onNavigate }: {{EntityPascal}
 {{/if}}
               ...(blocks.rowActions?.(nav) ?? []),
 {{#if hasDelete}}
-              ...(canDelete ? [{ type: "delete" as const, label: words.delete, onClick: (row: {{EntityPascal}}Row) => requestDelete({ id: String(row.{{rowIdField}}), name: nameOf(row) }) }] : []),
+              ...(canDelete ? [{ type: "delete" as const, label: words.delete, disabled: blocks.deleteDisabled, onClick: (row: {{EntityPascal}}Row) => requestDelete({ id: String(row.{{rowIdField}}), name: nameOf(row) }) }] : []),
 {{/if}}
             ]}
             {...blocks.listProps?.(nav)}

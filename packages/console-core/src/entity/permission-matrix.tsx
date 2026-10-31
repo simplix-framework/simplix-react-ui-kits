@@ -1,13 +1,21 @@
 import { CheckIcon } from "lucide-react";
-import { Checkbox, EmptyValue, Flex, StatusBadge, Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@simplix-react/ui";
+import { Checkbox, EmptyValue, Flex, StatusBadge, Text, Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@simplix-react/ui";
 
 import { SizedHead } from "../layout/sized-head";
 import { TableCard } from "../layout/table-card";
 import { permissionCheckStyle } from "./permission-matrix.style";
 import { slotAttributes } from "@simplix-react/ui/design";
 
-/** One cell: granted, not granted, or granted with a limit the cell names. */
-export type PermissionCell = { readonly state: "on" } | { readonly state: "off" } | { readonly state: "limited"; readonly label: string };
+/**
+ * One cell: granted, not granted, granted with a limit the cell names, or `none`: a cell that
+ * cannot be granted at all (nothing behind it carries the action), drawn as its `mark` and never
+ * offered as a checkbox, so an edit cannot ask for what the server has no row to hold.
+ */
+export type PermissionCell =
+  | { readonly state: "on" }
+  | { readonly state: "off" }
+  | { readonly state: "limited"; readonly label: string }
+  | { readonly state: "none"; readonly mark: string; readonly label?: string };
 
 /** Props for {@link PermissionMatrix}. */
 export interface PermissionMatrixProps {
@@ -48,7 +56,11 @@ export function PermissionMatrix({ corner, columns, rows, onToggle }: Permission
               <TableCell>{row.label}</TableCell>
               {row.cells.map((cell, index) => (
                 <TableCell key={`${row.key}-${columns[index]}`}>
-                  {onToggle ? (
+                  {cell.state === "none" ? (
+                    <Text as="span" size="sm" tone="muted" aria-label={cell.label}>
+                      {cell.mark}
+                    </Text>
+                  ) : onToggle ? (
                     <Flex align="center" gap="xs">
                       <Checkbox
                         checked={cell.state !== "off"}

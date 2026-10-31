@@ -362,7 +362,7 @@ function Content({ content, count }: { readonly content: RecordTabContent; reado
       {content.matrix ? (
         <Stack gap="xs">
           {content.matrix.title ? <Heading level={5}>{content.matrix.title}</Heading> : null}
-          <PermissionMatrix corner={content.matrix.corner} columns={content.matrix.columns} rows={content.matrix.rows} />
+          <PermissionMatrix corner={content.matrix.corner} columns={content.matrix.columns} rows={content.matrix.rows} onToggle={content.matrix.onToggle} />
         </Stack>
       ) : null}
       <Sections sections={content.afterSections} />

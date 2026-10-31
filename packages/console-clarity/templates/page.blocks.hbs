@@ -15,6 +15,8 @@ export interface PageBlocks {
   readonly listProps?: (nav: CrudPageNavigation) => Partial<{{EntityPascal}}ListProps>;
   /** Row actions of this screen's own, drawn between the generated edit and delete. */
   readonly rowActions?: (nav: CrudPageNavigation) => readonly RecordAction<{{EntityPascal}}Row>[];
+  /** Why a row cannot be deleted (a record the server refuses to remove), drawn on the generated delete. */
+  readonly deleteDisabled?: (row: {{EntityPascal}}Row) => string | false | undefined;
   readonly detailProps?: (id: string, nav: CrudPageNavigation) => Partial<{{EntityPascal}}DetailProps>;
   readonly detailWidth?: DetailWidth;
   readonly dialogs?: ReactNode;
