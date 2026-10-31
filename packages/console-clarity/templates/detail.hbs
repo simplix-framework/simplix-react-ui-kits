@@ -4,14 +4,14 @@
  * Laid down from the console-clarity kit's `detail.hbs` and rewritten while its fingerprint
  * matches. Tabs, verbs, notices and fields this record departs in go in `./detail.blocks.tsx`.
  */
-import { RecordDetail, useRecordContract, useScreenWords, type ContractField, {{#if statusField}}type RecordBadge, {{/if}}type RecordField, type RecordTab{{#if statusField}}, type RecordValue{{/if}} } from "@simplix-react-ui-kits/console-clarity/entity";
+import { RecordDetail, useAllowed, useRecordContract, useScreenWords, type ContractField, {{#if statusField}}type RecordBadge, {{/if}}type RecordField, type RecordTab{{#if statusField}}, type RecordValue{{/if}} } from "@simplix-react-ui-kits/console-clarity/entity";
 {{#if holders.length}}
 import { adaptForcedList, forcedScope, useCrudList } from "@simplix-react/ui";
 {{/if}}
 
 import { {{hookGet}} } from "{{packageName}}";
 {{#each holders}}
-import { {{this.hookList}} } from "{{this.packageName}}";
+import { {{this.accessList}}, {{this.hookList}} } from "{{this.packageName}}";
 {{/each}}
 import { useDetailBlocks } from "./detail.blocks";
 
@@ -96,7 +96,9 @@ export function {{EntityPascal}}Detail(props: {{EntityPascal}}DetailProps) {
   // Grows with the records that hold this one, so it is a list with its own search and pager,
   // forced to this record's key rather than narrowed by a filter the reader could clear.
   const holder{{@index}}Forced = { "{{this.filterKey}}": props.{{../entity}}Id };
-  const holder{{@index}}List = useCrudList<Readonly<Record<string, unknown>>>(adaptForcedList({{this.hookList}}, holder{{@index}}Forced), {
+  // Asked only of a reader the holder's list rule admits, so nobody meets a refused read (frontend invariant #61).
+  const holder{{@index}}Allowed = useAllowed({{this.accessList}});
+  const holder{{@index}}List = useCrudList<Readonly<Record<string, unknown>>>(adaptForcedList({{this.hookList}}, holder{{@index}}Forced, { queryOptions: { enabled: holder{{@index}}Allowed } }), {
     scopeKey: forcedScope(holder{{@index}}Forced),
     stateMode: "server",
     defaultPageSize: 20,
@@ -108,7 +110,7 @@ export function {{EntityPascal}}Detail(props: {{EntityPascal}}DetailProps) {
   const generatedTabs: RecordTab[] = [
     { key: "overview", label: words.overview, sections: [{ key: "overview", fields: generated }] },
 {{#each holders}}
-    {
+    ...(holder{{@index}}Allowed ? [{
       key: "{{this.key}}",
       label: holder{{@index}}Words.plural,
       count: holder{{@index}}List.pagination.total,
@@ -118,7 +120,7 @@ export function {{EntityPascal}}Detail(props: {{EntityPascal}}DetailProps) {
         columns: holder{{@index}}Contract.columns<Readonly<Record<string, unknown>>>({{this.EntityPascal}}HolderFields_{{@index}}),
         empty: { title: holder{{@index}}Words.emptyTitle },
       },
-    },
+    }] : []),
 {{/each}}
   ];
   const tabs = typeof blocks.tabs === "function" ? blocks.tabs(generatedTabs) : blocks.tabs ?? generatedTabs;
