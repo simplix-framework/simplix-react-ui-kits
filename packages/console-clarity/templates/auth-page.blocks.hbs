@@ -1,0 +1,18 @@
+/**
+ * What `{{NamePascal}}Page` shows: the messages it opens with, its body and the links under it.
+ * Written by hand and never regenerated.
+ */
+import type { ReactNode } from "react";
+
+export interface PageBlocks {
+  /** Replaces the panel's heading where it depends on the page's state. */
+  readonly title?: string;
+  readonly description?: ReactNode;
+  readonly notices?: ReactNode;
+  readonly body?: ReactNode;
+  readonly foot?: ReactNode;
+}
+
+export function usePageBlocks(): PageBlocks {
+  return {};
+}

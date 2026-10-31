@@ -83,6 +83,7 @@ export {
   type ConsoleMenuRailProps,
 } from "./menu-tree";
 export { AuthLayout } from "./auth-layout";
+export { AuthCard, type AuthCardProps } from "./auth-card";
 export { ConsolePageHeader } from "./page-header";
 export {
   ConsolePhoneMenuSection,

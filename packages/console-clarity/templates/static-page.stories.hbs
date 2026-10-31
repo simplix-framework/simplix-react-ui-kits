@@ -1,0 +1,34 @@
+/**
+ * @simplix-generated story/clarity-static-page
+ *
+ * The board frame for {{NamePascal}}Page, laid down from the console-clarity kit's
+ * `static-page.stories.hbs` with the page's own context, and rewritten while its fingerprint
+ * matches. Customise it to the frame the page is measured against; once edited it is kept, and
+ * `simplix generated` lists it.
+ */
+import type { Meta, StoryObj } from "@storybook/react";
+import { useState } from "react";
+import { useTranslation } from "@simplix-react/i18n/react";
+import { ConsolePage, type ConsoleSearch } from "@simplix-react-ui-kits/console-clarity/page";
+
+function Screen() {
+  const { t } = useTranslation("{{namespace}}");
+  const [search, setSearch] = useState<ConsoleSearch>({});
+  return (
+    <ConsolePage
+      spec={{ldb}} title: t("{{nameCamel}}.title"), description: t("{{nameCamel}}.description") {{rdb}}
+      search={search}
+      onNavigate={setSearch}
+    />
+  );
+}
+
+const meta: Meta<typeof Screen> = {
+  title: "Generated/{{storyTitle}}",
+  component: Screen,
+};
+export default meta;
+type Story = StoryObj<typeof Screen>;
+
+/** The page as it opens. */
+export const Page: Story = {};

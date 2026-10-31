@@ -1,0 +1,28 @@
+/**
+ * @simplix-generated page/clarity-auth-page
+ *
+ * A page reached before there is a session (signing in, finishing a sign-in), laid down from the
+ * console-clarity kit's `auth-page.hbs`: the kit's sign-in panel inside the app's sign-in shell.
+ * What the panel says and does goes in `./page.blocks.tsx`; this file is rewritten while its
+ * fingerprint matches.
+ */
+import { useTranslation } from "@simplix-react/i18n/react";
+import { AuthCard } from "@simplix-react-ui-kits/console-clarity/shell";
+
+import { usePageBlocks } from "./page.blocks";
+
+/** {{NamePascal}}: one sign-in panel. */
+export function {{NamePascal}}Page() {
+  const { t } = useTranslation("{{namespace}}");
+  const blocks = usePageBlocks();
+  return (
+    <AuthCard
+      title={blocks.title ?? t("{{nameCamel}}.title")}
+      description={blocks.description}
+      notices={blocks.notices}
+      foot={blocks.foot}
+    >
+      {blocks.body}
+    </AuthCard>
+  );
+}

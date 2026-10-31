@@ -6,6 +6,10 @@ import type { ReactNode } from "react";
 import type { PageSpec } from "@simplix-react-ui-kits/console-clarity/page";
 
 export interface PageBlocks {
+  /** Replaces the page's description where it is the record's own (whose page it is). */
+  readonly description?: PageSpec["description"];
+  /** Stands in the place of the tabs when what fills them could not be read. */
+  readonly fallback?: PageSpec["fallback"];
   readonly body?: ReactNode;
   readonly tabs?: PageSpec["tabs"];
   readonly notice?: PageSpec["notice"];

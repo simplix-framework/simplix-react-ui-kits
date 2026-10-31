@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { Outlet } from "@tanstack/react-router";
 import { Flex, Stack } from "@simplix-react/ui";
 
@@ -14,10 +15,12 @@ import { partAttributes, slotAttributes } from "@simplix-react/ui/design";
  * shells do: somebody typing a password needs to see whose server is asking for it before they
  * type it.
  *
- * <p>One implementation rather than one per app — three copies of a sign-in shell drift the first
+ * <p>One implementation rather than one per app: three copies of a sign-in shell drift the first
  * time one of them is restyled, and the operator who signs into two of them sees two products.
+ *
+ * <p>Draws the route's page, or `children` where there is no router (a design reference frame).
  */
-export function AuthLayout() {
+export function AuthLayout({ children }: { readonly children?: ReactNode } = {}) {
   const brand = useConsoleBrand();
   return (
     <Flex
@@ -33,7 +36,7 @@ export function AuthLayout() {
       <Stack gap="md" className="w-full max-w-sm">
         {/* The mark sits centred over the form whatever the product hands in. */}
         <span {...slotAttributes(authBrandStyle, {})}>{brand}</span>
-        <Outlet />
+        {children ?? <Outlet />}
       </Stack>
     </Flex>
   );

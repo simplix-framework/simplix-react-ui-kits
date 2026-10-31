@@ -6,24 +6,36 @@
  * `./page.blocks.tsx`; this file is rewritten while its fingerprint matches.
  */
 import { useTranslation } from "@simplix-react/i18n/react";
-import { ConsolePage } from "@simplix-react-ui-kits/console-clarity/page";
+import { ConsolePage, type ConsoleSearch } from "@simplix-react-ui-kits/console-clarity/page";
 
 import { usePageBlocks } from "./page.blocks";
 
+/** Props for {@link {{NamePascal}}Page}: the address the route holds, where the open tab is kept. */
+export interface {{NamePascal}}PageProps {
+  readonly search?: ConsoleSearch;
+  /** Moves the address, which is how a tab press opens that tab. */
+  readonly onNavigate?: (search: ConsoleSearch) => void;
+}
+
 /** {{NamePascal}}: one page of content. */
-export function {{NamePascal}}Page() {
+export function {{NamePascal}}Page({ search, onNavigate }: {{NamePascal}}PageProps = {}) {
   const { t } = useTranslation("{{namespace}}");
   const blocks = usePageBlocks();
   return (
     <ConsolePage
       spec={{ldb}}
         title: t("{{nameCamel}}.title"),
-        description: t("{{nameCamel}}.description"),
+        description: blocks.description ?? t("{{nameCamel}}.description"),
+        // A page of text and settings is as tall as it is, and the page scrolls.
+        layout: "flow",
+        fallback: blocks.fallback,
         actions: blocks.action,
         notice: blocks.notice,
         tabs: blocks.tabs,
         body: blocks.body,
       {{rdb}}
+      search={search}
+      onNavigate={onNavigate}
     />
   );
 }
