@@ -27,7 +27,9 @@ const {{EntityPascal}}FormFields: readonly ContractField[] = [
 {{#unless this.isReferenceName}}
 {{#unless this.isAuditField}}
 {{#unless this.readOnly}}
+{{#unless (eq this.name @root.formOrderField)}}
   { name: "{{this.name}}", kind: "{{this.contractKind}}"{{#if this.enumTypeName}}, enumName: "{{this.enumTypeName}}"{{/if}}{{#if this.options.length}}, options: [{{#each this.options}}"{{this}}"{{#unless @last}}, {{/unless}}{{/each}}]{{/if}}{{#if this.peekKind}}, peekKind: "{{this.peekKind}}"{{/if}}{{#if this.nameField}}, nameField: "{{this.nameField}}"{{/if}}{{#if (eq this.sortable true)}}, sortable: true{{/if}}{{#if (eq this.sortable false)}}, sortable: false{{/if}}{{#if this.baseFieldName}}, plainField: "{{this.baseFieldName}}"{{/if}}{{#if (eq this.formComponent "I18nTextareaField")}}, multiline: true{{/if}} },
+{{/unless}}
 {{/unless}}
 {{/unless}}
 {{/unless}}
@@ -92,7 +94,12 @@ export function {{EntityPascal}}Form(props: {{EntityPascal}}FormProps) {
       onSubmit={async (values) => {
         const contracted = contract.request({{EntityPascal}}FormFields, values);
         const written = blocks.toRequest ? blocks.toRequest(contracted, row) : contracted;
+{{#if formOrderField}}
+        // The list's drag sets the order, so a new record starts first and an edit keeps its place.
+        const body = editing && row ? { ...row, ...written } : { {{formOrderField}}: 0, ...written };
+{{else}}
         const body = editing && row ? { ...row, ...written } : written;
+{{/if}}
 {{#if hasUpdate}}
         if (editing && props.{{entity}}Id) await update.mutateAsync({ {{#if updatePathParam}}{{updatePathParam}}{{else}}id{{/if}}: props.{{entity}}Id, data: body } as never);
         else await create.mutateAsync({ data: body } as never);
