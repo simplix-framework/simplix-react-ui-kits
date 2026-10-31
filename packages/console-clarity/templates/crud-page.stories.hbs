@@ -76,7 +76,7 @@ function Screen({ open }: Args) {
   const columns = contract.columns<Row>(COLUMN_FIELDS);
   return (
     <CrudPage
-      spec={{ldb}} title: words.plural{{#if hasCreate}}, actions: <PageAction kind="add" label={words.add} onClick={() => setSearch({ mode: "new" })} />{{/if}} {{rdb}}
+      spec={{ldb}} title: words.plural, description: words.description{{#if hasCreate}}, actions: <PageAction kind="add" label={words.add} onClick={() => setSearch({ mode: "new" })} />{{/if}} {{rdb}}
       search={search}
       onNavigate={setSearch}
       {...presentation}
