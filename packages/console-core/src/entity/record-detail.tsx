@@ -176,11 +176,13 @@ function Sections({ sections }: { readonly sections?: readonly RecordSection[] }
     <>
       {sections.map((section) => (
         <CrudDetail.Section key={section.key} title={section.title} variant="flat" layout="two-column">
-          {section.fields.map((field) =>
+          {section.fields.map((field, index) =>
+            // The position is part of the key: two rows may carry the same label (one per session
+            // of the same application), and a repeated key draws neither of them reliably.
             field.copy && typeof field.value === "string" ? (
-              <CopyableDetailField key={field.label} label={field.label} layout="inline" value={field.value} className={field.wide ? "col-span-full" : undefined} />
+              <CopyableDetailField key={`${index}:${field.label}`} label={field.label} layout="inline" value={field.value} className={field.wide ? "col-span-full" : undefined} />
             ) : (
-              <DetailFieldWrapper key={field.label} label={field.label} layout="inline" className={field.wide ? "col-span-full" : undefined}>
+              <DetailFieldWrapper key={`${index}:${field.label}`} label={field.label} layout="inline" className={field.wide ? "col-span-full" : undefined}>
                 <RecordValueView value={field.value} />
               </DetailFieldWrapper>
             ),
@@ -323,7 +325,19 @@ function holdsContent(content: RecordTabContent): boolean {
   );
 }
 
-function Content({ content, count }: { readonly content: RecordTabContent; readonly count?: number }): ReactNode {
+/**
+ * What a tab holds, drawn top to bottom with no record around it: the page of a screen that reads
+ * one record's tab (an account's own sign-in activity) draws the same content the detail panel
+ * does, from the same {@link RecordTabContent}, instead of composing the sections and the list
+ * again.
+ *
+ * <p>Where `content.empty` is set and the tab holds nothing else, it is drawn in place of an empty
+ * list or a blank column.
+ *
+ * @param content what the tab holds
+ * @param count the total the tab's label counts, which decides whether its list is drawn compact or full
+ */
+export function RecordTabBody({ content, count }: { readonly content: RecordTabContent; readonly count?: number }): ReactNode {
   if (content.empty && !holdsContent(content)) {
     const action = content.empty.action;
     return (
@@ -425,7 +439,7 @@ export function RecordDetail({
     <Stack gap="sm">
       {tabsTrailing ? <Flex justify="end">{tabsTrailing}</Flex> : null}
       {verbsInFooter ? null : <RecordVerbs verbs={only.verbs} end />}
-      <Content content={only} count={only.count} />
+      <RecordTabBody content={only} count={only.count} />
     </Stack>
   ) : tabs && tabs.length > 0 ? (
     <Tabs value={openTab} onValueChange={setOpenTab}>
@@ -449,7 +463,7 @@ export function RecordDetail({
         >
           <Stack gap="sm">
             {verbsInFooter ? null : <RecordVerbs verbs={tab.verbs} end />}
-            <Content content={tab} count={tab.count} />
+            <RecordTabBody content={tab} count={tab.count} />
           </Stack>
         </TabsContent>
       ))}
@@ -457,7 +471,7 @@ export function RecordDetail({
   ) : (
     <Stack gap="sm">
       {tabsTrailing ? <Flex justify="end">{tabsTrailing}</Flex> : null}
-      <Content content={{ sections, notices, note }} />
+      <RecordTabBody content={{ sections, notices, note }} />
     </Stack>
   );
 
