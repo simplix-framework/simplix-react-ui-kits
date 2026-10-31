@@ -9,6 +9,11 @@ export interface ScreenWords {
   readonly label: string;
   /** The entity's name, plural (`entity/<entity>` `_plural`): the page title. */
   readonly plural: string;
+  /**
+   * What the screen is for, in one sentence (`entity/<entity>` `_description`): the page header's
+   * description. Absent while SimpliX Meta states none, so a header never draws the bare key.
+   */
+  readonly description: string | undefined;
   readonly view: string;
   readonly edit: string;
   readonly save: string;
@@ -50,6 +55,7 @@ export function useScreenWords(entity: string): ScreenWords {
     return {
       label,
       plural,
+      description: statedOrNothing(name("_description"), "_description"),
       view: t("screen.view"),
       edit: t("screen.edit"),
       overview: t("screen.overview"),
@@ -66,4 +72,10 @@ export function useScreenWords(entity: string): ScreenWords {
       readFailed: t("screen.readFailed"),
     };
   }, [name, t]);
+}
+
+/** A catalog answer, or nothing when the catalog has no entry and answered with the key itself. */
+export function statedOrNothing(text: string, key: string): string | undefined {
+  const trimmed = text.trim();
+  return trimmed === "" || trimmed === key || trimmed.endsWith(`.${key}`) || trimmed.endsWith(`:${key}`) ? undefined : text;
 }

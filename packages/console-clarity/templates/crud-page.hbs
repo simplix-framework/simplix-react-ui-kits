@@ -58,7 +58,7 @@ export function {{EntityPascal}}CrudPage({ search, onNavigate }: {{EntityPascal}
   return (
     <>
       <CrudPage
-        spec={{ldb}} title: words.plural{{#if hasCreate}}, actions: canCreate ? <PageAction kind="add" label={words.add} onClick={() => onNavigate({ ...search, mode: "new", id: undefined })} /> : undefined{{/if}}, ...blocks.spec {{rdb}}
+        spec={{ldb}} title: words.plural, description: words.description{{#if hasCreate}}, actions: canCreate ? <PageAction kind="add" label={words.add} onClick={() => onNavigate({ ...search, mode: "new", id: undefined })} /> : undefined{{/if}}, ...blocks.spec {{rdb}}
         search={search}
         onNavigate={onNavigate}
         {...presentation}

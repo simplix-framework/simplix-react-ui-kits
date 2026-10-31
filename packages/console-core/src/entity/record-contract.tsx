@@ -51,6 +51,12 @@ export interface ContractField {
   readonly required?: boolean;
   /** Whether the server orders a list by it, as SimpliX Meta's searchable metadata states; absent means unstated. */
   readonly sortable?: boolean;
+  /**
+   * Locale → the field the server orders this one by in that language (SimpliX Meta's
+   * `searchable.sortAlias`): a translated name sorts by its per-language sort key, so the visible
+   * name column sorts in the reader's language rather than not at all.
+   */
+  readonly sortAlias?: Readonly<Record<string, string>>;
   /** The record's own identifier: drawn with a copy control in a detail. */
   readonly identifier?: boolean;
   /** For an `i18nText` field, the plain field the request carries the base language's text in. */
@@ -113,6 +119,17 @@ export function valueAtPath(row: Row | undefined, path: string): unknown {
     at = (at as Row)[step];
   }
   return at;
+}
+
+/**
+ * The field a column over `field` sorts by in `locale`: its sort alias for that language, else for
+ * the language without its region (`ko` for `ko-KR`), else none. The cell still draws `field`'s
+ * value, so only the request's sort key changes.
+ */
+export function sortFieldOf(field: Pick<ContractField, "sortAlias">, locale: string): string | undefined {
+  const alias = field.sortAlias;
+  if (!alias) return undefined;
+  return alias[locale] ?? alias[locale.split("-")[0] ?? locale];
 }
 
 /** Text with digit grouping in the reader's locale; a non-number is drawn as it came. */
@@ -241,12 +258,12 @@ export function useRecordContract(entity: string, overrides: ContractOverrides =
     <R,>(field: ContractField) => ({
       key: field.name,
       header: fieldLabel(field.name),
-      field: field.name as keyof R & string,
+      field: (sortFieldOf(field, locale) ?? field.name) as keyof R & string,
       ...CONTRACT_COLUMN_SIZE[field.kind],
-      ...(field.sortable === undefined ? {} : { sortable: field.sortable }),
+      ...(sortFieldOf(field, locale) !== undefined ? { sortable: true } : field.sortable === undefined ? {} : { sortable: field.sortable }),
       value: (row: R) => value(field, row as unknown as Row),
     }),
-    [fieldLabel, value],
+    [fieldLabel, value, locale],
   );
 
   /**
