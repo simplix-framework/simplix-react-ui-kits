@@ -35,3 +35,10 @@ describe("the generated form under a list that reorders by drag", () => {
     expect(out).not.toContain("sortOrder: 0");
   });
 });
+
+describe("the generated form for a new record", () => {
+  it("states the contract's default of a field", async () => {
+    const out = await render("form.hbs", { ...context, fields: [{ name: "active", contractKind: "boolean", defaultLiteral: "true" }] });
+    expect(out).toContain('{ name: "active", kind: "boolean", defaultValue: true }');
+  });
+});

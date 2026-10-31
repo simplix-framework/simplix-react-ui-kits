@@ -70,6 +70,16 @@ export interface ContractField {
   readonly multiline?: boolean;
   /** For an `i18nText` field, where its language selector is drawn; absent, the installation's default. */
   readonly languageSelectorPlacement?: LanguageSelectorPlacement;
+  /** The value a new record starts the field with (SimpliX Meta's `defaultValue`). */
+  readonly defaultValue?: string | number | boolean;
+}
+
+/**
+ * What a form field starts from: the record's value when one is being edited, the contract's
+ * default for a new record. A new record's switch whose entity starts it on is drawn on.
+ */
+export function startingValue(field: Pick<ContractField, "name" | "defaultValue">, record: Readonly<Record<string, unknown>> | undefined): unknown {
+  return record ? record[field.name] : field.defaultValue;
 }
 
 /**
@@ -205,7 +215,7 @@ export function useRecordContract(entity: string, overrides: ContractOverrides =
 
   const formField = useCallback(
     (field: ContractField, record: Row | undefined): RecordFormField => {
-      const raw = record?.[field.name];
+      const raw = startingValue(field, record);
       const common = { key: field.name, label: fieldLabel(field.name), required: field.required };
       switch (field.kind) {
         case "enum":

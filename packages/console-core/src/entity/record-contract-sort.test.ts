@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { sortFieldOf, textValueOf } from "./record-contract";
+import { sortFieldOf, startingValue, textValueOf } from "./record-contract";
 import { statedOrNothing } from "./screen-words";
 
 describe("a column over a translated name", () => {
@@ -30,5 +30,18 @@ describe("a text value the contract marks as a code", () => {
   it("is drawn as code, and plain text without the mark", () => {
     expect(textValueOf({ code: true }, "ROLE_ADMIN")).toEqual({ text: "ROLE_ADMIN", code: true });
     expect(textValueOf({}, "Administrator")).toBe("Administrator");
+  });
+});
+
+describe("a form field's starting value", () => {
+  const field = { name: "active", defaultValue: true };
+
+  it("is the contract's default for a new record", () => {
+    expect(startingValue(field, undefined)).toBe(true);
+  });
+
+  it("is the record's own value, absent included, for one being edited", () => {
+    expect(startingValue(field, { active: false })).toBe(false);
+    expect(startingValue(field, {})).toBeUndefined();
   });
 });

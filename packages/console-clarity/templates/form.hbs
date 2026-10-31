@@ -28,7 +28,7 @@ const {{EntityPascal}}FormFields: readonly ContractField[] = [
 {{#unless this.isAuditField}}
 {{#unless this.readOnly}}
 {{#unless (eq this.name @root.formOrderField)}}
-  { name: "{{this.name}}", kind: "{{this.contractKind}}"{{#if this.enumTypeName}}, enumName: "{{this.enumTypeName}}"{{/if}}{{#if this.options.length}}, options: [{{#each this.options}}"{{this}}"{{#unless @last}}, {{/unless}}{{/each}}]{{/if}}{{#if this.peekKind}}, peekKind: "{{this.peekKind}}"{{/if}}{{#if this.nameField}}, nameField: "{{this.nameField}}"{{/if}}{{#if (eq this.sortable true)}}, sortable: true{{/if}}{{#if (eq this.sortable false)}}, sortable: false{{/if}}{{#if this.baseFieldName}}, plainField: "{{this.baseFieldName}}"{{/if}}{{#if (eq this.formComponent "I18nTextareaField")}}, multiline: true{{/if}} },
+  { name: "{{this.name}}", kind: "{{this.contractKind}}"{{#if this.enumTypeName}}, enumName: "{{this.enumTypeName}}"{{/if}}{{#if this.options.length}}, options: [{{#each this.options}}"{{this}}"{{#unless @last}}, {{/unless}}{{/each}}]{{/if}}{{#if this.peekKind}}, peekKind: "{{this.peekKind}}"{{/if}}{{#if this.nameField}}, nameField: "{{this.nameField}}"{{/if}}{{#if (eq this.sortable true)}}, sortable: true{{/if}}{{#if (eq this.sortable false)}}, sortable: false{{/if}}{{#if this.baseFieldName}}, plainField: "{{this.baseFieldName}}"{{/if}}{{#if (eq this.formComponent "I18nTextareaField")}}, multiline: true{{/if}}{{#if this.defaultLiteral}}, defaultValue: {{{this.defaultLiteral}}}{{/if}} },
 {{/unless}}
 {{/unless}}
 {{/unless}}
