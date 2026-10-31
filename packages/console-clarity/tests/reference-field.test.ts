@@ -26,3 +26,19 @@ describe("a reference the contract matches on a field other than the identifier"
     }
   });
 });
+
+describe("a holder that names the record by another field than its key", () => {
+  const holder = { entity: "speechResult", EntityPascal: "SpeechResult", key: "speechResultByVoiceCode", hookList: "useListSpeechResults", accessList: "listSpeechResultsAccess", packageName: "@test/domain-speech", filterKey: "voiceCode.equals", rowIdField: "speechResultId", fields: [] };
+  const voice = { ...context, entity: "catalogVoice", EntityPascal: "CatalogVoice", rowIdField: "catalogVoiceId", hookGet: "useGetCatalogVoice" };
+
+  it("is forced to that field of the open record, once the record has loaded", () => {
+    const out = render("detail.hbs", { ...voice, holders: [{ ...holder, matchField: "voiceCode" }] });
+    expect(out).toContain("?.voiceCode;");
+    expect(out).not.toContain('"voiceCode.equals": props.catalogVoiceId');
+    expect(out).toContain('enabled: holder0Allowed && holder0Forced["voiceCode.equals"] !== ""');
+  });
+
+  it("is forced to the record's key otherwise", () => {
+    expect(render("detail.hbs", { ...voice, holders: [holder] })).toContain('"voiceCode.equals": props.catalogVoiceId');
+  });
+});

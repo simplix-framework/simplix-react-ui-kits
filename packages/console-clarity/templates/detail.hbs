@@ -104,10 +104,16 @@ export function {{EntityPascal}}Detail(props: {{EntityPascal}}DetailProps) {
 {{#each holders}}
   // Grows with the records that hold this one, so it is a list with its own search and pager,
   // forced to this record's key rather than narrowed by a filter the reader could clear.
+{{#if this.matchField}}
+  // The holder names this record by its `{{this.matchField}}`, so the list waits for the record.
+  const holder{{@index}}Key = (data as Readonly<Record<string, unknown>> | undefined)?.{{this.matchField}};
+  const holder{{@index}}Forced = { "{{this.filterKey}}": typeof holder{{@index}}Key === "string" ? holder{{@index}}Key : "" };
+{{else}}
   const holder{{@index}}Forced = { "{{this.filterKey}}": props.{{../entity}}Id };
+{{/if}}
   // Asked only of a reader the holder's list rule admits, so nobody meets a refused read (frontend invariant #61).
   const holder{{@index}}Allowed = useAllowed({{this.accessList}});
-  const holder{{@index}}List = useCrudList<Readonly<Record<string, unknown>>>(adaptForcedList({{this.hookList}}, holder{{@index}}Forced, { {{#if this.hasKeywordSearch}}searchKey: SEARCHABLE_KEYWORD_PARAM, {{/if}}queryOptions: { enabled: holder{{@index}}Allowed } }), {
+  const holder{{@index}}List = useCrudList<Readonly<Record<string, unknown>>>(adaptForcedList({{this.hookList}}, holder{{@index}}Forced, { {{#if this.hasKeywordSearch}}searchKey: SEARCHABLE_KEYWORD_PARAM, {{/if}}queryOptions: { enabled: holder{{@index}}Allowed{{#if this.matchField}} && holder{{@index}}Forced["{{this.filterKey}}"] !== ""{{/if}} } }), {
     scopeKey: forcedScope(holder{{@index}}Forced),
     stateMode: "server",
     defaultPageSize: 20,
