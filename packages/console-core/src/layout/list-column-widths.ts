@@ -43,11 +43,11 @@ export const FREE_TEXT_MIN_WIDTH = 180;
  * is draggable, so the container is a range rather than two values and every width in that range
  * is reachable.
  *
- * <p><b>A list that uses this owes the third bound a measurement</b>: sum the wide set's declared
- * `width` and `minWidth` values, add 24px of cell padding per column plus the row-action column,
- * and keep the total under this number. A set that will not fit loses a column or narrows one; it
- * does not get a threshold of its own, because a per-list threshold is a per-list answer to a
- * question the reader asks once — 「is this list wide enough to read across」.
+ * <p><b>The list measures the third bound itself.</b> `CrudList` raises a tier whose drawn table is
+ * wider than its container to the measured width, so a threshold below the set's need drops the
+ * set instead of scrolling. The number here still orders the tiers and sets the floor; a set that
+ * needs more than it is dropped from full pages it could otherwise fill, so a set that will not fit
+ * loses a column or narrows one rather than getting a threshold of its own.
  *
  * <p>Goes on `CrudList.Column`'s `minTableWidth`, which is the framework's own answer for this:
  * below the number the column is not rendered at all, header and dropdown entry included. Only a
