@@ -49,7 +49,8 @@
     "signer": "Signer: {{signer}}",
     "signAgain": "Sign again",
     "fillBeforeSubmit": "Fill in {{count, number}} required field(s) first",
-    "otpDigit": "Digit {{index, number}} of {{count, number}}"
+    "otpDigit": "Digit {{index, number}} of {{count, number}}",
+    "refused": "The server did not accept this. Change what it names and save again."
   },
   "recordList": {
     "selected": "selected",

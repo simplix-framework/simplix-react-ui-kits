@@ -48,7 +48,8 @@
     "signer": "서명자: {{signer}}",
     "signAgain": "다시 쓰기",
     "fillBeforeSubmit": "필수 항목 {{count, number}}개를 입력해야 합니다",
-    "otpDigit": "{{count, number}}자리 중 {{index, number}}번째 숫자"
+    "otpDigit": "{{count, number}}자리 중 {{index, number}}번째 숫자",
+    "refused": "서버가 이 내용을 받지 않았습니다. 표시한 항목을 고친 뒤 다시 저장해 주세요."
   },
   "recordList": {
     "selected": "개 선택",

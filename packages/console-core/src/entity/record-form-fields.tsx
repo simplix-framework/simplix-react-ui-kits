@@ -55,6 +55,8 @@ export interface RecordFieldViewProps {
   readonly error?: FieldErrorCode;
   /** Whether the form shows its errors, which a repeat field passes on to its rows. */
   readonly errorsShown?: boolean;
+  /** What the server said about the value when it refused the last submit, in the reader's language. */
+  readonly serverError?: string;
 }
 
 /** 「HH:mm」 to the picker's value. */
@@ -110,9 +112,9 @@ function choicePrompt(t: (key: string, options?: Record<string, string>) => stri
   return examples ? t("recordForm.choosePromptWithExamples", { examples }) : t("recordForm.choosePrompt");
 }
 
-function FieldBody({ field, value, onChange, error, errorsShown }: RecordFieldViewProps) {
+function FieldBody({ field, value, onChange, error, errorsShown, serverError }: RecordFieldViewProps) {
   const { t } = useTranslation(PACKAGE_NAMESPACE + "/features");
-  const message = error ? t(`recordForm.errors.${error}`) : undefined;
+  const message = error ? t(`recordForm.errors.${error}`) : serverError;
   const disabled = Boolean(field.disabled);
   const common = { label: field.label, description: field.hint, required: field.required, disabled, error: message, ...(field.labelHidden ? { layout: "hidden" as const } : {}) };
   switch (field.kind) {

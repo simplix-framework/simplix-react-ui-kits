@@ -48,7 +48,8 @@
     "signer": "署名者: {{signer}}",
     "signAgain": "書き直す",
     "fillBeforeSubmit": "必須項目を{{count, number}}件入力してください",
-    "otpDigit": "{{count, number}}桁中{{index, number}}桁目"
+    "otpDigit": "{{count, number}}桁中{{index, number}}桁目",
+    "refused": "サーバーがこの内容を受け付けませんでした。示した項目を直してから、もう一度保存してください。"
   },
   "recordList": {
     "selected": "件選択",

@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
+import { getErrorMessage, getValidationErrors } from "@simplix-react/api";
 import { useTranslation } from "@simplix-react/i18n/react";
 import { Button, CrudForm, Flex, Heading, Stack, Text } from "@simplix-react/ui";
 import { slotAttributes } from "@simplix-react/ui/design";
@@ -36,6 +37,33 @@ function focusField(key: string | undefined): void {
   });
 }
 
+/** What the server answered when it refused a submit: its message, and the fields it named. */
+export interface SubmitRefusal {
+  /** The server's own sentence, in the reader's language; absent when it named fields instead. */
+  readonly message?: string;
+  /** The server's message per refused field, keyed by the form field it belongs to. */
+  readonly fields: Readonly<Record<string, string>>;
+  /** What the server calls each refused field, for a field the form does not draw. */
+  readonly labels: Readonly<Record<string, string>>;
+}
+
+/**
+ * Reads a refused submit. A server field is matched to the form field of the same key, or to the
+ * localized field it is the plain half of (`roleName` for `roleNameI18n`).
+ */
+export function refusalOf(error: unknown, fieldKeys: readonly string[]): SubmitRefusal {
+  const invalid = getValidationErrors(error) ?? [];
+  const fields: Record<string, string> = {};
+  const labels: Record<string, string> = {};
+  for (const one of invalid) {
+    const key = fieldKeys.includes(one.field) ? one.field : fieldKeys.includes(`${one.field}I18n`) ? `${one.field}I18n` : one.field;
+    if (!fields[key]) fields[key] = one.message;
+    if (one.label && !labels[key]) labels[key] = one.label;
+  }
+  const drawn = Object.keys(fields).some((key) => fieldKeys.includes(key));
+  return { message: drawn ? undefined : getErrorMessage(error), fields, labels };
+}
+
 /** The fields of a form's sections with their values, shared by {@link RecordForm} and {@link SettingsForm}. */
 export function useRecordFormValues(sections: readonly RecordFormSection[]) {
   const [values, setValues] = useState<Values>(() => initialValues(sections));
@@ -63,18 +91,25 @@ export function RecordFormSections({
   sections,
   form,
   flat = false,
+  refusal,
 }: {
   readonly sections: readonly RecordFormSection[];
   readonly form: ReturnType<typeof useRecordFormValues>;
   /** Draws the sections without their card, for a surface that is already one: a dialog, a panel. */
   readonly flat?: boolean;
+  /** The fields the server refused on the last submit. */
+  readonly refusal?: SubmitRefusal;
 }) {
   const fieldLabels = new Map(sections.flatMap((section) => section.fields).map((field) => [field.key, field.label]));
   const { t } = useTranslation(PACKAGE_NAMESPACE + "/features");
   const shownErrors = form.errorsShown ? Object.fromEntries(Object.entries(form.errors).map(([key, code]) => [key, t(`recordForm.errors.${code}`)])) : undefined;
   return (
     <>
-      <FormErrorSummary fieldErrors={shownErrors} label={(key) => fieldLabels.get(key) ?? key} />
+      <FormErrorSummary
+        fieldErrors={shownErrors ?? (refusal && Object.keys(refusal.fields).length > 0 ? refusal.fields : undefined)}
+        label={(key) => fieldLabels.get(key) ?? key}
+        serverLabels={refusal?.labels}
+      />
       {sections.map((section) => (
         <CrudForm.Section key={section.key} title={section.title} variant={flat ? "flat" : undefined} layout={section.columns === 2 ? "two-column" : "single-column"}>
           {section.fields.filter((field) => fieldShown(field, form.values)).map((field) => (
@@ -85,6 +120,7 @@ export function RecordFormSections({
               onChange={(value) => form.set(field.key, value)}
               error={form.errorsShown ? form.errors[field.key] : undefined}
               errorsShown={form.errorsShown}
+              serverError={refusal?.fields[field.key]}
             />
           ))}
         </CrudForm.Section>
@@ -101,7 +137,12 @@ export interface RecordFormProps {
   readonly note?: string;
   /** The verb that finishes it, such as 「초대 보내기」. */
   readonly submitLabel: string;
-  readonly onSubmit?: (values: Readonly<Record<string, unknown>>) => void;
+  /**
+   * Sends the values. A returned promise that rejects is the server refusing them: the form says
+   * so in a banner at its top and marks the fields the refusal names, instead of the rejection
+   * escaping as an unhandled error while the form looks as if nothing happened.
+   */
+  readonly onSubmit?: (values: Readonly<Record<string, unknown>>) => void | Promise<unknown>;
   readonly onCancel?: () => void;
   /** Actions beside the submit, such as a narrower alternative. */
   readonly actions?: readonly RecordVerb[];
@@ -119,13 +160,22 @@ export function RecordForm({ title, sections, notices, note, submitLabel, onSubm
   const { t } = useTranslation(PACKAGE_NAMESPACE + "/features");
   const form = useRecordFormValues(sections);
   const progress = requiredProgress(sections, form.values);
+  const [refusal, setRefusal] = useState<SubmitRefusal | undefined>(undefined);
+  const [pending, setPending] = useState(false);
+  const fieldKeys = sections.flatMap((section) => section.fields.map((field) => field.key));
   const submit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (form.missing.length > 0) {
       form.showErrors();
       return;
     }
-    onSubmit?.(form.values);
+    setRefusal(undefined);
+    const sent = onSubmit?.(form.values);
+    if (!sent || typeof (sent as Promise<unknown>).then !== "function") return;
+    setPending(true);
+    (sent as Promise<unknown>)
+      .catch((error: unknown) => setRefusal(refusalOf(error, fieldKeys)))
+      .finally(() => setPending(false));
   };
   return (
     <CrudForm
@@ -154,15 +204,15 @@ export function RecordForm({ title, sections, notices, note, submitLabel, onSubm
           {actions.map((action) => (
             <RecordVerbButton key={action.label} verb={action} />
           ))}
-          <Button type="submit" size="sm">
+          <Button type="submit" size="sm" loading={pending} loadingText={submitLabel} disabled={pending}>
             {submitLabel}
           </Button>
         </CrudForm.Actions>
       }
     >
       {/* Notices come first: a reason the form cannot go through is read before any field is filled. */}
-      <RecordNotices notices={notices} />
-      <RecordFormSections sections={sections} form={form} />
+      <RecordNotices notices={refusal ? [{ key: "submit-refused", tone: "danger", title: t("recordForm.refused"), body: refusal.message }, ...(notices ?? [])] : notices} />
+      <RecordFormSections sections={sections} form={form} refusal={refusal} />
       {children}
       <RecordNote text={note} />
       <FormMore />
