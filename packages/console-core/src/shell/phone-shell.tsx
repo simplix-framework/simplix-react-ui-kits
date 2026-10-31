@@ -36,8 +36,7 @@ import {
   phoneTabBadgeStyle,
   phoneTabLabelStyle,
   phoneTabStyle,
-  phoneTabbarStyle,
-} from "./phone-shell.style";
+  phoneTabbarStyle, phoneMenuSheetStyle } from "./phone-shell.style";
 import { partAttributes, slotAttributes } from "@simplix-react/ui/design";
 
 /**
@@ -449,7 +448,11 @@ export function ConsolePhoneMenuSheet({
 }: ConsolePhoneMenuSheetProps) {
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="bottom" className="flex max-h-[85dvh] flex-col gap-3 rounded-t-lg px-4 pb-4">
+      <SheetContent
+        side="bottom"
+        className="flex max-h-[85dvh] flex-col"
+        {...partAttributes(phoneMenuSheetStyle, {})}
+      >
         <SheetHeader>
           <SheetTitle>{title}</SheetTitle>
           {description && <SheetDescription>{description}</SheetDescription>}

@@ -21,3 +21,11 @@ export const pageHeaderMetadataStyle = defineSlotStyle({
   variants: {},
   defaultVariants: {},
 });
+
+/** The header's own actions, pushed to the row's far end. */
+export const pageHeaderActionsStyle = defineSlotStyle({
+  slot: "console-page-header-actions",
+  base: "ml-auto",
+  variants: {},
+  defaultVariants: {},
+});

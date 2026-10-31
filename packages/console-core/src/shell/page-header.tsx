@@ -2,7 +2,7 @@ import { Flex, Heading, Stack, Text, usePageHeaderState } from "@simplix-react/u
 
 import { NoticeMenu } from "../notice";
 import { useConsoleOnAPhone } from "./phone-shell";
-import { pageHeaderMetadataStyle, pageHeaderStyle } from "./page-header.style";
+import { pageHeaderActionsStyle, pageHeaderMetadataStyle, pageHeaderStyle } from "./page-header.style";
 import { partAttributes } from "@simplix-react/ui/design";
 
 /**
@@ -51,7 +51,12 @@ export function ConsolePageHeader() {
     return (
       <Flex justify="between" align="center" gap="sm" wrap {...partAttributes(pageHeaderStyle, {})}>
         <Flex align="center" className="min-w-0">{back}</Flex>
-        <Flex align="center" gap="sm" className="ml-auto [&_button]:min-h-11 [&_button]:min-w-11">
+        <Flex
+          align="center"
+          gap="sm"
+          className="[&_button]:min-h-11 [&_button]:min-w-11"
+          {...partAttributes(pageHeaderActionsStyle, {})}
+        >
           <NoticeMenu />
           {actions}
         </Flex>

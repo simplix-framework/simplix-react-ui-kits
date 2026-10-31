@@ -98,3 +98,11 @@ export const phoneEmptyStyle = defineSlotStyle({
   variants: {},
   defaultVariants: {},
 });
+
+/** The sheet the phone's menu tab raises from the bottom edge. */
+export const phoneMenuSheetStyle = defineSlotStyle({
+  slot: "console-phone-menu-sheet",
+  base: "gap-3 rounded-t-lg px-4 pb-4",
+  variants: {},
+  defaultVariants: {},
+});

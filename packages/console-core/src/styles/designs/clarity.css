@@ -1072,6 +1072,12 @@
   [data-slot="console-menu-slot"][data-slot][data-s-console-menu-slot] {
     @apply flex shrink-0 overflow-clip transition-[width] duration-[var(--dur-slow)] ease-[var(--ease)];
   }
+  [data-slot="console-page-header-actions"][data-slot][data-s-console-page-header-actions] {
+    @apply ml-auto;
+  }
+  [data-slot="console-phone-menu-sheet"][data-slot][data-s-console-phone-menu-sheet] {
+    @apply gap-3 rounded-t-[var(--radius-surface)] px-4 pb-4;
+  }
   [data-slot="console-phone-row-button"][data-slot][data-s-console-phone-row-button] {
     @apply rounded-[var(--radius-surface)] border px-3 py-2 text-left;
   }
