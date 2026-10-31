@@ -100,3 +100,14 @@ describe("fieldShown", () => {
     expect(requiredProgress(sections, { decision: "허가 필요" })).toEqual({ total: 1, filled: 1 });
   });
 });
+
+describe("a multilingual text", () => {
+  const field = { key: "name", label: "Name", kind: "i18nText", required: true } as RecordFormField;
+
+  it("is filled once any language carries words, and empty while none does", () => {
+    expect(validateField(field, {})).toBe("required");
+    expect(validateField(field, { en: "  ", ko: "" })).toBe("required");
+    expect(validateField(field, { en: "", ko: "직위" })).toBeNull();
+    expect(initialFieldValue(field)).toEqual({});
+  });
+});

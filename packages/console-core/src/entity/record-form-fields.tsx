@@ -1,6 +1,6 @@
 import { CalendarIcon, CameraIcon, EyeIcon, ImageIcon, PlusIcon, Trash2Icon, UploadIcon, XIcon } from "lucide-react";
 import { useRef, useState, type ReactNode } from "react";
-import { useTranslation } from "@simplix-react/i18n/react";
+import { useI18nEditLanguage, useTranslation } from "@simplix-react/i18n/react";
 import {
   Badge,
   Button,
@@ -132,6 +132,8 @@ function FieldBody({ field, value, onChange, error, errorsShown }: RecordFieldVi
       return <FormFields.DateField {...common} value={(value as string) || null} onChange={(next) => onChange(formatLocalDate(next ?? undefined) ?? "")} placeholder={field.placeholder} />;
     case "switch":
       return <FormFields.SwitchField {...common} value={Boolean(value)} onChange={onChange} />;
+    case "i18nText":
+      return <I18nTextBody common={common} value={(value ?? {}) as Readonly<Record<string, string>>} onChange={onChange} />;
     case "textarea":
       return <FormFields.TextareaField {...common} value={(value as string) ?? ""} onChange={onChange} placeholder={field.placeholder} />;
     case "datetime":
@@ -186,6 +188,21 @@ function FieldBody({ field, value, onChange, error, errorsShown }: RecordFieldVi
     default:
       return <FormFields.TextField {...common} type={field.kind === "email" ? "email" : "text"} value={(value as string) ?? ""} onChange={onChange} placeholder={field.placeholder} />;
   }
+}
+
+/** A multilingual text, one language at a time, on the language the reader picked last. */
+function I18nTextBody({ common, value, onChange }: { readonly common: Common; readonly value: Readonly<Record<string, string>>; readonly onChange: (value: unknown) => void }) {
+  const language = useI18nEditLanguage();
+  return (
+    <FormFields.I18nTextField
+      {...common}
+      value={{ ...value }}
+      onChange={onChange}
+      languages={language.languages}
+      selectedLanguage={language.selectedLanguage}
+      onLanguageChange={language.onLanguageChange}
+    />
+  );
 }
 
 interface Common {

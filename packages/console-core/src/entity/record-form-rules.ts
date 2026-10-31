@@ -49,6 +49,7 @@ export function initialFieldValue(field: RecordFormField): unknown {
     case "time":
       return field.value ?? null;
     case "range":
+    case "i18nText":
       return field.value ?? {};
     case "row":
       return field.value ?? {};
@@ -141,6 +142,9 @@ export function validateField(field: RecordFormField, value: unknown): FieldErro
       if (choice.choice === field.otherValue && blank(choice.detail)) return "detailRequired";
       return required && blank(choice.choice) ? "required" : null;
     }
+    case "i18nText":
+      // A multilingual text is filled once any language carries words.
+      return required && !Object.values((value ?? {}) as Readonly<Record<string, string>>).some((entry) => typeof entry === "string" && entry.trim() !== "") ? "required" : null;
     case "otp":
       // A partial code is as unusable as none, so a required code asks for every digit.
       return required && String(value ?? "").length !== field.length ? "required" : null;

@@ -7,23 +7,22 @@
 import { RecordForm, useRecordContract, useScreenWords, type ContractField, type RecordFormField } from "@simplix-react-ui-kits/console-clarity/entity";
 import { QueryFallback, useInvalidateEntity } from "@simplix-react/ui";
 
-import { {{#if hookGet}}{{hookGet}}, {{/if}}{{#if hookCreate}}{{hookCreate}}{{/if}}{{#if hookUpdate}}{{#if hookCreate}}, {{/if}}{{hookUpdate}}{{/if}} } from "{{packageName}}";
+import { {{#if hookGetForEdit}}{{hookGetForEdit}}, {{else}}{{#if hookGet}}{{hookGet}}, {{/if}}{{/if}}{{#if hookCreate}}{{hookCreate}}{{/if}}{{#if hookUpdate}}{{#if hookCreate}}, {{/if}}{{hookUpdate}}{{/if}} } from "{{packageName}}";
 import { useFormBlocks, useFormContract } from "./form.blocks";
 
 /** The fields the contract lets this form write, each edited by its kind. */
 export const {{EntityPascal}}FormFields: readonly ContractField[] = [
 {{#each fields}}
-{{!-- The plain field of an i18n pair is written: the server requires it and derives nothing from
-      the map. The map has no form kind yet, so the form leaves it to the blocks. The record's own
-      key and keys nobody reads are never typed in. --}}
+{{!-- An i18n pair is written through its map, and the request fills the plain field from it. The
+      record's own key and keys nobody reads are never typed in. --}}
 {{#unless this.isIdentifier}}
 {{#unless this.isOpaqueId}}
-{{#unless this.baseFieldName}}
+{{#unless this.isI18nPair}}
 {{#unless this.isSystemField}}
 {{#unless this.isReferenceName}}
 {{#unless this.isAuditField}}
 {{#unless this.readOnly}}
-  { name: "{{this.name}}", kind: "{{this.contractKind}}"{{#if this.enumTypeName}}, enumName: "{{this.enumTypeName}}"{{/if}}{{#if this.options.length}}, options: [{{#each this.options}}"{{this}}"{{#unless @last}}, {{/unless}}{{/each}}]{{/if}}{{#if this.peekKind}}, peekKind: "{{this.peekKind}}"{{/if}}{{#if this.nameField}}, nameField: "{{this.nameField}}"{{/if}}{{#if (eq this.sortable true)}}, sortable: true{{/if}}{{#if (eq this.sortable false)}}, sortable: false{{/if}} },
+  { name: "{{this.name}}", kind: "{{this.contractKind}}"{{#if this.enumTypeName}}, enumName: "{{this.enumTypeName}}"{{/if}}{{#if this.options.length}}, options: [{{#each this.options}}"{{this}}"{{#unless @last}}, {{/unless}}{{/each}}]{{/if}}{{#if this.peekKind}}, peekKind: "{{this.peekKind}}"{{/if}}{{#if this.nameField}}, nameField: "{{this.nameField}}"{{/if}}{{#if (eq this.sortable true)}}, sortable: true{{/if}}{{#if (eq this.sortable false)}}, sortable: false{{/if}}{{#if this.baseFieldName}}, plainField: "{{this.baseFieldName}}"{{/if}} },
 {{/unless}}
 {{/unless}}
 {{/unless}}
@@ -48,7 +47,9 @@ export function {{EntityPascal}}Form(props: {{EntityPascal}}FormProps) {
   const words = useScreenWords("{{entity}}");
 {{#if hasUpdate}}
   const editing = Boolean(props.{{entity}}Id);
-  const { data, isLoading } = {{hookGet}}(props.{{entity}}Id ?? "", { query: { enabled: editing, gcTime: 0 } });
+  // The edit read is the record as the update takes it back, so a field the form does not show
+  // goes back as it came instead of being blanked by a full-record update.
+  const { data, isLoading } = {{#if hookGetForEdit}}{{hookGetForEdit}}{{else}}{{hookGet}}{{/if}}(props.{{entity}}Id ?? "", { query: { enabled: editing, gcTime: 0 } });
 {{else}}
   const editing = false;
   const data = undefined;
@@ -76,7 +77,9 @@ export function {{EntityPascal}}Form(props: {{EntityPascal}}FormProps) {
       submitLabel={blocks.submitLabel ?? words.save}
       onCancel={props.onCancel}
       onSubmit={async (values) => {
-        const body = blocks.toRequest ? blocks.toRequest(values) : values;
+        const contracted = contract.request({{EntityPascal}}FormFields, values);
+        const written = blocks.toRequest ? blocks.toRequest(contracted, row) : contracted;
+        const body = editing && row ? { ...row, ...written } : written;
 {{#if hasUpdate}}
         if (editing && props.{{entity}}Id) await update.mutateAsync({ {{#if updatePathParam}}{{updatePathParam}}{{else}}id{{/if}}: props.{{entity}}Id, data: body } as never);
         else await create.mutateAsync({ data: body } as never);

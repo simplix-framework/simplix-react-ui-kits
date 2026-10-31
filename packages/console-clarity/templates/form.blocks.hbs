@@ -9,7 +9,8 @@ export interface FormBlocks {
   readonly sections?: readonly RecordFormSection[];
   readonly notices?: readonly RecordNotice[];
   readonly submitLabel?: string;
-  readonly toRequest?: (values: Readonly<Record<string, unknown>>) => Record<string, unknown>;
+  /** The request from the form's values; on an edit the loaded record goes underneath it. */
+  readonly toRequest?: (values: Readonly<Record<string, unknown>>, record?: Readonly<Record<string, unknown>>) => Record<string, unknown>;
 }
 
 export function useFormBlocks<T>(_form: { readonly record: T | undefined; readonly editing: boolean; readonly generated: readonly RecordFormField[] }): FormBlocks {

@@ -1,7 +1,11 @@
 import { useCallback, useMemo } from "react";
 import { resolveBootEnum } from "@simplix-react-ext/simplix-boot-utils";
 import { calendarDayLabel, useAppTimeZone, zoneDateTimeText } from "@simplix-react/headless";
-import { useEntityTranslation, useLocale, useTranslation } from "@simplix-react/i18n/react";
+import { i18nBaseValue, seedI18nDefaults } from "@simplix-react/i18n";
+
+/** A text per content language, as the i18n helpers take it. */
+type I18nMap = Parameters<typeof i18nBaseValue>[0] & object;
+import { useEntityTranslation, useI18nEditLanguage, useLocale, useTranslation } from "@simplix-react/i18n/react";
 import type { EntitySearch, StatusTone } from "@simplix-react/ui";
 
 import { PACKAGE_NAMESPACE } from "./locales";
@@ -27,7 +31,9 @@ export type ContractFieldKind =
   | "instant"
   | "time"
   | "number"
-  | "reference";
+  | "reference"
+  /** A text written once per content language (`<field>I18n`), whose plain sibling the server reads. */
+  | "i18nText";
 
 export interface ContractField {
   readonly name: string;
@@ -47,6 +53,8 @@ export interface ContractField {
   readonly sortable?: boolean;
   /** The record's own identifier: drawn with a copy control in a detail. */
   readonly identifier?: boolean;
+  /** For an `i18nText` field, the plain field the request carries the base language's text in. */
+  readonly plainField?: string;
 }
 
 /**
@@ -65,6 +73,7 @@ export const CONTRACT_COLUMN_SIZE: Readonly<Record<ContractFieldKind, { readonly
   time: { width: 96 },
   number: { width: 112 },
   reference: { minWidth: 160 },
+  i18nText: { minWidth: 140 },
 };
 
 /** A searchable field as the generator writes it, which {@link useRecordContract}'s `filters` turns into a list filter. */
@@ -126,6 +135,7 @@ export function useRecordContract(entity: string, overrides: ContractOverrides =
   const locale = useLocale();
   const zone = useAppTimeZone();
   const peek = usePeekHost();
+  const { languages } = useI18nEditLanguage();
   const { tones, searches } = overrides;
 
   const value = useCallback(
@@ -188,6 +198,13 @@ export function useRecordContract(entity: string, overrides: ContractOverrides =
           if (search) return { ...common, kind: "reference", value: raw == null ? "" : String(raw), search, peek: Boolean(field.peekKind), peekKind: field.peekKind };
           return { ...common, kind: "text", value: raw == null ? "" : String(raw) };
         }
+        case "i18nText": {
+          // A record written before its translations existed carries only the plain text; it opens
+          // as that text in the base language rather than as an empty map.
+          const plain = field.plainField ? record?.[field.plainField] : undefined;
+          const map = raw && typeof raw === "object" ? (raw as I18nMap) : undefined;
+          return { ...common, kind: "i18nText", value: seedI18nDefaults(map, typeof plain === "string" ? plain : undefined, languages) };
+        }
         case "longText":
           return { ...common, kind: "textarea", value: raw == null ? "" : String(raw) };
         case "email":
@@ -196,7 +213,24 @@ export function useRecordContract(entity: string, overrides: ContractOverrides =
           return { ...common, kind: "text", value: raw == null ? "" : String(raw) };
       }
     },
-    [enumLabel, fieldLabel, searches, zone],
+    [enumLabel, fieldLabel, languages, searches, zone],
+  );
+
+  /**
+   * The request a form's values make: each `i18nText` field also writes its plain sibling, in the
+   * base language, because the server validates and sorts by the plain text.
+   */
+  const request = useCallback(
+    (fields: readonly ContractField[], values: Readonly<Record<string, unknown>>): Record<string, unknown> => {
+      const body: Record<string, unknown> = { ...values };
+      for (const field of fields) {
+        if (field.kind !== "i18nText" || !field.plainField) continue;
+        const map = values[field.name];
+        body[field.plainField] = i18nBaseValue(map && typeof map === "object" ? (map as I18nMap) : undefined, languages);
+      }
+      return body;
+    },
+    [languages],
   );
 
   const column = useCallback(
@@ -258,5 +292,5 @@ export function useRecordContract(entity: string, overrides: ContractOverrides =
     [fieldLabel, value],
   );
 
-  return useMemo(() => ({ value, formField, column, columns, filters, detailField, fieldLabel }), [value, formField, column, columns, filters, detailField, fieldLabel]);
+  return useMemo(() => ({ value, formField, request, column, columns, filters, detailField, fieldLabel }), [value, formField, request, column, columns, filters, detailField, fieldLabel]);
 }

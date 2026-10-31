@@ -98,6 +98,8 @@ export interface RangeValue {
 /** One field of a {@link RecordForm} or a {@link SettingsForm}, declared rather than drawn. */
 export type RecordFormField =
   | ({ readonly kind: "text" | "email" | "textarea"; readonly value?: string } & FieldCommon)
+  /** One text per content language, edited a language at a time; filled when any language is. */
+  | ({ readonly kind: "i18nText"; readonly value?: Readonly<Record<string, string>> } & FieldCommon)
   | ({ readonly kind: "number"; readonly value?: number | null; readonly unit?: string; readonly min?: number; readonly max?: number } & FieldCommon)
   | ({ readonly kind: "select"; readonly value?: string; readonly options: readonly RecordOption[] } & FieldCommon)
   /** One choice of a few, every option visible at once as a row of radio buttons. */
