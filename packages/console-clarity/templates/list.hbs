@@ -1,0 +1,73 @@
+/**
+ * @simplix-generated widget/clarity-list
+ *
+ * Laid down from the console-clarity kit's `list.hbs` and rewritten while its fingerprint
+ * matches. Columns, filters, chips and row actions this list departs in go in `./list.blocks.tsx`.
+ */
+import { adaptForcedList, adaptOrvalList, useCrudList } from "@simplix-react/ui";
+import { RecordList, type RecordAction, type RecordColumn, type RecordFilter } from "@simplix-react-ui-kits/console-clarity/entity";
+import { useEntityTranslation, useTranslation } from "@simplix-react/i18n/react";
+import type { ReactNode } from "react";
+
+import { {{hookList}}, type {{listRowType}} } from "{{packageName}}";
+import { useListBlocks } from "./list.blocks";
+
+export type {{EntityPascal}}Row = {{listRowType}};
+
+/** The {{entity}} list's server-paged state; `params` are forced into every request. */
+export function use{{EntityPascal}}List(params?: Readonly<Record<string, unknown>>) {
+  return useCrudList<{{EntityPascal}}Row>(params ? adaptForcedList<{{EntityPascal}}Row>({{hookList}}, { ...params }) : adaptOrvalList<{{EntityPascal}}Row>({{hookList}}), {
+    stateMode: "server",
+    defaultPageSize: 20,
+    defaultSort: { field: "{{#if orderField}}{{orderField}}{{else}}{{rowIdField}}{{/if}}", direction: "{{#if orderField}}asc{{else}}desc{{/if}}" },
+    filterMode: "immediate",
+  });
+}
+
+export interface {{EntityPascal}}ListProps {
+  readonly list: ReturnType<typeof use{{EntityPascal}}List>;
+  readonly activeRowId?: string | null;
+  readonly onRowClick?: (row: {{EntityPascal}}Row) => void;
+  readonly actions?: readonly RecordAction<{{EntityPascal}}Row>[];
+  readonly leading?: ReactNode;
+}
+
+/** The generated columns, in the order the fields arrive; the blocks keep, reorder or replace them. */
+export function use{{EntityPascal}}Columns(): RecordColumn<{{EntityPascal}}Row>[] {
+  const { fieldLabel } = useEntityTranslation("{{entity}}");
+  return [
+{{#each listFields}}
+{{#unless this.isI18nPair}}
+{{#unless this.baseFieldName}}
+{{#unless this.hideInList}}
+    { key: "{{this.name}}", header: fieldLabel("{{this.name}}"), field: "{{this.name}}" },
+{{/unless}}
+{{/unless}}
+{{/unless}}
+{{/each}}
+  ];
+}
+
+/** The {{entity}} records, drawn by the kit's list. */
+export function {{EntityPascal}}List({ list, activeRowId, onRowClick, actions, leading }: {{EntityPascal}}ListProps) {
+  const { t } = useTranslation("{{moduleNamespace}}/widgets");
+  const generated = use{{EntityPascal}}Columns();
+  const blocks = useListBlocks({ generated });
+  const filters: readonly RecordFilter<{{EntityPascal}}Row>[] = blocks.filters ?? [];
+  return (
+    <RecordList<{{EntityPascal}}Row>
+      list={list}
+      rowId={(row) => String(row.{{rowIdField}})}
+      columns={blocks.columns ?? generated}
+      filters={filters}
+      chips={blocks.chips}
+      actions={actions ?? blocks.actions}
+      leading={leading ?? blocks.leading}
+      activeRowId={activeRowId}
+      onRowClick={onRowClick}
+      searchPlaceholder={blocks.searchPlaceholder}
+      empty={blocks.empty ?? { title: t("{{entity}}.emptyTitle"), description: t("{{entity}}.emptyDescription") }}
+      features={blocks.features}
+    />
+  );
+}

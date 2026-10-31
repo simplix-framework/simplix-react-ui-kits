@@ -1,0 +1,17 @@
+/**
+ * What the {{entity}} form departs in from the generated one: its sections, its notices and the
+ * request it sends. Written by hand and never regenerated.
+ */
+import type { RecordFormField, RecordFormSection, RecordNotice } from "@simplix-react-ui-kits/console-clarity/entity";
+
+export interface FormBlocks {
+  readonly title?: string;
+  readonly sections?: readonly RecordFormSection[];
+  readonly notices?: readonly RecordNotice[];
+  readonly submitLabel?: string;
+  readonly toRequest?: (values: Readonly<Record<string, unknown>>) => Record<string, unknown>;
+}
+
+export function useFormBlocks<T>(_form: { readonly record: T | undefined; readonly editing: boolean; readonly generated: readonly RecordFormField[] }): FormBlocks {
+  return {};
+}

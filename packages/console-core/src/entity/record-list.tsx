@@ -16,6 +16,7 @@ import {
   type FilterDef,
   type ListHook,
   type RowActionDef,
+  type UseCrudListResult,
 } from "@simplix-react/ui";
 import { partAttributes, slotAttributes } from "@simplix-react/ui/design";
 import { BulkActionBar } from "@simplix-react/ui/interaction";
@@ -160,7 +161,14 @@ export interface RecordListFeatures {
 
 /** Props for {@link RecordList}. */
 export interface RecordListProps<Row> {
-  readonly rows: readonly Row[];
+  /** The rows, filtered, sorted and paged in memory. Ignored when {@link list} is given. */
+  readonly rows?: readonly Row[];
+  /**
+   * A list the server pages: a `useCrudList` result in `"server"` mode. The search, the filters, the
+   * sort and the pager then drive its request instead of the rows in memory, and the count is the
+   * server's total.
+   */
+  readonly list?: UseCrudListResult<Row>;
   readonly columns: readonly RecordColumn<Row>[];
   /** The value that names a row, in the address and in the open panel. */
   readonly rowId: (row: Row) => string;
@@ -296,6 +304,16 @@ function filterDef<Row>(filter: RecordFilter<Row>): FilterDef {
 }
 
 
+/**
+ * Whether a search or a filter narrows the rows. In memory that is fewer rows than given; on a server
+ * list, whose unfiltered total is unknown, it is any search text or filter value.
+ */
+export function isNarrowed(list: Pick<UseCrudListResult<unknown>, "filters" | "pagination">, given: number, server: boolean): boolean {
+  if (!server) return list.pagination.total < given;
+  if (list.filters.search.trim() !== "") return true;
+  return Object.values(list.filters.committedValues).some((value) => value !== undefined && value !== null && value !== "" && !(Array.isArray(value) && value.length === 0));
+}
+
 /** The toolbar controls that move between rows when the list folds its toolbar. */
 const TOOLBAR_ITEMS =
   "[data-part=list-total-badge], [data-flip-key=search], [data-slot=crud-filter-bar-trigger], [data-slot=crud-filter-bar-columns-button]";
@@ -308,8 +326,11 @@ const TOOLBAR_ITEMS =
  * action is; how each feature behaves is the kit's, processed in memory over the rows by the
  * framework's client-mode list, so a feature is never drawn by hand for one screen.
  */
+const NO_ROWS: readonly never[] = [];
+
 export function RecordList<Row>({
-  rows,
+  rows = NO_ROWS,
+  list: serverList,
   columns,
   rowId,
   activeRowId,
@@ -335,9 +356,10 @@ export function RecordList<Row>({
   useReflowFlip(rootRef, TOOLBAR_ITEMS, []);
   const on = (feature: keyof RecordListFeatures) => features[feature] !== false;
   const useRows = useMemo<ListHook<Row>>(() => () => ({ data: [...rows], total: rows.length, isLoading: false, error: null }), [rows]);
-  const list = useCrudList(useRows, { stateMode: "client", filterMode: "immediate", defaultPageSize: pageSize });
+  const clientList = useCrudList(useRows, { stateMode: "client", filterMode: "immediate", defaultPageSize: pageSize });
+  const list = serverList ?? clientList;
 
-  const counted = features.count === "filtered" ? list.pagination.total < rows.length : on("count");
+  const counted = features.count === "filtered" ? isNarrowed(list, rows.length, serverList !== undefined) : on("count");
 
   const rowActions: RowActionDef<Row>[] = on("rowActions")
     ? actions.map((action) => ({
@@ -484,6 +506,7 @@ export function RecordList<Row>({
         // With no rows the table says why: the page's own empty state, or inside a record (where the
         // list is one part of the panel) the compact sentence centred in the list's place.
         emptyReason={list.emptyReason}
+        isLoading={list.isLoading}
         emptyState={empty}
         slots={nested ? { empty: ({ reason }) => (empty && reason === "no-data" ? <EmptyState size="sm" title={empty.title} description={empty.description} /> : <CrudList.Empty reason={reason} />) } : undefined}
         cardBreakpoint={titleColumn ? breakpoint : undefined}

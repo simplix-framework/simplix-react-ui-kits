@@ -1,0 +1,54 @@
+/**
+ * @simplix-generated widget/clarity-detail
+ *
+ * Laid down from the console-clarity kit's `detail.hbs` and rewritten while its fingerprint
+ * matches. Tabs, verbs, notices and fields this record departs in go in `./detail.blocks.tsx`.
+ */
+import { RecordDetail, type RecordField } from "@simplix-react-ui-kits/console-clarity/entity";
+import { useEntityTranslation, useTranslation } from "@simplix-react/i18n/react";
+
+import { {{hookGet}} } from "{{packageName}}";
+import { useDetailBlocks } from "./detail.blocks";
+
+export interface {{EntityPascal}}DetailProps {
+  readonly {{entity}}Id: string;
+  readonly onClose?: () => void;
+  readonly onEdit?: () => void;
+  readonly onDeleted?: () => void;
+  readonly initialTab?: string;
+}
+
+/** The {{entity}} record, drawn by the kit's record detail. */
+export function {{EntityPascal}}Detail(props: {{EntityPascal}}DetailProps) {
+  const { t } = useTranslation("{{moduleNamespace}}/widgets");
+  const { fieldLabel } = useEntityTranslation("{{entity}}");
+  const { data, isLoading } = {{hookGet}}(props.{{entity}}Id);
+  const record = data ?? undefined;
+  const generated: RecordField[] = record
+    ? [
+{{#each fields}}
+{{#unless this.isI18nPair}}
+{{#unless this.baseFieldName}}
+        { label: fieldLabel("{{this.name}}"), value: record.{{this.name}} == null ? "" : String(record.{{this.name}}) },
+{{/unless}}
+{{/unless}}
+{{/each}}
+      ]
+    : [];
+  const blocks = useDetailBlocks({ record, generated, props });
+  return (
+    <RecordDetail
+      isLoading={isLoading}
+      title={blocks.title ?? (record ? String(record.{{#if displayNameField}}{{displayNameField}}{{else}}{{rowIdField}}{{/if}} ?? "") : t("{{entity}}.{{entity}}"))}
+      subtitle={blocks.subtitle}
+      status={blocks.status}
+      notices={blocks.notices}
+      verbs={blocks.verbs}
+      actions={blocks.actions}
+      defaultTab={props.initialTab ?? blocks.defaultTab}
+      tabs={blocks.tabs}
+      sections={blocks.tabs ? undefined : blocks.sections ?? [{ key: "overview", fields: generated }]}
+      onClose={props.onClose}
+    />
+  );
+}

@@ -1,0 +1,75 @@
+/**
+ * @simplix-generated widget/clarity-form
+ *
+ * Laid down from the console-clarity kit's `form.hbs` and rewritten while its fingerprint
+ * matches. Sections, rules and the request this form sends go in `./form.blocks.tsx`.
+ */
+import { RecordForm, type RecordFormField } from "@simplix-react-ui-kits/console-clarity/entity";
+import { QueryFallback, useInvalidateEntity } from "@simplix-react/ui";
+import { useEntityTranslation, useTranslation } from "@simplix-react/i18n/react";
+
+import { {{#if hookGet}}{{hookGet}}, {{/if}}{{#if hookCreate}}{{hookCreate}}{{/if}}{{#if hookUpdate}}{{#if hookCreate}}, {{/if}}{{hookUpdate}}{{/if}} } from "{{packageName}}";
+import { useFormBlocks } from "./form.blocks";
+
+export interface {{EntityPascal}}FormProps {
+{{#if hasUpdate}}
+  readonly {{entity}}Id?: string;
+{{/if}}
+  readonly onClose?: () => void;
+  readonly onSuccess?: () => void;
+  readonly onCancel?: () => void;
+}
+
+/** Creates or edits a {{entity}} through the kit's record form. */
+export function {{EntityPascal}}Form(props: {{EntityPascal}}FormProps) {
+  const { t } = useTranslation("{{moduleNamespace}}/widgets");
+  const { fieldLabel } = useEntityTranslation("{{entity}}");
+{{#if hasUpdate}}
+  const editing = Boolean(props.{{entity}}Id);
+  const { data, isLoading } = {{hookGet}}(props.{{entity}}Id ?? "", { query: { enabled: editing, gcTime: 0 } });
+{{else}}
+  const editing = false;
+  const data = undefined;
+  const isLoading = false;
+{{/if}}
+  const invalidate = useInvalidateEntity("{{entityPath}}");
+{{#if hookCreate}}
+  const create = {{hookCreate}}({ mutation: { onSettled: invalidate } });
+{{/if}}
+{{#if hookUpdate}}
+  const update = {{hookUpdate}}({ mutation: { onSettled: invalidate } });
+{{/if}}
+  const record = editing ? data ?? undefined : undefined;
+  const generated: RecordFormField[] = [
+{{#each fields}}
+{{#unless this.isI18nPair}}
+{{#unless this.baseFieldName}}
+{{#unless this.readOnly}}
+    { kind: "text", key: "{{this.name}}", label: fieldLabel("{{this.name}}"), value: record ? String((record as Record<string, unknown>)["{{this.name}}"] ?? "") : "" },
+{{/unless}}
+{{/unless}}
+{{/unless}}
+{{/each}}
+  ];
+  const blocks = useFormBlocks({ record, editing, generated });
+  if (editing && (isLoading || !data)) return <QueryFallback isLoading={isLoading} />;
+  return (
+    <RecordForm
+      title={blocks.title ?? (editing ? t("{{entity}}.edit{{EntityPascal}}") : t("{{entity}}.addNew{{EntityPascal}}"))}
+      sections={blocks.sections ?? [{ key: "main", fields: generated }]}
+      notices={blocks.notices}
+      submitLabel={blocks.submitLabel ?? t("{{entity}}.save")}
+      onCancel={props.onCancel}
+      onSubmit={async (values) => {
+        const body = blocks.toRequest ? blocks.toRequest(values) : values;
+{{#if hasUpdate}}
+        if (editing && props.{{entity}}Id) await update.mutateAsync({ {{#if updatePathParam}}{{updatePathParam}}{{else}}id{{/if}}: props.{{entity}}Id, data: body } as never);
+        else await create.mutateAsync({ data: body } as never);
+{{else}}
+        await create.mutateAsync({ data: body } as never);
+{{/if}}
+        props.onSuccess?.();
+      }}
+    />
+  );
+}

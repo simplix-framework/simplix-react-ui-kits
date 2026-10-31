@@ -1,0 +1,22 @@
+/**
+ * What the {{entity}} record departs in from the generated detail. Written by hand and never regenerated.
+ */
+import type { RecordBadge, RecordField, RecordNotice, RecordSection, RecordTab, RecordVerb } from "@simplix-react-ui-kits/console-clarity/entity";
+
+import type { {{EntityPascal}}DetailProps } from "./detail";
+
+export interface DetailBlocks {
+  readonly title?: string;
+  readonly subtitle?: string;
+  readonly status?: RecordBadge;
+  readonly notices?: readonly RecordNotice[];
+  readonly verbs?: readonly RecordVerb[];
+  readonly actions?: readonly RecordVerb[];
+  readonly defaultTab?: string;
+  readonly tabs?: readonly RecordTab[];
+  readonly sections?: readonly RecordSection[];
+}
+
+export function useDetailBlocks<T>(_detail: { readonly record: T | undefined; readonly generated: readonly RecordField[]; readonly props: {{EntityPascal}}DetailProps }): DetailBlocks {
+  return {};
+}

@@ -1,0 +1,22 @@
+/**
+ * What `{{EntityPascal}}CrudPage` does differently from the generated page: the header's actions,
+ * tiles and tabs, the list's request and its props, the detail's props, and dialogs. Written by
+ * hand and never regenerated.
+ */
+import type { ReactNode } from "react";
+import type { ConsoleSearch, CrudPageNavigation, DetailWidth, PageSpec } from "@simplix-react-ui-kits/console-clarity/page";
+
+import type { {{EntityPascal}}DetailProps, {{EntityPascal}}ListProps } from "../../widgets/{{entityKebab}}";
+
+export interface PageBlocks {
+  readonly spec?: Partial<Omit<PageSpec, "body">>;
+  readonly listParams?: Readonly<Record<string, unknown>>;
+  readonly listProps?: (nav: CrudPageNavigation) => Partial<{{EntityPascal}}ListProps>;
+  readonly detailProps?: (id: string, nav: CrudPageNavigation) => Partial<{{EntityPascal}}DetailProps>;
+  readonly detailWidth?: DetailWidth;
+  readonly dialogs?: ReactNode;
+}
+
+export function usePageBlocks(_page: { readonly search: ConsoleSearch; readonly onNavigate: (search: ConsoleSearch) => void }): PageBlocks {
+  return {};
+}

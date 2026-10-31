@@ -1,0 +1,67 @@
+/**
+ * @simplix-generated page/clarity-crud-page
+ *
+ * Laid down from the console-clarity kit's `crud-page.hbs`. This file is the generator's and is
+ * rewritten on every run while its `@simplix-render` fingerprint matches; what this screen does
+ * differently goes in `./page.blocks.tsx`, which the generator writes once and never again.
+ */
+import { CrudPage, type ConsoleSearch, useDetailPresentationSetting } from "@simplix-react-ui-kits/console-clarity/page";
+import { useTranslation } from "@simplix-react/i18n/react";
+
+import { {{EntityPascal}}Detail, {{#if hasForm}}{{EntityPascal}}Form, {{/if}}{{EntityPascal}}List, use{{EntityPascal}}List } from "../../widgets/{{entityKebab}}";
+import { usePageBlocks } from "./page.blocks";
+
+interface {{EntityPascal}}CrudPageProps {
+  readonly search: ConsoleSearch;
+  readonly onNavigate: (search: ConsoleSearch) => void;
+}
+
+/** {{EntityPascal}}: the list, and the record it opens. */
+export function {{EntityPascal}}CrudPage({ search, onNavigate }: {{EntityPascal}}CrudPageProps) {
+  const { t } = useTranslation("{{moduleNamespace}}/widgets");
+  const blocks = usePageBlocks({ search, onNavigate });
+  const list = use{{EntityPascal}}List(blocks.listParams);
+  const presentation = useDetailPresentationSetting();
+
+  return (
+    <>
+      <CrudPage
+        spec={{ldb}} title: t("{{entity}}.{{entityPlural}}"), description: t("{{entity}}.{{entityPlural}}Description"), ...blocks.spec {{rdb}}
+        search={search}
+        onNavigate={onNavigate}
+        {...presentation}
+        detailWidth={blocks.detailWidth}
+        renderList={(nav) => (
+          <{{EntityPascal}}List
+            list={list}
+            activeRowId={nav.selectedId}
+            onRowClick={(row) => nav.showDetail(String(row.{{rowIdField}}))}
+            {...blocks.listProps?.(nav)}
+          />
+        )}
+        renderDetail={(id, nav) => (
+          <{{EntityPascal}}Detail
+            {{entity}}Id={id}
+            onClose={nav.closePanel}
+{{#if hasUpdate}}
+            onEdit={() => nav.showEdit(id)}
+{{/if}}
+{{#if hasDelete}}
+            onDeleted={nav.showList}
+{{/if}}
+            {...blocks.detailProps?.(id, nav)}
+          />
+        )}
+{{#if hasCreate}}
+        renderNew={(nav) => <{{EntityPascal}}Form onClose={nav.closePanel} onSuccess={nav.showList} onCancel={nav.showList} />}
+{{/if}}
+{{#if hasUpdate}}
+        renderEdit={(id, nav) => (
+          <{{EntityPascal}}Form {{entity}}Id={id} onClose={nav.closePanel} onSuccess={() => nav.showDetail(id)} onCancel={() => nav.showDetail(id)} />
+        )}
+{{/if}}
+      />
+      {blocks.dialogs}
+    </>
+  );
+}

@@ -106,11 +106,13 @@
       "types": "./dist/shell/index.d.ts",
       "import": "./dist/shell/index.js"
     },
-    "./styles/*": "./src/styles/*"
+    "./styles/*": "./src/styles/*",
+    "./templates/*": "./templates/*"
   },
   "files": [
     "dist",
-    "src"
+    "src",
+    "templates"
   ],
   "scripts": {
     "build": "NODE_OPTIONS=--max-old-space-size=4096 tsup",
@@ -147,5 +149,8 @@
     "tsup": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
+  },
+  "simplix": {
+    "templates": "templates"
   }
 }

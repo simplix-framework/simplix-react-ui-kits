@@ -288,7 +288,7 @@ function RecordRowDialog<Row>({
  */
 function SubList({ list, count }: { readonly list: RecordListProps<any>; readonly count: number | undefined }) {
   const [opened, setOpened] = useState<unknown | null>(null);
-  const kind = sublistKind(list.rows.length, count);
+  const kind = sublistKind(list.list?.pagination.total ?? list.rows?.length ?? 0, count);
   const features = kind === "compact" ? { ...list.features, ...COMPACT_FEATURES } : { ...list.features, ...FULL_FEATURES };
   return (
     <div {...slotAttributes(recordSublistStyle, { kind })}>
@@ -312,7 +312,7 @@ function holdsContent(content: RecordTabContent): boolean {
       content.matrix ||
       content.evidence ||
       content.history ||
-      (content.list && content.list.rows.length > 0),
+      (content.list && (content.list.list ? content.list.list.pagination.total : content.list.rows?.length ?? 0) > 0),
   );
 }
 

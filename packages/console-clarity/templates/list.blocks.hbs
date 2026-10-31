@@ -1,0 +1,22 @@
+/**
+ * What the {{entity}} list departs in from the generated one. Written by hand and never regenerated.
+ */
+import type { ReactNode } from "react";
+import type { RecordAction, RecordColumn, RecordFilter, RecordListProps } from "@simplix-react-ui-kits/console-clarity/entity";
+
+import type { {{EntityPascal}}Row } from "./list";
+
+export interface ListBlocks {
+  readonly columns?: readonly RecordColumn<{{EntityPascal}}Row>[];
+  readonly filters?: readonly RecordFilter<{{EntityPascal}}Row>[];
+  readonly chips?: RecordListProps<{{EntityPascal}}Row>["chips"];
+  readonly actions?: readonly RecordAction<{{EntityPascal}}Row>[];
+  readonly leading?: ReactNode;
+  readonly searchPlaceholder?: string;
+  readonly empty?: RecordListProps<{{EntityPascal}}Row>["empty"];
+  readonly features?: RecordListProps<{{EntityPascal}}Row>["features"];
+}
+
+export function useListBlocks(_list: { readonly generated: readonly RecordColumn<{{EntityPascal}}Row>[] }): ListBlocks {
+  return {};
+}
