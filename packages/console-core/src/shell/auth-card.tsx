@@ -1,5 +1,8 @@
 import type { ReactNode } from "react";
 import { Card, Flex, Heading, Separator, Stack, Text } from "@simplix-react/ui";
+import { partAttributes } from "@simplix-react/ui/design";
+
+import { authCardTitleStyle } from "./auth-card.style";
 
 /** Props for {@link AuthCard}. */
 export interface AuthCardProps {
@@ -26,7 +29,9 @@ export function AuthCard({ title, description, notices, children, foot }: AuthCa
     <Card padding="md">
       <Stack gap="md">
         <Stack gap="xs">
-          <Heading level={2}>{title}</Heading>
+          <Heading level={2} {...partAttributes(authCardTitleStyle, {})}>
+            {title}
+          </Heading>
           {description ? (
             <Text tone="muted" size="sm">
               {description}
