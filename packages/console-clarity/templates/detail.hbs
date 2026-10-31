@@ -12,12 +12,16 @@ import { useDetailBlocks } from "./detail.blocks";
 
 /** The fields the contract gives this record, each drawn by its kind. */
 export const {{EntityPascal}}DetailFields: readonly ContractField[] = [
-{{#each fields}}
+{{#each detailFields}}
 {{#unless this.isI18nPair}}
 {{#unless this.baseFieldName}}
 {{#unless this.isSystemField}}
 {{#unless this.isReferenceName}}
-  { name: "{{this.name}}", kind: "{{this.contractKind}}"{{#if this.enumTypeName}}, enumName: "{{this.enumTypeName}}"{{/if}}{{#if this.options.length}}, options: [{{#each this.options}}"{{this}}"{{#unless @last}}, {{/unless}}{{/each}}]{{/if}}{{#if this.peekKind}}, peekKind: "{{this.peekKind}}"{{/if}}{{#if this.nameField}}, nameField: "{{this.nameField}}"{{/if}} },
+{{#unless this.isAuditField}}
+{{#unless this.isOpaqueId}}
+  { name: "{{this.name}}", kind: "{{this.contractKind}}"{{#if this.enumTypeName}}, enumName: "{{this.enumTypeName}}"{{/if}}{{#if this.options.length}}, options: [{{#each this.options}}"{{this}}"{{#unless @last}}, {{/unless}}{{/each}}]{{/if}}{{#if this.peekKind}}, peekKind: "{{this.peekKind}}"{{/if}}{{#if this.nameField}}, nameField: "{{this.nameField}}"{{/if}}{{#if (eq this.sortable true)}}, sortable: true{{/if}}{{#if (eq this.sortable false)}}, sortable: false{{/if}}{{#if this.isIdentifier}}, identifier: true{{/if}} },
+{{/unless}}
+{{/unless}}
 {{/unless}}
 {{/unless}}
 {{/unless}}
@@ -51,17 +55,26 @@ export function {{EntityPascal}}Detail(props: {{EntityPascal}}DetailProps) {
   const contract = useRecordContract("{{entity}}", blocks.contract);
   const row = record as Readonly<Record<string, unknown>> | undefined;
   const generated: RecordField[] = record
-    ? {{EntityPascal}}DetailFields.map((field) => ({ label: contract.fieldLabel(field.name), value: contract.value(field, row), wide: field.kind === "longText" }))
+    ? {{EntityPascal}}DetailFields.map((field) => contract.detailField(field, row))
     : [];
+{{#if statusField}}
+  const headerStatus = STATUS_FIELD ? statusBadge(contract.value(STATUS_FIELD, row)) : undefined;
+{{else}}
+  const headerStatus = undefined;
+{{/if}}
   return (
     <RecordDetail
       isLoading={isLoading}
       title={blocks.title ?? (record ? String(record.{{#if displayNameField}}{{displayNameField}}{{else}}{{rowIdField}}{{/if}} ?? "") : t("{{entity}}.{{entity}}"))}
+{{#if displayNameField}}
+      subtitle={blocks.subtitle ?? (record?.{{rowIdField}} === undefined ? undefined : String(record.{{rowIdField}}))}
+{{else}}
       subtitle={blocks.subtitle}
-      status={blocks.status{{#if statusField}} ?? (STATUS_FIELD ? statusBadge(contract.value(STATUS_FIELD, row)) : undefined){{/if}}}
+{{/if}}
+      status={blocks.status ?? headerStatus}
       notices={blocks.notices}
       verbs={blocks.verbs}
-      actions={blocks.actions}
+      actions={blocks.actions ?? (props.onEdit ? [{ label: t("{{entity}}.edit"), onClick: props.onEdit }] : undefined)}
       defaultTab={props.initialTab ?? blocks.defaultTab}
       tabs={blocks.tabs}
       sections={blocks.tabs ? undefined : blocks.sections ?? [{ key: "overview", fields: generated }]}

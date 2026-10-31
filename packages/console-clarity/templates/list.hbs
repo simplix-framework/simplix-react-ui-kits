@@ -5,7 +5,7 @@
  * matches. Columns, filters, chips and row actions this list departs in go in `./list.blocks.tsx`.
  */
 import { adaptForcedList, adaptOrvalList, useCrudList } from "@simplix-react/ui";
-import { RecordList, useRecordContract, type ContractField, type ContractOverrides, type RecordAction, type RecordColumn, type RecordFilter } from "@simplix-react-ui-kits/console-clarity/entity";
+import { RecordList, useRecordContract, type ContractField, type ContractFilter, type ContractOverrides, type RecordAction, type RecordColumn, type RecordFilter } from "@simplix-react-ui-kits/console-clarity/entity";
 import { useTranslation } from "@simplix-react/i18n/react";
 import type { ReactNode } from "react";
 
@@ -39,8 +39,14 @@ export const {{EntityPascal}}ColumnFields: readonly ContractField[] = [
 {{#unless this.baseFieldName}}
 {{#unless this.isSystemField}}
 {{#unless this.isReferenceName}}
+{{#unless this.isAuditField}}
+{{#unless this.isOpaqueId}}
 {{#unless this.hideInList}}
-  { name: "{{this.name}}", kind: "{{this.contractKind}}"{{#if this.enumTypeName}}, enumName: "{{this.enumTypeName}}"{{/if}}{{#if this.options.length}}, options: [{{#each this.options}}"{{this}}"{{#unless @last}}, {{/unless}}{{/each}}]{{/if}}{{#if this.peekKind}}, peekKind: "{{this.peekKind}}"{{/if}}{{#if this.nameField}}, nameField: "{{this.nameField}}"{{/if}} },
+{{#unless this.isIdentifier}}
+  { name: "{{this.name}}", kind: "{{this.contractKind}}"{{#if this.enumTypeName}}, enumName: "{{this.enumTypeName}}"{{/if}}{{#if this.options.length}}, options: [{{#each this.options}}"{{this}}"{{#unless @last}}, {{/unless}}{{/each}}]{{/if}}{{#if this.peekKind}}, peekKind: "{{this.peekKind}}"{{/if}}{{#if this.nameField}}, nameField: "{{this.nameField}}"{{/if}}{{#if (eq this.sortable true)}}, sortable: true{{/if}}{{#if (eq this.sortable false)}}, sortable: false{{/if}}{{#if this.isIdentifier}}, identifier: true{{/if}} },
+{{/unless}}
+{{/unless}}
+{{/unless}}
 {{/unless}}
 {{/unless}}
 {{/unless}}
@@ -49,15 +55,17 @@ export const {{EntityPascal}}ColumnFields: readonly ContractField[] = [
 {{/each}}
 ];
 
+/** The filters the contract's searchable fields give this list. */
+export const {{EntityPascal}}Filters: readonly ContractFilter[] = [
+{{#each contractFilters}}
+  { kind: "{{this.kind}}", field: "{{this.field}}"{{#if this.enumTypeName}}, enumName: "{{this.enumTypeName}}"{{/if}}{{#if this.options}}, options: [{{#each this.options}}"{{this}}"{{#unless @last}}, {{/unless}}{{/each}}]{{/if}}{{#if (eq this.kind "dateRange")}}, dateOnly: {{#if this.dateOnly}}true{{else}}false{{/if}}{{/if}} },
+{{/each}}
+];
+
 /** The generated columns, in the order the fields arrive; the blocks keep, reorder or replace them. */
 export function use{{EntityPascal}}Columns(overrides?: ContractOverrides): RecordColumn<{{EntityPascal}}Row>[] {
   const contract = useRecordContract("{{entity}}", overrides);
-  return {{EntityPascal}}ColumnFields.map((field) => ({
-    key: field.name,
-    header: contract.fieldLabel(field.name),
-    field: field.name as keyof {{EntityPascal}}Row & string,
-    value: (row: {{EntityPascal}}Row) => contract.value(field, row as unknown as Readonly<Record<string, unknown>>),
-  }));
+  return contract.columns<{{EntityPascal}}Row>({{EntityPascal}}ColumnFields);
 }
 
 /** The {{entity}} records, drawn by the kit's list. */
@@ -65,7 +73,8 @@ export function {{EntityPascal}}List({ list, activeRowId, onRowClick, actions, l
   const { t } = useTranslation("{{moduleNamespace}}/widgets");
   const generated = use{{EntityPascal}}Columns();
   const blocks = useListBlocks({ generated });
-  const filters: readonly RecordFilter<{{EntityPascal}}Row>[] = blocks.filters ?? [];
+  const contract = useRecordContract("{{entity}}");
+  const filters: readonly RecordFilter<{{EntityPascal}}Row>[] = blocks.filters ?? contract.filters<{{EntityPascal}}Row>({{EntityPascal}}Filters);
   return (
     <RecordList<{{EntityPascal}}Row>
       list={list}

@@ -7,6 +7,7 @@ import type { EntitySearch, StatusTone } from "@simplix-react/ui";
 import { PACKAGE_NAMESPACE } from "./locales";
 import { usePeekHost } from "../peek";
 import type { RecordFormField } from "./record-form-types";
+import type { RecordFilter } from "./record-list";
 import type { RecordValue } from "./record-value";
 
 /**
@@ -37,12 +38,43 @@ export interface ContractField {
   readonly options?: readonly string[];
   /** The peek kind a `reference` field opens, which is the referenced entity's name. */
   readonly peekKind?: string;
-  /** The field beside a `reference` that carries the referenced record's name. */
+  /** The field beside a `reference` that carries the referenced record's name, or a dotted path into the nested record. */
   readonly nameField?: string;
   /** The server owns it: drawn in a detail, never edited in a form. */
   readonly readOnly?: boolean;
   readonly required?: boolean;
+  /** Whether the server orders a list by it, as SimpliX Meta's searchable metadata states; absent means unstated. */
+  readonly sortable?: boolean;
+  /** The record's own identifier: drawn with a copy control in a detail. */
+  readonly identifier?: boolean;
 }
+
+/**
+ * The column geometry each kind takes: a value of known size gets a fixed width, free text a floor
+ * that takes the spare width. One table of numbers for every generated list, so two lists showing
+ * the same kinds line up.
+ */
+export const CONTRACT_COLUMN_SIZE: Readonly<Record<ContractFieldKind, { readonly width?: number; readonly minWidth?: number; readonly wrap?: boolean }>> = {
+  text: { minWidth: 140 },
+  longText: { minWidth: 220, wrap: true },
+  email: { minWidth: 200 },
+  enum: { width: 120 },
+  boolean: { width: 96 },
+  date: { width: 128 },
+  instant: { width: 176 },
+  time: { width: 96 },
+  number: { width: 112 },
+  reference: { minWidth: 160 },
+};
+
+/** A searchable field as the generator writes it, which {@link useRecordContract}'s `filters` turns into a list filter. */
+export type ContractFilter =
+  | { readonly kind: "choice"; readonly field: string; readonly enumName?: string; readonly options: readonly string[] }
+  | { readonly kind: "toggle" | "number"; readonly field: string }
+  | { readonly kind: "dateRange"; readonly field: string; readonly dateOnly?: boolean };
+
+/** How many leading columns of a generated list draw at every pane width. */
+export const ALWAYS_DRAWN_COLUMNS = 4;
 
 /** What one screen adds to the contract's drawing: tones for its enums, pickers for its references. */
 export interface ContractOverrides {
@@ -58,6 +90,16 @@ type Row = Readonly<Record<string, unknown>>;
 export function enumValueOf(raw: unknown): string {
   if (raw === null || raw === undefined) return "";
   return String(resolveBootEnum(raw as never) || "");
+}
+
+/** The value at a dotted path (`position.name`), or `undefined` where any step is absent. */
+export function valueAtPath(row: Row | undefined, path: string): unknown {
+  let at: unknown = row;
+  for (const step of path.split(".")) {
+    if (at === null || typeof at !== "object") return undefined;
+    at = (at as Row)[step];
+  }
+  return at;
 }
 
 /** Text with digit grouping in the reader's locale; a non-number is drawn as it came. */
@@ -106,7 +148,7 @@ export function useRecordContract(entity: string, overrides: ContractOverrides =
         case "number":
           return groupedNumber(raw, locale);
         case "reference": {
-          const name = field.nameField ? row?.[field.nameField] : undefined;
+          const name = field.nameField ? valueAtPath(row, field.nameField) : undefined;
           const text = typeof name === "string" && name !== "" ? name : String(raw);
           if (!field.peekKind) return { link: text };
           const kind = field.peekKind;
@@ -157,5 +199,64 @@ export function useRecordContract(entity: string, overrides: ContractOverrides =
     [enumLabel, fieldLabel, searches, zone],
   );
 
-  return useMemo(() => ({ value, formField, fieldLabel }), [value, formField, fieldLabel]);
+  const column = useCallback(
+    <R,>(field: ContractField) => ({
+      key: field.name,
+      header: fieldLabel(field.name),
+      field: field.name as keyof R & string,
+      ...CONTRACT_COLUMN_SIZE[field.kind],
+      ...(field.sortable === undefined ? {} : { sortable: field.sortable }),
+      value: (row: R) => value(field, row as unknown as Row),
+    }),
+    [fieldLabel, value],
+  );
+
+  /**
+   * Every field as a column. The leading columns always draw; each one after them is dropped from a
+   * pane narrower than the table that holds it, so a wide record set narrows column by column
+   * instead of flipping to cards, and the card layout is left to a phone.
+   */
+  const columns = useCallback(
+    <R,>(fields: readonly ContractField[]) => {
+      let running = 0;
+      return fields.map((field, index) => {
+        const drawn = column<R>(field);
+        running += drawn.width ?? drawn.minWidth ?? 0;
+        return index < ALWAYS_DRAWN_COLUMNS ? drawn : { ...drawn, minTableWidth: running };
+      });
+    },
+    [column],
+  );
+
+  /** The searchable fields as list filters, labelled by the field and, for an enum, by its values. */
+  const filters = useCallback(
+    <R,>(defs: readonly ContractFilter[]): RecordFilter<R>[] =>
+      defs.map((def): RecordFilter<R> => {
+        const field = def.field as keyof R & string;
+        const label = fieldLabel(def.field);
+        switch (def.kind) {
+          case "choice": {
+            const enumName = def.enumName;
+            return { kind: "choice", field, label, options: def.options.map((option) => ({ value: option, label: enumName ? enumLabel(enumName, option) : option })) };
+          }
+          case "dateRange":
+            return { kind: "dateRange", field, label, dateOnly: def.dateOnly ?? false };
+          default:
+            return { kind: def.kind, field, label };
+        }
+      }),
+    [enumLabel, fieldLabel],
+  );
+
+  const detailField = useCallback(
+    (field: ContractField, row: Row | undefined) => ({
+      label: fieldLabel(field.name),
+      value: value(field, row),
+      wide: field.kind === "longText",
+      copy: field.identifier === true,
+    }),
+    [fieldLabel, value],
+  );
+
+  return useMemo(() => ({ value, formField, column, columns, filters, detailField, fieldLabel }), [value, formField, column, columns, filters, detailField, fieldLabel]);
 }
