@@ -11,6 +11,8 @@
 /* The type steps the kit's parts read, after the framework theme so a theme that defines them wins
    only through a more specific selector. */
 @import './type-steps.css';
+/* Kit geometry and palettes that no framework theme defines. */
+@import './console-tokens.css';
 /* This kit's own components as a content source, so an app importing this stylesheet gets every
    utility the kit's parts write wherever the kit is installed. */
 @source '../**/*.{ts,tsx}';

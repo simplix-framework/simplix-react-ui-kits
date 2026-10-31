@@ -1,0 +1,46 @@
+/* Geometry and palettes the kit's parts read that no framework theme defines, at the values the
+   kit draws with. A product theme overrides each through a more specific selector. */
+:root {
+  /* A nested menu branch draws its rule under the centre of the parent row's icon: indent is the
+     offset of that rule, inset the room between the rule and the child rows, gap the space
+     between child rows. */
+  --menu-branch-indent: 17px;
+  --menu-branch-inset: 9px;
+  --menu-branch-gap: 1px;
+
+  /* The title type step a sign-in panel's heading reads (the product theme writes its own). */
+  --text-title: 26px;
+  --text-title--line-height: 32px;
+  --text-title--font-weight: 700;
+  --text-title--letter-spacing: -0.02em;
+
+  /* Initials avatar tones: a ground and its ink per tone. A person's id picks one of them, so the
+     same person keeps the same tone on every screen. */
+  --avatar-1: #ceeff6;
+  --avatar-1-ink: #005867;
+  --avatar-2: #d5f0e0;
+  --avatar-2-ink: #1b5a3e;
+  --avatar-3: #eaead0;
+  --avatar-3-ink: #515013;
+  --avatar-4: #fae3d1;
+  --avatar-4-ink: #6c411a;
+  --avatar-5: #ffdfde;
+  --avatar-5-ink: #723a3b;
+  --avatar-6: #ebe3fc;
+  --avatar-6-ink: #544272;
+}
+
+.dark {
+  --avatar-1: #123f47;
+  --avatar-1-ink: #b2e1eb;
+  --avatar-2: #1e402f;
+  --avatar-2-ink: #bce2cc;
+  --avatar-3: #3a3a19;
+  --avatar-3-ink: #dadbb5;
+  --avatar-4: #4b321c;
+  --avatar-4-ink: #f1d0b7;
+  --avatar-5: #4f2d2d;
+  --avatar-5-ink: #f7cbca;
+  --avatar-6: #3c324e;
+  --avatar-6-ink: #dcd1f4;
+}

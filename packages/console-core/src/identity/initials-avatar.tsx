@@ -7,16 +7,19 @@ import { initialsAvatarStyle } from "./initials-avatar.style";
 export interface InitialsAvatarProps {
   /** The person's name; its last two letters are drawn. */
   readonly name: string;
-  /** What tells the person apart, from which the ground's hue is taken, so it stays put across screens. */
+  /** What tells the person apart, from which the palette tone is taken, so it stays put across screens. */
   readonly seed: string;
   readonly size?: "sm" | "lg";
 }
 
-/** The hue, 0-359, a seed always maps to. */
-export function avatarHue(seed: string): number {
+/** How many avatar tones the palette holds (`--avatar-1` to `--avatar-6`). */
+export const AVATAR_TONE_COUNT = 6;
+
+/** The palette tone, 1 to {@link AVATAR_TONE_COUNT}, a seed always maps to. */
+export function avatarTone(seed: string): number {
   let sum = 0;
   for (const char of seed) sum += char.codePointAt(0) ?? 0;
-  return sum % 360;
+  return (sum % AVATAR_TONE_COUNT) + 1;
 }
 
 /**
@@ -29,7 +32,12 @@ export function InitialsAvatar({ name, seed, size = "sm" }: InitialsAvatarProps)
     <span
       aria-hidden="true"
       className="shrink-0 place-items-center"
-      style={{ "--avatar-h": avatarHue(seed) } as CSSProperties}
+      style={
+        {
+          "--avatar-ground": `var(--avatar-${avatarTone(seed)})`,
+          "--avatar-ink": `var(--avatar-${avatarTone(seed)}-ink)`,
+        } as CSSProperties
+      }
       {...slotAttributes(initialsAvatarStyle, { size })}
     >
       {letters}

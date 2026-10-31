@@ -3,7 +3,8 @@
   "designFiles": [
     "src/styles/designs/clarity.css",
     "src/styles/designs/classic.css",
-    "src/styles/designs/clarity-stylesheet.ts"
+    "src/styles/designs/clarity-stylesheet.ts",
+    "src/styles/console-tokens.css"
   ],
   "exclude": [
     "**/*.stories.tsx",
@@ -13,9 +14,9 @@
   ],
   "allow": {},
   "max": {
-    "arbitrary-literal": 116,
+    "arbitrary-literal": 107,
     "arbitrary-shadow": 0,
-    "arbitrary-colour": 8,
+    "arbitrary-colour": 0,
     "css-literal": 13
   }
 }
