@@ -8,7 +8,7 @@
  */
 import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
-import { CrudPage, type ConsoleSearch } from "@simplix-react-ui-kits/console-clarity/page";
+import { CrudPage, type ConsoleSearch, useDetailPresentationSetting } from "@simplix-react-ui-kits/console-clarity/page";
 import { RecordDetail, RecordList, useRecordContract, useScreenWords, type ContractField } from "@simplix-react-ui-kits/console-clarity/entity";
 import { useMockRecords } from "@simplix-react-ui-kits/console-clarity/mock";
 
@@ -68,6 +68,8 @@ interface Args {
 
 function Screen({ open }: Args) {
   const words = useScreenWords("{{entity}}");
+  // The same setting the generated page reads, so the frame draws the presentation switch the screen draws.
+  const presentation = useDetailPresentationSetting();
   const records = useMockRecords(ROWS, idOf);
   const [search, setSearch] = useState<ConsoleSearch>(open ? { id: open } : {});
   const contract = useRecordContract("{{entity}}");
@@ -77,6 +79,7 @@ function Screen({ open }: Args) {
       spec={{ldb}} title: words.plural {{rdb}}
       search={search}
       onNavigate={setSearch}
+      {...presentation}
       renderList={(nav) => (
         <RecordList<Row>
           rows={records.rows}

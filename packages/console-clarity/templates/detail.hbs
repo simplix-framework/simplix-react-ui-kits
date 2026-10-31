@@ -4,7 +4,7 @@
  * Laid down from the console-clarity kit's `detail.hbs` and rewritten while its fingerprint
  * matches. Tabs, verbs, notices and fields this record departs in go in `./detail.blocks.tsx`.
  */
-import { RecordDetail, useRecordContract, useScreenWords, type ContractField, type RecordBadge, type RecordField, type RecordTab, type RecordValue } from "@simplix-react-ui-kits/console-clarity/entity";
+import { RecordDetail, useRecordContract, useScreenWords, type ContractField, {{#if statusField}}type RecordBadge, {{/if}}type RecordField, type RecordTab{{#if statusField}}, type RecordValue{{/if}} } from "@simplix-react-ui-kits/console-clarity/entity";
 {{#if holders.length}}
 import { adaptForcedList, forcedScope, useCrudList } from "@simplix-react/ui";
 {{/if}}
@@ -131,6 +131,7 @@ export function {{EntityPascal}}Detail(props: {{EntityPascal}}DetailProps) {
     ...(props.onEdit ? [{ label: words.edit, onClick: props.onEdit }] : []),
   ];
   return (
+    <>
     <RecordDetail
       isLoading={isLoading}
       title={blocks.title ?? (record ? String(record.{{#if displayNameField}}{{displayNameField}}{{else}}{{rowIdField}}{{/if}} ?? "") : words.label)}
@@ -148,5 +149,7 @@ export function {{EntityPascal}}Detail(props: {{EntityPascal}}DetailProps) {
       sections={tabs ? undefined : blocks.sections ?? [{ key: "overview", fields: generated }]}
       onClose={props.onClose}
     />
+    {blocks.dialogs}
+    </>
   );
 }

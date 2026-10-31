@@ -1,6 +1,7 @@
 /**
  * What the {{entity}} record departs in from the generated detail. Written by hand and never regenerated.
  */
+import type { ReactNode } from "react";
 import type { ContractOverrides, RecordBadge, RecordNotice, RecordSection, RecordTab, RecordVerb } from "@simplix-react-ui-kits/console-clarity/entity";
 
 import type { {{EntityPascal}}DetailProps } from "./detail";
@@ -18,6 +19,8 @@ export interface DetailBlocks {
   /** The tabs, or a function of the generated ones (the overview and a list per holder) that keeps, reorders or adds to them. */
   readonly tabs?: readonly RecordTab[] | ((generated: readonly RecordTab[]) => readonly RecordTab[]);
   readonly sections?: readonly RecordSection[];
+  /** Confirmations this record's own verbs open, rendered beside the detail. */
+  readonly dialogs?: ReactNode;
 }
 
 export function useDetailBlocks<T>(_detail: { readonly record: T | undefined; readonly props: {{EntityPascal}}DetailProps }): DetailBlocks {
