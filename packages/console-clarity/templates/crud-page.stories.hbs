@@ -94,8 +94,22 @@ function Screen({ open }: Args) {
           columns={columns}
           filters={contract.filters<Row>(FILTERS)}
           empty={ { {{#if hasCreate}}title: words.emptyTitle, description: words.emptyDescription{{else}}title: words.emptyTitleRecorded, description: words.emptyDescriptionRecorded{{/if}} } }
-          // The generated page's one row action, so the frame draws the column the screen draws.
-          actions={[{ type: "view", label: words.view, onClick: (row) => nav.showDetail(idOf(row)) }]}
+          // The generated page's row actions, so the frame draws the column the screen draws.
+          actions={[
+            { type: "view", label: words.view, onClick: (row) => nav.showDetail(idOf(row)) },
+{{#if hasUpdate}}
+            { type: "edit", label: words.edit, onClick: (row) => nav.showEdit(idOf(row)) },
+{{/if}}
+{{#if hasDelete}}
+            { type: "delete", label: words.delete, onClick: (row) => records.remove(idOf(row)) },
+{{/if}}
+          ]}
+{{#if hookOrder}}
+{{#if orderField}}
+          // The contract has a reorder, so the frame draws the drag the screen offers.
+          reorder={ { orderField: "{{orderField}}", idField: "{{rowIdField}}", onReorder: (updates) => updates.forEach((one) => records.update(String(one.{{rowIdField}}), { {{orderField}}: one.{{orderField}} })) } }
+{{/if}}
+{{/if}}
           activeRowId={nav.selectedId}
           onRowClick={(row) => nav.showDetail(idOf(row))}
 {{#unless hasKeywordSearch}}
@@ -110,6 +124,17 @@ function Screen({ open }: Args) {
           <RecordDetail
             title={row ? String(row.{{#if displayNameField}}{{displayNameField}}{{else}}{{rowIdField}}{{/if}} ?? id) : id}
             sections={[{ key: "overview", fields: row ? DETAIL_FIELDS.map((field) => contract.detailField(field, row)) : [] }]}
+{{#if (or hasUpdate hasDelete)}}
+            // The generated detail's footer verbs, so the frame draws the footer the screen draws.
+            actions={[
+{{#if hasDelete}}
+              { label: words.delete, kind: "danger", onClick: () => { records.remove(id); nav.closePanel(); } },
+{{/if}}
+{{#if hasUpdate}}
+              { label: words.edit, onClick: () => nav.showEdit(id) },
+{{/if}}
+            ]}
+{{/if}}
             onClose={nav.closePanel}
           />
         );

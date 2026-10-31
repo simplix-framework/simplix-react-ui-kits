@@ -30,7 +30,7 @@ describe("the generated board frame's list", () => {
     expect(source).toContain('{ kind: "choice", field: "status", enumName: "ProductStatus", options: ["ON", "OFF"] },');
     expect(source).toContain('{ kind: "dateRange", field: "createdOn", dateOnly: true },');
     expect(source).toContain("filters={contract.filters<Row>(FILTERS)}");
-    expect(source).toContain('actions={[{ type: "view", label: words.view, onClick: (row) => nav.showDetail(idOf(row)) }]}');
+    expect(source).toContain('{ type: "view", label: words.view, onClick: (row) => nav.showDetail(idOf(row)) },');
     expect(source).not.toContain("search: false");
   });
 
@@ -45,5 +45,17 @@ describe("the generated board frame's list", () => {
     expect(render("list.hbs", { ...context, hasCreate: false })).toContain("title: words.emptyTitleRecorded, description: words.emptyDescriptionRecorded");
     expect(render("crud-page.stories.hbs", { ...context, hasCreate: true })).toContain("title: words.emptyTitle, description: words.emptyDescription }");
     expect(render("list.hbs", { ...context, hasCreate: true })).toContain("title: words.emptyTitle, description: words.emptyDescription }");
+  });
+
+  it("draws the row and footer verbs and the drag the generated screen offers", () => {
+    const full = render("crud-page.stories.hbs", { ...context, hasCreate: true, hasUpdate: true, hasDelete: true, hookOrder: "useOrderProducts", orderField: "sortOrder" });
+    expect(full).toContain('{ type: "edit", label: words.edit, onClick: (row) => nav.showEdit(idOf(row)) },');
+    expect(full).toContain('{ type: "delete", label: words.delete, onClick: (row) => records.remove(idOf(row)) },');
+    expect(full).toContain('reorder={ { orderField: "sortOrder", idField: "productId"');
+    expect(full).toContain('{ label: words.edit, onClick: () => nav.showEdit(id) },');
+    const readOnly = render("crud-page.stories.hbs", { ...context });
+    expect(readOnly).not.toContain("words.edit");
+    expect(readOnly).not.toContain("reorder=");
+    expect(readOnly).not.toContain("actions={[\n              { label");
   });
 });
