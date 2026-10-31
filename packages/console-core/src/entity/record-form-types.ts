@@ -99,7 +99,7 @@ export interface RangeValue {
 export type RecordFormField =
   | ({ readonly kind: "text" | "email" | "textarea"; readonly value?: string } & FieldCommon)
   /** One text per content language, edited a language at a time; filled when any language is. */
-  | ({ readonly kind: "i18nText"; readonly value?: Readonly<Record<string, string>> } & FieldCommon)
+  | ({ readonly kind: "i18nText"; readonly value?: Readonly<Record<string, string>>; readonly multiline?: boolean } & FieldCommon)
   | ({ readonly kind: "number"; readonly value?: number | null; readonly unit?: string; readonly min?: number; readonly max?: number } & FieldCommon)
   /**
    * One choice from a list. `clearable` draws a control that returns an optional field to no value,

@@ -135,7 +135,7 @@ function FieldBody({ field, value, onChange, error, errorsShown, serverError }: 
     case "switch":
       return <FormFields.SwitchField {...common} value={Boolean(value)} onChange={onChange} />;
     case "i18nText":
-      return <I18nTextBody common={common} value={(value ?? {}) as Readonly<Record<string, string>>} onChange={onChange} />;
+      return <I18nTextBody common={common} multiline={field.multiline === true} value={(value ?? {}) as Readonly<Record<string, string>>} onChange={onChange} />;
     case "textarea":
       return <FormFields.TextareaField {...common} value={(value as string) ?? ""} onChange={onChange} placeholder={field.placeholder} />;
     case "datetime":
@@ -193,10 +193,11 @@ function FieldBody({ field, value, onChange, error, errorsShown, serverError }: 
 }
 
 /** A multilingual text, one language at a time, on the language the reader picked last. */
-function I18nTextBody({ common, value, onChange }: { readonly common: Common; readonly value: Readonly<Record<string, string>>; readonly onChange: (value: unknown) => void }) {
+function I18nTextBody({ common, multiline, value, onChange }: { readonly common: Common; readonly multiline: boolean; readonly value: Readonly<Record<string, string>>; readonly onChange: (value: unknown) => void }) {
   const language = useI18nEditLanguage();
+  const Field = multiline ? FormFields.I18nTextareaField : FormFields.I18nTextField;
   return (
-    <FormFields.I18nTextField
+    <Field
       {...common}
       value={{ ...value }}
       onChange={onChange}

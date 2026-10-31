@@ -55,6 +55,8 @@ export interface ContractField {
   readonly identifier?: boolean;
   /** For an `i18nText` field, the plain field the request carries the base language's text in. */
   readonly plainField?: string;
+  /** For an `i18nText` field whose plain sibling is long text, the per-language editor is a text area. */
+  readonly multiline?: boolean;
 }
 
 /**
@@ -203,7 +205,7 @@ export function useRecordContract(entity: string, overrides: ContractOverrides =
           // as that text in the base language rather than as an empty map.
           const plain = field.plainField ? record?.[field.plainField] : undefined;
           const map = raw && typeof raw === "object" ? (raw as I18nMap) : undefined;
-          return { ...common, kind: "i18nText", value: seedI18nDefaults(map, typeof plain === "string" ? plain : undefined, languages) };
+          return { ...common, kind: "i18nText", multiline: field.multiline === true, value: seedI18nDefaults(map, typeof plain === "string" ? plain : undefined, languages) };
         }
         case "longText":
           return { ...common, kind: "textarea", value: raw == null ? "" : String(raw) };
