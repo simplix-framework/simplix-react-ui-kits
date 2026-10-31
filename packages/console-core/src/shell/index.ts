@@ -108,7 +108,7 @@ export {
   type PlainConsoleShellProps,
 } from "./plain-shell";
 export { ShellReadyHome } from "./shell-ready-home";
-export { ConsoleProviders, type ConsoleProvidersProps } from "./console-providers";
+export { ConsoleProviders, type ConsoleProvidersProps, type UIDefaults } from "./console-providers";
 export { createConsoleQueryClient, isSessionExpiry } from "./query-client";
 export { guarded } from "./guarded-route";
 export { RouteErrorFallback } from "./route-error";

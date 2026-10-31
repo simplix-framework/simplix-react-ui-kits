@@ -39,9 +39,18 @@ export interface ConsoleProvidersProps {
    * A design kit passes its own; the classic design when absent.
    */
   readonly design?: Design;
+  /**
+   * The installation's UI defaults (frontend invariant #69): how a record's detail appears, and
+   * any other `UIProvider` default the product sets once at its root. The reader's density
+   * preference still wins over a density named here.
+   */
+  readonly defaults?: UIDefaults;
   /** Whatever the app mounts inside its own providers — a router, a shell. */
   readonly children: ReactNode;
 }
+
+/** The defaults `UIProvider` takes. */
+export type UIDefaults = NonNullable<Parameters<typeof UIProvider>[0]["defaults"]>;
 
 /** Writes the card fill the reader's theme and choices name onto the document element. */
 function AppliedFill() {
@@ -74,11 +83,15 @@ export function ConsoleProviders({
   queryClient,
   product,
   design = CLASSIC_DESIGN,
+  defaults: installationDefaults,
   children,
 }: ConsoleProvidersProps) {
   const { prefs } = useDisplayPreferences();
   const chosen = CONSOLE_DESIGNS.find((d) => d.id === prefs.design) ?? design;
-  const defaults = prefs.density ? { density: prefs.density } : undefined;
+  const defaults =
+    installationDefaults || prefs.density
+      ? { ...installationDefaults, ...(prefs.density ? { density: prefs.density } : {}) }
+      : undefined;
   return (
     <I18nProvider adapter={i18nAdapter}>
       <AuthProvider auth={auth}>
