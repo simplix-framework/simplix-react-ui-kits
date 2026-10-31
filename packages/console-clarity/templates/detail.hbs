@@ -6,7 +6,7 @@
  */
 import { fieldEnumsOf, RecordDetail, {{#if holders.length}}useAllowed, {{/if}}useRecordContract, useScreenWords, type ContractField, type CrudDetailBlocks, {{#if statusField}}type RecordBadge, {{/if}}type RecordField{{#if holders.length}}, type RecordTab{{/if}}{{#if statusField}}, type RecordValue{{/if}} } from "@simplix-react-ui-kits/console-clarity/entity";
 {{#if holders.length}}
-import { adaptForcedList, forcedScope, useCrudList } from "@simplix-react/ui";
+import { adaptForcedList, forcedScope, {{#if holdersKeywordSearch}}SEARCHABLE_KEYWORD_PARAM, {{/if}}useCrudList } from "@simplix-react/ui";
 {{/if}}
 
 import { {{hookGet}} } from "{{packageName}}";
@@ -107,7 +107,7 @@ export function {{EntityPascal}}Detail(props: {{EntityPascal}}DetailProps) {
   const holder{{@index}}Forced = { "{{this.filterKey}}": props.{{../entity}}Id };
   // Asked only of a reader the holder's list rule admits, so nobody meets a refused read (frontend invariant #61).
   const holder{{@index}}Allowed = useAllowed({{this.accessList}});
-  const holder{{@index}}List = useCrudList<Readonly<Record<string, unknown>>>(adaptForcedList({{this.hookList}}, holder{{@index}}Forced, { queryOptions: { enabled: holder{{@index}}Allowed } }), {
+  const holder{{@index}}List = useCrudList<Readonly<Record<string, unknown>>>(adaptForcedList({{this.hookList}}, holder{{@index}}Forced, { {{#if this.hasKeywordSearch}}searchKey: SEARCHABLE_KEYWORD_PARAM, {{/if}}queryOptions: { enabled: holder{{@index}}Allowed } }), {
     scopeKey: forcedScope(holder{{@index}}Forced),
     stateMode: "server",
     defaultPageSize: 20,
@@ -128,6 +128,10 @@ export function {{EntityPascal}}Detail(props: {{EntityPascal}}DetailProps) {
         rowId: (one: Readonly<Record<string, unknown>>) => String(one.{{this.rowIdField}}),
         columns: holder{{@index}}Contract.columns<Readonly<Record<string, unknown>>>({{this.EntityPascal}}HolderFields_{{@index}}),
         empty: { title: holder{{@index}}Words.emptyTitle },
+{{#unless this.hasKeywordSearch}}
+        // The holder's route declares no keyword field, so there is nothing for a search box to send.
+        features: { search: false },
+{{/unless}}
       },
     }] : []),
 {{/each}}

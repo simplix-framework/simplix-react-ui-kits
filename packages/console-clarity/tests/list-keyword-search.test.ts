@@ -62,3 +62,33 @@ describe("the generated list's search box", () => {
     expect(check(source)).toEqual([]);
   });
 });
+
+describe("a detail's holder tab", () => {
+  const holder = (hasKeywordSearch: boolean) => ({
+    entity: "member",
+    EntityPascal: "Member",
+    key: "memberByProductId",
+    hookList: "useListMembers",
+    accessList: "listMembersAccess",
+    packageName: "@test/domain-member",
+    filterKey: "productId.equals",
+    rowIdField: "memberId",
+    fields: [{ name: "name", contractKind: "text" }],
+    hasKeywordSearch,
+  });
+  const detail = (hasKeywordSearch: boolean) =>
+    render("detail.hbs", { ...context, detailFields: [field], hookGet: "useGetProduct", holders: [holder(hasKeywordSearch)], holdersKeywordSearch: hasKeywordSearch });
+
+  it("sends its search as the holder route's keyword search where that route declares keyword fields", () => {
+    const source = detail(true);
+    expect(source).toContain("adaptForcedList(useListMembers, holder0Forced, { searchKey: SEARCHABLE_KEYWORD_PARAM, queryOptions:");
+    expect(source).toMatch(/import \{ adaptForcedList, forcedScope, SEARCHABLE_KEYWORD_PARAM, useCrudList \}/);
+    expect(source).not.toContain("features: { search: false }");
+  });
+
+  it("draws no search box where the holder route declares none", () => {
+    const source = detail(false);
+    expect(source).not.toContain("SEARCHABLE_KEYWORD_PARAM");
+    expect(source).toContain("features: { search: false }");
+  });
+});

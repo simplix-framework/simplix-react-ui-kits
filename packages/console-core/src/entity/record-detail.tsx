@@ -311,7 +311,9 @@ function SubList({ list, count }: { readonly list: RecordListProps<any>; readonl
     ? list.features
     : kind === "compact"
       ? { ...list.features, ...COMPACT_FEATURES }
-      : { ...list.features, ...FULL_FEATURES };
+      : // A screen that turned the search off keeps it off: a box whose text reaches nothing
+        // narrows nothing, which is worse than no box.
+        { ...list.features, ...FULL_FEATURES, search: list.features?.search !== false };
   return (
     <div {...slotAttributes(recordSublistStyle, { kind })}>
       <RecordListNestingContext.Provider value={true}>
