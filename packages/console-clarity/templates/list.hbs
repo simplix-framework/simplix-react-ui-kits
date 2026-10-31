@@ -5,8 +5,8 @@
  * matches. Columns, filters, chips and row actions this list departs in go in `./list.blocks.tsx`.
  */
 import { adaptForcedList, adaptOrvalList, useCrudList } from "@simplix-react/ui";
-import { RecordList, type RecordAction, type RecordColumn, type RecordFilter } from "@simplix-react-ui-kits/console-clarity/entity";
-import { useEntityTranslation, useTranslation } from "@simplix-react/i18n/react";
+import { RecordList, useRecordContract, type ContractField, type ContractOverrides, type RecordAction, type RecordColumn, type RecordFilter } from "@simplix-react-ui-kits/console-clarity/entity";
+import { useTranslation } from "@simplix-react/i18n/react";
 import type { ReactNode } from "react";
 
 import { {{hookList}}, type {{listRowType}} } from "{{packageName}}";
@@ -32,20 +32,32 @@ export interface {{EntityPascal}}ListProps {
   readonly leading?: ReactNode;
 }
 
-/** The generated columns, in the order the fields arrive; the blocks keep, reorder or replace them. */
-export function use{{EntityPascal}}Columns(): RecordColumn<{{EntityPascal}}Row>[] {
-  const { fieldLabel } = useEntityTranslation("{{entity}}");
-  return [
+/** The fields a row carries, each drawn by its contract kind. */
+export const {{EntityPascal}}ColumnFields: readonly ContractField[] = [
 {{#each listFields}}
 {{#unless this.isI18nPair}}
 {{#unless this.baseFieldName}}
+{{#unless this.isSystemField}}
+{{#unless this.isReferenceName}}
 {{#unless this.hideInList}}
-    { key: "{{this.name}}", header: fieldLabel("{{this.name}}"), field: "{{this.name}}" },
+  { name: "{{this.name}}", kind: "{{this.contractKind}}"{{#if this.enumTypeName}}, enumName: "{{this.enumTypeName}}"{{/if}}{{#if this.options.length}}, options: [{{#each this.options}}"{{this}}"{{#unless @last}}, {{/unless}}{{/each}}]{{/if}}{{#if this.peekKind}}, peekKind: "{{this.peekKind}}"{{/if}}{{#if this.nameField}}, nameField: "{{this.nameField}}"{{/if}} },
+{{/unless}}
+{{/unless}}
 {{/unless}}
 {{/unless}}
 {{/unless}}
 {{/each}}
-  ];
+];
+
+/** The generated columns, in the order the fields arrive; the blocks keep, reorder or replace them. */
+export function use{{EntityPascal}}Columns(overrides?: ContractOverrides): RecordColumn<{{EntityPascal}}Row>[] {
+  const contract = useRecordContract("{{entity}}", overrides);
+  return {{EntityPascal}}ColumnFields.map((field) => ({
+    key: field.name,
+    header: contract.fieldLabel(field.name),
+    field: field.name as keyof {{EntityPascal}}Row & string,
+    value: (row: {{EntityPascal}}Row) => contract.value(field, row as unknown as Readonly<Record<string, unknown>>),
+  }));
 }
 
 /** The {{entity}} records, drawn by the kit's list. */

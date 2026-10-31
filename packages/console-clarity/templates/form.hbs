@@ -4,12 +4,29 @@
  * Laid down from the console-clarity kit's `form.hbs` and rewritten while its fingerprint
  * matches. Sections, rules and the request this form sends go in `./form.blocks.tsx`.
  */
-import { RecordForm, type RecordFormField } from "@simplix-react-ui-kits/console-clarity/entity";
+import { RecordForm, useRecordContract, type ContractField, type RecordFormField } from "@simplix-react-ui-kits/console-clarity/entity";
 import { QueryFallback, useInvalidateEntity } from "@simplix-react/ui";
-import { useEntityTranslation, useTranslation } from "@simplix-react/i18n/react";
+import { useTranslation } from "@simplix-react/i18n/react";
 
 import { {{#if hookGet}}{{hookGet}}, {{/if}}{{#if hookCreate}}{{hookCreate}}{{/if}}{{#if hookUpdate}}{{#if hookCreate}}, {{/if}}{{hookUpdate}}{{/if}} } from "{{packageName}}";
-import { useFormBlocks } from "./form.blocks";
+import { useFormBlocks, useFormContract } from "./form.blocks";
+
+/** The fields the contract lets this form write, each edited by its kind. */
+export const {{EntityPascal}}FormFields: readonly ContractField[] = [
+{{#each fields}}
+{{#unless this.isI18nPair}}
+{{#unless this.baseFieldName}}
+{{#unless this.isSystemField}}
+{{#unless this.isReferenceName}}
+{{#unless this.readOnly}}
+  { name: "{{this.name}}", kind: "{{this.contractKind}}"{{#if this.enumTypeName}}, enumName: "{{this.enumTypeName}}"{{/if}}{{#if this.options.length}}, options: [{{#each this.options}}"{{this}}"{{#unless @last}}, {{/unless}}{{/each}}]{{/if}}{{#if this.peekKind}}, peekKind: "{{this.peekKind}}"{{/if}}{{#if this.nameField}}, nameField: "{{this.nameField}}"{{/if}} },
+{{/unless}}
+{{/unless}}
+{{/unless}}
+{{/unless}}
+{{/unless}}
+{{/each}}
+];
 
 export interface {{EntityPascal}}FormProps {
 {{#if hasUpdate}}
@@ -23,7 +40,6 @@ export interface {{EntityPascal}}FormProps {
 /** Creates or edits a {{entity}} through the kit's record form. */
 export function {{EntityPascal}}Form(props: {{EntityPascal}}FormProps) {
   const { t } = useTranslation("{{moduleNamespace}}/widgets");
-  const { fieldLabel } = useEntityTranslation("{{entity}}");
 {{#if hasUpdate}}
   const editing = Boolean(props.{{entity}}Id);
   const { data, isLoading } = {{hookGet}}(props.{{entity}}Id ?? "", { query: { enabled: editing, gcTime: 0 } });
@@ -40,17 +56,10 @@ export function {{EntityPascal}}Form(props: {{EntityPascal}}FormProps) {
   const update = {{hookUpdate}}({ mutation: { onSettled: invalidate } });
 {{/if}}
   const record = editing ? data ?? undefined : undefined;
-  const generated: RecordFormField[] = [
-{{#each fields}}
-{{#unless this.isI18nPair}}
-{{#unless this.baseFieldName}}
-{{#unless this.readOnly}}
-    { kind: "text", key: "{{this.name}}", label: fieldLabel("{{this.name}}"), value: record ? String((record as Record<string, unknown>)["{{this.name}}"] ?? "") : "" },
-{{/unless}}
-{{/unless}}
-{{/unless}}
-{{/each}}
-  ];
+  const preBlocks = useFormContract();
+  const contract = useRecordContract("{{entity}}", preBlocks);
+  const row = record as Readonly<Record<string, unknown>> | undefined;
+  const generated: RecordFormField[] = {{EntityPascal}}FormFields.map((field) => contract.formField(field, row));
   const blocks = useFormBlocks({ record, editing, generated });
   if (editing && (isLoading || !data)) return <QueryFallback isLoading={isLoading} />;
   return (

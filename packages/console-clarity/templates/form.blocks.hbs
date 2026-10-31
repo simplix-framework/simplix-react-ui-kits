@@ -2,7 +2,7 @@
  * What the {{entity}} form departs in from the generated one: its sections, its notices and the
  * request it sends. Written by hand and never regenerated.
  */
-import type { RecordFormField, RecordFormSection, RecordNotice } from "@simplix-react-ui-kits/console-clarity/entity";
+import type { ContractOverrides, RecordFormField, RecordFormSection, RecordNotice } from "@simplix-react-ui-kits/console-clarity/entity";
 
 export interface FormBlocks {
   readonly title?: string;
@@ -13,5 +13,10 @@ export interface FormBlocks {
 }
 
 export function useFormBlocks<T>(_form: { readonly record: T | undefined; readonly editing: boolean; readonly generated: readonly RecordFormField[] }): FormBlocks {
+  return {};
+}
+
+/** Tones and the reference pickers this form edits with; a reference with no picker is edited as text. */
+export function useFormContract(): ContractOverrides {
   return {};
 }
