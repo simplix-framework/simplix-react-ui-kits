@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useMemo, useRef, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useMemo, useRef, useState, type ReactNode } from "react";
 import { useTranslation } from "@simplix-react/i18n/react";
 import {
   addToast,
@@ -227,6 +227,43 @@ export interface RecordListProps<Row> {
    * rows, `x` selects the marked row and `Enter` opens it. One list per screen takes them.
    */
   readonly keyboard?: boolean;
+  /**
+   * Lets the reader put the rows in order by dragging them. A toolbar control turns the arrangement
+   * on: the list then sorts by {@link RecordReorder.orderField}, draws a drag handle on each row and
+   * drops its group headings, since the order is one sequence across every group. Turned off, the
+   * list returns to the sort and the headings it had.
+   */
+  readonly reorder?: RecordReorder<Row>;
+}
+
+/** How a {@link RecordList} writes a new order: the field, the row key, and the request. */
+export interface RecordReorder<Row> {
+  readonly orderField: keyof Row & string;
+  readonly idField: keyof Row & string;
+  /** Sends the rows' new positions, as {@link orderUpdates} computes them. */
+  readonly onReorder: (updates: readonly Readonly<Record<string, unknown>>[]) => unknown;
+}
+
+/**
+ * The positions a drag writes: the order values the rows held, handed out again in the new
+ * sequence, so rows on other pages keep their places and only the dragged rows' values move.
+ */
+export function orderUpdates<Row>(before: readonly Row[], after: readonly Row[], idField: keyof Row & string, orderField: keyof Row & string): Readonly<Record<string, unknown>>[] {
+  const values = before
+    .map((row, index) => {
+      const value = Number((row as Record<string, unknown>)[orderField]);
+      return Number.isFinite(value) ? value : index;
+    })
+    .sort((a, b) => a - b);
+  // Equal values would leave the dragged rows tied; spread them so the sequence is strict.
+  for (let at = 1; at < values.length; at += 1) {
+    if (values[at]! <= values[at - 1]!) values[at] = values[at - 1]! + 1;
+  }
+  return after.flatMap((row, index) => {
+    const id = (row as Record<string, unknown>)[idField];
+    const was = (before.find((one) => (one as Record<string, unknown>)[idField] === id) as Record<string, unknown> | undefined)?.[orderField];
+    return values[index] === Number(was) ? [] : [{ [idField]: id, [orderField]: values[index] }];
+  });
 }
 
 const DEFAULT_PAGE_SIZE = 20;
@@ -370,6 +407,7 @@ export function RecordList<Row>({
   cardBreakpoint,
   bulkActions,
   keyboard = false,
+  reorder,
 }: RecordListProps<Row>) {
   const { t } = useTranslation(PACKAGE_NAMESPACE + "/features");
   const nested = useContext(RecordListNestingContext);
@@ -381,6 +419,17 @@ export function RecordList<Row>({
   const useRows = useMemo<ListHook<Row>>(() => () => ({ data: [...rows], total: rows.length, isLoading: false, error: null }), [rows]);
   const clientList = useCrudList(useRows, { stateMode: "client", filterMode: "immediate", defaultPageSize: pageSize });
   const list = serverList ?? clientList;
+  const [arranging, setArranging] = useState(false);
+  const arrange = (on: boolean) => {
+    setArranging(on);
+    if (on && reorder) list.sort.setSort(reorder.orderField, "asc");
+  };
+  const arranged = arranging && reorder !== undefined;
+  const arrangeControl = reorder ? (
+    <Button size="sm" variant={arranged ? "default" : "outline"} aria-pressed={arranged} onClick={() => arrange(!arranged)}>
+      {arranged ? t("recordList.reorderDone") : t("recordList.reorder")}
+    </Button>
+  ) : null;
 
   const counted = features.count === "filtered" ? isNarrowed(list, rows.length, serverList !== undefined) : on("count");
 
@@ -481,10 +530,11 @@ export function RecordList<Row>({
           state={list.filters}
           count={counted ? list.pagination.total : undefined}
           leading={
-            leading || chipRow ? (
+            leading || chipRow || arrangeControl ? (
               <>
                 {leading}
                 {chipRow}
+                {arrangeControl}
               </>
             ) : undefined
           }
@@ -492,7 +542,7 @@ export function RecordList<Row>({
           maxBadges={3}
           className="[&>[data-slot=crud-filter-bar-trailing]]:min-w-0 [&>[data-slot=crud-filter-bar-trailing]]:flex-1 [&>[data-slot=crud-filter-bar-trailing]]:basis-48 [&>[data-slot=crud-filter-bar-trailing]]:justify-end @max-md/record-list:[&>[data-slot=crud-filter-bar-trailing]]:ml-0 @max-md/record-list:[&>[data-slot=crud-filter-bar-trailing]]:basis-full @max-md/record-list:[&>[data-slot=crud-filter-bar-trailing]]:flex-nowrap"
         />
-      ) : counted || leading || chipRow || search ? (
+      ) : counted || leading || chipRow || search || arrangeControl ? (
         // No filters to offer: the count, the chips and the search stand on their own row rather
         // than beside a filter control that would open onto nothing.
         // The same inset as the filter bar, so the toolbar's first item lines up with the table's
@@ -502,6 +552,7 @@ export function RecordList<Row>({
             {counted ? <ListTotalBadge count={list.pagination.total} /> : null}
             {leading}
             {chipRow}
+            {arrangeControl}
           </Flex>
           {search}
         </Flex>
@@ -519,8 +570,19 @@ export function RecordList<Row>({
         density="compact"
         sort={on("sort") && list.sort.field ? { field: list.sort.field, direction: list.sort.direction } : null}
         onSortChange={on("sort") ? (next) => list.sort.setSort(next.field, next.direction) : undefined}
+        reorder={
+          arranged
+            ? {
+                orderField: reorder.orderField,
+                idField: reorder.idField,
+                onReorder: async (items: Row[]) => {
+                  await reorder.onReorder(orderUpdates(list.data, items, reorder.idField, reorder.orderField));
+                },
+              }
+            : undefined
+        }
         groupBy={
-          on("groups") && groupBy
+          on("groups") && groupBy && !arranged
             ? { of: (row: Row) => enumValueOf((row as Record<string, unknown>)[groupBy.field]), order: groupBy.order, label: groupBy.label }
             : undefined
         }

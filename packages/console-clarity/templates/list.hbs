@@ -4,11 +4,11 @@
  * Laid down from the console-clarity kit's `list.hbs` and rewritten while its fingerprint
  * matches. Columns, filters, chips and row actions this list departs in go in `./list.blocks.tsx`.
  */
-import { adaptForcedList, adaptOrvalList, useCrudList } from "@simplix-react/ui";
-import { RecordList, useRecordContract, useScreenWords, type ContractField, type ContractFilter, type ContractOverrides, type RecordAction, type RecordColumn, type RecordFilter } from "@simplix-react-ui-kits/console-clarity/entity";
+import { adaptForcedList, adaptOrvalList, useCrudList{{#if hookOrder}}{{#if orderField}}, useInvalidateEntity{{/if}}{{/if}} } from "@simplix-react/ui";
+import { RecordList, {{#if hookOrder}}{{#if orderField}}useAllowed, {{/if}}{{/if}}useRecordContract, useScreenWords, type ContractField, type ContractFilter, type ContractOverrides, type RecordAction, type RecordColumn, type RecordFilter } from "@simplix-react-ui-kits/console-clarity/entity";
 import type { ReactNode } from "react";
 
-import { {{hookList}}, type {{listRowType}} } from "{{packageName}}";
+import { {{hookList}}, {{#if hookOrder}}{{#if orderField}}{{hookOrder}}, {{#if accessOrder}}{{accessOrder}}, {{/if}}{{/if}}{{/if}}type {{listRowType}} } from "{{packageName}}";
 import { useListBlocks } from "./list.blocks";
 
 export type {{EntityPascal}}Row = {{listRowType}};
@@ -42,7 +42,7 @@ export const {{EntityPascal}}ColumnFields: readonly ContractField[] = [
 {{#unless this.isOpaqueId}}
 {{#unless this.hideInList}}
 {{#unless this.isIdentifier}}
-  { name: "{{this.name}}", kind: "{{this.contractKind}}"{{#if this.enumTypeName}}, enumName: "{{this.enumTypeName}}"{{/if}}{{#if this.options.length}}, options: [{{#each this.options}}"{{this}}"{{#unless @last}}, {{/unless}}{{/each}}]{{/if}}{{#if this.peekKind}}, peekKind: "{{this.peekKind}}"{{/if}}{{#if this.nameField}}, nameField: "{{this.nameField}}"{{/if}}{{#if (eq this.sortable true)}}, sortable: true{{/if}}{{#if (eq this.sortable false)}}, sortable: false{{/if}}{{#if this.isIdentifier}}, identifier: true{{/if}} },
+  { name: "{{this.name}}", kind: "{{this.contractKind}}"{{#if this.enumTypeName}}, enumName: "{{this.enumTypeName}}"{{/if}}{{#if this.options.length}}, options: [{{#each this.options}}"{{this}}"{{#unless @last}}, {{/unless}}{{/each}}]{{/if}}{{#if this.peekKind}}, peekKind: "{{this.peekKind}}"{{/if}}{{#if this.nameField}}, nameField: "{{this.nameField}}"{{/if}}{{#if (eq this.sortable true)}}, sortable: true{{/if}}{{#if (eq this.sortable false)}}, sortable: false{{/if}}{{#if this.isIdentifier}}, identifier: true{{/if}}{{#if this.sortAlias}}, sortAlias: { {{#each this.sortAlias}}{{@key}}: "{{this}}"{{#unless @last}}, {{/unless}}{{/each}} }{{/if}} },
 {{/unless}}
 {{/unless}}
 {{/unless}}
@@ -74,6 +74,14 @@ export function {{EntityPascal}}List({ list, activeRowId, onRowClick, actions, l
   const blocks = useListBlocks({ generated });
   const contract = useRecordContract("{{entity}}");
   const filters: readonly RecordFilter<{{EntityPascal}}Row>[] = blocks.filters ?? contract.filters<{{EntityPascal}}Row>({{EntityPascal}}Filters);
+{{#if hookOrder}}
+{{#if orderField}}
+  // The contract has a reorder, so a reader its rule admits can drag the rows into order.
+  const canOrder = useAllowed({{#if accessOrder}}{{accessOrder}}{{else}}undefined{{/if}});
+  const invalidate = useInvalidateEntity("{{entityPath}}");
+  const order = {{hookOrder}}({ mutation: { onSettled: invalidate } });
+{{/if}}
+{{/if}}
   return (
     <RecordList<{{EntityPascal}}Row>
       list={list}
@@ -89,6 +97,11 @@ export function {{EntityPascal}}List({ list, activeRowId, onRowClick, actions, l
       searchPlaceholder={blocks.searchPlaceholder}
       empty={blocks.empty ?? { title: words.emptyTitle, description: words.emptyDescription }}
       features={blocks.features}
+{{#if hookOrder}}
+{{#if orderField}}
+      reorder={canOrder ? { orderField: "{{orderField}}", idField: "{{rowIdField}}", onReorder: (updates) => order.mutateAsync({ data: updates as never }) } : undefined}
+{{/if}}
+{{/if}}
     />
   );
 }

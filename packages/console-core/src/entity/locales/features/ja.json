@@ -54,7 +54,9 @@
   "recordList": {
     "selected": "件選択",
     "clearSelection": "選択解除",
-    "undo": "元に戻す"
+    "undo": "元に戻す",
+    "reorder": "並べ替え",
+    "reorderDone": "完了"
   },
   "stageGate": {
     "title": "{{command}}の前に残る条件",

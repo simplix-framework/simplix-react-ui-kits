@@ -55,7 +55,9 @@
   "recordList": {
     "selected": "selected",
     "clearSelection": "Clear selection",
-    "undo": "Undo"
+    "undo": "Undo",
+    "reorder": "Reorder",
+    "reorderDone": "Done"
   },
   "stageGate": {
     "title": "Left before {{command}}",

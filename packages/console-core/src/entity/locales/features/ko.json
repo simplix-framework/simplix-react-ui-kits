@@ -54,7 +54,9 @@
   "recordList": {
     "selected": "개 선택",
     "clearSelection": "선택 해제",
-    "undo": "실행 취소"
+    "undo": "실행 취소",
+    "reorder": "순서 변경",
+    "reorderDone": "완료"
   },
   "stageGate": {
     "title": "{{command}} 전에 남은 조건",
