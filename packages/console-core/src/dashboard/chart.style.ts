@@ -49,7 +49,7 @@ export const stageTrackStyle = defineSlotStyle({
 /** One stage on the bar. */
 export const stageSegmentStyle = defineSlotStyle({
   slot: "stage-segment",
-  base: "absolute inset-y-0 rounded-[3px] bg-[var(--mark)] outline-none [transition:left_var(--dur-slow)_var(--ease),width_var(--dur-slow)_var(--ease),opacity_var(--dur-fast)_var(--ease),filter_var(--dur-fast)_var(--ease)] hover:brightness-110 focus-visible:shadow-[var(--focus-halo)]",
+  base: "absolute inset-y-0 rounded-[var(--radius-xs)] bg-[var(--mark)] outline-none [transition:left_var(--dur-slow)_var(--ease),width_var(--dur-slow)_var(--ease),opacity_var(--dur-fast)_var(--ease),filter_var(--dur-fast)_var(--ease)] hover:brightness-110 focus-visible:shadow-[var(--focus-halo)]",
   variants: {
     dimmed: { true: "opacity-40", false: "" },
   },
@@ -69,7 +69,7 @@ export const stageKeyStyle = defineSlotStyle({
 /** The swatch of a stage's key, in the stage's colour. */
 export const stageSwatchStyle = defineSlotStyle({
   slot: "stage-swatch",
-  base: "size-2 shrink-0 rounded-[2px] bg-[var(--mark)]",
+  base: "size-2 shrink-0 rounded-[var(--radius-2xs)] bg-[var(--mark)]",
   variants: {
     empty: { true: "bg-muted-foreground/30", false: "" },
   },
@@ -169,7 +169,7 @@ export const riskLevelStyle = defineSlotStyle({
 /** One count of a row, shaded by how hot it is in its column. */
 export const riskCellStyle = defineSlotStyle({
   slot: "risk-cell",
-  base: "h-8 rounded-[4px] text-center text-(length:--fs-body-sm) leading-(--lh-body-sm) font-semibold tabular-nums transition-[filter] hover:brightness-95 focus-visible:outline-none focus-visible:shadow-[var(--focus-halo)] disabled:cursor-default disabled:hover:brightness-100",
+  base: "h-8 rounded-[var(--radius-xs)] text-center text-(length:--fs-body-sm) leading-(--lh-body-sm) font-semibold tabular-nums transition-[filter] hover:brightness-95 focus-visible:outline-none focus-visible:shadow-[var(--focus-halo)] disabled:cursor-default disabled:hover:brightness-100",
   variants: {
     heat: {
       "0": "bg-transparent font-normal text-muted-foreground",
@@ -265,7 +265,7 @@ export const figureActionStyle = defineSlotStyle({
 /** One cell of an obligation matrix: the state of one duty for one row, with its icon and words. */
 export const matrixCellStyle = defineSlotStyle({
   slot: "matrix-cell",
-  base: "flex h-8 w-full items-center justify-center gap-1 rounded-[4px] px-1 text-(length:--fs-caption) leading-(--lh-caption) font-medium tabular-nums transition-[filter] hover:brightness-95 focus-visible:outline-none focus-visible:shadow-[var(--focus-halo)] disabled:cursor-default disabled:hover:brightness-100",
+  base: "flex h-8 w-full items-center justify-center gap-1 rounded-[var(--radius-xs)] px-1 text-(length:--fs-caption) leading-(--lh-caption) font-medium tabular-nums transition-[filter] hover:brightness-95 focus-visible:outline-none focus-visible:shadow-[var(--focus-halo)] disabled:cursor-default disabled:hover:brightness-100",
   variants: {
     state: {
       done: "bg-[color-mix(in_srgb,var(--tone-success)_14%,var(--card))] text-foreground",

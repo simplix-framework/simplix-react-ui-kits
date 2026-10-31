@@ -20,7 +20,7 @@ export const shellSlots: Record<string, string> = {
   "console-preview-tools": "gap-0.5",
   "console-bar-search":
     "mr-2 h-8 w-60 max-w-none gap-2 border-[var(--border)] bg-[var(--surface-2)] pl-2.5 pr-1.5 text-(length:--fs-cell) leading-(--lh-cell) text-muted-foreground hover:border-muted-foreground hover:bg-[var(--surface-2)] max-[1441px]:w-50",
-  "console-key-cap": "rounded-[calc(var(--radius-control)-3px)] border-[var(--border-strong)] bg-card font-sans",
+  "console-key-cap": "rounded-[var(--radius-xs)] border-[var(--border-strong)] bg-card font-sans",
   "console-key-cap onbar=true": "border-[var(--border)] bg-transparent",
   "console-preview-site":
     "h-7 gap-1.5 border-[var(--border)] bg-[var(--surface-2)] px-2.5 text-(length:--fs-control) leading-(--lh-control) font-medium shadow-none focus-visible:shadow-[var(--focus-halo)] transition-[border-color,gap] duration-[var(--dur-base)] ease-[var(--ease)] hover:border-muted-foreground hover:bg-[var(--surface-2)] max-[900px]:gap-0.5 [&>[data-slot=text]]:transition-[max-width,opacity] [&>[data-slot=text]]:duration-[var(--dur-base)] [&>[data-slot=text]]:ease-[var(--ease)] max-[900px]:[&>[data-slot=text]]:max-w-0! max-[900px]:[&>[data-slot=text]]:opacity-0 [&_[data-slot=button-caret]]:mr-0 [&_[data-slot=button-caret]]:border-0 [&_[data-slot=button-caret]]:pl-0",

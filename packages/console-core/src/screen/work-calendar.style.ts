@@ -83,7 +83,7 @@ export const workCalendarMarksStyle = defineSlotStyle({
 /** One item as a line: a colour bar, the marks and the title; a wide one is an agenda line. */
 export const workCalendarChipStyle = defineSlotStyle({
   slot: "work-calendar-chip",
-  base: "gap-1 rounded-[4px] border bg-card pl-2 pr-1 text-left text-(length:--fs-caption) leading-5 hover:bg-muted/60 focus-visible:outline-none focus-visible:shadow-[var(--focus-halo)]",
+  base: "gap-1 rounded-[var(--radius-xs)] border bg-card pl-2 pr-1 text-left text-(length:--fs-caption) leading-5 hover:bg-muted/60 focus-visible:outline-none focus-visible:shadow-[var(--focus-halo)]",
   variants: {
     wide: { true: "py-1.5 text-(length:--fs-body-sm) leading-(--lh-body-sm)", false: "" },
     dashed: { true: "border-dashed", false: "" },
