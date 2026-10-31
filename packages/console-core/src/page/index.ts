@@ -1,6 +1,7 @@
 export { ConsolePage } from "./console-page";
 export { CrudPage, useCrudPresentation } from "./crud-page";
-export { DIALOG_DETAIL_WIDTH, DRAWER_DETAIL_WIDTH, PANEL_DETAIL_WIDTH, REGULAR_DETAIL_WIDTH, WIDE_DETAIL_WIDTH, detailWidthFor, detailWidthPx, type DetailWidth } from "./detail-width";
+export { REGULAR_DETAIL_WIDTH, detailWidthFor, detailWidthLimits, detailWidthPx, useDetailWidthLimits, type DetailWidth, type DetailWidthLimits, type ResizablePresentation } from "./detail-width";
+export { DETAIL_WIDTH_STORAGE_KEY, forgetRememberedWidths, persistWidths, readRememberedWidths, useDetailWidthMemory, withWidth, withoutWidth, writeRememberedWidths, type DetailWidthMemoryOptions, type DetailWidths, type DetailWidthSetting } from "./detail-width-memory";
 export { RecordPage } from "./record-page";
 export type { RecordPageHeader, RecordPageProps } from "./record-page";
 export { PageAction } from "./page-action";

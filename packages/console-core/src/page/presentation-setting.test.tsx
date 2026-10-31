@@ -3,6 +3,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { UIProvider } from "@simplix-react/ui";
 import { describe, expect, it } from "vitest";
 
+import { writeRememberedWidths } from "./detail-width-memory";
 import { memoryPresentationStorage, writeRememberedPresentation, useDetailPresentationSetting, type DetailPresentationSetting, type PresentationStorage } from "./presentation-memory";
 
 /** Renders the hook once under an installation default and returns what it handed the page. */
@@ -34,5 +35,18 @@ describe("useDetailPresentationSetting", () => {
 
   it("does not report remembering when nothing was saved", () => {
     expect(settingUnder("panel", memoryPresentationStorage()).presentationSwitch.remember).toBe(false);
+  });
+
+  it("hands the page the widths the reader chose when the browser remembers their presentation", () => {
+    const storage = memoryPresentationStorage();
+    writeRememberedPresentation(storage, "drawer");
+    writeRememberedWidths(storage, { drawer: 840 });
+    expect(settingUnder("panel", storage).detailWidths.widths).toEqual({ drawer: 840 });
+  });
+
+  it("starts every presentation at its theme's width when the browser remembers nothing", () => {
+    const storage = memoryPresentationStorage();
+    writeRememberedWidths(storage, { drawer: 840 });
+    expect(settingUnder("panel", storage).detailWidths.widths).toEqual({});
   });
 });

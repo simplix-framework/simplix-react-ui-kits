@@ -5,7 +5,8 @@ import { PHONE_WINDOW } from "../layout/window-size";
 
 import { ConsolePage } from "./console-page";
 import type { DetailPresentationSwitchProps } from "./detail-presentation-switch";
-import { detailWidthPx, type DetailWidth } from "./detail-width";
+import { useDetailWidthLimits, type DetailWidth } from "./detail-width";
+import type { DetailWidthSetting } from "./detail-width-memory";
 import type { ConsoleSearch, PageSpec } from "./types";
 
 /** Where a {@link CrudPage} opens the record a reader picked. */
@@ -59,11 +60,17 @@ export interface CrudPageProps {
   /** A fixed list width in px while a record stands open beside it. */
   readonly listWidth?: number;
   /**
-   * How wide the record opens: `wide` opens a dialog wider for a record with many tabs or wide
-   * parts; a panel keeps the framework's width and a drawer its own, whatever the record, and a
-   * tab strip wider than either scrolls. Use {@link detailWidthFor} to choose it from the tabs.
+   * Accepted so a screen that names it compiles; it no longer changes the width. The record opens
+   * at the width the theme names for its presentation (`--detail-<presentation>-width`), a tab
+   * strip wider than that scrolls, and the reader can drag the record to another width.
    */
   readonly detailWidth?: DetailWidth;
+  /**
+   * The widths the reader chose for the record, by presentation, and how a change to one is kept.
+   * Without it the reader can still drag the record, and the width lasts as long as the page.
+   * {@link useDetailPresentationSetting} hands one that the browser remembers when the reader asks.
+   */
+  readonly detailWidths?: DetailWidthSetting;
   readonly renderList: (nav: CrudPageNavigation) => ReactNode;
   readonly renderDetail: (id: string, nav: CrudPageNavigation) => ReactNode;
   readonly renderNew?: (nav: CrudPageNavigation) => ReactNode;
@@ -85,7 +92,7 @@ export function CrudPage({
   presentation,
   presentationSwitch,
   listWidth,
-  detailWidth = "regular",
+  detailWidths,
   renderList,
   renderDetail,
   renderNew,
@@ -97,6 +104,7 @@ export function CrudPage({
   // way back behind a backdrop.
   const onAPhone = useMediaQuery(PHONE_WINDOW);
   const shown = onAPhone ? "page" : (presentation ?? defaults.detailPresentation);
+  const widthLimits = useDetailWidthLimits(shown);
   const nav = useCrudNavigation(search, onNavigate);
   const { state, fade, closePanel } = useCrudPageState(shown, nav);
   const handed: CrudPageNavigation = {
@@ -131,7 +139,11 @@ export function CrudPage({
         variant={shown}
         activePanel={nav.view === "list" ? "list" : "detail"}
         onClose={nav.showList}
-        {...(listWidth ? { listWidth } : detailWidthPx(shown, detailWidth) ? { detailWidth: detailWidthPx(shown, detailWidth) } : {})}
+        minDetailWidth={widthLimits.min}
+        maxDetailWidth={widthLimits.max}
+        onDetailWidthChange={detailWidths ? (width) => detailWidths.onWidthChange(shown, width) : undefined}
+        onDetailWidthReset={detailWidths ? () => detailWidths.onWidthReset(shown) : undefined}
+        {...(listWidth ? { listWidth } : { detailWidth: detailWidths?.widths[shown] ?? widthLimits.width })}
       >
         <ListDetail.List>{renderList(handed)}</ListDetail.List>
         <ListDetail.Detail>{record}</ListDetail.Detail>

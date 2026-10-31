@@ -4,6 +4,8 @@ import { useUIDefaults } from "@simplix-react/ui";
 
 import type { CrudPagePresentation } from "./crud-page";
 import type { DetailPresentationSwitchProps } from "./detail-presentation-switch";
+import { browserStorage, type PresentationStorage } from "./browser-storage";
+import { useDetailWidthMemory, type DetailWidthSetting } from "./detail-width-memory";
 
 /** Every way a record can be presented, in the order a switch offers them. */
 export const DETAIL_PRESENTATIONS: readonly CrudPagePresentation[] = ["panel", "drawer", "dialog", "page"];
@@ -11,20 +13,9 @@ export const DETAIL_PRESENTATIONS: readonly CrudPagePresentation[] = ["panel", "
 /** The storage key {@link useDetailPresentationMemory} saves under when a product names none. */
 export const DETAIL_PRESENTATION_STORAGE_KEY = "console.detailPresentation";
 
-/** The part of the Web Storage API the memory uses, so a product or a story can hand in its own. */
-export type PresentationStorage = Pick<Storage, "getItem" | "setItem" | "removeItem">;
+export type { PresentationStorage };
 
 const isPresentation = (value: unknown): value is CrudPagePresentation => DETAIL_PRESENTATIONS.includes(value as CrudPagePresentation);
-
-/** The browser's local storage, or undefined where it cannot be reached (a private window, blocked site data). */
-function browserStorage(): PresentationStorage | undefined {
-  try {
-    return typeof window === "undefined" ? undefined : window.localStorage;
-  } catch (error) {
-    if (error instanceof DOMException || error instanceof TypeError) return undefined;
-    throw error;
-  }
-}
 
 /** The saved presentation, or undefined when none is saved, the value is not one, or storage cannot be read. */
 export function readRememberedPresentation(storage: PresentationStorage | undefined, key: string = DETAIL_PRESENTATION_STORAGE_KEY): CrudPagePresentation | undefined {
@@ -130,16 +121,27 @@ export interface DetailPresentationSetting {
   readonly presentation: CrudPagePresentation;
   /** The record head's switch, with the browser's memory of the reader's choice. */
   readonly presentationSwitch: DetailPresentationSwitchProps;
+  /** The widths the reader dragged the record to, remembered with the presentation when they ask. */
+  readonly detailWidths: DetailWidthSetting;
+}
+
+/** Options for {@link useDetailPresentationSetting}. */
+export interface DetailPresentationSettingOptions extends Omit<DetailPresentationMemoryOptions, "value" | "onChange"> {
+  /** The storage key the chosen widths are saved under; the kit's own when absent. */
+  readonly widthStorageKey?: string;
 }
 
 /**
  * The reader's detail presentation for one page: it starts from the installation's default
  * (`UIProvider`'s `detailPresentation`), the record head's switch changes it, and the browser
- * remembers the choice when the reader asks. Spread the result onto a {@link CrudPage}.
+ * remembers the choice when the reader asks. The widths the reader drags the record to follow the
+ * same setting. Spread the result onto a {@link CrudPage}.
  */
-export function useDetailPresentationSetting(options: Omit<DetailPresentationMemoryOptions, "value" | "onChange"> = {}): DetailPresentationSetting {
+export function useDetailPresentationSetting(options: DetailPresentationSettingOptions = {}): DetailPresentationSetting {
   const defaults = useUIDefaults();
-  const [presentation, setPresentation] = useState<CrudPagePresentation>(() => readRememberedPresentation(options.storage ?? browserStorage(), options.storageKey) ?? defaults.detailPresentation);
-  const memory = useDetailPresentationMemory({ ...options, value: presentation, onChange: setPresentation });
-  return { presentation, presentationSwitch: { value: presentation, onChange: setPresentation, ...memory } };
+  const { widthStorageKey, ...memoryOptions } = options;
+  const [presentation, setPresentation] = useState<CrudPagePresentation>(() => readRememberedPresentation(memoryOptions.storage ?? browserStorage(), memoryOptions.storageKey) ?? defaults.detailPresentation);
+  const memory = useDetailPresentationMemory({ ...memoryOptions, value: presentation, onChange: setPresentation });
+  const detailWidths = useDetailWidthMemory({ remember: memory.remember, storage: memoryOptions.storage, storageKey: widthStorageKey });
+  return { presentation, presentationSwitch: { value: presentation, onChange: setPresentation, ...memory }, detailWidths };
 }
