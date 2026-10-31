@@ -26,6 +26,7 @@ import { PACKAGE_NAMESPACE } from "./locales";
 import { recordListStyle, recordListToolbarStyle } from "./record-list.style";
 import { cardLayout, isBadge, isEmpty, keptColumns, packedLines, wideColumns, type CardPlace } from "./record-card";
 import { RecordValueView, type RecordValue } from "./record-value";
+import { enumValueOf } from "./record-contract";
 
 /** One column of a {@link RecordList}. */
 export interface RecordColumn<Row> {
@@ -182,8 +183,11 @@ export interface RecordListProps<Row> {
     readonly field: keyof Row & string;
     readonly options: readonly { readonly value: string; readonly label: string }[];
   };
-  /** Group headings by one field, in this order. */
-  readonly groupBy?: { readonly field: keyof Row & string; readonly order?: readonly string[] };
+  /**
+   * Group headings by one field, in this order. An enum field groups by its constant, whatever
+   * shape the server sends it in, and `label` names a heading (the enum's translated label).
+   */
+  readonly groupBy?: { readonly field: keyof Row & string; readonly order?: readonly string[]; readonly label?: (key: string) => string };
   readonly actions?: readonly RecordAction<Row>[];
   readonly searchPlaceholder?: string;
   readonly pageSize?: number;
@@ -497,7 +501,7 @@ export function RecordList<Row>({
         onSortChange={on("sort") ? (next) => list.sort.setSort(next.field, next.direction) : undefined}
         groupBy={
           on("groups") && groupBy
-            ? { of: (row: Row) => String((row as Record<string, unknown>)[groupBy.field] ?? ""), order: groupBy.order }
+            ? { of: (row: Row) => enumValueOf((row as Record<string, unknown>)[groupBy.field]), order: groupBy.order, label: groupBy.label }
             : undefined
         }
         actions={rowActions.length > 0 ? rowActions : undefined}
