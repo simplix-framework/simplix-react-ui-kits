@@ -1,13 +1,17 @@
 /**
  * What the {{entity}} record departs in from the generated detail. Written by hand and never regenerated.
  */
-import type { CrudDetailBlocks } from "@simplix-react-ui-kits/console-clarity/entity";
+import type { ContractField, CrudDetailBlocks } from "@simplix-react-ui-kits/console-clarity/entity";
 
 import type { {{EntityPascal}}DetailProps } from "./detail";
 
-/** The keys a record may state, and what each one does, are the kit's `CrudDetailBlocks`. */
+/**
+ * The keys a record may state, and what each one does, are the kit's `CrudDetailBlocks`. The
+ * generated detail imports this file, so import only types from `./detail`; the field table the
+ * contract gives the record arrives as `fields`.
+ */
 export type DetailBlocks = CrudDetailBlocks;
 
-export function useDetailBlocks<T>(_detail: { readonly record: T | undefined; readonly props: {{EntityPascal}}DetailProps }): DetailBlocks {
+export function useDetailBlocks<T>(_detail: { readonly record: T | undefined; readonly props: {{EntityPascal}}DetailProps; readonly fields: readonly ContractField[] }): DetailBlocks {
   return {};
 }

@@ -79,6 +79,31 @@ function check(widget: "form" | "detail", blocks: string, source = render(`${wid
   );
 }
 
+/** A detail blocks file that takes the field table as an argument, as the stub the kit ships does. */
+const detailBlocksReadingFields = `
+import type { ContractField } from "@simplix-react-ui-kits/console-clarity/entity";
+import type { ProductDetailProps } from "./detail";
+
+export interface DetailBlocks {}
+
+export function useDetailBlocks<T>({ fields }: { readonly record: T | undefined; readonly props: ProductDetailProps; readonly fields: readonly ContractField[] }): DetailBlocks {
+  void fields.length;
+  return {};
+}
+`;
+
+/** A detail blocks file that imports the field table back from the widget that imports it. */
+const detailBlocksImportingTheTable = `
+import { ProductDetailFields, type ProductDetailProps } from "./detail";
+
+export interface DetailBlocks {}
+
+export function useDetailBlocks<T>(_detail: { readonly record: T | undefined; readonly props: ProductDetailProps }): DetailBlocks {
+  void ProductDetailFields.length;
+  return {};
+}
+`;
+
 /** The widget as it reads its blocks without widening them: the blocks hook's own type, with nothing added. */
 function unwidened(widget: "form" | "detail"): string {
   const widened = render(`${widget}.hbs`, context);
@@ -119,5 +144,22 @@ describe("the generated detail against a blocks file written before a key existe
     for (const key of ["contract", "note", "notices", "tabs"]) {
       expect(messages.some((line) => line.includes(`'${key}'`)), key).toBe(true);
     }
+  });
+});
+
+describe("the generated detail and the module cycle with its blocks file", () => {
+  it("hands the blocks hook the field table, which a blocks file reads from its argument", () => {
+    expect(check("detail", detailBlocksReadingFields)).toEqual([]);
+  });
+
+  it("does not export the field table, so a blocks file cannot import it back", () => {
+    const source = render("detail.hbs", context);
+    expect(source).not.toMatch(/export const ProductDetailFields/);
+    const blocksFile = join(widgetsDir, "detail.blocks.tsx");
+    const messages = typecheck(
+      { [join(widgetsDir, "detail.tsx")]: source, [blocksFile]: detailBlocksImportingTheTable, [join(virtualRoot, "domain-product.ts")]: domainStub },
+      [blocksFile],
+    );
+    expect(messages.some((line) => line.includes("ProductDetailFields")), messages.join("\n")).toBe(true);
   });
 });

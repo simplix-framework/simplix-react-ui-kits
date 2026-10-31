@@ -15,8 +15,13 @@ import { {{this.accessList}}, {{this.hookList}} } from "{{this.packageName}}";
 {{/each}}
 import { useDetailBlocks } from "./detail.blocks";
 
-/** The fields the contract gives this record, each drawn by its kind. */
-export const {{EntityPascal}}DetailFields: readonly ContractField[] = [
+/**
+ * The fields the contract gives this record, each drawn by its kind. Not exported: `./detail.blocks`
+ * is imported by this file, so it takes the table as the `fields` argument of its hook and imports
+ * only types back from here (a value import back is a module cycle, and a cycle turns every edit
+ * of either file into a full page reload).
+ */
+const {{EntityPascal}}DetailFields: readonly ContractField[] = [
 {{#each detailFields}}
 {{#unless this.isI18nPair}}
 {{#unless this.baseFieldName}}
@@ -81,8 +86,10 @@ export function {{EntityPascal}}Detail(props: {{EntityPascal}}DetailProps) {
   const words = useScreenWords("{{entity}}");
   const { data, isLoading, isError } = {{hookGet}}(props.{{entity}}Id);
   // Every key of the kit's detail blocks contract is optional here, so a blocks file written
-  // before a key existed still compiles.
-  const blocks: ReturnType<typeof useDetailBlocks> & CrudDetailBlocks = useDetailBlocks({ record: data ?? undefined, props });
+  // before a key existed still compiles. The input is held in a variable for the same reason: an
+  // object literal written inline would refuse a blocks hook that does not declare `fields`.
+  const blocksInput = { record: data ?? undefined, props, fields: {{EntityPascal}}DetailFields };
+  const blocks: ReturnType<typeof useDetailBlocks> & CrudDetailBlocks = useDetailBlocks(blocksInput);
   const record = data ?? undefined;
   const contract = useRecordContract("{{entity}}", blocks.contract);
   const row = record as Readonly<Record<string, unknown>> | undefined;
