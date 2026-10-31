@@ -323,5 +323,6 @@ export function useRecordContract(entity: string, overrides: ContractOverrides =
     [fieldLabel, value],
   );
 
-  return useMemo(() => ({ value, formField, request, column, columns, filters, detailField, fieldLabel }), [value, formField, request, column, columns, filters, detailField, fieldLabel]);
+  // `enumLabel` is returned for a screen that draws an enum constant outside a column or a filter (a tab per group).
+  return useMemo(() => ({ value, formField, request, column, columns, filters, detailField, fieldLabel, enumLabel }), [value, formField, request, column, columns, filters, detailField, fieldLabel, enumLabel]);
 }

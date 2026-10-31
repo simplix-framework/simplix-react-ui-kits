@@ -265,8 +265,11 @@ export interface SettingsFormProps {
   readonly sections: readonly RecordFormSection[];
   readonly notices?: readonly RecordNotice[];
   readonly note?: string;
-  /** Saves the settings; with it the form carries 취소 and 저장 once a value has changed. */
-  readonly onSave?: (values: Readonly<Record<string, unknown>>) => void;
+  /**
+   * Saves the settings; with it the form carries 취소 and 저장 once a value has changed. A promise
+   * keeps the form dirty until it resolves, so a refused save leaves the edits in place to retry.
+   */
+  readonly onSave?: (values: Readonly<Record<string, unknown>>) => void | Promise<void>;
 }
 
 /**
@@ -276,6 +279,7 @@ export interface SettingsFormProps {
 export function SettingsForm({ sections, notices, note, onSave }: SettingsFormProps) {
   const { t: tUi } = useTranslation("simplix/ui");
   const [saved, setSaved] = useState(() => initialValues(sections));
+  const [saving, setSaving] = useState(false);
   const form = useRecordFormValues(sections);
   const changed = Object.keys(form.values).some((key) => JSON.stringify(form.values[key]) !== JSON.stringify(saved[key]));
   // Sections stand apart by the form's section gap, as they do in every other form.
@@ -292,14 +296,20 @@ export function SettingsForm({ sections, notices, note, onSave }: SettingsFormPr
           <Button
             type="button"
             size="sm"
-            disabled={!changed}
+            disabled={!changed || saving}
             onClick={() => {
               if (form.missing.length > 0) {
                 form.showErrors();
                 return;
               }
-              onSave(form.values);
-              setSaved(form.values);
+              const values = form.values;
+              const result = onSave(values);
+              if (!(result instanceof Promise)) {
+                setSaved(values);
+                return;
+              }
+              setSaving(true);
+              result.then(() => setSaved(values), () => undefined).finally(() => setSaving(false));
             }}
           >
             {tUi("common.save")}

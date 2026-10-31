@@ -36,6 +36,8 @@ export type { RecordNotice, RecordVerb } from "./record-blocks";
 export { RecordTree } from "./record-tree";
 export type { RecordTreeFeatures, RecordTreeProps } from "./record-tree";
 export { RecordForm, RecordFormSections, SettingsForm, useRecordFormValues } from "./record-form";
+export { changedSettings, settingField, settingOptions, settingSection } from "./setting-catalogue";
+export type { SettingCatalogueRow, SettingCatalogueWords, SettingChange, SettingValueType } from "./setting-catalogue";
 export type { RecordFormField, RecordFormProps, RecordFormSection, RecordOption, SettingsFormProps } from "./record-form";
 export type { CrudDetailBlocks, CrudFormBlocks } from "./crud-widget-blocks";
 export { PermissionMatrix } from "./permission-matrix";
