@@ -79,6 +79,7 @@
     "add": "Add {{entity}}",
     "editTitle": "Edit {{entity}}",
     "emptyTitle": "No {{entities}} yet",
+    "emptyTitleRecorded": "No {{entities}} yet",
     "emptyDescription": "What you add appears here.",
     "emptyDescriptionRecorded": "Records appear here as they are made.",
     "overview": "Overview",

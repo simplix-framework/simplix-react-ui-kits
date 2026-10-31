@@ -110,7 +110,7 @@ export function {{EntityPascal}}List({ list, activeRowId, onRowClick, actions, l
       activeRowId={activeRowId}
       onRowClick={onRowClick}
       searchPlaceholder={blocks.searchPlaceholder}
-      empty={blocks.empty ?? { title: words.emptyTitle, description: {{#if hasCreate}}words.emptyDescription{{else}}words.emptyDescriptionRecorded{{/if}} }}
+      empty={blocks.empty ?? { {{#if hasCreate}}title: words.emptyTitle, description: words.emptyDescription{{else}}title: words.emptyTitleRecorded, description: words.emptyDescriptionRecorded{{/if}} }}
 {{#if hasKeywordSearch}}
       features={blocks.features}
 {{else}}

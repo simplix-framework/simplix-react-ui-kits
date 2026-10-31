@@ -78,6 +78,7 @@
     "add": "{{entity}}を追加",
     "editTitle": "{{entity}}を編集",
     "emptyTitle": "{{entities}}はまだありません",
+    "emptyTitleRecorded": "{{entities}}はまだありません",
     "emptyDescription": "追加するとここに表示されます。",
     "emptyDescriptionRecorded": "記録されるとここに表示されます。",
     "overview": "概要",

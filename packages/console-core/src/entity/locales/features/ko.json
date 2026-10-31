@@ -78,6 +78,7 @@
     "add": "{{entity}} 추가",
     "editTitle": "{{entity}} 편집",
     "emptyTitle": "등록된 {{entities}} 없음",
+    "emptyTitleRecorded": "{{entities}} 없음",
     "emptyDescription": "추가하면 이 목록에 표시됩니다.",
     "emptyDescriptionRecorded": "기록이 생기면 이 목록에 표시됩니다.",
     "overview": "개요",

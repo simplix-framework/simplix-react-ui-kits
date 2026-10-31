@@ -41,9 +41,9 @@ describe("the generated board frame's list", () => {
 
   it("says rows are recorded elsewhere where the screen creates none, as the generated list does", () => {
     const readOnly = render("crud-page.stories.hbs", { ...context, hasCreate: false });
-    expect(readOnly).toContain("description: words.emptyDescriptionRecorded");
-    expect(render("list.hbs", { ...context, hasCreate: false })).toContain("description: words.emptyDescriptionRecorded");
-    expect(render("crud-page.stories.hbs", { ...context, hasCreate: true })).toContain("description: words.emptyDescription }");
-    expect(render("list.hbs", { ...context, hasCreate: true })).toContain("description: words.emptyDescription }");
+    expect(readOnly).toContain("title: words.emptyTitleRecorded, description: words.emptyDescriptionRecorded");
+    expect(render("list.hbs", { ...context, hasCreate: false })).toContain("title: words.emptyTitleRecorded, description: words.emptyDescriptionRecorded");
+    expect(render("crud-page.stories.hbs", { ...context, hasCreate: true })).toContain("title: words.emptyTitle, description: words.emptyDescription }");
+    expect(render("list.hbs", { ...context, hasCreate: true })).toContain("title: words.emptyTitle, description: words.emptyDescription }");
   });
 });
