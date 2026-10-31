@@ -108,9 +108,13 @@
     },
     "./styles/*": "./src/styles/*"
   },
+  "bin": {
+    "simplix-design-literals": "scripts/check-design-literals.mjs"
+  },
   "files": [
     "dist",
-    "src"
+    "src",
+    "scripts"
   ],
   "scripts": {
     "build": "NODE_OPTIONS=--max-old-space-size=4096 tsup",
@@ -120,7 +124,7 @@
     "test": "vitest run --passWithNoTests",
     "clean": "rm -rf dist .turbo",
     "design:css": "simplix-design-css --root . --out src/styles/designs/classic.css && simplix-design-css --root . --design-spec src/styles/designs/clarity.spec.ts --out src/styles/designs/clarity.css --compiled src/styles/designs/clarity-stylesheet.ts --tailwind-from ../../../accesscore/simplix-react/apps/storybook --reference src/styles/utilities.css",
-    "design:check": "simplix-design-css --root . --out src/styles/designs/classic.css --check && simplix-design-css --root . --design-spec src/styles/designs/clarity.spec.ts --out src/styles/designs/clarity.css --compiled src/styles/designs/clarity-stylesheet.ts --tailwind-from ../../../accesscore/simplix-react/apps/storybook --reference src/styles/utilities.css --check && simplix-design-coverage src/styles/designs/classic.css src/styles/designs/clarity.css && simplix-design-classes src && node ../../node_modules/@simplix-react/ui/scripts/check-slot-spread.mjs src"
+    "design:check": "simplix-design-css --root . --out src/styles/designs/classic.css --check && simplix-design-css --root . --design-spec src/styles/designs/clarity.spec.ts --out src/styles/designs/clarity.css --compiled src/styles/designs/clarity-stylesheet.ts --tailwind-from ../../../accesscore/simplix-react/apps/storybook --reference src/styles/utilities.css --check && simplix-design-coverage src/styles/designs/classic.css src/styles/designs/clarity.css && simplix-design-classes src && node ../../node_modules/@simplix-react/ui/scripts/check-slot-spread.mjs src && node scripts/check-design-literals.mjs --test && node scripts/check-design-literals.mjs src"
   },
   "dependencies": {
     "@fontsource/noto-sans-jp": "catalog:",
