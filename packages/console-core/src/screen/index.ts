@@ -35,7 +35,9 @@ export {
   type ConflictChoice,
   type ConflictField,
 } from "./edit-conflict";
-export { chipFilterValues } from "@simplix-react/ui";
+// A screen-owned narrowing: the chip row and its state live on the page so the rows and the counts
+// above them read one selection, and a board frame draws the same parts without reaching past the kit.
+export { ChipFilter, chipFilterValues, SearchOperator, Text, useFilterBarState } from "@simplix-react/ui";
 export { FeatureLock } from "./feature-lock";
 export { HistoryRail, type HistoryLane, type HistoryNode, type HistoryNodeState, type HistoryRailProps } from "./history-rail";
 export { ImpactAnalysis, type ImpactGroup, type ImpactKind, type ImpactRow } from "./impact-analysis";

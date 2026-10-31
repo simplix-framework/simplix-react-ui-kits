@@ -8,11 +8,7 @@
  */
 import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
-{{#if hasCreate}}
-import { PlusIcon } from "lucide-react";
-import { Button } from "@simplix-react/ui";
-{{/if}}
-import { CrudPage, type ConsoleSearch, useDetailPresentationSetting } from "@simplix-react-ui-kits/console-clarity/page";
+import { CrudPage, {{#if hasCreate}}PageAction, {{/if}}type ConsoleSearch, useDetailPresentationSetting } from "@simplix-react-ui-kits/console-clarity/page";
 import { RecordDetail, RecordList, useRecordContract, useScreenWords, type ContractField } from "@simplix-react-ui-kits/console-clarity/entity";
 import { useMockRecords } from "@simplix-react-ui-kits/console-clarity/mock";
 
@@ -80,7 +76,7 @@ function Screen({ open }: Args) {
   const columns = contract.columns<Row>(COLUMN_FIELDS);
   return (
     <CrudPage
-      spec={{ldb}} title: words.plural{{#if hasCreate}}, actions: <CreateAction label={words.add} onClick={() => setSearch({ mode: "new" })} />{{/if}} {{rdb}}
+      spec={{ldb}} title: words.plural{{#if hasCreate}}, actions: <PageAction kind="add" label={words.add} onClick={() => setSearch({ mode: "new" })} />{{/if}} {{rdb}}
       search={search}
       onNavigate={setSearch}
       {...presentation}
@@ -107,20 +103,11 @@ function Screen({ open }: Args) {
   );
 }
 
-{{#if hasCreate}}
-/** The header's create action, drawn as the generated page draws it. */
-function CreateAction({ label, onClick }: { readonly label: string; readonly onClick: () => void }) {
-  return (
-    <Button size="sm" onClick={onClick}>
-      <PlusIcon />
-      {label}
-    </Button>
-  );
-}
-
-{{/if}}
 const meta: Meta<typeof Screen> = {
-  title: "Generated/{{EntityPascal}}",
+{{#if storyId}}
+  id: "{{storyId}}",
+{{/if}}
+  title: "{{#if storyTitle}}{{storyTitle}}{{else}}Generated/{{EntityPascal}}{{/if}}",
   component: Screen,
 };
 export default meta;
