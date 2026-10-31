@@ -326,3 +326,18 @@ export function useRecordContract(entity: string, overrides: ContractOverrides =
   // `enumLabel` is returned for a screen that draws an enum constant outside a column or a filter (a tab per group).
   return useMemo(() => ({ value, formField, request, column, columns, filters, detailField, fieldLabel, enumLabel }), [value, formField, request, column, columns, filters, detailField, fieldLabel, enumLabel]);
 }
+
+/**
+ * A field table's enum fields, field name to enum name: what a changes tab needs to label an enum
+ * value the audit record names no enum for.
+ *
+ * @param fields the record's contract fields
+ * @returns each field that declares an `enumName`, by name
+ */
+export function fieldEnumsOf(fields: readonly ContractField[]): Readonly<Record<string, string>> {
+  const enums: Record<string, string> = {};
+  for (const field of fields) {
+    if (field.enumName) enums[field.name] = field.enumName;
+  }
+  return enums;
+}

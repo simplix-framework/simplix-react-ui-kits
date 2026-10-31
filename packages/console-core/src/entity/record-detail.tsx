@@ -36,7 +36,7 @@ import { CheckMatrix, type CheckMatrixProps } from "../layout/check-matrix";
 import { MeasurementGrid, type MeasurementGridProps } from "../layout/measurement-grid";
 import { FormSheet, type FormSheetProps } from "../screen/form-sheet";
 import { HistoryRail, type HistoryRailProps } from "../screen/history-rail";
-import { ChangeHistoryTable, type useChangeHistory } from "../identity/change-history";
+import { ChangeHistoryTable, FieldEnumsProvider, type useChangeHistory } from "../identity/change-history";
 import { ScoreSheet, type ScoreSheetProps } from "../screen/score-sheet";
 import { useCrudPresentation } from "../page/crud-page";
 import { DetailPresentationSwitch, type DetailPresentationSwitchProps } from "../page/detail-presentation-switch";
@@ -168,6 +168,12 @@ export interface RecordDetailProps {
   /** Who made it and when it last changed, at the foot. */
   readonly audit?: { readonly id?: string; readonly createdAt?: string; readonly updatedAt?: string };
   readonly isLoading?: boolean;
+  /**
+   * The record's enum fields, field name to enum name ({@link fieldEnumsOf} builds it from the
+   * contract's field table), so a changes tab labels an enum value the audit record names no
+   * enum for.
+   */
+  readonly fieldEnums?: Readonly<Record<string, string>>;
 }
 
 function Sections({ sections }: { readonly sections?: readonly RecordSection[] }) {
@@ -435,6 +441,7 @@ export function RecordDetail({
   tabToggle,
   audit,
   isLoading,
+  fieldEnums,
 }: RecordDetailProps) {
   const [openTab, setOpenTab] = useState(defaultTab ?? tabs?.[0]?.key ?? "");
   const presentationSwitch = useCrudPresentation()?.presentationSwitch;
@@ -529,7 +536,7 @@ export function RecordDetail({
     >
       <Stack gap="sm">
         {tabs && tabs.length > 0 ? <RecordNotices notices={notices} /> : null}
-        {body}
+        <FieldEnumsProvider value={fieldEnums}>{body}</FieldEnumsProvider>
         <Flex justify="end">
           <RecordVerbs verbs={verbs} end />
         </Flex>

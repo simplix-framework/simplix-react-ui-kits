@@ -19,6 +19,7 @@ export {
 export { AdminDestination, type AdminDestinationProps } from "./admin-destination";
 export {
   ChangeHistoryTable,
+  FieldEnumsProvider,
   useChangeHistory,
   useRefreshChangeHistory,
   type ChangeHistoryScope,

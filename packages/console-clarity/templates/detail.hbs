@@ -4,7 +4,7 @@
  * Laid down from the console-clarity kit's `detail.hbs` and rewritten while its fingerprint
  * matches. Tabs, verbs, notices and fields this record departs in go in `./detail.blocks.tsx`.
  */
-import { RecordDetail, {{#if holders.length}}useAllowed, {{/if}}useRecordContract, useScreenWords, type ContractField, type CrudDetailBlocks, {{#if statusField}}type RecordBadge, {{/if}}type RecordField{{#if holders.length}}, type RecordTab{{/if}}{{#if statusField}}, type RecordValue{{/if}} } from "@simplix-react-ui-kits/console-clarity/entity";
+import { fieldEnumsOf, RecordDetail, {{#if holders.length}}useAllowed, {{/if}}useRecordContract, useScreenWords, type ContractField, type CrudDetailBlocks, {{#if statusField}}type RecordBadge, {{/if}}type RecordField{{#if holders.length}}, type RecordTab{{/if}}{{#if statusField}}, type RecordValue{{/if}} } from "@simplix-react-ui-kits/console-clarity/entity";
 {{#if holders.length}}
 import { adaptForcedList, forcedScope, useCrudList } from "@simplix-react/ui";
 {{/if}}
@@ -158,6 +158,7 @@ export function {{EntityPascal}}Detail(props: {{EntityPascal}}DetailProps) {
       tabs={tabs}
       sections={tabs ? undefined : blocks.sections ?? [{ key: "overview", fields: generated }]}
       note={blocks.note}
+      fieldEnums={fieldEnumsOf({{EntityPascal}}DetailFields)}
 {{#if hasAuditFields}}
       audit={record ? { id: record.{{rowIdField}} == null ? undefined : String(record.{{rowIdField}}), createdAt: record.createdAt ?? undefined, updatedAt: record.updatedAt ?? undefined } : undefined}
 {{/if}}

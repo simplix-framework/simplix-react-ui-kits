@@ -153,6 +153,14 @@ describe("the generated detail against a blocks file written before a key existe
   });
 });
 
+describe("the generated detail's changes tab", () => {
+  it("hands the record its field enums, so an enum value the audit record names no enum for is labeled", () => {
+    const source = render("detail.hbs", context);
+    expect(source).toContain("fieldEnums={fieldEnumsOf(ProductDetailFields)}");
+    expect(check("detail", render("detail.blocks.hbs", context), source)).toEqual([]);
+  });
+});
+
 describe("the generated detail and the module cycle with its blocks file", () => {
   it("hands the blocks hook the field table, which a blocks file reads from its argument", () => {
     expect(check("detail", detailBlocksReadingFields)).toEqual([]);

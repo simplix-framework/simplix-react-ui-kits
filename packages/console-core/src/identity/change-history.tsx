@@ -19,6 +19,7 @@ import type { OrvalListHookLike } from "@simplix-react/ui";
 
 import { EnumBadge } from "../badge";
 import { useChangeHistorySource, type ChangeHistoryEvent } from "./change-history-source";
+import { createContext, useContext } from "react";
 import { EllipsisText, PanelList, StrongText, useWideList, WIDE_LIST_WIDTH } from "../layout";
 import { useAppTimeZone } from "../datetime";
 
@@ -256,7 +257,55 @@ interface ChangeHistoryTableProps {
    * @param value one side of the change, as the record stores it
    */
   readonly resolveValue?: (field: string, value: string) => string | undefined;
+  /**
+   * The audited entity's enum fields, field name to enum name, as its contract declares them.
+   *
+   * <p>A recorder that names no catalogue beside a value leaves an enum constant with nothing to
+   * say which enum it belongs to, and the row prints `FAILED → QUEUED` where every other surface
+   * says 실패 → 대기. The entity's own contract knows each field's enum, so the table reads it from
+   * here. Defaults to what the enclosing {@link FieldEnumsProvider} supplies, which a record detail
+   * fills from its field table.
+   */
+  readonly fieldEnums?: Readonly<Record<string, string>>;
 }
+
+/** What {@link changeValueLabel} reads a value through. */
+export interface ChangeValueReaders {
+  readonly fieldEnums?: Readonly<Record<string, string>>;
+  readonly enumLabel: (enumName: string, value: string) => string;
+  readonly resolveValue?: (field: string, value: string) => string | undefined;
+  /** What a side with no value reads as. */
+  readonly nothing: string;
+  /** What a stored boolean reads as. */
+  readonly switched: (on: boolean) => string;
+}
+
+/**
+ * One side of a change, as a reader reads it: the enum the recorder names, else the enum the
+ * entity's contract declares for the field, else what the owning screen resolves, else a switch's
+ * state, else the stored text.
+ */
+export function changeValueLabel(
+  change: { readonly value?: string; readonly valueEnum?: string; readonly field?: string },
+  readers: ChangeValueReaders,
+): string {
+  const { value, valueEnum, field } = change;
+  if (!value) return readers.nothing;
+  const enumName = valueEnum ?? (field ? readers.fieldEnums?.[field] : undefined);
+  if (enumName) return readers.enumLabel(enumName, value);
+  const named = readers.resolveValue?.(field ?? "", value);
+  if (named) return named;
+  // A boolean is stored as the word the language prints, and 「false → true」 says nothing to an
+  // operator reading what somebody switched. It is not an enum, so the recorder names no
+  // catalogue for it and nothing else in this pair can tell the reader which way it went.
+  if (value === "true" || value === "false") return readers.switched(value === "true");
+  return value;
+}
+
+const FieldEnumsContext = createContext<Readonly<Record<string, string>> | undefined>(undefined);
+
+/** Supplies {@link ChangeHistoryTableProps.fieldEnums} to every history table below it. */
+export const FieldEnumsProvider = FieldEnumsContext.Provider;
 
 /**
  * Who changed a setting, when, and to which record.
@@ -273,7 +322,10 @@ export function ChangeHistoryTable({
   denied,
   emptyBody,
   resolveValue,
+  fieldEnums: givenFieldEnums,
 }: ChangeHistoryTableProps) {
+  const providedFieldEnums = useContext(FieldEnumsContext);
+  const fieldEnums = givenFieldEnums ?? providedFieldEnums;
   // The console's shared namespace: this table is drawn by screens in four different modules, so
   // its labels cannot live in any one module's catalogue.
   const { t } = useTranslation("common");
@@ -301,7 +353,8 @@ export function ChangeHistoryTable({
    *
    * <p>An enum's constant is stored, not its label — 「분류 MANAGEMENT」 where 관리 belongs — and
    * the value alone cannot say which catalogue to look in. The recorder names the enum beside the
-   * value, so this resolves it exactly rather than guessing.
+   * value, so this resolves it exactly rather than guessing; where it names none, the entity's
+   * contract says which enum the field is ({@link ChangeHistoryTableProps.fieldEnums}).
    *
    * <p>Where it names none, the owning screen gets its turn ({@link ChangeHistoryTableProps.resolveValue}):
    * a value keyed into a table the installation registered has no catalogue for the recorder to
@@ -312,17 +365,17 @@ export function ChangeHistoryTable({
     value: string | undefined,
     valueEnum: string | undefined,
     field: string | undefined,
-  ) => {
-    if (!value) return NOTHING;
-    if (valueEnum) return enumLabel(valueEnum, value);
-    const named = resolveValue?.(field ?? "", value);
-    if (named) return named;
-    // A boolean is stored as the word the language prints, and 「false → true」 says nothing to an
-    // operator reading what somebody switched. It is not an enum, so the recorder names no
-    // catalogue for it and nothing else in this pair can tell the reader which way it went.
-    if (value === "true" || value === "false") return tUi(`common.${value === "true" ? "on" : "off"}`);
-    return value;
-  };
+  ) =>
+    changeValueLabel(
+      { value, valueEnum, field },
+      {
+        fieldEnums,
+        enumLabel,
+        resolveValue,
+        nothing: NOTHING,
+        switched: (on) => tUi(`common.${on ? "on" : "off"}`),
+      },
+    );
 
   if (denied) {
     return (
