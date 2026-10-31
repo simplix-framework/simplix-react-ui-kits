@@ -55,13 +55,22 @@ export interface ActionDialogProps {
  * main button. The main button is named by the command it runs (`submit.label`), and while a
  * required field is empty, or the caller gives a reason, it is drawn disabled with the reason under it.
  */
-export function ActionDialog({ title, open, onOpenChange, notices, sections, fields = [], steps, note, leading = [], trailing = [], submit, closeLabel }: ActionDialogProps) {
+export function ActionDialog(props: ActionDialogProps) {
+  return (
+    <Dialog open={props.open} onOpenChange={props.onOpenChange}>
+      {/* The body mounts with each opening, so the fields start from their initial values every time
+          rather than holding what the last submit or cancel left in them. */}
+      {props.open ? <ActionDialogBody {...props} /> : null}
+    </Dialog>
+  );
+}
+
+function ActionDialogBody({ title, onOpenChange, notices, sections, fields = [], steps, note, leading = [], trailing = [], submit, closeLabel }: ActionDialogProps) {
   const { t } = useTranslation(`${PACKAGE_NAMESPACE}/features`);
   const { t: tUi } = useTranslation("simplix/ui");
   const form = useRecordFormValues(fields);
   const blocked = submit?.disabled ?? (form.missing.length > 0 ? t("recordForm.fillBeforeSubmit", { count: form.missing.length }) : undefined);
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
       <BoundedDialogContent width="lg">
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
@@ -112,6 +121,5 @@ export function ActionDialog({ title, open, onOpenChange, notices, sections, fie
           </Flex>
         </DialogFooter>
       </BoundedDialogContent>
-    </Dialog>
   );
 }
