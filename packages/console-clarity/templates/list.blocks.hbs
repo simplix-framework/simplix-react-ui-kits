@@ -2,7 +2,7 @@
  * What the {{entity}} list departs in from the generated one. Written by hand and never regenerated.
  */
 import type { ReactNode } from "react";
-import type { RecordAction, RecordColumn, RecordFilter, RecordListProps } from "@simplix-react-ui-kits/console-clarity/entity";
+import type { ContractField, ContractFilter, RecordAction, RecordColumn, RecordFilter, RecordListProps } from "@simplix-react-ui-kits/console-clarity/entity";
 
 import type { {{EntityPascal}}Row } from "./list";
 
@@ -18,6 +18,14 @@ export interface ListBlocks {
   readonly features?: RecordListProps<{{EntityPascal}}Row>["features"];
 }
 
-export function useListBlocks(_list: { readonly generated: readonly RecordColumn<{{EntityPascal}}Row>[] }): ListBlocks {
+/**
+ * The generated list imports this file, so import only types from `./list`; the contract's field
+ * and filter tables arrive as `fields` and `contractFilters`.
+ */
+export function useListBlocks(_list: {
+  readonly generated: readonly RecordColumn<{{EntityPascal}}Row>[];
+  readonly fields: readonly ContractField[];
+  readonly contractFilters: readonly ContractFilter[];
+}): ListBlocks {
   return {};
 }

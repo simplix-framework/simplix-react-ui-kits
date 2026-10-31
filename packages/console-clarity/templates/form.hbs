@@ -10,8 +10,13 @@ import { QueryFallback, useInvalidateEntity } from "@simplix-react/ui";
 import { {{#if hookGetForEdit}}{{hookGetForEdit}}, {{else}}{{#if hookGet}}{{hookGet}}, {{/if}}{{/if}}{{#if hookCreate}}{{hookCreate}}{{/if}}{{#if hookUpdate}}{{#if hookCreate}}, {{/if}}{{hookUpdate}}{{/if}} } from "{{packageName}}";
 import { useFormBlocks, useFormContract } from "./form.blocks";
 
-/** The fields the contract lets this form write, each edited by its kind. */
-export const {{EntityPascal}}FormFields: readonly ContractField[] = [
+/**
+ * The fields the contract lets this form write, each edited by its kind. Not exported:
+ * `./form.blocks` is imported by this file, so it takes the table as the `fields` argument of its
+ * hook (a value import back is a module cycle, and a cycle turns every edit of either file into a
+ * full page reload).
+ */
+const {{EntityPascal}}FormFields: readonly ContractField[] = [
 {{#each fields}}
 {{!-- An i18n pair is written through its map, and the request fills the plain field from it. The
       record's own key and keys nobody reads are never typed in. --}}
@@ -70,8 +75,10 @@ export function {{EntityPascal}}Form(props: {{EntityPascal}}FormProps) {
   const row = record as Readonly<Record<string, unknown>> | undefined;
   const generated: RecordFormField[] = {{EntityPascal}}FormFields.map((field) => contract.formField(field, row));
   // Every key of the kit's form blocks contract is optional here, so a blocks file written before
-  // a key existed still compiles.
-  const blocks: ReturnType<typeof useFormBlocks> & CrudFormBlocks = useFormBlocks({ record, editing, generated });
+  // a key existed still compiles. The input is held in a variable for the same reason: an object
+  // literal written inline would refuse a blocks hook that does not declare `fields`.
+  const blocksInput = { record, editing, generated, fields: {{EntityPascal}}FormFields };
+  const blocks: ReturnType<typeof useFormBlocks> & CrudFormBlocks = useFormBlocks(blocksInput);
   if (editing && (isLoading || !data)) return <QueryFallback isLoading={isLoading} />;
   return (
     <RecordForm

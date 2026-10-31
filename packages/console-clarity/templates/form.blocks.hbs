@@ -2,12 +2,16 @@
  * What the {{entity}} form departs in from the generated one: its sections, its notices and the
  * request it sends. Written by hand and never regenerated.
  */
-import type { ContractOverrides, CrudFormBlocks, RecordFormField } from "@simplix-react-ui-kits/console-clarity/entity";
+import type { ContractField, ContractOverrides, CrudFormBlocks, RecordFormField } from "@simplix-react-ui-kits/console-clarity/entity";
 
-/** The keys a form may state, and what each one does, are the kit's `CrudFormBlocks`. */
+/**
+ * The keys a form may state, and what each one does, are the kit's `CrudFormBlocks`. The generated
+ * form imports this file, so import only types from `./form`; the field table the contract lets
+ * the form write arrives as `fields`.
+ */
 export type FormBlocks = CrudFormBlocks;
 
-export function useFormBlocks<T>(_form: { readonly record: T | undefined; readonly editing: boolean; readonly generated: readonly RecordFormField[] }): FormBlocks {
+export function useFormBlocks<T>(_form: { readonly record: T | undefined; readonly editing: boolean; readonly generated: readonly RecordFormField[]; readonly fields: readonly ContractField[] }): FormBlocks {
   return {};
 }
 

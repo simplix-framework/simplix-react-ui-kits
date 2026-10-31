@@ -31,8 +31,13 @@ export interface {{EntityPascal}}ListProps {
   readonly leading?: ReactNode;
 }
 
-/** The fields a row carries, each drawn by its contract kind. */
-export const {{EntityPascal}}ColumnFields: readonly ContractField[] = [
+/**
+ * The fields a row carries, each drawn by its contract kind. Not exported: `./list.blocks` is
+ * imported by this file, so it takes the table as the `fields` argument of its hook and imports
+ * only types back from here (a value import back is a module cycle, and a cycle turns every edit
+ * of either file into a full page reload).
+ */
+const {{EntityPascal}}ColumnFields: readonly ContractField[] = [
 {{#each listFields}}
 {{#unless this.isI18nPair}}
 {{#unless this.baseFieldName}}
@@ -54,8 +59,8 @@ export const {{EntityPascal}}ColumnFields: readonly ContractField[] = [
 {{/each}}
 ];
 
-/** The filters the contract's searchable fields give this list. */
-export const {{EntityPascal}}Filters: readonly ContractFilter[] = [
+/** The filters the contract's searchable fields give this list; not exported, for the same reason. */
+const {{EntityPascal}}Filters: readonly ContractFilter[] = [
 {{#each contractFilters}}
   { kind: "{{this.kind}}", field: "{{this.field}}"{{#if this.enumTypeName}}, enumName: "{{this.enumTypeName}}"{{/if}}{{#if this.options}}, options: [{{#each this.options}}"{{this}}"{{#unless @last}}, {{/unless}}{{/each}}]{{/if}}{{#if (eq this.kind "dateRange")}}, dateOnly: {{#if this.dateOnly}}true{{else}}false{{/if}}{{/if}} },
 {{/each}}
@@ -71,7 +76,10 @@ export function use{{EntityPascal}}Columns(overrides?: ContractOverrides): Recor
 export function {{EntityPascal}}List({ list, activeRowId, onRowClick, actions, leading }: {{EntityPascal}}ListProps) {
   const words = useScreenWords("{{entity}}");
   const generated = use{{EntityPascal}}Columns();
-  const blocks = useListBlocks({ generated });
+  // The input is held in a variable so a blocks hook written before `fields` and `contractFilters`
+  // existed still compiles: an object literal written inline would refuse the extra keys.
+  const blocksInput = { generated, fields: {{EntityPascal}}ColumnFields, contractFilters: {{EntityPascal}}Filters };
+  const blocks = useListBlocks(blocksInput);
   const contract = useRecordContract("{{entity}}");
   const filters: readonly RecordFilter<{{EntityPascal}}Row>[] = blocks.filters ?? contract.filters<{{EntityPascal}}Row>({{EntityPascal}}Filters);
 {{#if hookOrder}}

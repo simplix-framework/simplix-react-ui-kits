@@ -4,7 +4,7 @@
  * Laid down from the console-clarity kit's `detail.hbs` and rewritten while its fingerprint
  * matches. Tabs, verbs, notices and fields this record departs in go in `./detail.blocks.tsx`.
  */
-import { RecordDetail, useAllowed, useRecordContract, useScreenWords, type ContractField, type CrudDetailBlocks, {{#if statusField}}type RecordBadge, {{/if}}type RecordField, type RecordTab{{#if statusField}}, type RecordValue{{/if}} } from "@simplix-react-ui-kits/console-clarity/entity";
+import { RecordDetail, {{#if holders.length}}useAllowed, {{/if}}useRecordContract, useScreenWords, type ContractField, type CrudDetailBlocks, {{#if statusField}}type RecordBadge, {{/if}}type RecordField{{#if holders.length}}, type RecordTab{{/if}}{{#if statusField}}, type RecordValue{{/if}} } from "@simplix-react-ui-kits/console-clarity/entity";
 {{#if holders.length}}
 import { adaptForcedList, forcedScope, useCrudList } from "@simplix-react/ui";
 {{/if}}
