@@ -91,6 +91,10 @@
   "exportAction": {
     "label": "내보내기",
     "running": "내보내는 중...",
-    "failed": "파일을 내보내지 못했습니다."
+    "failed": "파일을 내보내지 못했습니다.",
+    "format": {
+      "csv": "CSV (.csv)",
+      "xlsx": "엑셀 (.xlsx)"
+    }
   }
 }

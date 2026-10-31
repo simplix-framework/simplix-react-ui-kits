@@ -92,6 +92,10 @@
   "exportAction": {
     "label": "Export",
     "running": "Exporting...",
-    "failed": "The file could not be exported."
+    "failed": "The file could not be exported.",
+    "format": {
+      "csv": "CSV (.csv)",
+      "xlsx": "Excel (.xlsx)"
+    }
   }
 }
