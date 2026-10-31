@@ -12,7 +12,7 @@ export interface RecordBadge {
 /**
  * What one cell or one detail field shows, declared rather than drawn.
  *
- * <p>Text; text over a quieter second line; one or more badges; the name of another record. Nothing
+ * <p>Text, or an identifier drawn as code; text over a quieter second line; one or more badges; the name of another record. Nothing
  * is the kit's empty mark, so a screen never draws its own placeholder.
  */
 export type RecordValue =
@@ -26,6 +26,11 @@ export type RecordValue =
       readonly badge?: RecordBadge;
       /** Draws the person the text names beside it, tinted by this seed (their id). */
       readonly avatar?: string;
+      /**
+       * The text is an identifier the reader may type or compare (a code, a setting key), drawn in
+       * the monospaced face so it reads as one rather than as a sentence.
+       */
+      readonly code?: boolean;
     }
   | { readonly badge: RecordBadge }
   | { readonly badges: readonly RecordBadge[] }
@@ -81,7 +86,13 @@ export function RecordValueView({ value }: { readonly value: RecordValue }): Rea
     const lines = (
       <Flex direction="column" gap="none" minSize>
         <Flex align="center" gap="xs">
-          <span>{value.text}</span>
+          {value.code ? (
+            <Text as="code" font="mono">
+              {value.text}
+            </Text>
+          ) : (
+            <span>{value.text}</span>
+          )}
           {value.badge ? <StatusBadge tone={value.badge.tone ?? "neutral"} label={value.badge.label} /> : null}
         </Flex>
         {value.sub ? (
