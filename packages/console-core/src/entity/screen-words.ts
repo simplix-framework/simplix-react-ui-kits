@@ -27,6 +27,8 @@ export interface ScreenWords {
   readonly deleteDescription: (name: string) => string;
   readonly cancel: string;
   readonly deleting: string;
+  /** What a detail says when its read failed, so a failure never reads as an empty record. */
+  readonly readFailed: string;
 }
 
 /**
@@ -61,6 +63,7 @@ export function useScreenWords(entity: string): ScreenWords {
       deleteDescription: (record: string) => t("screen.deleteDescription", { name: record }),
       cancel: t("screen.cancel"),
       deleting: t("screen.deleting"),
+      readFailed: t("screen.readFailed"),
     };
   }, [name, t]);
 }

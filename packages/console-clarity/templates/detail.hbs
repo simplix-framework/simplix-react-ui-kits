@@ -79,7 +79,7 @@ export interface {{EntityPascal}}DetailProps {
 /** The {{entity}} record, drawn by the kit's record detail. */
 export function {{EntityPascal}}Detail(props: {{EntityPascal}}DetailProps) {
   const words = useScreenWords("{{entity}}");
-  const { data, isLoading } = {{hookGet}}(props.{{entity}}Id);
+  const { data, isLoading, isError } = {{hookGet}}(props.{{entity}}Id);
   const blocks = useDetailBlocks({ record: data ?? undefined, props });
   const record = data ?? undefined;
   const contract = useRecordContract("{{entity}}", blocks.contract);
@@ -130,6 +130,7 @@ export function {{EntityPascal}}Detail(props: {{EntityPascal}}DetailProps) {
     ...(props.onDelete ? [{ label: words.delete, kind: "danger" as const, onClick: () => props.onDelete?.(recordName) }] : []),
     ...(props.onEdit ? [{ label: words.edit, onClick: props.onEdit }] : []),
   ];
+  // A read that failed says so in a notice, rather than drawing a record with nothing in it.
   // The subtitle is the blocks' alone and never the record's key: a panel is titled by what
   // people call the record (frontend invariant #36).
   return (
@@ -139,12 +140,15 @@ export function {{EntityPascal}}Detail(props: {{EntityPascal}}DetailProps) {
       title={blocks.title ?? (record ? String(record.{{#if displayNameField}}{{displayNameField}}{{else}}{{rowIdField}}{{/if}} ?? "") : words.label)}
       subtitle={blocks.subtitle}
       status={blocks.status ?? headerStatus}
-      notices={blocks.notices}
+      notices={[...(isError ? [{ key: "read-failed", tone: "danger" as const, title: words.readFailed }] : []), ...(blocks.notices ?? [])]}
       verbs={blocks.verbs}
       actions={blocks.actions ?? generatedActions}
       defaultTab={props.initialTab ?? blocks.defaultTab}
       tabs={tabs}
       sections={tabs ? undefined : blocks.sections ?? [{ key: "overview", fields: generated }]}
+{{#if hasAuditFields}}
+      audit={record ? { id: record.{{rowIdField}} == null ? undefined : String(record.{{rowIdField}}), createdAt: record.createdAt ?? undefined, updatedAt: record.updatedAt ?? undefined } : undefined}
+{{/if}}
       onClose={props.onClose}
     />
     {blocks.dialogs}

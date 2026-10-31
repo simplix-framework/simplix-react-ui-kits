@@ -82,6 +82,7 @@
     "deleteDescription": "Delete “{{name}}”? This cannot be undone.",
     "cancel": "Cancel",
     "deleting": "Deleting…",
-    "view": "View"
+    "view": "View",
+    "readFailed": "This record could not be read. Try again in a moment."
   }
 }
