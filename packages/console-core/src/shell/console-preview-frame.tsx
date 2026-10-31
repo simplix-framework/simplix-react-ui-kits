@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { PageHeaderProvider, ToastContainer } from "@simplix-react/ui";
+import { PageHeaderProvider, ToastContainer, usePageHeaderState } from "@simplix-react/ui";
 
 import { TilesCollapseProvider } from "../layout/tiles-collapse";
 import { LocalNoticeDismissalsProvider } from "../notice/local-dismissals";
@@ -8,6 +8,7 @@ import { PeekHost } from "../peek/peek-host";
 import { ConsoleContentColumn } from "./content-column";
 import { ConsoleContextProvider, type ConsoleContextValue } from "./console-context";
 import { ConsolePreviewWindowChrome, type ConsolePreviewChrome } from "./preview-chrome";
+import { ConsolePhoneShell, useConsoleOnAPhone } from "./phone-shell";
 
 /** Props for {@link ConsolePreviewFrame}. */
 export interface ConsolePreviewFrameProps {
@@ -33,6 +34,9 @@ export interface ConsolePreviewFrameProps {
  * open and come back from the header's list; the tile row folds and opens as it does in an app.
  */
 export function ConsolePreviewFrame({ console, namespace, chrome, children }: ConsolePreviewFrameProps) {
+  // A phone window draws the console's phone shell, as an app's shell does, so a page previewed at
+  // a phone's width is measured inside the same shell (its 44px touch targets, its bars) as the app.
+  const onAPhone = useConsoleOnAPhone();
   return (
     <ConsoleContextProvider value={console}>
       <PeekHost>
@@ -42,7 +46,9 @@ export function ConsolePreviewFrame({ console, namespace, chrome, children }: Co
               <NoticeRegistryProvider>
                 {/* Bounded to the viewport as the shell bounds its column, so a list scrolls inside and
                     a panel's footer stays on screen. */}
-                {chrome ? (
+                {chrome && onAPhone ? (
+                  <PreviewPhoneShell chrome={chrome}>{children}</PreviewPhoneShell>
+                ) : chrome ? (
                   <ConsolePreviewWindowChrome chrome={chrome}>
                     <ConsoleContentColumn>{children}</ConsoleContentColumn>
                   </ConsolePreviewWindowChrome>
@@ -59,5 +65,18 @@ export function ConsolePreviewFrame({ console, namespace, chrome, children }: Co
         </PageHeaderProvider>
       </PeekHost>
     </ConsoleContextProvider>
+  );
+}
+
+/**
+ * The phone shell around a previewed page: the page header's title in the top bar and the menu
+ * entry along the bottom. A preview has no router, so the entry is drawn without a destination.
+ */
+function PreviewPhoneShell({ chrome, children }: { readonly chrome: ConsolePreviewChrome; readonly children: ReactNode }) {
+  const { title } = usePageHeaderState();
+  return (
+    <ConsolePhoneShell brand={chrome.mark} title={title ?? chrome.title} tabs={[{ key: "menu", label: chrome.labels.menu, icon: "menu" }]} activeTab="">
+      <ConsoleContentColumn>{children}</ConsoleContentColumn>
+    </ConsolePhoneShell>
   );
 }
