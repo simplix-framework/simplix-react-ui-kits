@@ -4,7 +4,7 @@
  * Laid down from the console-clarity kit's `list.hbs` and rewritten while its fingerprint
  * matches. Columns, filters, chips and row actions this list departs in go in `./list.blocks.tsx`.
  */
-import { adaptForcedList, adaptOrvalList, useCrudList{{#if hookOrder}}{{#if orderField}}, useInvalidateEntity{{/if}}{{/if}} } from "@simplix-react/ui";
+import { adaptForcedList, adaptOrvalList{{#if hasKeywordSearch}}, SEARCHABLE_KEYWORD_PARAM{{/if}}, useCrudList{{#if hookOrder}}{{#if orderField}}, useInvalidateEntity{{/if}}{{/if}} } from "@simplix-react/ui";
 import { RecordList, {{#if hookOrder}}{{#if orderField}}useAllowed, {{/if}}{{/if}}useRecordContract, useScreenWords, type ContractField, type ContractFilter, type ContractOverrides, type RecordAction, type RecordColumn, type RecordFilter } from "@simplix-react-ui-kits/console-clarity/entity";
 import type { ReactNode } from "react";
 
@@ -15,7 +15,14 @@ export type {{EntityPascal}}Row = {{listRowType}};
 
 /** The {{entity}} list's server-paged state; `params` are forced into every request. */
 export function use{{EntityPascal}}List(params?: Readonly<Record<string, unknown>>) {
+{{#if hasKeywordSearch}}
+  // The search box's text goes out as the route's keyword search, matched against every field the
+  // search DTO marks as a keyword field.
+  const options = { searchKey: SEARCHABLE_KEYWORD_PARAM };
+  return useCrudList<{{EntityPascal}}Row>(params ? adaptForcedList<{{EntityPascal}}Row>({{hookList}}, { ...params }, options) : adaptOrvalList<{{EntityPascal}}Row>({{hookList}}, options), {
+{{else}}
   return useCrudList<{{EntityPascal}}Row>(params ? adaptForcedList<{{EntityPascal}}Row>({{hookList}}, { ...params }) : adaptOrvalList<{{EntityPascal}}Row>({{hookList}}), {
+{{/if}}
     stateMode: "server",
     defaultPageSize: 20,
     defaultSort: { field: "{{#if orderField}}{{orderField}}{{else}}{{rowIdField}}{{/if}}", direction: "{{#if orderField}}asc{{else}}desc{{/if}}" },
@@ -104,7 +111,12 @@ export function {{EntityPascal}}List({ list, activeRowId, onRowClick, actions, l
       onRowClick={onRowClick}
       searchPlaceholder={blocks.searchPlaceholder}
       empty={blocks.empty ?? { title: words.emptyTitle, description: words.emptyDescription }}
+{{#if hasKeywordSearch}}
       features={blocks.features}
+{{else}}
+      // The route declares no keyword field, so there is nothing for a search box to send.
+      features={ { search: false, ...blocks.features } }
+{{/if}}
 {{#if hookOrder}}
 {{#if orderField}}
       reorder={canOrder ? { orderField: "{{orderField}}", idField: "{{rowIdField}}", onReorder: (updates) => order.mutateAsync({ data: updates as never }) } : undefined}
