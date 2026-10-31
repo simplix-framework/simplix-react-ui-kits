@@ -50,6 +50,13 @@ export {
   type ConsoleTopBarRegion,
 } from "./console-top-bar";
 export { ConsoleContentColumn, type ConsoleContentColumnProps } from "./content-column";
+export {
+  ConsoleBandTopBar,
+  ConsoleTopBarWindow,
+  type ConsoleBandDestination,
+  type ConsoleBandTopBarProps,
+  type ConsoleTopBarWindowProps,
+} from "./top-bar-window";
 export { ConsolePreviewFrame, type ConsolePreviewFrameProps } from "./console-preview-frame";
 export type {
   ConsolePreviewChrome,

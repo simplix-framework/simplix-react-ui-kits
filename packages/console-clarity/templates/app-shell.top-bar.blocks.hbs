@@ -1,0 +1,31 @@
+/**
+ * What the app's top-bar shell holds: its bar and what wraps the routed screens. Written by hand
+ * and never regenerated; every value below is a start for the app to replace.
+ */
+import type { ReactNode } from "react";
+import { useTranslation } from "@simplix-react/i18n/react";
+import { ConsoleBandTopBar, DarkModeToggle, LocalePicker } from "@simplix-react-ui-kits/console-clarity/shell";
+
+export interface ShellBlocks {
+  /** The band across the top of the window: the mark, the destinations and the controls. */
+  readonly topBar: ReactNode;
+  /** The routes drawn without the window (sign-in and the pages around it). */
+  readonly isOutsideTheShell: (route: string) => boolean;
+  /** Providers the routed screen needs inside the window. */
+  readonly wrap: (screen: ReactNode) => ReactNode;
+}
+
+/** The shell's parts for the route on screen, which the bar reads to mark where the reader stands. */
+export function useShellBlocks(_route: string): ShellBlocks {
+  const { t } = useTranslation("{{namespace}}");
+  return {
+    topBar: (
+      <ConsoleBandTopBar mark={t("shell.title")}>
+        <LocalePicker />
+        <DarkModeToggle />
+      </ConsoleBandTopBar>
+    ),
+    isOutsideTheShell: () => false,
+    wrap: (screen) => screen,
+  };
+}

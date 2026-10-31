@@ -9,6 +9,7 @@ import { ConsoleContentColumn } from "./content-column";
 import { ConsoleContextProvider, type ConsoleContextValue } from "./console-context";
 import { ConsolePreviewWindowChrome, type ConsolePreviewChrome } from "./preview-chrome";
 import { ConsolePhoneShell, useConsoleOnAPhone } from "./phone-shell";
+import { ConsoleTopBarWindow } from "./top-bar-window";
 
 /** Props for {@link ConsolePreviewFrame}. */
 export interface ConsolePreviewFrameProps {
@@ -21,6 +22,11 @@ export interface ConsolePreviewFrameProps {
    * Absent, the page is drawn alone, bounded to the viewport.
    */
   readonly chrome?: ConsolePreviewChrome;
+  /**
+   * The band of a window with no menu column, drawn over the page instead of {@link chrome}: the
+   * shell of an app the console's people do not work in.
+   */
+  readonly topBar?: ReactNode;
   readonly children: ReactNode;
 }
 
@@ -33,7 +39,7 @@ export interface ConsolePreviewFrameProps {
  * supply handed in as props. Notices the reader puts away are kept for as long as the page is
  * open and come back from the header's list; the tile row folds and opens as it does in an app.
  */
-export function ConsolePreviewFrame({ console, namespace, chrome, children }: ConsolePreviewFrameProps) {
+export function ConsolePreviewFrame({ console, namespace, chrome, topBar, children }: ConsolePreviewFrameProps) {
   // A phone window draws the console's phone shell, as an app's shell does, so a page previewed at
   // a phone's width is measured inside the same shell (its 44px touch targets, its bars) as the app.
   const onAPhone = useConsoleOnAPhone();
@@ -52,6 +58,8 @@ export function ConsolePreviewFrame({ console, namespace, chrome, children }: Co
                   <ConsolePreviewWindowChrome chrome={chrome}>
                     <ConsoleContentColumn>{children}</ConsoleContentColumn>
                   </ConsolePreviewWindowChrome>
+                ) : topBar ? (
+                  <ConsoleTopBarWindow topBar={topBar}>{children}</ConsoleTopBarWindow>
                 ) : (
                   <div className="flex h-dvh min-h-0 flex-col">
                     <ConsoleContentColumn>{children}</ConsoleContentColumn>

@@ -1,0 +1,34 @@
+/**
+ * @simplix-generated page/clarity-app-shell-top-bar
+ *
+ * The app's window, laid down once from the console-clarity kit's `app-shell.top-bar.hbs` and owned
+ * by the app from then on: a top bar and the routed screen under it, with no menu column and no
+ * status strip, for an app whose readers reach a handful of destinations from the bar itself. The
+ * bar, the destinations and what wraps the routed screens come from `./root-layout.blocks.tsx`;
+ * the screens reached without a session wear `AuthLayout`.
+ */
+import { Outlet, useRouterState } from "@tanstack/react-router";
+import { PageHeaderProvider } from "@simplix-react/ui";
+import { PeekHost } from "@simplix-react-ui-kits/console-clarity/peek";
+import { NoticeRegistryProvider } from "@simplix-react-ui-kits/console-clarity/notice";
+import { AuthLayout, ConsoleTopBarWindow } from "@simplix-react-ui-kits/console-clarity/shell";
+
+import { useShellBlocks } from "./root-layout.blocks";
+
+/** Picks the shell a screen wears: the sign-in shell before a session, the top-bar window after it. */
+export function RootLayout() {
+  // What the outlet renders, not where the router is heading: the previous route stays on screen
+  // until the next one loads.
+  const route = useRouterState({ select: (s) => s.matches[s.matches.length - 1]?.pathname ?? s.location.pathname });
+  const blocks = useShellBlocks(route);
+  if (blocks.isOutsideTheShell(route)) return <AuthLayout />;
+  return (
+    <PeekHost>
+      <PageHeaderProvider>
+        <NoticeRegistryProvider>
+          <ConsoleTopBarWindow topBar={blocks.topBar}>{blocks.wrap(<Outlet />)}</ConsoleTopBarWindow>
+        </NoticeRegistryProvider>
+      </PageHeaderProvider>
+    </PeekHost>
+  );
+}

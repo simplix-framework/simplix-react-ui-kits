@@ -1,0 +1,38 @@
+/**
+ * @simplix-generated story/clarity-app-shell-top-bar
+ *
+ * The board frame for the {{NamePascal}} shell, laid down from the console-clarity kit's
+ * `app-shell.top-bar.stories.hbs`, and rewritten while its fingerprint matches: the top bar of a
+ * window with no menu column over an empty content column. Customise it to the bar the app draws;
+ * once edited it is kept, and `simplix generated` lists it. Frames of the screens this shell holds
+ * are drawn inside the same window through the board's preview.
+ */
+import type { Meta, StoryObj } from "@storybook/react";
+import { ConsoleBandTopBar, ConsoleTopBarWindow, DarkModeToggle, LocalePicker } from "@simplix-react-ui-kits/console-clarity/shell";
+
+function Screen() {
+  return (
+    <ConsoleTopBarWindow
+      topBar={
+        <ConsoleBandTopBar mark="{{NamePascal}}">
+          <LocalePicker />
+          <DarkModeToggle />
+        </ConsoleBandTopBar>
+      }
+    >
+      {null}
+    </ConsoleTopBarWindow>
+  );
+}
+
+const meta: Meta<typeof Screen> = {
+  title: "Generated/{{storyTitle}}",
+  component: Screen,
+  // The frame is the window itself, so the board draws no second window around it.
+  parameters: { layout: "fullscreen", consoleFrame: false },
+};
+export default meta;
+type Story = StoryObj<typeof Screen>;
+
+/** The window as it opens. */
+export const Shell: Story = {};

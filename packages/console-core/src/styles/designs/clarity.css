@@ -1530,6 +1530,9 @@
   :where([data-part="console-preview-topbar"])[data-part][data-p-console-preview-topbar] {
     @apply border-b border-[var(--border)] bg-card;
   }
+  :where([data-part="console-band-top-bar"])[data-part][data-p-console-band-top-bar] {
+    @apply border-b px-4 py-2;
+  }
   :where([data-slot="console-copyable-field"])[data-s-console-copyable-field] {
     @apply [&>[data-slot=button]]:size-[22px] [&>[data-slot=button]]:text-muted-foreground [&>[data-slot=button]]:opacity-0 [&>[data-slot=button]]:transition-opacity [&>[data-slot=button]]:duration-[var(--dur-fast)] hover:[&>[data-slot=button]]:opacity-100 focus-within:[&>[data-slot=button]]:opacity-100 [@media(hover:none)]:[&>[data-slot=button]]:opacity-100 [&>[data-slot=button]_svg]:size-3.5;
   }
