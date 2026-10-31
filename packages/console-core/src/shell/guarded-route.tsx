@@ -2,6 +2,7 @@ import { useSyncExternalStore, type ComponentType, type ReactNode } from "react"
 import { useAccess, useCan } from "@simplix-react/access/react";
 
 import { AccessDeniedPage } from "../error";
+import { permissionOf, type OperationAccess } from "../entity/allowed";
 
 /**
  * Wraps a screen in the permission it requires.
@@ -43,4 +44,17 @@ export function guarded(
 
     return <Screen />;
   };
+}
+
+/**
+ * Wraps a screen in the permission its endpoint's generated access rule names
+ * (`list<Entity>sAccess`), so a generated route admits exactly whom the server admits.
+ *
+ * @param rule the operation's access rule, as SimpliX Meta states it
+ * @param Screen the screen to render once the operator is admitted
+ * @returns the component the route mounts
+ */
+export function guardedBy(rule: OperationAccess | undefined, Screen: ComponentType): () => ReactNode {
+  const permission = permissionOf(rule);
+  return guarded(permission ? { action: permission.action, subject: permission.group } : undefined, Screen);
 }

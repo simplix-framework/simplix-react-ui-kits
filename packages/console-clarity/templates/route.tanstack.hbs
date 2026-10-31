@@ -1,0 +1,30 @@
+/**
+ * @simplix-generated route/tanstack-crud
+ *
+ * Laid down from the console-clarity kit's `route.tanstack.hbs` and rewritten while its fingerprint
+ * matches: `/{{routePath}}`, the {{entity}} list and its detail.
+ */
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { validateCrudSearch } from "@simplix-react/ui";
+import type { ConsoleSearch } from "@simplix-react-ui-kits/console-clarity/page";
+import { guardedBy } from "@simplix-react-ui-kits/console-clarity/shell";
+{{#if accessList}}
+import { {{accessList}} } from "{{packageName}}";
+{{/if}}
+import { {{EntityPascal}}CrudPage } from "{{modulePackage}}/pages";
+
+/**
+ * Guarded on what the list endpoint requires, so a typed address meets the refusal up front rather
+ * than a page of chrome around a list the server empties.
+ */
+export const Route = createFileRoute("/{{routePath}}")({
+  component: guardedBy({{#if accessList}}{{accessList}}{{else}}undefined{{/if}}, {{EntityPascal}}Route),
+  validateSearch: (search: Record<string, unknown>): ConsoleSearch => validateCrudSearch(search),
+});
+
+function {{EntityPascal}}Route() {
+  const search = Route.useSearch();
+  const navigate = useNavigate();
+
+  return <{{EntityPascal}}CrudPage search={search} onNavigate={(next) => navigate({ to: "/{{routePath}}", search: next })} />;
+}

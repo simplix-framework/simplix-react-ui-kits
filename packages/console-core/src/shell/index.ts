@@ -118,7 +118,7 @@ export {
 export { ShellReadyHome } from "./shell-ready-home";
 export { ConsoleProviders, type ConsoleProvidersProps, type UIDefaults } from "./console-providers";
 export { createConsoleQueryClient, isSessionExpiry } from "./query-client";
-export { guarded } from "./guarded-route";
+export { guarded, guardedBy } from "./guarded-route";
 export { RouteErrorFallback } from "./route-error";
 export { useSidebarCollapse, type SidebarCollapse } from "./sidebar-collapse";
 export { createRememberMe, type RememberMe } from "@simplix-react/auth";
