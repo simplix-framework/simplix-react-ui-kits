@@ -5,7 +5,7 @@
 export const detailSlots: Record<string, string> = {
   // The record's head: the name at 18px, the avatar in a soft ring.
   "console-record-head":
-    "[&_[data-slot=heading]]:text-[18px] [&_[data-slot=heading]]:leading-[1.3] [&_[data-slot=heading]]:font-(--fw-heavy) [&_[data-slot=heading]]:tracking-[-0.02em] [&>[data-slot=console-initials-avatar]]:shadow-[0_0_0_3px_var(--card),0_0_0_4px_var(--border)]",
+    "[&_[data-slot=heading]]:text-[18px] [&_[data-slot=heading]]:leading-[1.3] [&_[data-slot=heading]]:font-(--fw-heavy) [&_[data-slot=heading]]:tracking-[-0.02em] [&>[data-slot=console-initials-avatar]]:shadow-[var(--shadow-avatar-ring)]",
   "console-record-head-subtitle": "text-(length:--fs-control) leading-(--lh-control)",
   // A sub-list in a detail tab, in one of its two forms (language.md, "Lists inside a detail").
   // full: the card on the surface radius and hairline.

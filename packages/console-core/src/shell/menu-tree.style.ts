@@ -72,9 +72,9 @@ export const menuLabelStyle = defineSlotStyle({
 export const menuBranchStyle = defineSlotStyle({
   slot: "console-menu-branch",
   as: "part",
-  base: "gap-px",
+  base: "gap-[var(--menu-branch-gap)]",
   variants: {
-    ruled: { true: "border-l ml-[17px] pl-[9px]", false: "" },
+    ruled: { true: "border-l ml-[var(--menu-branch-indent)] pl-[var(--menu-branch-inset)]", false: "" },
   },
   defaultVariants: { ruled: false },
 });

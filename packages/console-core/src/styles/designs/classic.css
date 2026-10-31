@@ -719,7 +719,7 @@
     @apply bg-accent text-accent-foreground;
   }
   [data-slot="presentation-group"][data-slot][data-s-presentation-group] {
-    @apply overflow-hidden rounded-md ring-1 ring-border;
+    @apply overflow-hidden rounded-md shadow-[var(--shadow-outline)];
   }
   [data-slot="presentation-hint"][data-slot][data-s-presentation-hint] {
     @apply text-xs text-muted-foreground;
@@ -1414,10 +1414,10 @@
     @apply w-80 gap-4 p-4;
   }
   :where([data-part="console-menu-branch"])[data-part][data-p-console-menu-branch] {
-    @apply gap-px;
+    @apply gap-[var(--menu-branch-gap)];
   }
   :where([data-part="console-menu-branch"][data-part-ruled="true"])[data-part][data-p-console-menu-branch] {
-    @apply border-l ml-[17px] pl-[9px];
+    @apply border-l ml-[var(--menu-branch-indent)] pl-[var(--menu-branch-inset)];
   }
   :where([data-part="console-menu-column-body"])[data-part][data-p-console-menu-column-body] {
     @apply gap-0 px-2.5 pb-6 pt-0.5 [&>*]:mt-1.5;

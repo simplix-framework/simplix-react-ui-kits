@@ -33,7 +33,7 @@ export const shellSlots: Record<string, string> = {
     "size-8 text-muted-foreground transition-[background-color,color,scale] duration-[var(--dur-fast)] ease-[var(--ease)] hover:bg-[var(--hover-bg-strong)] hover:text-foreground active:scale-[0.98]",
   // The count sits on the glyph's top-right corner, leaving the bell readable under it.
   "console-counted-count":
-    "right-0.5 top-0.5 duration-[var(--dur-base)] ease-[var(--ease-spring)] h-[15px] min-w-[15px] rounded-full px-1 text-(length:--fs-2xs) font-semibold leading-[15px] shadow-[0_0_0_2px_var(--card)]",
+    "right-0.5 top-0.5 duration-[var(--dur-base)] ease-[var(--ease-spring)] h-[15px] min-w-[15px] rounded-full px-1 text-(length:--fs-2xs) font-semibold leading-[15px] shadow-[var(--shadow-cutout)]",
   "console-preview-account":
     "ml-1.5 h-8 gap-2 pl-1 pr-1.5 text-(length:--fs-cell) leading-(--lh-cell) font-(--fw-strong) hover:bg-[var(--hover-bg-strong)] max-[1281px]:[&_[data-part=console-preview-account-name]]:hidden",
   "console-preview-account-caret": "text-muted-foreground opacity-100 max-[900px]:hidden",
@@ -51,8 +51,8 @@ export const shellSlots: Record<string, string> = {
   "console-menu-column-head":
     "h-12 border-0 py-0 pl-[18px] pr-2.5 text-secondary-foreground [&>*:first-child]:text-(length:--fs-cell) leading-(--lh-cell) [&>*:first-child]:font-semibold",
   "console-menu-column-body": "gap-0 px-2.5 pb-6 pt-0.5 [&>*]:mt-1.5",
-  "console-menu-branch": "gap-px",
-  "console-menu-branch ruled=true": "ml-[17px] border-[var(--border)] pl-[9px]",
+  "console-menu-branch": "gap-[var(--menu-branch-gap)]",
+  "console-menu-branch ruled=true": "ml-[var(--menu-branch-indent)] border-[var(--border)] pl-[var(--menu-branch-inset)]",
   "console-menu-row":
     "focus-visible:outline-none focus-visible:ring-0 focus-visible:shadow-[var(--focus-halo)] min-h-8 gap-2.5 rounded-[var(--radius-control)] px-2.5 py-0 text-(length:--fs-cell) leading-(--lh-cell) text-secondary-foreground transition-colors duration-[var(--dur-fast)] ease-[var(--ease)]",
   "console-menu-row kind=branch": "hover:bg-[var(--chrome-sidebar-hover)] hover:text-secondary-foreground",

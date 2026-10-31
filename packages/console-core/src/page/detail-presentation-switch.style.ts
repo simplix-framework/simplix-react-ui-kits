@@ -5,7 +5,7 @@ export const presentationGroupStyle = defineSlotStyle({
   slot: "presentation-group",
   // The outline is a ring, so the group is no taller than one button; a button's own variant
   // paints its fill and border later in the cascade, so the segment fill and dividers are marked important.
-  base: "overflow-hidden rounded-md ring-1 ring-border [&>button]:!h-6 [&>button]:!w-7 [&>button]:!min-w-0 [&>button]:!p-0 [&_svg]:!size-3.5 [&>button]:rounded-none [&>button:first-child]:rounded-l-md [&>button:last-child]:rounded-r-md [&>button]:!border-0 [&>button]:!shadow-none [&>button+button]:!border-l [&>button+button]:!border-border [&>button[aria-pressed=true]]:bg-accent! [&>button[aria-pressed=true]]:text-accent-foreground! [&>button:not([aria-pressed=true])]:text-muted-foreground",
+  base: "overflow-hidden rounded-md shadow-[var(--shadow-outline)] [&>button]:!h-6 [&>button]:!w-7 [&>button]:!min-w-0 [&>button]:!p-0 [&_svg]:!size-3.5 [&>button]:rounded-none [&>button:first-child]:rounded-l-md [&>button:last-child]:rounded-r-md [&>button]:!border-0 [&>button]:!shadow-none [&>button+button]:!border-l [&>button+button]:!border-border [&>button[aria-pressed=true]]:bg-accent! [&>button[aria-pressed=true]]:text-accent-foreground! [&>button:not([aria-pressed=true])]:text-muted-foreground",
   variants: {},
   defaultVariants: {},
 });
