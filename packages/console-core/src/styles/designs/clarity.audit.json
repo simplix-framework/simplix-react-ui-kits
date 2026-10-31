@@ -1,0 +1,6 @@
+{
+  "$comment": "Options for audit-rendered.mjs under the clarity design. Clarity draws every action button filled; navigation entries (menu rows, rail buttons, phone tabs, a tab strip's scroll arrows) mark the current place by their ground and a table head's sort control is part of the head, so those stand bare by design.",
+  "requireButtonFill": true,
+  "buttonFillDesigns": ["clarity"],
+  "buttonFillExemptSelector": "[data-slot=console-menu-row], [data-part=console-menu-rail-button], [data-slot=console-phone-tab], [data-slot=tabs-scroll-arrow], [data-slot=crud-list-sort-button]"
+}
