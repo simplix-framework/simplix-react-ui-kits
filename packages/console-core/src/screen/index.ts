@@ -38,6 +38,10 @@ export {
 // A screen-owned narrowing: the chip row and its state live on the page so the rows and the counts
 // above them read one selection, and a board frame draws the same parts without reaching past the kit.
 export { ChipFilter, chipFilterValues, SearchOperator, Text, useFilterBarState } from "@simplix-react/ui";
+// The primitives a page frame composes around the kit's parts (a sign-in card's banner, an account
+// page's rows), re-exported so a board frame reaches them through the kit; an icon is named, so a
+// frame never imports an icon library.
+export { AlertBanner, Button, Flex, FormFields, Icon, Stack, type IconName } from "@simplix-react/ui";
 export { FeatureLock } from "./feature-lock";
 export { HistoryRail, type HistoryLane, type HistoryNode, type HistoryNodeState, type HistoryRailProps } from "./history-rail";
 export { ImpactAnalysis, type ImpactGroup, type ImpactKind, type ImpactRow } from "./impact-analysis";

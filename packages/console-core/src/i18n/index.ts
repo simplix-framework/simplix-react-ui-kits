@@ -2,6 +2,8 @@ export { configureFallbackLocale, useFallbackLocale, getFallbackLocale, DEFAULT_
 export { useContentEditLanguage, useI18nEditLanguage } from "@simplix-react/i18n/react";
 export type { I18nEditLanguage } from "@simplix-react/i18n/react";
 export { useOptionalTranslation } from "@simplix-react/i18n/react";
+// What a page frame reads its copy and the language picker through, so it never reaches past the kit.
+export { useLocalePicker, useTranslation } from "@simplix-react/i18n/react";
 export { countedFigure } from "@simplix-react/i18n/react";
 export { useGroupedFigure } from "@simplix-react/i18n/react";
 export { byteSize } from "@simplix-react/i18n";
