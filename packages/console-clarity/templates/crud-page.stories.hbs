@@ -93,6 +93,7 @@ function Screen({ open }: Args) {
           rowId={idOf}
           columns={columns}
           filters={contract.filters<Row>(FILTERS)}
+          empty={ { title: words.emptyTitle, description: {{#if hasCreate}}words.emptyDescription{{else}}words.emptyDescriptionRecorded{{/if}} } }
           // The generated page's one row action, so the frame draws the column the screen draws.
           actions={[{ type: "view", label: words.view, onClick: (row) => nav.showDetail(idOf(row)) }]}
           activeRowId={nav.selectedId}

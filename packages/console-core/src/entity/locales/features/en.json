@@ -80,6 +80,7 @@
     "editTitle": "Edit {{entity}}",
     "emptyTitle": "No {{entities}} yet",
     "emptyDescription": "What you add appears here.",
+    "emptyDescriptionRecorded": "Records appear here as they are made.",
     "overview": "Overview",
     "delete": "Delete",
     "deleteTitle": "Delete {{entity}}",

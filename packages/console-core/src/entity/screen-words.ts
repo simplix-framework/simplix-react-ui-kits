@@ -25,6 +25,8 @@ export interface ScreenWords {
   readonly editTitle: string;
   readonly emptyTitle: string;
   readonly emptyDescription: string;
+  /** The empty list's sentence where nobody adds rows on this screen: they are recorded elsewhere. */
+  readonly emptyDescriptionRecorded: string;
   readonly delete: string;
   /** The delete confirmation's title, naming the entity. */
   readonly deleteTitle: string;
@@ -64,6 +66,7 @@ export function useScreenWords(entity: string): ScreenWords {
       editTitle: t("screen.editTitle", { entity: label }),
       emptyTitle: t("screen.emptyTitle", { entities: plural }),
       emptyDescription: t("screen.emptyDescription"),
+      emptyDescriptionRecorded: t("screen.emptyDescriptionRecorded"),
       delete: t("screen.delete"),
       deleteTitle: t("screen.deleteTitle", { entity: label }),
       deleteDescription: (record: string) => t("screen.deleteDescription", { name: record }),

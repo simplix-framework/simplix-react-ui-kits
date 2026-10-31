@@ -38,4 +38,12 @@ describe("the generated board frame's list", () => {
     const source = render("crud-page.stories.hbs", { ...context, hasKeywordSearch: false });
     expect(source).toContain("features={ { search: false } }");
   });
+
+  it("says rows are recorded elsewhere where the screen creates none, as the generated list does", () => {
+    const readOnly = render("crud-page.stories.hbs", { ...context, hasCreate: false });
+    expect(readOnly).toContain("description: words.emptyDescriptionRecorded");
+    expect(render("list.hbs", { ...context, hasCreate: false })).toContain("description: words.emptyDescriptionRecorded");
+    expect(render("crud-page.stories.hbs", { ...context, hasCreate: true })).toContain("description: words.emptyDescription }");
+    expect(render("list.hbs", { ...context, hasCreate: true })).toContain("description: words.emptyDescription }");
+  });
 });
