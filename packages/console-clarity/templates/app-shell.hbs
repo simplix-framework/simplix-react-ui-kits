@@ -48,13 +48,15 @@ export function RootLayout() {
   // until the next one loads.
   const route = useRouterState({ select: (s) => s.matches[s.matches.length - 1]?.pathname ?? s.location.pathname });
   const blocks = useShellBlocks();
+  // Read before the branch below, so the hooks run in one order on every route.
+  const onAPhone = useConsoleOnAPhone();
   if (blocks.isOutsideTheConsole(route)) return <AuthLayout />;
   return (
     <PeekHost>
       <PageHeaderProvider>
         <NoticeRegistryProvider>
           {blocks.wrap(
-            useConsoleOnAPhone() ? (
+            onAPhone ? (
               <PhoneShell route={route}>
                 <Outlet />
               </PhoneShell>
