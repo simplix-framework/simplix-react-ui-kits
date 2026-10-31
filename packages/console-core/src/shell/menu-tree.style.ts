@@ -22,7 +22,7 @@ export const menuColumnStyle = defineSlotStyle({
 export const menuRailStyle = defineSlotStyle({
   slot: "console-menu-rail",
   as: "part",
-  base: "border-r bg-muted/30 w-[60px] pb-0 pt-2",
+  base: "border-r bg-muted/30 w-15 pb-0 pt-2",
   variants: {},
   defaultVariants: {},
 });

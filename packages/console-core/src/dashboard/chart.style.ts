@@ -25,7 +25,7 @@ export const figureValueStyle = defineSlotStyle({
 /** The words beside the figure: what it counts and against what. */
 export const figureContextStyle = defineSlotStyle({
   slot: "figure-context",
-  base: "text-[12.5px] text-muted-foreground",
+  base: "text-(length:--fs-control) text-muted-foreground",
   variants: {},
   defaultVariants: {},
 });
@@ -59,7 +59,7 @@ export const stageSegmentStyle = defineSlotStyle({
 /** A stage's key under the bar: swatch, name and count. */
 export const stageKeyStyle = defineSlotStyle({
   slot: "stage-key",
-  base: "gap-1.5 rounded-md px-1.5 py-1 text-[12.5px] transition-colors hover:bg-muted/60 focus-visible:outline-none focus-visible:shadow-[var(--focus-halo)]",
+  base: "gap-1.5 rounded-md px-1.5 py-1 text-(length:--fs-control) transition-colors hover:bg-muted/60 focus-visible:outline-none focus-visible:shadow-[var(--focus-halo)]",
   variants: {
     empty: { true: "text-muted-foreground", false: "" },
   },
@@ -111,7 +111,7 @@ export const ringFillStyle = defineSlotStyle({
 /** The percentage in the ring's middle. */
 export const ringPercentStyle = defineSlotStyle({
   slot: "ring-percent",
-  base: "fill-foreground text-[13px] font-semibold",
+  base: "fill-foreground text-(length:--fs-body-sm) font-semibold",
   variants: {},
   defaultVariants: {},
 });
@@ -119,7 +119,7 @@ export const ringPercentStyle = defineSlotStyle({
 /** What the ring measures. */
 export const ringLabelStyle = defineSlotStyle({
   slot: "ring-label",
-  base: "text-[13px] font-medium",
+  base: "text-(length:--fs-body-sm) font-medium",
   variants: {},
   defaultVariants: {},
 });
@@ -127,7 +127,7 @@ export const ringLabelStyle = defineSlotStyle({
 /** Done against due, under the ring's label. */
 export const ringFiguresStyle = defineSlotStyle({
   slot: "ring-figures",
-  base: "text-[12.5px] tabular-nums text-muted-foreground",
+  base: "text-(length:--fs-control) tabular-nums text-muted-foreground",
   variants: {},
   defaultVariants: {},
 });
@@ -135,7 +135,7 @@ export const ringFiguresStyle = defineSlotStyle({
 /** The header row of a risk table: the column names. */
 export const riskHeadStyle = defineSlotStyle({
   slot: "risk-head",
-  base: "gap-1 px-2 pb-1 text-[11.5px] font-medium text-muted-foreground",
+  base: "gap-1 px-2 pb-1 text-(length:--fs-badge) font-medium text-muted-foreground",
   variants: {},
   defaultVariants: {},
 });
@@ -151,7 +151,7 @@ export const riskRowStyle = defineSlotStyle({
 /** The row's name, which opens the record. */
 export const riskNameStyle = defineSlotStyle({
   slot: "risk-name",
-  base: "min-w-0 gap-2 rounded-md py-1 text-left text-[13px] font-medium focus-visible:outline-none focus-visible:shadow-[var(--focus-halo)]",
+  base: "min-w-0 gap-2 rounded-md py-1 text-left text-(length:--fs-body-sm) font-medium focus-visible:outline-none focus-visible:shadow-[var(--focus-halo)]",
   variants: {},
   defaultVariants: {},
 });
@@ -169,7 +169,7 @@ export const riskLevelStyle = defineSlotStyle({
 /** One count of a row, shaded by how hot it is in its column. */
 export const riskCellStyle = defineSlotStyle({
   slot: "risk-cell",
-  base: "h-8 rounded-[4px] text-center text-[13px] font-semibold tabular-nums transition-[filter] hover:brightness-95 focus-visible:outline-none focus-visible:shadow-[var(--focus-halo)] disabled:cursor-default disabled:hover:brightness-100",
+  base: "h-8 rounded-[4px] text-center text-(length:--fs-body-sm) font-semibold tabular-nums transition-[filter] hover:brightness-95 focus-visible:outline-none focus-visible:shadow-[var(--focus-halo)] disabled:cursor-default disabled:hover:brightness-100",
   variants: {
     heat: {
       "0": "bg-transparent font-normal text-muted-foreground",
@@ -185,7 +185,7 @@ export const riskCellStyle = defineSlotStyle({
 /** A text cell of a row, such as the latest grade. */
 export const riskTextStyle = defineSlotStyle({
   slot: "risk-text",
-  base: "truncate text-center text-[12.5px] text-muted-foreground",
+  base: "truncate text-center text-(length:--fs-control) text-muted-foreground",
   variants: {},
   defaultVariants: {},
 });
@@ -193,7 +193,7 @@ export const riskTextStyle = defineSlotStyle({
 /** A row of the overdue list. */
 export const overdueRowStyle = defineSlotStyle({
   slot: "overdue-row",
-  base: "min-h-11 gap-3 rounded-md px-2.5 py-1.5 text-left text-[13px] transition-colors hover:bg-muted/50 focus-visible:outline-none focus-visible:shadow-[var(--focus-halo)] disabled:cursor-default disabled:hover:bg-transparent",
+  base: "min-h-11 gap-3 rounded-md px-2.5 py-1.5 text-left text-(length:--fs-body-sm) transition-colors hover:bg-muted/50 focus-visible:outline-none focus-visible:shadow-[var(--focus-halo)] disabled:cursor-default disabled:hover:bg-transparent",
   variants: {},
   defaultVariants: {},
 });
@@ -233,7 +233,7 @@ export const sparkStyle = defineSlotStyle({
 /** The line a block shows when it has nothing to show. */
 export const chartEmptyStyle = defineSlotStyle({
   slot: "chart-empty",
-  base: "px-2.5 py-3 text-[12.5px] text-muted-foreground",
+  base: "px-2.5 py-3 text-(length:--fs-control) text-muted-foreground",
   variants: {},
   defaultVariants: {},
 });
@@ -249,7 +249,7 @@ export const chartSkeletonStyle = defineSlotStyle({
 /** A small heading over a part inside a block, such as the list of the next measurements. */
 export const chartCaptionStyle = defineSlotStyle({
   slot: "chart-caption",
-  base: "px-2 text-[11.5px] font-medium text-muted-foreground",
+  base: "px-2 text-(length:--fs-badge) font-medium text-muted-foreground",
   variants: {},
   defaultVariants: {},
 });
@@ -257,7 +257,7 @@ export const chartCaptionStyle = defineSlotStyle({
 /** A link at the right of a block's figure, to the screen behind it. */
 export const figureActionStyle = defineSlotStyle({
   slot: "figure-action",
-  base: "rounded-md px-2 py-1 text-[12.5px] font-medium transition-colors hover:bg-muted/60 focus-visible:outline-none focus-visible:shadow-[var(--focus-halo)]",
+  base: "rounded-md px-2 py-1 text-(length:--fs-control) font-medium transition-colors hover:bg-muted/60 focus-visible:outline-none focus-visible:shadow-[var(--focus-halo)]",
   variants: {},
   defaultVariants: {},
 });
@@ -265,7 +265,7 @@ export const figureActionStyle = defineSlotStyle({
 /** One cell of an obligation matrix: the state of one duty for one row, with its icon and words. */
 export const matrixCellStyle = defineSlotStyle({
   slot: "matrix-cell",
-  base: "flex h-8 w-full items-center justify-center gap-1 rounded-[4px] px-1 text-[12px] font-medium tabular-nums transition-[filter] hover:brightness-95 focus-visible:outline-none focus-visible:shadow-[var(--focus-halo)] disabled:cursor-default disabled:hover:brightness-100",
+  base: "flex h-8 w-full items-center justify-center gap-1 rounded-[4px] px-1 text-(length:--fs-caption) font-medium tabular-nums transition-[filter] hover:brightness-95 focus-visible:outline-none focus-visible:shadow-[var(--focus-halo)] disabled:cursor-default disabled:hover:brightness-100",
   variants: {
     state: {
       done: "bg-[color-mix(in_srgb,var(--tone-success)_14%,var(--card))] text-foreground",
@@ -335,7 +335,7 @@ export const figureReadingStyle = defineSlotStyle({
 /** The unit after a figure's value. */
 export const figureUnitStyle = defineSlotStyle({
   slot: "figure-unit",
-  base: "text-[13px] text-muted-foreground",
+  base: "text-(length:--fs-body-sm) text-muted-foreground",
   variants: {},
   defaultVariants: {},
 });
@@ -367,7 +367,7 @@ export const dashboardSkeletonStyle = defineSlotStyle({
 /** A meter's name. */
 export const meterLabelStyle = defineSlotStyle({
   slot: "meter-label",
-  base: "text-[13px] font-medium",
+  base: "text-(length:--fs-body-sm) font-medium",
   variants: {},
   defaultVariants: {},
 });
@@ -375,7 +375,7 @@ export const meterLabelStyle = defineSlotStyle({
 /** A meter's second line, and the count under its share. */
 export const meterSubStyle = defineSlotStyle({
   slot: "meter-sub",
-  base: "text-[12px] text-muted-foreground",
+  base: "text-(length:--fs-caption) text-muted-foreground",
   variants: {},
   defaultVariants: {},
 });
@@ -391,7 +391,7 @@ export const meterFiguresStyle = defineSlotStyle({
 /** A meter's share. */
 export const meterShareStyle = defineSlotStyle({
   slot: "meter-share",
-  base: "text-[13px]",
+  base: "text-(length:--fs-body-sm)",
   variants: {},
   defaultVariants: {},
 });
@@ -407,7 +407,7 @@ export const riskColumnHeadStyle = defineSlotStyle({
 /** A risk or obligation row's second line. */
 export const riskSubStyle = defineSlotStyle({
   slot: "risk-sub",
-  base: "text-[12px] font-normal text-muted-foreground",
+  base: "text-(length:--fs-caption) font-normal text-muted-foreground",
   variants: {},
   defaultVariants: {},
 });
@@ -423,7 +423,7 @@ export const riskHeatCellStyle = defineSlotStyle({
 /** The legend under an obligation matrix. */
 export const matrixLegendStyle = defineSlotStyle({
   slot: "matrix-legend",
-  base: "gap-x-3 gap-y-1 px-1 text-[12px] text-muted-foreground",
+  base: "gap-x-3 gap-y-1 px-1 text-(length:--fs-caption) text-muted-foreground",
   variants: {},
   defaultVariants: {},
 });
@@ -447,7 +447,7 @@ export const overdueAgeCellStyle = defineSlotStyle({
 /** How long an overdue item has waited. */
 export const overdueAgeLabelStyle = defineSlotStyle({
   slot: "overdue-age-label",
-  base: "text-[12px] text-muted-foreground",
+  base: "text-(length:--fs-caption) text-muted-foreground",
   variants: {},
   defaultVariants: {},
 });
@@ -455,7 +455,7 @@ export const overdueAgeLabelStyle = defineSlotStyle({
 /** The unit after an overdue row's count. */
 export const overdueUnitStyle = defineSlotStyle({
   slot: "overdue-unit",
-  base: "ml-0.5 text-[12px] font-normal text-muted-foreground",
+  base: "ml-0.5 text-(length:--fs-caption) font-normal text-muted-foreground",
   variants: {},
   defaultVariants: {},
 });
@@ -463,7 +463,7 @@ export const overdueUnitStyle = defineSlotStyle({
 /** A warning under a progress ring's figures. */
 export const ringNoteStyle = defineSlotStyle({
   slot: "ring-note",
-  base: "text-[12px] font-medium text-[var(--destructive-text,var(--destructive))]",
+  base: "text-(length:--fs-caption) font-medium text-[var(--destructive-text,var(--destructive))]",
   variants: {},
   defaultVariants: {},
 });

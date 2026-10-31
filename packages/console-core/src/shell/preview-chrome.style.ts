@@ -13,7 +13,7 @@ export const previewTopBarStyle = defineSlotStyle({
 export const previewTopBarRowStyle = defineSlotStyle({
   slot: "console-preview-topbar-row",
   as: "part",
-  base: "min-h-[52px] gap-5 pl-4 pr-3",
+  base: "min-h-13 gap-5 pl-4 pr-3",
   variants: {},
   defaultVariants: {},
 });
@@ -43,7 +43,7 @@ export const previewBrandStyle = defineSlotStyle({
 export const previewBadgeStyle = defineSlotStyle({
   slot: "console-preview-badge",
   // Leaves with the title below 1180px, so the narrowed bar keeps only the mark.
-  base: "inline-flex shrink-0 items-center rounded-sm border border-border px-1.5 py-px text-[10px] font-semibold uppercase leading-4 tracking-wide text-muted-foreground max-[1180px]:hidden",
+  base: "inline-flex shrink-0 items-center rounded-sm border border-border px-1.5 py-px text-(length:--fs-2xs) font-semibold uppercase leading-4 tracking-wide text-muted-foreground max-[1180px]:hidden",
   variants: {},
   defaultVariants: {},
 });
@@ -133,7 +133,7 @@ export const previewAccountCaretStyle = defineSlotStyle({
 /** The signed-in account's initials in a circle. */
 export const previewAvatarStyle = defineSlotStyle({
   slot: "console-preview-avatar",
-  base: "rounded-full bg-muted text-[10px] font-semibold text-muted-foreground size-[26px]",
+  base: "rounded-full bg-muted text-(length:--fs-2xs) font-semibold text-muted-foreground size-[26px]",
   variants: {},
   defaultVariants: {},
 });

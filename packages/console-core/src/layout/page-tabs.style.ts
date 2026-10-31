@@ -26,7 +26,7 @@ export const countedTabCountStyle = defineSlotStyle({
   slot: "console-counted-tab-count",
   as: "part",
   // A tab's count as a pill beside its label, tinted on the chosen tab.
-  base: "h-[18px] min-w-5 self-auto rounded-full bg-muted px-1.5 text-center text-[11px] leading-[18px] font-semibold text-muted-foreground transition-colors duration-[var(--dur-base)] group-data-[state=active]:bg-primary/10 group-data-[state=active]:text-primary",
+  base: "h-[18px] min-w-5 self-auto rounded-full bg-muted px-1.5 text-center text-(length:--fs-label) leading-[18px] font-semibold text-muted-foreground transition-colors duration-[var(--dur-base)] group-data-[state=active]:bg-primary/10 group-data-[state=active]:text-primary",
   variants: {},
   defaultVariants: {},
 });

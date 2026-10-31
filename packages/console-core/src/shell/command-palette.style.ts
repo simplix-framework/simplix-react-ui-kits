@@ -3,7 +3,7 @@ import { defineSlotStyle } from "@simplix-react/ui/design";
 /** A key the reader presses, drawn as a keycap. */
 export const keyCapStyle = defineSlotStyle({
   slot: "console-key-cap",
-  base: "h-[18px] min-w-[18px] rounded-sm border bg-muted px-1 font-mono text-[11px] leading-none text-muted-foreground",
+  base: "h-[18px] min-w-[18px] rounded-sm border bg-muted px-1 font-mono text-(length:--fs-label) leading-none text-muted-foreground",
   variants: {
     /** A keycap on the top bar, which sits on the bar's own ground rather than on a card. */
     onbar: { true: "bg-transparent", false: "" },
@@ -17,7 +17,7 @@ export const keyCapStyle = defineSlotStyle({
  */
 export const barSearchStyle = defineSlotStyle({
   slot: "console-bar-search",
-  base: "h-8 gap-2 rounded-md border border-input bg-background pl-3 pr-1.5 text-sm text-muted-foreground transition-colors hover:bg-accent max-[1281px]:w-8 max-[1281px]:justify-center max-[1281px]:pl-0 max-[1281px]:pr-0 max-[1281px]:[&>kbd]:!hidden max-[1281px]:[&>span]:!hidden mr-2 w-[240px] max-w-none max-[1441px]:w-[200px]",
+  base: "h-8 gap-2 rounded-md border border-input bg-background pl-3 pr-1.5 text-sm text-muted-foreground transition-colors hover:bg-accent max-[1281px]:w-8 max-[1281px]:justify-center max-[1281px]:pl-0 max-[1281px]:pr-0 max-[1281px]:[&>kbd]:!hidden max-[1281px]:[&>span]:!hidden mr-2 w-60 max-w-none max-[1441px]:w-50",
   variants: {},
   defaultVariants: {},
 });
