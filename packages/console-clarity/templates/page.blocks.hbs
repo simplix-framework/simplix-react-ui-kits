@@ -6,12 +6,15 @@
 import type { ReactNode } from "react";
 import type { ConsoleSearch, CrudPageNavigation, DetailWidth, PageSpec } from "@simplix-react-ui-kits/console-clarity/page";
 
-import type { {{EntityPascal}}DetailProps, {{EntityPascal}}ListProps } from "../../widgets/{{entityKebab}}";
+import type { RecordAction } from "@simplix-react-ui-kits/console-clarity/entity";
+import type { {{EntityPascal}}DetailProps, {{EntityPascal}}ListProps, {{EntityPascal}}Row } from "../../widgets/{{entityKebab}}";
 
 export interface PageBlocks {
   readonly spec?: Partial<Omit<PageSpec, "body">>;
   readonly listParams?: Readonly<Record<string, unknown>>;
   readonly listProps?: (nav: CrudPageNavigation) => Partial<{{EntityPascal}}ListProps>;
+  /** Row actions of this screen's own, drawn between the generated edit and delete. */
+  readonly rowActions?: (nav: CrudPageNavigation) => readonly RecordAction<{{EntityPascal}}Row>[];
   readonly detailProps?: (id: string, nav: CrudPageNavigation) => Partial<{{EntityPascal}}DetailProps>;
   readonly detailWidth?: DetailWidth;
   readonly dialogs?: ReactNode;

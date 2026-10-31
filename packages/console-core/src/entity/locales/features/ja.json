@@ -73,6 +73,13 @@
     "add": "{{entity}}を追加",
     "editTitle": "{{entity}}を編集",
     "emptyTitle": "{{entities}}はまだありません",
-    "emptyDescription": "追加するとここに表示されます。"
+    "emptyDescription": "追加するとここに表示されます。",
+    "overview": "概要",
+    "delete": "削除",
+    "deleteTitle": "{{entity}}を削除",
+    "deleteDescription": "「{{name}}」を削除します。元に戻せません。",
+    "cancel": "キャンセル",
+    "deleting": "削除しています…",
+    "view": "表示"
   }
 }

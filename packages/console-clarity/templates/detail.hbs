@@ -4,9 +4,15 @@
  * Laid down from the console-clarity kit's `detail.hbs` and rewritten while its fingerprint
  * matches. Tabs, verbs, notices and fields this record departs in go in `./detail.blocks.tsx`.
  */
-import { RecordDetail, useRecordContract, useScreenWords, type ContractField, type RecordBadge, type RecordField, type RecordValue } from "@simplix-react-ui-kits/console-clarity/entity";
+import { RecordDetail, useRecordContract, useScreenWords, type ContractField, type RecordBadge, type RecordField, type RecordTab, type RecordValue } from "@simplix-react-ui-kits/console-clarity/entity";
+{{#if holders.length}}
+import { adaptForcedList, forcedScope, useCrudList } from "@simplix-react/ui";
+{{/if}}
 
 import { {{hookGet}} } from "{{packageName}}";
+{{#each holders}}
+import { {{this.hookList}} } from "{{this.packageName}}";
+{{/each}}
 import { useDetailBlocks } from "./detail.blocks";
 
 /** The fields the contract gives this record, each drawn by its kind. */
@@ -28,6 +34,29 @@ export const {{EntityPascal}}DetailFields: readonly ContractField[] = [
 {{/each}}
 ];
 
+{{#each holders}}
+/** The {{this.entity}} records that point at this one through `{{this.filterKey}}`, as their list draws them. */
+const {{this.EntityPascal}}HolderFields_{{@index}}: readonly ContractField[] = [
+{{#each this.fields}}
+{{#unless this.isI18nPair}}
+{{#unless this.baseFieldName}}
+{{#unless this.isSystemField}}
+{{#unless this.isReferenceName}}
+{{#unless this.isAuditField}}
+{{#unless this.isOpaqueId}}
+{{#unless this.isIdentifier}}
+  { name: "{{this.name}}", kind: "{{this.contractKind}}"{{#if this.enumTypeName}}, enumName: "{{this.enumTypeName}}"{{/if}}{{#if this.options.length}}, options: [{{#each this.options}}"{{this}}"{{#unless @last}}, {{/unless}}{{/each}}]{{/if}}{{#if this.peekKind}}, peekKind: "{{this.peekKind}}"{{/if}}{{#if this.nameField}}, nameField: "{{this.nameField}}"{{/if}}{{#if (eq this.sortable true)}}, sortable: true{{/if}}{{#if (eq this.sortable false)}}, sortable: false{{/if}} },
+{{/unless}}
+{{/unless}}
+{{/unless}}
+{{/unless}}
+{{/unless}}
+{{/unless}}
+{{/unless}}
+{{/each}}
+];
+
+{{/each}}
 {{#if statusField}}
 /** The record's standing, drawn in the header as the badge its field is drawn as. */
 const STATUS_FIELD = {{EntityPascal}}DetailFields.find((field) => field.name === "{{statusField}}");
@@ -42,6 +71,8 @@ export interface {{EntityPascal}}DetailProps {
   readonly onClose?: () => void;
   readonly onEdit?: () => void;
   readonly onDeleted?: () => void;
+  /** Asks to delete the record, named for the confirmation; absent where the reader may not. */
+  readonly onDelete?: (name: string) => void;
   readonly initialTab?: string;
 }
 
@@ -61,6 +92,44 @@ export function {{EntityPascal}}Detail(props: {{EntityPascal}}DetailProps) {
 {{else}}
   const headerStatus = undefined;
 {{/if}}
+{{#each holders}}
+  // Grows with the records that hold this one, so it is a list with its own search and pager,
+  // forced to this record's key rather than narrowed by a filter the reader could clear.
+  const holder{{@index}}Forced = { "{{this.filterKey}}": props.{{../entity}}Id };
+  const holder{{@index}}List = useCrudList<Readonly<Record<string, unknown>>>(adaptForcedList({{this.hookList}}, holder{{@index}}Forced), {
+    scopeKey: forcedScope(holder{{@index}}Forced),
+    stateMode: "server",
+    defaultPageSize: 20,
+  });
+  const holder{{@index}}Contract = useRecordContract("{{this.entity}}");
+  const holder{{@index}}Words = useScreenWords("{{this.entity}}");
+{{/each}}
+{{#if holders.length}}
+  const generatedTabs: RecordTab[] = [
+    { key: "overview", label: words.overview, sections: [{ key: "overview", fields: generated }] },
+{{#each holders}}
+    {
+      key: "{{this.key}}",
+      label: holder{{@index}}Words.plural,
+      count: holder{{@index}}List.pagination.total,
+      list: {
+        list: holder{{@index}}List,
+        rowId: (one: Readonly<Record<string, unknown>>) => String(one.{{this.rowIdField}}),
+        columns: holder{{@index}}Contract.columns<Readonly<Record<string, unknown>>>({{this.EntityPascal}}HolderFields_{{@index}}),
+        empty: { title: holder{{@index}}Words.emptyTitle },
+      },
+    },
+{{/each}}
+  ];
+  const tabs = typeof blocks.tabs === "function" ? blocks.tabs(generatedTabs) : blocks.tabs ?? generatedTabs;
+{{else}}
+  const tabs = typeof blocks.tabs === "function" ? blocks.tabs([{ key: "overview", label: words.overview, sections: [{ key: "overview", fields: generated }] }]) : blocks.tabs;
+{{/if}}
+  const recordName = record ? String(record.{{#if displayNameField}}{{displayNameField}}{{else}}{{rowIdField}}{{/if}} ?? "") : "";
+  const generatedActions = [
+    ...(props.onDelete ? [{ label: words.delete, kind: "danger" as const, onClick: () => props.onDelete?.(recordName) }] : []),
+    ...(props.onEdit ? [{ label: words.edit, onClick: props.onEdit }] : []),
+  ];
   return (
     <RecordDetail
       isLoading={isLoading}
@@ -73,10 +142,10 @@ export function {{EntityPascal}}Detail(props: {{EntityPascal}}DetailProps) {
       status={blocks.status ?? headerStatus}
       notices={blocks.notices}
       verbs={blocks.verbs}
-      actions={blocks.actions ?? (props.onEdit ? [{ label: words.edit, onClick: props.onEdit }] : undefined)}
+      actions={blocks.actions ?? generatedActions}
       defaultTab={props.initialTab ?? blocks.defaultTab}
-      tabs={blocks.tabs}
-      sections={blocks.tabs ? undefined : blocks.sections ?? [{ key: "overview", fields: generated }]}
+      tabs={tabs}
+      sections={tabs ? undefined : blocks.sections ?? [{ key: "overview", fields: generated }]}
       onClose={props.onClose}
     />
   );

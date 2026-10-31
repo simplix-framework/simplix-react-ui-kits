@@ -6,9 +6,26 @@
  * differently goes in `./page.blocks.tsx`, which the generator writes once and never again.
  */
 import { CrudPage, type ConsoleSearch, useDetailPresentationSetting } from "@simplix-react-ui-kits/console-clarity/page";
-import { useScreenWords } from "@simplix-react-ui-kits/console-clarity/entity";
+import { useAllowed, useScreenWords } from "@simplix-react-ui-kits/console-clarity/entity";
+{{#if hasCreate}}
+import { PlusIcon } from "lucide-react";
+import { Button } from "@simplix-react/ui";
+{{/if}}
+{{#if hasDelete}}
+import { adaptOrvalDelete, useCrudDeleteWired, useInvalidateEntity } from "@simplix-react/ui";
+import { {{hookDelete}} } from "{{packageName}}";
+{{/if}}
+{{#if accessCreate}}
+import { {{accessCreate}} } from "{{packageName}}";
+{{/if}}
+{{#if accessUpdate}}
+import { {{accessUpdate}} } from "{{packageName}}";
+{{/if}}
+{{#if accessDelete}}
+import { {{accessDelete}} } from "{{packageName}}";
+{{/if}}
 
-import { {{EntityPascal}}Detail, {{#if hasForm}}{{EntityPascal}}Form, {{/if}}{{EntityPascal}}List, use{{EntityPascal}}List } from "../../widgets/{{entityKebab}}";
+import { {{EntityPascal}}Detail, {{#if hasForm}}{{EntityPascal}}Form, {{/if}}{{EntityPascal}}List, use{{EntityPascal}}List, type {{EntityPascal}}Row } from "../../widgets/{{entityKebab}}";
 import { usePageBlocks } from "./page.blocks";
 
 interface {{EntityPascal}}CrudPageProps {
@@ -22,11 +39,30 @@ export function {{EntityPascal}}CrudPage({ search, onNavigate }: {{EntityPascal}
   const blocks = usePageBlocks({ search, onNavigate });
   const list = use{{EntityPascal}}List(blocks.listParams);
   const presentation = useDetailPresentationSetting();
+  // Every control is gated on the rule its endpoint states, so none leads to a call the server refuses.
+  const canCreate = useAllowed({{#if accessCreate}}{{accessCreate}}{{else}}undefined{{/if}}){{#unless hasCreate}} && false{{/unless}};
+  const canEdit = useAllowed({{#if accessUpdate}}{{accessUpdate}}{{else}}undefined{{/if}}){{#unless hasUpdate}} && false{{/unless}};
+  const canDelete = useAllowed({{#if accessDelete}}{{accessDelete}}{{else}}undefined{{/if}}){{#unless hasDelete}} && false{{/unless}};
+{{#if hasDelete}}
+  const invalidate = useInvalidateEntity("{{entityPath}}");
+  const { requestDelete, deleteDialog } = useCrudDeleteWired({
+    deleteMutation: adaptOrvalDelete({{hookDelete}}(), "{{#if deletePathParam}}{{deletePathParam}}{{else}}{{rowIdField}}{{/if}}", { onSettled: invalidate }),
+    labels: {
+      title: () => words.deleteTitle,
+      description: (target) => words.deleteDescription(target.name),
+      cancel: words.cancel,
+      delete: words.delete,
+      deleting: words.deleting,
+    },
+    onDeleted: () => onNavigate({}),
+  });
+  const nameOf = (row: { readonly {{#if displayNameField}}{{displayNameField}}{{else}}{{rowIdField}}{{/if}}?: unknown }) => String(row.{{#if displayNameField}}{{displayNameField}}{{else}}{{rowIdField}}{{/if}} ?? "");
+{{/if}}
 
   return (
     <>
       <CrudPage
-        spec={{ldb}} title: words.plural, ...blocks.spec {{rdb}}
+        spec={{ldb}} title: words.plural{{#if hasCreate}}, actions: canCreate ? <CreateAction label={words.add} onClick={() => onNavigate({ ...search, mode: "new", id: undefined })} /> : undefined{{/if}}, ...blocks.spec {{rdb}}
         search={search}
         onNavigate={onNavigate}
         {...presentation}
@@ -36,6 +72,16 @@ export function {{EntityPascal}}CrudPage({ search, onNavigate }: {{EntityPascal}
             list={list}
             activeRowId={nav.selectedId}
             onRowClick={(row) => nav.showDetail(String(row.{{rowIdField}}))}
+            actions={[
+              { type: "view", label: words.view, onClick: (row) => nav.showDetail(String(row.{{rowIdField}})) },
+{{#if hasUpdate}}
+              ...(canEdit ? [{ type: "edit" as const, label: words.edit, onClick: (row: {{EntityPascal}}Row) => nav.showEdit(String(row.{{rowIdField}})) }] : []),
+{{/if}}
+              ...(blocks.rowActions?.(nav) ?? []),
+{{#if hasDelete}}
+              ...(canDelete ? [{ type: "delete" as const, label: words.delete, onClick: (row: {{EntityPascal}}Row) => requestDelete({ id: String(row.{{rowIdField}}), name: nameOf(row) }) }] : []),
+{{/if}}
+            ]}
             {...blocks.listProps?.(nav)}
           />
         )}
@@ -44,9 +90,10 @@ export function {{EntityPascal}}CrudPage({ search, onNavigate }: {{EntityPascal}
             {{entity}}Id={id}
             onClose={nav.closePanel}
 {{#if hasUpdate}}
-            onEdit={() => nav.showEdit(id)}
+            onEdit={canEdit ? () => nav.showEdit(id) : undefined}
 {{/if}}
 {{#if hasDelete}}
+            onDelete={canDelete ? (name) => requestDelete({ id, name }) : undefined}
             onDeleted={nav.showList}
 {{/if}}
             {...blocks.detailProps?.(id, nav)}
@@ -61,7 +108,21 @@ export function {{EntityPascal}}CrudPage({ search, onNavigate }: {{EntityPascal}
         )}
 {{/if}}
       />
+{{#if hasDelete}}
+      {deleteDialog}
+{{/if}}
       {blocks.dialogs}
     </>
   );
 }
+{{#if hasCreate}}
+
+function CreateAction({ label, onClick }: { readonly label: string; readonly onClick: () => void }) {
+  return (
+    <Button size="sm" onClick={onClick}>
+      <PlusIcon />
+      {label}
+    </Button>
+  );
+}
+{{/if}}

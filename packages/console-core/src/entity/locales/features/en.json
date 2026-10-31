@@ -74,6 +74,13 @@
     "add": "Add {{entity}}",
     "editTitle": "Edit {{entity}}",
     "emptyTitle": "No {{entities}} yet",
-    "emptyDescription": "What you add appears here."
+    "emptyDescription": "What you add appears here.",
+    "overview": "Overview",
+    "delete": "Delete",
+    "deleteTitle": "Delete {{entity}}",
+    "deleteDescription": "Delete “{{name}}”? This cannot be undone.",
+    "cancel": "Cancel",
+    "deleting": "Deleting…",
+    "view": "View"
   }
 }

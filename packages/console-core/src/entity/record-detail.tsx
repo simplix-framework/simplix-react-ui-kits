@@ -36,6 +36,7 @@ import { CheckMatrix, type CheckMatrixProps } from "../layout/check-matrix";
 import { MeasurementGrid, type MeasurementGridProps } from "../layout/measurement-grid";
 import { FormSheet, type FormSheetProps } from "../screen/form-sheet";
 import { HistoryRail, type HistoryRailProps } from "../screen/history-rail";
+import { ChangeHistoryTable, type useChangeHistory } from "../identity/change-history";
 import { ScoreSheet, type ScoreSheetProps } from "../screen/score-sheet";
 import { useCrudPresentation } from "../page/crud-page";
 import { DetailPresentationSwitch, type DetailPresentationSwitchProps } from "../page/detail-presentation-switch";
@@ -90,6 +91,11 @@ export interface RecordTabContent {
   readonly checkMatrix?: CheckMatrixProps;
   readonly evidence?: EvidenceGridProps;
   readonly history?: HistoryRailProps;
+  /**
+   * The record's change history from the audit log, drawn as the kit's history table with its own
+   * refusal when the reader may not read the log.
+   */
+  readonly changes?: { readonly history: ReturnType<typeof useChangeHistory>; readonly emptyBody?: string };
 }
 
 /** One tab of a {@link RecordDetail}. */
@@ -312,6 +318,7 @@ function holdsContent(content: RecordTabContent): boolean {
       content.matrix ||
       content.evidence ||
       content.history ||
+      content.changes ||
       (content.list && (content.list.list ? content.list.list.pagination.total : content.list.rows?.length ?? 0) > 0),
   );
 }
@@ -361,6 +368,7 @@ function Content({ content, count }: { readonly content: RecordTabContent; reado
       <Sections sections={content.afterSections} />
       {content.evidence ? <EvidenceGrid {...content.evidence} /> : null}
       {content.history ? <HistoryRail {...content.history} /> : null}
+      {content.changes ? <ChangeHistoryTable history={content.changes.history} denied={!content.changes.history.readable} emptyBody={content.changes.emptyBody} /> : null}
       <RecordNotices notices={content.notices} />
       <RecordNote text={content.note} />
     </Stack>

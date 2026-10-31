@@ -15,7 +15,8 @@ export interface DetailBlocks {
   readonly verbs?: readonly RecordVerb[];
   readonly actions?: readonly RecordVerb[];
   readonly defaultTab?: string;
-  readonly tabs?: readonly RecordTab[];
+  /** The tabs, or a function of the generated ones (the overview and a list per holder) that keeps, reorders or adds to them. */
+  readonly tabs?: readonly RecordTab[] | ((generated: readonly RecordTab[]) => readonly RecordTab[]);
   readonly sections?: readonly RecordSection[];
 }
 
