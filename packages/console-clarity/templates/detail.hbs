@@ -4,7 +4,7 @@
  * Laid down from the console-clarity kit's `detail.hbs` and rewritten while its fingerprint
  * matches. Tabs, verbs, notices and fields this record departs in go in `./detail.blocks.tsx`.
  */
-import { RecordDetail, useAllowed, useRecordContract, useScreenWords, type ContractField, {{#if statusField}}type RecordBadge, {{/if}}type RecordField, type RecordTab{{#if statusField}}, type RecordValue{{/if}} } from "@simplix-react-ui-kits/console-clarity/entity";
+import { RecordDetail, useAllowed, useRecordContract, useScreenWords, type ContractField, type CrudDetailBlocks, {{#if statusField}}type RecordBadge, {{/if}}type RecordField, type RecordTab{{#if statusField}}, type RecordValue{{/if}} } from "@simplix-react-ui-kits/console-clarity/entity";
 {{#if holders.length}}
 import { adaptForcedList, forcedScope, useCrudList } from "@simplix-react/ui";
 {{/if}}
@@ -24,7 +24,7 @@ export const {{EntityPascal}}DetailFields: readonly ContractField[] = [
 {{#unless this.isReferenceName}}
 {{#unless this.isAuditField}}
 {{#unless this.isOpaqueId}}
-  { name: "{{this.name}}", kind: "{{this.contractKind}}"{{#if this.enumTypeName}}, enumName: "{{this.enumTypeName}}"{{/if}}{{#if this.options.length}}, options: [{{#each this.options}}"{{this}}"{{#unless @last}}, {{/unless}}{{/each}}]{{/if}}{{#if this.peekKind}}, peekKind: "{{this.peekKind}}"{{/if}}{{#if this.nameField}}, nameField: "{{this.nameField}}"{{/if}}{{#if (eq this.sortable true)}}, sortable: true{{/if}}{{#if (eq this.sortable false)}}, sortable: false{{/if}}{{#if this.isIdentifier}}, identifier: true{{/if}} },
+  { name: "{{this.name}}", kind: "{{this.contractKind}}"{{#if this.enumTypeName}}, enumName: "{{this.enumTypeName}}"{{/if}}{{#if this.options.length}}, options: [{{#each this.options}}"{{this}}"{{#unless @last}}, {{/unless}}{{/each}}]{{/if}}{{#if this.peekKind}}, peekKind: "{{this.peekKind}}"{{/if}}{{#if this.nameField}}, nameField: "{{this.nameField}}"{{/if}}{{#if (eq this.sortable true)}}, sortable: true{{/if}}{{#if (eq this.sortable false)}}, sortable: false{{/if}}{{#if this.isIdentifier}}, identifier: true{{/if}}{{#if this.isCode}}, code: true{{/if}} },
 {{/unless}}
 {{/unless}}
 {{/unless}}
@@ -45,7 +45,7 @@ const {{this.EntityPascal}}HolderFields_{{@index}}: readonly ContractField[] = [
 {{#unless this.isAuditField}}
 {{#unless this.isOpaqueId}}
 {{#unless this.isIdentifier}}
-  { name: "{{this.name}}", kind: "{{this.contractKind}}"{{#if this.enumTypeName}}, enumName: "{{this.enumTypeName}}"{{/if}}{{#if this.options.length}}, options: [{{#each this.options}}"{{this}}"{{#unless @last}}, {{/unless}}{{/each}}]{{/if}}{{#if this.peekKind}}, peekKind: "{{this.peekKind}}"{{/if}}{{#if this.nameField}}, nameField: "{{this.nameField}}"{{/if}}{{#if (eq this.sortable true)}}, sortable: true{{/if}}{{#if (eq this.sortable false)}}, sortable: false{{/if}} },
+  { name: "{{this.name}}", kind: "{{this.contractKind}}"{{#if this.enumTypeName}}, enumName: "{{this.enumTypeName}}"{{/if}}{{#if this.options.length}}, options: [{{#each this.options}}"{{this}}"{{#unless @last}}, {{/unless}}{{/each}}]{{/if}}{{#if this.peekKind}}, peekKind: "{{this.peekKind}}"{{/if}}{{#if this.nameField}}, nameField: "{{this.nameField}}"{{/if}}{{#if (eq this.sortable true)}}, sortable: true{{/if}}{{#if (eq this.sortable false)}}, sortable: false{{/if}}{{#if this.isCode}}, code: true{{/if}} },
 {{/unless}}
 {{/unless}}
 {{/unless}}
@@ -80,9 +80,9 @@ export interface {{EntityPascal}}DetailProps {
 export function {{EntityPascal}}Detail(props: {{EntityPascal}}DetailProps) {
   const words = useScreenWords("{{entity}}");
   const { data, isLoading, isError } = {{hookGet}}(props.{{entity}}Id);
-  // Keys the template gained after a blocks file was written stay optional here, so an older
-  // blocks file that never declared them still compiles.
-  const blocks: ReturnType<typeof useDetailBlocks> & { readonly note?: string } = useDetailBlocks({ record: data ?? undefined, props });
+  // Every key of the kit's detail blocks contract is optional here, so a blocks file written
+  // before a key existed still compiles.
+  const blocks: ReturnType<typeof useDetailBlocks> & CrudDetailBlocks = useDetailBlocks({ record: data ?? undefined, props });
   const record = data ?? undefined;
   const contract = useRecordContract("{{entity}}", blocks.contract);
   const row = record as Readonly<Record<string, unknown>> | undefined;

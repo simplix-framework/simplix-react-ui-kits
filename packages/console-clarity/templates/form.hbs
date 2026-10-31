@@ -4,7 +4,7 @@
  * Laid down from the console-clarity kit's `form.hbs` and rewritten while its fingerprint
  * matches. Sections, rules and the request this form sends go in `./form.blocks.tsx`.
  */
-import { RecordForm, useRecordContract, useScreenWords, type ContractField, type RecordFormField } from "@simplix-react-ui-kits/console-clarity/entity";
+import { RecordForm, useRecordContract, useScreenWords, type ContractField, type CrudFormBlocks, type RecordFormField } from "@simplix-react-ui-kits/console-clarity/entity";
 import { QueryFallback, useInvalidateEntity } from "@simplix-react/ui";
 
 import { {{#if hookGetForEdit}}{{hookGetForEdit}}, {{else}}{{#if hookGet}}{{hookGet}}, {{/if}}{{/if}}{{#if hookCreate}}{{hookCreate}}{{/if}}{{#if hookUpdate}}{{#if hookCreate}}, {{/if}}{{hookUpdate}}{{/if}} } from "{{packageName}}";
@@ -69,12 +69,9 @@ export function {{EntityPascal}}Form(props: {{EntityPascal}}FormProps) {
   const contract = useRecordContract("{{entity}}", preBlocks);
   const row = record as Readonly<Record<string, unknown>> | undefined;
   const generated: RecordFormField[] = {{EntityPascal}}FormFields.map((field) => contract.formField(field, row));
-  // Keys the template gained after a blocks file was written stay optional here, so an older
-  // blocks file that never declared them still compiles.
-  const blocks: ReturnType<typeof useFormBlocks> & {
-    readonly note?: string;
-    readonly fieldNotices?: (values: Readonly<Record<string, unknown>>) => Readonly<Record<string, string | undefined>>;
-  } = useFormBlocks({ record, editing, generated });
+  // Every key of the kit's form blocks contract is optional here, so a blocks file written before
+  // a key existed still compiles.
+  const blocks: ReturnType<typeof useFormBlocks> & CrudFormBlocks = useFormBlocks({ record, editing, generated });
   if (editing && (isLoading || !data)) return <QueryFallback isLoading={isLoading} />;
   return (
     <RecordForm
