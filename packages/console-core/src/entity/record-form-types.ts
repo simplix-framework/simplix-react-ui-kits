@@ -1,4 +1,4 @@
-import type { EntitySearch } from "@simplix-react/ui";
+import type { EntitySearch, LanguageSelectorPlacement } from "@simplix-react/ui";
 
 import type { EvidenceItem } from "../attachment";
 
@@ -99,7 +99,11 @@ export interface RangeValue {
 export type RecordFormField =
   | ({ readonly kind: "text" | "email" | "textarea"; readonly value?: string } & FieldCommon)
   /** One text per content language, edited a language at a time; filled when any language is. */
-  | ({ readonly kind: "i18nText"; readonly value?: Readonly<Record<string, string>>; readonly multiline?: boolean } & FieldCommon)
+  /**
+   * `languageSelectorPlacement` overrides the installation's choice (`UIProvider`
+   * `defaults.languageSelectorPlacement`) of where the language selector is drawn.
+   */
+  | ({ readonly kind: "i18nText"; readonly value?: Readonly<Record<string, string>>; readonly multiline?: boolean; readonly languageSelectorPlacement?: LanguageSelectorPlacement } & FieldCommon)
   | ({ readonly kind: "number"; readonly value?: number | null; readonly unit?: string; readonly min?: number; readonly max?: number } & FieldCommon)
   /**
    * One choice from a list. `clearable` draws a control that returns an optional field to no value,

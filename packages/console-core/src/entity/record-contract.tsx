@@ -6,7 +6,7 @@ import { i18nBaseValue, seedI18nDefaults } from "@simplix-react/i18n";
 /** A text per content language, as the i18n helpers take it. */
 type I18nMap = Parameters<typeof i18nBaseValue>[0] & object;
 import { useEntityTranslation, useI18nEditLanguage, useLocale, useTranslation } from "@simplix-react/i18n/react";
-import type { EntitySearch, StatusTone } from "@simplix-react/ui";
+import type { EntitySearch, LanguageSelectorPlacement, StatusTone } from "@simplix-react/ui";
 
 import { PACKAGE_NAMESPACE } from "./locales";
 import { usePeekHost } from "../peek";
@@ -57,6 +57,8 @@ export interface ContractField {
   readonly plainField?: string;
   /** For an `i18nText` field whose plain sibling is long text, the per-language editor is a text area. */
   readonly multiline?: boolean;
+  /** For an `i18nText` field, where its language selector is drawn; absent, the installation's default. */
+  readonly languageSelectorPlacement?: LanguageSelectorPlacement;
 }
 
 /**
@@ -205,7 +207,7 @@ export function useRecordContract(entity: string, overrides: ContractOverrides =
           // as that text in the base language rather than as an empty map.
           const plain = field.plainField ? record?.[field.plainField] : undefined;
           const map = raw && typeof raw === "object" ? (raw as I18nMap) : undefined;
-          return { ...common, kind: "i18nText", multiline: field.multiline === true, value: seedI18nDefaults(map, typeof plain === "string" ? plain : undefined, languages) };
+          return { ...common, kind: "i18nText", multiline: field.multiline === true, languageSelectorPlacement: field.languageSelectorPlacement, value: seedI18nDefaults(map, typeof plain === "string" ? plain : undefined, languages) };
         }
         case "longText":
           return { ...common, kind: "textarea", value: raw == null ? "" : String(raw) };
