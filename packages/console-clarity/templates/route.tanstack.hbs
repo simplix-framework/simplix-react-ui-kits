@@ -5,13 +5,16 @@
  * matches: `/{{routePath}}`, the {{entity}} list and its detail.
  */
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { validateCrudSearch } from "@simplix-react/ui";
-import type { ConsoleSearch } from "@simplix-react-ui-kits/console-clarity/page";
+import { validateConsoleSearch } from "@simplix-react-ui-kits/console-clarity/page";
 import { guardedBy } from "@simplix-react-ui-kits/console-clarity/shell";
 {{#if accessList}}
 import { {{accessList}} } from "{{packageName}}";
 {{/if}}
 import { {{EntityPascal}}CrudPage } from "{{modulePackage}}/pages";
+{{#if moduleLocales}}
+// The module's own words (columns, filters, sections) register with its locales entry.
+import "{{modulePackage}}/locales";
+{{/if}}
 
 /**
  * Guarded on what the list endpoint requires, so a typed address meets the refusal up front rather
@@ -19,7 +22,7 @@ import { {{EntityPascal}}CrudPage } from "{{modulePackage}}/pages";
  */
 export const Route = createFileRoute("/{{routePath}}")({
   component: guardedBy({{#if accessList}}{{accessList}}{{else}}undefined{{/if}}, {{EntityPascal}}Route),
-  validateSearch: (search: Record<string, unknown>): ConsoleSearch => validateCrudSearch(search),
+  validateSearch: validateConsoleSearch,
 });
 
 function {{EntityPascal}}Route() {

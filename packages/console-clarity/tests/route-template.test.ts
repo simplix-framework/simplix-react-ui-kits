@@ -11,6 +11,12 @@ describe("the TanStack route a list screen is reached through", () => {
     expect(out).toContain('import { listCatalogVoicesAccess } from "@test/domain-speech";');
     expect(out).toContain("guardedBy(listCatalogVoicesAccess, CatalogVoiceRoute)");
     expect(out).toContain('import { CatalogVoiceCrudPage } from "@test/admin-speech/pages";');
+    expect(out).toContain("validateSearch: validateConsoleSearch,");
+    expect(out).not.toContain('import "@test/admin-speech/locales";');
+  });
+
+  it("registers the module's words where the module exports them", () => {
+    expect(render("route.tanstack.hbs", { ...context, moduleLocales: true })).toContain('import "@test/admin-speech/locales";');
   });
 
   it("admits everyone the server admits where the contract states no rule", () => {

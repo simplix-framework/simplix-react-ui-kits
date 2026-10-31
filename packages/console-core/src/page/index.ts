@@ -1,4 +1,5 @@
 export { ConsolePage } from "./console-page";
+export { validateConsoleSearch } from "./console-search";
 export { CrudPage, useCrudPresentation } from "./crud-page";
 export { REGULAR_DETAIL_WIDTH, detailWidthFor, detailWidthLimits, detailWidthPx, useDetailWidthLimits, type DetailWidth, type DetailWidthLimits, type ResizablePresentation } from "./detail-width";
 export { DETAIL_WIDTH_STORAGE_KEY, forgetRememberedWidths, persistWidths, readRememberedWidths, useDetailWidthMemory, withWidth, withoutWidth, writeRememberedWidths, type DetailWidthMemoryOptions, type DetailWidths, type DetailWidthSetting } from "./detail-width-memory";
