@@ -6,7 +6,7 @@
  * differently goes in `./page.blocks.tsx`, which the generator writes once and never again.
  */
 import { CrudPage, {{#if hasCreate}}PageAction, {{/if}}type ConsoleSearch, type CrudPageBlocks, useDetailPresentationSetting } from "@simplix-react-ui-kits/console-clarity/page";
-import { useAllowed, useScreenWords } from "@simplix-react-ui-kits/console-clarity/entity";
+import { {{#if (or hasCreate hasUpdate hasDelete)}}useAllowed, {{/if}}useScreenWords } from "@simplix-react-ui-kits/console-clarity/entity";
 {{#if hasDelete}}
 import { adaptOrvalDelete, useCrudDeleteWired, useInvalidateEntity } from "@simplix-react/ui";
 import { {{hookDelete}} } from "{{packageName}}";
@@ -37,10 +37,18 @@ export function {{EntityPascal}}CrudPage({ search, onNavigate }: {{EntityPascal}
   const blocks: ReturnType<typeof usePageBlocks> & CrudPageBlocks<{{EntityPascal}}Row, {{EntityPascal}}ListProps, {{EntityPascal}}DetailProps> = usePageBlocks({ search, onNavigate });
   const list = use{{EntityPascal}}List(blocks.listParams);
   const presentation = useDetailPresentationSetting();
+{{#if (or hasCreate hasUpdate hasDelete)}}
   // Every control is gated on the rule its endpoint states, so none leads to a call the server refuses.
-  const canCreate = useAllowed({{#if accessCreate}}{{accessCreate}}{{else}}undefined{{/if}}){{#unless hasCreate}} && false{{/unless}};
-  const canEdit = useAllowed({{#if accessUpdate}}{{accessUpdate}}{{else}}undefined{{/if}}){{#unless hasUpdate}} && false{{/unless}};
-  const canDelete = useAllowed({{#if accessDelete}}{{accessDelete}}{{else}}undefined{{/if}}){{#unless hasDelete}} && false{{/unless}};
+{{/if}}
+{{#if hasCreate}}
+  const canCreate = useAllowed({{#if accessCreate}}{{accessCreate}}{{else}}undefined{{/if}});
+{{/if}}
+{{#if hasUpdate}}
+  const canEdit = useAllowed({{#if accessUpdate}}{{accessUpdate}}{{else}}undefined{{/if}});
+{{/if}}
+{{#if hasDelete}}
+  const canDelete = useAllowed({{#if accessDelete}}{{accessDelete}}{{else}}undefined{{/if}});
+{{/if}}
 {{#if hasDelete}}
   const invalidate = useInvalidateEntity("{{entityPath}}");
   const { requestDelete, deleteDialog } = useCrudDeleteWired({

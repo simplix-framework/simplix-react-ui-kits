@@ -35,6 +35,8 @@ export function render(templateFile: string, context: Record<string, unknown>): 
   engine.registerHelper("ldb", () => "{{");
   engine.registerHelper("rdb", () => "}}");
   engine.registerHelper("eq", (a: unknown, b: unknown) => a === b);
+  // The CLI's `or`: true when any argument before Handlebars' trailing options object is.
+  engine.registerHelper("or", (...args: unknown[]) => args.slice(0, -1).some(Boolean));
   return engine.compile(readFileSync(join(templatesDir, templateFile), "utf-8"), { noEscape: true })(context);
 }
 
