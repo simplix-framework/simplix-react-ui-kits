@@ -103,6 +103,11 @@ export interface RecordAction<Row> {
    * label an icon cannot say (「이 항목 확정」). Any labelled action draws every action labelled.
    */
   readonly labelled?: boolean;
+  /**
+   * The glyph the icon strip draws instead of the type's. An action with its own glyph is told
+   * apart from another of its type by that glyph, so the strip stays icon-only.
+   */
+  readonly icon?: ReactNode;
 }
 
 /** What a bulk action reports once it has run: what changed, and how to take it back. */
@@ -240,11 +245,14 @@ const LABEL_GAP = 8;
 
 /**
  * Whether the row actions must carry their labels. An icon stands for the action's type, so two
- * actions of one type would draw the same icon for different verbs; then, or when an action asks
- * for its label, every action is a labelled button instead.
+ * actions drawing the type's own icon for one type would show the same glyph for different verbs;
+ * then, or when an action asks for its label, every action is a labelled button instead. An action
+ * carrying its own icon is distinct by that icon and never forces labels.
  */
-export function actionsNeedLabels(actions: readonly { readonly type: string; readonly labelled?: boolean }[]): boolean {
-  return actions.some((action) => action.labelled) || new Set(actions.map((action) => action.type)).size < actions.length;
+export function actionsNeedLabels(actions: readonly { readonly type: string; readonly labelled?: boolean; readonly icon?: unknown }[]): boolean {
+  if (actions.some((action) => action.labelled)) return true;
+  const typeGlyphs = actions.filter((action) => action.icon === undefined || action.icon === null).map((action) => action.type);
+  return new Set(typeGlyphs).size < typeGlyphs.length;
 }
 
 /** The action column's width when every action is a labelled button. */
@@ -380,6 +388,7 @@ export function RecordList<Row>({
     ? actions.map((action) => ({
         type: action.type,
         label: action.label,
+        icon: action.icon,
         onClick: (row: Row) => action.onClick?.(row),
         disabled: action.disabled ? (row: Row) => Boolean(action.disabled?.(row)) : undefined,
         disabledReason: action.disabled ? (row: Row) => action.disabled?.(row) || undefined : undefined,
