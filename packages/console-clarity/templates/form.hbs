@@ -57,10 +57,12 @@ export function {{EntityPascal}}Form(props: {{EntityPascal}}FormProps) {
 {{/if}}
   const invalidate = useInvalidateEntity("{{entityPath}}");
 {{#if hookCreate}}
-  const create = {{hookCreate}}({ mutation: { onSettled: invalidate } });
+  // The form shows a refusal itself (RecordForm's banner and field errors), so the app's error
+  // dialog is told not to report the same failure a second time.
+  const create = {{hookCreate}}({ mutation: { onSettled: invalidate, meta: { handledByForm: true } } });
 {{/if}}
 {{#if hookUpdate}}
-  const update = {{hookUpdate}}({ mutation: { onSettled: invalidate } });
+  const update = {{hookUpdate}}({ mutation: { onSettled: invalidate, meta: { handledByForm: true } } });
 {{/if}}
   const record = editing ? data ?? undefined : undefined;
   const preBlocks = useFormContract();
