@@ -135,11 +135,8 @@ export function {{EntityPascal}}Detail(props: {{EntityPascal}}DetailProps) {
     <RecordDetail
       isLoading={isLoading}
       title={blocks.title ?? (record ? String(record.{{#if displayNameField}}{{displayNameField}}{{else}}{{rowIdField}}{{/if}} ?? "") : words.label)}
-{{#if displayNameField}}
-      subtitle={blocks.subtitle ?? (record?.{{rowIdField}} === undefined ? undefined : String(record.{{rowIdField}}))}
-{{else}}
+      {/* Never the record's key: a panel is titled by what people call the record (frontend invariant #36). */}
       subtitle={blocks.subtitle}
-{{/if}}
       status={blocks.status ?? headerStatus}
       notices={blocks.notices}
       verbs={blocks.verbs}
