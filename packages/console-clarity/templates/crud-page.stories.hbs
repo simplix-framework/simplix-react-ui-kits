@@ -9,7 +9,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
 import { CrudPage, {{#if hasCreate}}PageAction, {{/if}}type ConsoleSearch, useDetailPresentationSetting } from "@simplix-react-ui-kits/console-clarity/page";
-import { RecordDetail, RecordList, useRecordContract, useScreenWords, type ContractField } from "@simplix-react-ui-kits/console-clarity/entity";
+import { RecordDetail, RecordList, useRecordContract, useScreenWords, type ContractField, type ContractFilter } from "@simplix-react-ui-kits/console-clarity/entity";
 import { useMockRecords } from "@simplix-react-ui-kits/console-clarity/mock";
 
 type Row = Readonly<Record<string, unknown>>;
@@ -34,6 +34,13 @@ const COLUMN_FIELDS: readonly ContractField[] = [
 {{/unless}}
 {{/unless}}
 {{/unless}}
+{{/each}}
+];
+
+/** The filters the contract's searchable fields give the list, as the generated list offers them. */
+const FILTERS: readonly ContractFilter[] = [
+{{#each contractFilters}}
+  { kind: "{{this.kind}}", field: "{{this.field}}"{{#if this.enumTypeName}}, enumName: "{{this.enumTypeName}}"{{/if}}{{#if this.options}}, options: [{{#each this.options}}"{{this}}"{{#unless @last}}, {{/unless}}{{/each}}]{{/if}}{{#if (eq this.kind "dateRange")}}, dateOnly: {{#if this.dateOnly}}true{{else}}false{{/if}}{{/if}} },
 {{/each}}
 ];
 
@@ -85,8 +92,15 @@ function Screen({ open }: Args) {
           rows={records.rows}
           rowId={idOf}
           columns={columns}
+          filters={contract.filters<Row>(FILTERS)}
+          // The generated page's one row action, so the frame draws the column the screen draws.
+          actions={[{ type: "view", label: words.view, onClick: (row) => nav.showDetail(idOf(row)) }]}
           activeRowId={nav.selectedId}
           onRowClick={(row) => nav.showDetail(idOf(row))}
+{{#unless hasKeywordSearch}}
+          // The route declares no keyword field, so the screen draws no search box either.
+          features={ { search: false } }
+{{/unless}}
         />
       )}
       renderDetail={(id, nav) => {
