@@ -130,12 +130,13 @@ export function {{EntityPascal}}Detail(props: {{EntityPascal}}DetailProps) {
     ...(props.onDelete ? [{ label: words.delete, kind: "danger" as const, onClick: () => props.onDelete?.(recordName) }] : []),
     ...(props.onEdit ? [{ label: words.edit, onClick: props.onEdit }] : []),
   ];
+  // The subtitle is the blocks' alone and never the record's key: a panel is titled by what
+  // people call the record (frontend invariant #36).
   return (
     <>
     <RecordDetail
       isLoading={isLoading}
       title={blocks.title ?? (record ? String(record.{{#if displayNameField}}{{displayNameField}}{{else}}{{rowIdField}}{{/if}} ?? "") : words.label)}
-      {/* Never the record's key: a panel is titled by what people call the record (frontend invariant #36). */}
       subtitle={blocks.subtitle}
       status={blocks.status ?? headerStatus}
       notices={blocks.notices}
