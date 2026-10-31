@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { sortFieldOf } from "./record-contract";
+import { sortFieldOf, textValueOf } from "./record-contract";
 import { statedOrNothing } from "./screen-words";
 
 describe("a column over a translated name", () => {
@@ -23,5 +23,12 @@ describe("a screen's description", () => {
     expect(statedOrNothing("_description", "_description")).toBeUndefined();
     expect(statedOrNothing("entity/jobPosition:_description", "_description")).toBeUndefined();
     expect(statedOrNothing("", "_description")).toBeUndefined();
+  });
+});
+
+describe("a text value the contract marks as a code", () => {
+  it("is drawn as code, and plain text without the mark", () => {
+    expect(textValueOf({ code: true }, "ROLE_ADMIN")).toEqual({ text: "ROLE_ADMIN", code: true });
+    expect(textValueOf({}, "Administrator")).toBe("Administrator");
   });
 });

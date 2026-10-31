@@ -59,6 +59,11 @@ export interface ContractField {
   readonly sortAlias?: Readonly<Record<string, string>>;
   /** The record's own identifier: drawn with a copy control in a detail. */
   readonly identifier?: boolean;
+  /**
+   * A code the reader types or compares (SimpliX Meta's `format: "code"`, from `@CodeValue`): a
+   * text value drawn in the monospaced face.
+   */
+  readonly code?: boolean;
   /** For an `i18nText` field, the plain field the request carries the base language's text in. */
   readonly plainField?: string;
   /** For an `i18nText` field whose plain sibling is long text, the per-language editor is a text area. */
@@ -104,6 +109,11 @@ export interface ContractOverrides {
 }
 
 type Row = Readonly<Record<string, unknown>>;
+
+/** A value no other kind draws, as text: in the monospaced face where the contract marks it as a code. */
+export function textValueOf(field: Pick<ContractField, "code">, raw: unknown): RecordValue {
+  return field.code ? { text: String(raw), code: true } : String(raw);
+}
 
 /** The enum's value as text, whether the server sent the constant or the boot enum object. */
 export function enumValueOf(raw: unknown): string {
@@ -186,7 +196,7 @@ export function useRecordContract(entity: string, overrides: ContractOverrides =
           return { link: text, onClick: () => peek.open({ kind, target: { id: String(raw), name: text } }) };
         }
         default:
-          return String(raw);
+          return textValueOf(field, raw);
       }
     },
     [enumLabel, locale, peek, t, tones, zone],
