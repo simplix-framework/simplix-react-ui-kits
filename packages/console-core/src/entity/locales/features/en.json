@@ -67,5 +67,13 @@
       "unmet": "Unmet",
       "held": "Held for interpretation"
     }
+  },
+  "screen": {
+    "edit": "Edit",
+    "save": "Save",
+    "add": "Add {{entity}}",
+    "editTitle": "Edit {{entity}}",
+    "emptyTitle": "No {{entities}} yet",
+    "emptyDescription": "What you add appears here."
   }
 }

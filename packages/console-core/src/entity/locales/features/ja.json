@@ -66,5 +66,13 @@
       "unmet": "未充足",
       "held": "解釈保留"
     }
+  },
+  "screen": {
+    "edit": "編集",
+    "save": "保存",
+    "add": "{{entity}}を追加",
+    "editTitle": "{{entity}}を編集",
+    "emptyTitle": "{{entities}}はまだありません",
+    "emptyDescription": "追加するとここに表示されます。"
   }
 }

@@ -9,8 +9,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
 import { CrudPage, type ConsoleSearch } from "@simplix-react-ui-kits/console-clarity/page";
-import { RecordDetail, RecordList, useRecordContract, type ContractField } from "@simplix-react-ui-kits/console-clarity/entity";
-import { useOptionalTranslation } from "@simplix-react-ui-kits/console-clarity/i18n";
+import { RecordDetail, RecordList, useRecordContract, useScreenWords, type ContractField } from "@simplix-react-ui-kits/console-clarity/entity";
 import { useMockRecords } from "@simplix-react-ui-kits/console-clarity/mock";
 
 type Row = Readonly<Record<string, unknown>>;
@@ -68,14 +67,14 @@ interface Args {
 }
 
 function Screen({ open }: Args) {
-  const { t } = useOptionalTranslation("entity/{{entity}}");
+  const words = useScreenWords("{{entity}}");
   const records = useMockRecords(ROWS, idOf);
   const [search, setSearch] = useState<ConsoleSearch>(open ? { id: open } : {});
   const contract = useRecordContract("{{entity}}");
   const columns = contract.columns<Row>(COLUMN_FIELDS);
   return (
     <CrudPage
-      spec={{ldb}} title: t("_plural") {{rdb}}
+      spec={{ldb}} title: words.plural {{rdb}}
       search={search}
       onNavigate={setSearch}
       renderList={(nav) => (

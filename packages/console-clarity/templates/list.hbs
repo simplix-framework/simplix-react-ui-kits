@@ -5,8 +5,7 @@
  * matches. Columns, filters, chips and row actions this list departs in go in `./list.blocks.tsx`.
  */
 import { adaptForcedList, adaptOrvalList, useCrudList } from "@simplix-react/ui";
-import { RecordList, useRecordContract, type ContractField, type ContractFilter, type ContractOverrides, type RecordAction, type RecordColumn, type RecordFilter } from "@simplix-react-ui-kits/console-clarity/entity";
-import { useTranslation } from "@simplix-react/i18n/react";
+import { RecordList, useRecordContract, useScreenWords, type ContractField, type ContractFilter, type ContractOverrides, type RecordAction, type RecordColumn, type RecordFilter } from "@simplix-react-ui-kits/console-clarity/entity";
 import type { ReactNode } from "react";
 
 import { {{hookList}}, type {{listRowType}} } from "{{packageName}}";
@@ -70,7 +69,7 @@ export function use{{EntityPascal}}Columns(overrides?: ContractOverrides): Recor
 
 /** The {{entity}} records, drawn by the kit's list. */
 export function {{EntityPascal}}List({ list, activeRowId, onRowClick, actions, leading }: {{EntityPascal}}ListProps) {
-  const { t } = useTranslation("{{moduleNamespace}}/widgets");
+  const words = useScreenWords("{{entity}}");
   const generated = use{{EntityPascal}}Columns();
   const blocks = useListBlocks({ generated });
   const contract = useRecordContract("{{entity}}");
@@ -87,7 +86,7 @@ export function {{EntityPascal}}List({ list, activeRowId, onRowClick, actions, l
       activeRowId={activeRowId}
       onRowClick={onRowClick}
       searchPlaceholder={blocks.searchPlaceholder}
-      empty={blocks.empty ?? { title: t("{{entity}}.emptyTitle"), description: t("{{entity}}.emptyDescription") }}
+      empty={blocks.empty ?? { title: words.emptyTitle, description: words.emptyDescription }}
       features={blocks.features}
     />
   );

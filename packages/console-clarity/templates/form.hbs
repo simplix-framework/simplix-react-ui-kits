@@ -4,9 +4,8 @@
  * Laid down from the console-clarity kit's `form.hbs` and rewritten while its fingerprint
  * matches. Sections, rules and the request this form sends go in `./form.blocks.tsx`.
  */
-import { RecordForm, useRecordContract, type ContractField, type RecordFormField } from "@simplix-react-ui-kits/console-clarity/entity";
+import { RecordForm, useRecordContract, useScreenWords, type ContractField, type RecordFormField } from "@simplix-react-ui-kits/console-clarity/entity";
 import { QueryFallback, useInvalidateEntity } from "@simplix-react/ui";
-import { useTranslation } from "@simplix-react/i18n/react";
 
 import { {{#if hookGet}}{{hookGet}}, {{/if}}{{#if hookCreate}}{{hookCreate}}{{/if}}{{#if hookUpdate}}{{#if hookCreate}}, {{/if}}{{hookUpdate}}{{/if}} } from "{{packageName}}";
 import { useFormBlocks, useFormContract } from "./form.blocks";
@@ -14,13 +13,18 @@ import { useFormBlocks, useFormContract } from "./form.blocks";
 /** The fields the contract lets this form write, each edited by its kind. */
 export const {{EntityPascal}}FormFields: readonly ContractField[] = [
 {{#each fields}}
-{{#unless this.isI18nPair}}
+{{!-- The plain field of an i18n pair is written: the server requires it and derives nothing from
+      the map. The map has no form kind yet, so the form leaves it to the blocks. The record's own
+      key and keys nobody reads are never typed in. --}}
+{{#unless this.isIdentifier}}
+{{#unless this.isOpaqueId}}
 {{#unless this.baseFieldName}}
 {{#unless this.isSystemField}}
 {{#unless this.isReferenceName}}
 {{#unless this.isAuditField}}
 {{#unless this.readOnly}}
-  { name: "{{this.name}}", kind: "{{#if this.isForeignKey}}reference{{else}}{{this.contractKind}}{{/if}}"{{#if this.enumTypeName}}, enumName: "{{this.enumTypeName}}"{{/if}}{{#if this.options.length}}, options: [{{#each this.options}}"{{this}}"{{#unless @last}}, {{/unless}}{{/each}}]{{/if}}{{#if this.peekKind}}, peekKind: "{{this.peekKind}}"{{/if}}{{#if this.nameField}}, nameField: "{{this.nameField}}"{{/if}}{{#if (eq this.sortable true)}}, sortable: true{{/if}}{{#if (eq this.sortable false)}}, sortable: false{{/if}}{{#if this.isIdentifier}}, identifier: true{{/if}} },
+  { name: "{{this.name}}", kind: "{{this.contractKind}}"{{#if this.enumTypeName}}, enumName: "{{this.enumTypeName}}"{{/if}}{{#if this.options.length}}, options: [{{#each this.options}}"{{this}}"{{#unless @last}}, {{/unless}}{{/each}}]{{/if}}{{#if this.peekKind}}, peekKind: "{{this.peekKind}}"{{/if}}{{#if this.nameField}}, nameField: "{{this.nameField}}"{{/if}}{{#if (eq this.sortable true)}}, sortable: true{{/if}}{{#if (eq this.sortable false)}}, sortable: false{{/if}} },
+{{/unless}}
 {{/unless}}
 {{/unless}}
 {{/unless}}
@@ -41,7 +45,7 @@ export interface {{EntityPascal}}FormProps {
 
 /** Creates or edits a {{entity}} through the kit's record form. */
 export function {{EntityPascal}}Form(props: {{EntityPascal}}FormProps) {
-  const { t } = useTranslation("{{moduleNamespace}}/widgets");
+  const words = useScreenWords("{{entity}}");
 {{#if hasUpdate}}
   const editing = Boolean(props.{{entity}}Id);
   const { data, isLoading } = {{hookGet}}(props.{{entity}}Id ?? "", { query: { enabled: editing, gcTime: 0 } });
@@ -66,10 +70,10 @@ export function {{EntityPascal}}Form(props: {{EntityPascal}}FormProps) {
   if (editing && (isLoading || !data)) return <QueryFallback isLoading={isLoading} />;
   return (
     <RecordForm
-      title={blocks.title ?? (editing ? t("{{entity}}.edit{{EntityPascal}}") : t("{{entity}}.addNew{{EntityPascal}}"))}
+      title={blocks.title ?? (editing ? words.editTitle : words.add)}
       sections={blocks.sections ?? [{ key: "main", fields: generated }]}
       notices={blocks.notices}
-      submitLabel={blocks.submitLabel ?? t("{{entity}}.save")}
+      submitLabel={blocks.submitLabel ?? words.save}
       onCancel={props.onCancel}
       onSubmit={async (values) => {
         const body = blocks.toRequest ? blocks.toRequest(values) : values;

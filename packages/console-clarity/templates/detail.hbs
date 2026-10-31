@@ -4,8 +4,7 @@
  * Laid down from the console-clarity kit's `detail.hbs` and rewritten while its fingerprint
  * matches. Tabs, verbs, notices and fields this record departs in go in `./detail.blocks.tsx`.
  */
-import { RecordDetail, useRecordContract, type ContractField, type RecordBadge, type RecordField, type RecordValue } from "@simplix-react-ui-kits/console-clarity/entity";
-import { useTranslation } from "@simplix-react/i18n/react";
+import { RecordDetail, useRecordContract, useScreenWords, type ContractField, type RecordBadge, type RecordField, type RecordValue } from "@simplix-react-ui-kits/console-clarity/entity";
 
 import { {{hookGet}} } from "{{packageName}}";
 import { useDetailBlocks } from "./detail.blocks";
@@ -48,7 +47,7 @@ export interface {{EntityPascal}}DetailProps {
 
 /** The {{entity}} record, drawn by the kit's record detail. */
 export function {{EntityPascal}}Detail(props: {{EntityPascal}}DetailProps) {
-  const { t } = useTranslation("{{moduleNamespace}}/widgets");
+  const words = useScreenWords("{{entity}}");
   const { data, isLoading } = {{hookGet}}(props.{{entity}}Id);
   const blocks = useDetailBlocks({ record: data ?? undefined, props });
   const record = data ?? undefined;
@@ -65,7 +64,7 @@ export function {{EntityPascal}}Detail(props: {{EntityPascal}}DetailProps) {
   return (
     <RecordDetail
       isLoading={isLoading}
-      title={blocks.title ?? (record ? String(record.{{#if displayNameField}}{{displayNameField}}{{else}}{{rowIdField}}{{/if}} ?? "") : t("{{entity}}.{{entity}}"))}
+      title={blocks.title ?? (record ? String(record.{{#if displayNameField}}{{displayNameField}}{{else}}{{rowIdField}}{{/if}} ?? "") : words.label)}
 {{#if displayNameField}}
       subtitle={blocks.subtitle ?? (record?.{{rowIdField}} === undefined ? undefined : String(record.{{rowIdField}}))}
 {{else}}
@@ -74,7 +73,7 @@ export function {{EntityPascal}}Detail(props: {{EntityPascal}}DetailProps) {
       status={blocks.status ?? headerStatus}
       notices={blocks.notices}
       verbs={blocks.verbs}
-      actions={blocks.actions ?? (props.onEdit ? [{ label: t("{{entity}}.edit"), onClick: props.onEdit }] : undefined)}
+      actions={blocks.actions ?? (props.onEdit ? [{ label: words.edit, onClick: props.onEdit }] : undefined)}
       defaultTab={props.initialTab ?? blocks.defaultTab}
       tabs={blocks.tabs}
       sections={blocks.tabs ? undefined : blocks.sections ?? [{ key: "overview", fields: generated }]}
