@@ -19,8 +19,8 @@ A mockup draws every screen with one UI kit (a package of screen types built on 
 | `storybook/mockup-settings.tsx` | `useMockupSettings()`: the toolbar's settings, read by a screen |
 | `.storybook/` | The kit's own Storybook: every framework story rendered with a design |
 | `scaffold/` | Files `init-mockup` copies into a new mockup root |
-| `checks/` | `check-screens`, `check-designs`, `check-imports`, `check-versions`, `console-menu`, `new-override`, `extract-tokens`, `capture`, `init-mockup` |
-| `lib/` | Helpers the checks and the plugin share; `console-menu.mjs` holds the console menu readers and checks, proved by `console-menu.test.mjs` (`pnpm test`) |
+| `checks/` | `check-screens`, `check-designs`, `check-imports`, `check-versions`, `console-menu`, `screen-design`, `new-override`, `extract-tokens`, `capture`, `init-mockup` |
+| `lib/` | Helpers the checks and the plugin share; `console-menu.mjs` holds the console menu readers and checks, proved by `console-menu.test.mjs`; `screen-design.mjs` holds the screen design checks, proved by `screen-design.test.mjs` (`pnpm test`) |
 
 ## Designs
 
@@ -101,3 +101,25 @@ SIMPLIX_FRAMEWORK=<simplix-react checkout> KIT_DESIGN=<design> pnpm storybook
 ```
 
 It renders every framework story with the framework's own preview and the design applied. One Storybook serves one design.
+
+## Screen design
+
+A screen is designed for its purpose before it is scaffolded. `screen-design` reads a manifest beside the mockup with one entry per routed screen: the persona and the question they bring, whether the screen shows a description, cards and notices (each with its reason; none is a decision too), the list presentation, leading column, default sort and filters, and the detail sections. The board frame is drawn from that entry; a frame generated from the same template as the screen is not a design, so agreement against it proves nothing.
+
+```bash
+node kit/checks/screen-design.mjs [--root <mockup root>]
+```
+
+It fails when a routed screen has no entry, an entry is undecided (`"decided": false`), a decision has no reason, a list sorts by its primary key, or a screen's blocks file is still an empty stub while its entry asks for a description, cards or notices. A screen not yet customised is listed under `acknowledged` with its reason, and an acknowledgement whose blocks have since been customised fails as stale.
+
+Everything specific to a product is the root's `mockup.config.json` key `screenDesign`; a root without the key is left alone:
+
+```json
+{
+  "screenDesign": {
+    "manifest": "screen-design.json",
+    "routes": [{ "app": "<app>", "dir": "<path to the app's routes>" }],
+    "primaryKey": "{entity}Id"
+  }
+}
+```
