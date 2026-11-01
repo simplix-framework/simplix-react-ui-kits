@@ -11,7 +11,7 @@ import { useState } from "react";
 import { CrudPage, {{#if hasCreate}}PageAction, {{/if}}type ConsoleSearch, useDetailPresentationSetting } from "@simplix-react-ui-kits/console-clarity/page";
 import { {{#if figureTiles}}figureTiles, statusCounts, {{/if}}RecordDetail, {{#if hasForm}}RecordForm, {{/if}}RecordList, useRecordContract, useScreenWords, type ContractField, type ContractFilter{{#if statusField}}, type RecordBadge, type RecordValue{{/if}} } from "@simplix-react-ui-kits/console-clarity/entity";
 import { useOptionalTranslation } from "@simplix-react-ui-kits/console-clarity/i18n";
-import { {{#if hasCreate}}mockId, {{/if}}useMockRecords } from "@simplix-react-ui-kits/console-clarity/mock";
+import { {{#if hasCreate}}mockId, {{/if}}{{#if figureTiles}}useMockList, {{/if}}useMockRecords } from "@simplix-react-ui-kits/console-clarity/mock";
 
 type Row = Readonly<Record<string, unknown>>;
 
@@ -143,6 +143,9 @@ function Screen({ open{{#if hasCreate}}, mode{{/if}} }: Args) {
   const contract = useRecordContract("{{entity}}");
   const columns = contract.columns<Row>(COLUMN_FIELDS);
 {{#if figureTiles}}
+  // The list's state in the frame's hands, so a pressed figure narrows the rows under it, as the
+  // generated page hands its list's filters to the tiles.
+  const list = useMockList(records.rows);
   // The generated page's figure row, counted and summed over the sample rows.
   const figures = figureTiles(
     {
@@ -185,9 +188,12 @@ function Screen({ open{{#if hasCreate}}, mode{{/if}} }: Args) {
       search={search}
       onNavigate={setSearch}
       {...presentation}
+{{#if figureTiles}}
+      tileFilters={list.filters}
+{{/if}}
       renderList={(nav) => (
         <RecordList<Row>
-          rows={records.rows}
+          {{#if figureTiles}}list={list}{{else}}rows={records.rows}{{/if}}
           rowId={idOf}
           columns={columns}
           filters={contract.filters<Row>(FILTERS)}
