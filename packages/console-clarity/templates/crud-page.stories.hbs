@@ -72,6 +72,30 @@ const DETAIL_FIELDS: readonly ContractField[] = [
 {{/each}}
 ];
 
+{{#each holders}}
+/** The {{this.entity}} records that point at this one through `{{this.filterKey}}`, as their list draws them. */
+const {{this.EntityPascal}}HolderFields_{{@index}}: readonly ContractField[] = [
+{{#each this.fields}}
+{{#unless this.isI18nPair}}
+{{#unless this.baseFieldName}}
+{{#unless this.isSystemField}}
+{{#unless this.isReferenceName}}
+{{#unless this.isAuditField}}
+{{#unless this.isOpaqueId}}
+{{#unless this.isIdentifier}}
+  { name: "{{this.name}}", kind: "{{this.contractKind}}"{{#if this.money}}, currency: "{{this.money.currency}}", scale: {{this.money.scale}}{{/if}}{{#if this.enumTypeName}}, enumName: "{{this.enumTypeName}}"{{/if}}{{#if this.options.length}}, options: [{{#each this.options}}"{{this}}"{{#unless @last}}, {{/unless}}{{/each}}]{{/if}}{{#if this.peekKind}}, peekKind: "{{this.peekKind}}"{{/if}}{{#if this.nameField}}, nameField: "{{this.nameField}}"{{/if}}{{#if this.peekBy}}, peekBy: "{{this.peekBy}}"{{/if}}{{#if (eq this.sortable true)}}, sortable: true{{/if}}{{#if (eq this.sortable false)}}, sortable: false{{/if}}{{#if this.isCode}}, code: true{{/if}} },
+{{/unless}}
+{{/unless}}
+{{/unless}}
+{{/unless}}
+{{/unless}}
+{{/unless}}
+{{/unless}}
+{{/each}}
+];
+
+{{/each}}
+
 /** Sample rows, one value per field by its contract kind. */
 const ROWS: readonly Row[] = {{{fixtureRowsJson}}};
 
@@ -99,6 +123,10 @@ function Screen({ open }: Args) {
   const [search, setSearch] = useState<ConsoleSearch>(open ? { id: open } : {});
   const contract = useRecordContract("{{entity}}");
   const columns = contract.columns<Row>(COLUMN_FIELDS);
+{{#each holders}}
+  const holder{{@index}}Contract = useRecordContract("{{this.entity}}");
+  const holder{{@index}}Words = useScreenWords("{{this.entity}}");
+{{/each}}
   return (
     <CrudPage
       spec={{ldb}} title: words.plural, description: words.description{{#if hasCreate}}, actions: <PageAction kind="add" label={words.add} onClick={() => setSearch({ mode: "new" })} />{{/if}} {{rdb}}
@@ -141,7 +169,31 @@ function Screen({ open }: Args) {
         return (
           <RecordDetail
             title={row ? ({{#if displayNameField}}contract.recordName(NAME_FIELDS, row){{else}}String(row.{{rowIdField}} ?? ""){{/if}} || id) : id}
+{{#if holders.length}}
+            // The generated detail's tabs: the record, then each list of the records that hold it,
+            // drawn empty here because the frame carries no rows of theirs.
+            tabs={[
+              { key: "overview", label: words.overview, sections: [{ key: "overview", fields: row ? DETAIL_FIELDS.map((field) => contract.detailField(field, row)) : [] }] },
+{{#each holders}}
+              {
+                key: "{{this.key}}",
+                label: holder{{@index}}Words.plural,
+                count: 0,
+                list: {
+                  rows: [],
+                  rowId: (one: Row) => String(one.{{this.rowIdField}}),
+                  columns: holder{{@index}}Contract.columns<Row>({{this.EntityPascal}}HolderFields_{{@index}}),
+                  empty: { title: holder{{@index}}Words.emptyTitle },
+{{#unless this.hasKeywordSearch}}
+                  features: { search: false },
+{{/unless}}
+                },
+              },
+{{/each}}
+            ]}
+{{else}}
             sections={[{ key: "overview", fields: row ? DETAIL_FIELDS.map((field) => contract.detailField(field, row)) : [] }]}
+{{/if}}
 {{#if statusField}}
             // The generated detail's header badge, so the frame draws the standing the screen draws.
             status={row && STATUS_FIELD ? statusBadge(contract.value(STATUS_FIELD, row)) : undefined}

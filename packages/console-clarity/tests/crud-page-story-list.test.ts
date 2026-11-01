@@ -71,4 +71,17 @@ describe("the generated board frame's list", () => {
     expect(plain).not.toContain("STATUS_FIELD");
     expect(plain).not.toContain("audit=");
   });
+
+  it("draws a tab for each list of the records that hold this one, as the generated detail does", () => {
+    const holder = { entity: "member", EntityPascal: "Member", key: "memberByProductId", rowIdField: "memberId", fields: [{ name: "name", contractKind: "text" }], hasKeywordSearch: false };
+    const held = render("crud-page.stories.hbs", { ...context, holders: [holder] });
+    expect(held).toContain("const MemberHolderFields_0: readonly ContractField[] = [");
+    expect(held).toContain('const holder0Contract = useRecordContract("member");');
+    expect(held).toContain('key: "memberByProductId",');
+    expect(held).toContain("columns: holder0Contract.columns<Row>(MemberHolderFields_0),");
+    expect(held).not.toContain("            sections={[");
+    const alone = render("crud-page.stories.hbs", { ...context, holders: [] });
+    expect(alone).not.toContain("tabs={[");
+    expect(alone).toContain("            sections={[");
+  });
 });
