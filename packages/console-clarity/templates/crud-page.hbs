@@ -35,7 +35,7 @@ interface {{EntityPascal}}CrudPageProps {
 /** The fields the record is named by, in order, each drawn by its kind. */
 const NAME_FIELDS: readonly ContractField[] = [
 {{#each nameContractFields}}
-  { name: "{{this.name}}", kind: "{{this.contractKind}}"{{#if this.enumTypeName}}, enumName: "{{this.enumTypeName}}"{{/if}}{{#if this.nameField}}, nameField: "{{this.nameField}}"{{/if}}{{#if this.isCode}}, code: true{{/if}} },
+  { name: "{{this.name}}", kind: "{{this.contractKind}}"{{#if this.money}}, currency: "{{this.money.currency}}", scale: {{this.money.scale}}{{/if}}{{#if this.enumTypeName}}, enumName: "{{this.enumTypeName}}"{{/if}}{{#if this.nameField}}, nameField: "{{this.nameField}}"{{/if}}{{#if this.isCode}}, code: true{{/if}} },
 {{/each}}
 ];
 

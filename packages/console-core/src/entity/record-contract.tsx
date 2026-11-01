@@ -31,6 +31,8 @@ export type ContractFieldKind =
   | "instant"
   | "time"
   | "number"
+  /** An amount of money stored as a whole number of `10^-scale` units of `currency` (SimpliX Meta's `format: "money"`). */
+  | "money"
   | "reference"
   /** A text written once per content language (`<field>I18n`), whose plain sibling the server reads. */
   | "i18nText";
@@ -75,6 +77,10 @@ export interface ContractField {
   readonly multiline?: boolean;
   /** For an `i18nText` field, where its language selector is drawn; absent, the installation's default. */
   readonly languageSelectorPlacement?: LanguageSelectorPlacement;
+  /** For a `money` field, the ISO 4217 currency the amount is in. */
+  readonly currency?: string;
+  /** For a `money` field, the decimal places the stored whole number carries: 6 stores millionths. */
+  readonly scale?: number;
   /** The value a new record starts the field with (SimpliX Meta's `defaultValue`). */
   readonly defaultValue?: string | number | boolean;
 }
@@ -108,6 +114,7 @@ export const CONTRACT_COLUMN_SIZE: Readonly<Record<ContractFieldKind, { readonly
   time: { width: 96 },
   // A figure is compared down the column, so it sits against the end edge where the place values line up.
   number: { width: 112, align: "end" },
+  money: { width: 128, align: "end" },
   reference: { minWidth: 160 },
   i18nText: { minWidth: 140 },
 };
@@ -170,6 +177,33 @@ export function groupedNumber(raw: unknown, locale: string): string {
   return Number.isFinite(value) ? new Intl.NumberFormat(locale).format(value) : String(raw);
 }
 
+/** The amount a `money` field's stored whole number stands for, in the currency's own units. */
+export function moneyAmount(field: Pick<ContractField, "scale">, raw: unknown): number | null {
+  if (raw === null || raw === undefined || raw === "") return null;
+  const stored = typeof raw === "number" ? raw : Number(raw);
+  return Number.isFinite(stored) ? stored / 10 ** (field.scale ?? 0) : null;
+}
+
+/** The stored whole number an amount in the currency's own units is written back as. */
+export function moneyStored(field: Pick<ContractField, "scale">, amount: unknown): number | null {
+  if (amount === null || amount === undefined || amount === "") return null;
+  const value = typeof amount === "number" ? amount : Number(amount);
+  return Number.isFinite(value) ? Math.round(value * 10 ** (field.scale ?? 0)) : null;
+}
+
+/**
+ * A `money` value as currency in the reader's locale. It keeps as many decimal places as the
+ * stored scale can hold beyond the currency's own, so a fraction of a cent is not rounded away.
+ */
+export function moneyText(field: Pick<ContractField, "currency" | "scale">, raw: unknown, locale: string): string {
+  const amount = moneyAmount(field, raw);
+  if (amount === null) return raw == null ? "" : String(raw);
+  if (!field.currency) return new Intl.NumberFormat(locale).format(amount);
+  const format = new Intl.NumberFormat(locale, { style: "currency", currency: field.currency });
+  const digits = Math.max(format.resolvedOptions().maximumFractionDigits ?? 0, Math.min(field.scale ?? 0, 20));
+  return new Intl.NumberFormat(locale, { style: "currency", currency: field.currency, maximumFractionDigits: digits }).format(amount);
+}
+
 /**
  * Draws and edits fields by their contract kind.
  *
@@ -209,6 +243,8 @@ export function useRecordContract(entity: string, overrides: ContractOverrides =
           return calendarDayLabel(String(raw), locale, "iso") || String(raw);
         case "number":
           return groupedNumber(raw, locale);
+        case "money":
+          return moneyText(field, raw, locale);
         case "reference": {
           const name = field.nameField ? valueAtPath(row, field.nameField) : undefined;
           const text = typeof name === "string" && name !== "" ? name : String(raw);
@@ -245,6 +281,9 @@ export function useRecordContract(entity: string, overrides: ContractOverrides =
           return { ...common, kind: "time", value: raw == null ? null : String(raw), clearable: !field.required };
         case "number":
           return { ...common, kind: "number", value: raw == null || raw === "" ? null : Number(raw) };
+        // Edited in the currency's own units; `request` writes it back as the stored whole number.
+        case "money":
+          return { ...common, kind: "number", value: moneyAmount(field, raw), min: 0, ...(field.currency ? { unit: field.currency } : {}) };
         case "reference": {
           const search = searches?.[field.name];
           if (search) return { ...common, kind: "reference", value: raw == null ? "" : String(raw), search, peek: Boolean(field.peekKind), peekKind: field.peekKind };
@@ -270,12 +309,14 @@ export function useRecordContract(entity: string, overrides: ContractOverrides =
 
   /**
    * The request a form's values make: each `i18nText` field also writes its plain sibling, in the
-   * base language, because the server validates and sorts by the plain text.
+   * base language, because the server validates and sorts by the plain text, and each `money`
+   * field goes back from the currency's units to the stored whole number.
    */
   const request = useCallback(
     (fields: readonly ContractField[], values: Readonly<Record<string, unknown>>): Record<string, unknown> => {
       const body: Record<string, unknown> = { ...values };
       for (const field of fields) {
+        if (field.kind === "money" && field.name in values) body[field.name] = moneyStored(field, values[field.name]);
         if (field.kind !== "i18nText" || !field.plainField) continue;
         const map = values[field.name];
         body[field.plainField] = i18nBaseValue(map && typeof map === "object" ? (map as I18nMap) : undefined, languages);
