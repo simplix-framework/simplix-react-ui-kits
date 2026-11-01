@@ -359,6 +359,16 @@
         "selector": "[data-slot=time-range-preset]:not([aria-pressed=true]):not([data-active])",
         "prop": "color",
         "token": "--muted-foreground"
+      },
+      {
+        "selector": "[data-slot=time-range-heatmap] .apexcharts-heatmap-rect",
+        "attr": "fill",
+        "ramp": [
+          "--muted",
+          "--primary"
+        ],
+        "steps": 6,
+        "$comment": "every slice is a step of the theme ramp from muted (empty) to primary (busiest)"
       }
     ]
   },

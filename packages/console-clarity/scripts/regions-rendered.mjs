@@ -56,7 +56,17 @@ export function probeTokens(entries) {
   const ctx = document.createElement("canvas").getContext("2d");
   const norm = (c) => { ctx.fillStyle = "#010203"; ctx.fillStyle = c; return ctx.fillStyle; };
   const root = getComputedStyle(document.documentElement);
+  const channels = (c) => { const h = norm(c).slice(1); return [0, 2, 4].map((i) => parseInt(h.slice(i, i + 2), 16)); };
+  const hex = (rgb) => `#${rgb.map((c) => Math.round(c).toString(16).padStart(2, "0")).join("")}`;
   return entries.map((e) => {
+    if (e.ramp) {
+      // The theme ramp, built the way the framework builds it, and every fill drawn checked against it.
+      const [from, to] = e.ramp.map((token) => channels(root.getPropertyValue(token).trim()));
+      const ramp = Array.from({ length: e.steps }, (_, step) => hex(from.map((c, i) => c + (to[i] - c) * (step / (e.steps - 1)))));
+      const fills = [...new Set([...document.querySelectorAll(e.selector)].map((el) => norm(el.getAttribute(e.attr))))];
+      if (fills.length === 0) return { ...e, missing: true };
+      return { ...e, measured: fills.join(","), expected: ramp.join(","), outside: fills.filter((f) => !ramp.includes(f)) };
+    }
     const el = document.querySelector(e.selector);
     if (!el) return { ...e, missing: true };
     const raw = e.attr ? el.getAttribute(e.attr) : getComputedStyle(el).getPropertyValue(e.prop);
@@ -66,7 +76,9 @@ export function probeTokens(entries) {
 
 /** The measured properties that differ from their token, as strings. A missing element is not judged. */
 export function compareTokens(measured) {
-  return measured.filter((m) => !m.missing && m.measured !== m.expected).map((m) => `${m.selector} ${m.attr ?? m.prop} = ${m.measured}, token ${m.token} = ${m.expected}`);
+  return measured
+    .filter((m) => !m.missing && (m.ramp ? m.outside.length > 0 : m.measured !== m.expected))
+    .map((m) => (m.ramp ? `${m.selector} ${m.attr} draws ${m.outside.join(",")} outside the ramp ${m.ramp.join(" to ")} (${m.expected})` : `${m.selector} ${m.attr ?? m.prop} = ${m.measured}, token ${m.token} = ${m.expected}`));
 }
 
 /** The ways a signature breaks the type's contract, as strings; empty when it holds. */
@@ -98,7 +110,9 @@ if (process.argv.includes("--selftest")) {
   const tokHit = compareTokens([{ selector: "rect", attr: "stroke", token: "--background", measured: "#000000", expected: "#f4f7f7" }]);
   const tokMiss = compareTokens([{ selector: "rect", attr: "stroke", token: "--background", measured: "#f4f7f7", expected: "#f4f7f7" }, { selector: "x", missing: true }]);
   const vacuous = compare({ missing: "main" }, "list-detail");
-  const ok = vacuous.length === 1 && tokHit.length === 1 && tokMiss.length === 0 && miss.length === 0 && noStrip.length === 1 && empty.length === 0 && hit.length === 4 && compare(good, "system").length === 4;
-  console.log(ok ? "regions-rendered selftest: hit 7, miss 0" : `regions-rendered selftest FAILED\nhit: ${hit.join("\n")}\nmiss: ${miss.join("\n")}`);
+  const rampHit = compareTokens([{ selector: "rect", attr: "fill", ramp: ["--muted", "--primary"], measured: "#f1f5f9", expected: "#eef2f2,#0f766e", outside: ["#f1f5f9"] }]);
+  const rampMiss = compareTokens([{ selector: "rect", attr: "fill", ramp: ["--muted", "--primary"], measured: "#eef2f2", expected: "#eef2f2,#0f766e", outside: [] }]);
+  const ok = rampHit.length === 1 && rampMiss.length === 0 && vacuous.length === 1 && tokHit.length === 1 && tokMiss.length === 0 && miss.length === 0 && noStrip.length === 1 && empty.length === 0 && hit.length === 4 && compare(good, "system").length === 4;
+  console.log(ok ? "regions-rendered selftest: hit 8, miss 0" : `regions-rendered selftest FAILED\nhit: ${hit.join("\n")}\nmiss: ${miss.join("\n")}`);
   process.exit(ok ? 0 : 1);
 }

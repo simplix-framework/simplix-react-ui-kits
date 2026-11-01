@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "@simplix-react/i18n/react";
 import { TimeRangeSelector } from "@simplix-react/ui";
-import type { CrudListFilters, TimeRange, TimeRangeValue, WindowPreset } from "@simplix-react/ui";
+import type { CrudListFilters, HeatmapColorTheme, TimeRange, TimeRangeValue, WindowPreset } from "@simplix-react/ui";
 
 import { useAppTimeZone } from "@simplix-react/headless";
 
@@ -107,6 +107,8 @@ export interface ListTimeRangeProps {
    * itself and forces it, so there is one value rather than two.
    */
   onRangeChange?: (range: TimeRange) => void;
+  /** The heatmap's colours: the theme's own ramp by default, so no screen picks a palette. @defaultValue "tokens" */
+  colorTheme?: HeatmapColorTheme;
 }
 
 /**
@@ -126,6 +128,7 @@ export function ListTimeRange({
   defaultWindow = "1d",
   presets,
   onRangeChange,
+  colorTheme = "tokens",
 }: ListTimeRangeProps) {
   const zone = useAppTimeZone();
   // Nothing is selected until somebody selects something. The strip opens on its default window
@@ -180,6 +183,7 @@ export function ListTimeRange({
       presets={presets}
       defaultWindow={defaultWindow}
       displayZone={zone}
+      colorTheme={colorTheme}
     />
   );
 }
