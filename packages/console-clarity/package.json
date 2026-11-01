@@ -178,6 +178,14 @@
           "useTilesCollapse"
         ],
         "message": "A screen hands its figures to the page as spec.tiles; the page shell draws the figure row and its one fold. Never draw SettingsTiles or a tile fold yourself."
+      },
+      {
+        "name": "@simplix-react-ui-kits/console-clarity/datetime",
+        "importNames": [
+          "ListTimeRange",
+          "PageTimeRange"
+        ],
+        "message": "A screen switches the time range region on with data (blocks `timeRange: { field, presets?, counts? }`); the page template draws the strip. Never draw ListTimeRange yourself."
       }
     ]
   }

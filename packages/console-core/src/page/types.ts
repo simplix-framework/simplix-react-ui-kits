@@ -1,5 +1,6 @@
 import type { ComponentType, ReactNode } from "react";
-import type { CrudSearch } from "@simplix-react/ui";
+import type { CrudListFilters, CrudSearch } from "@simplix-react/ui";
+import type { PageTimeRangeSlot } from "../datetime/page-time-range";
 
 import type { SettingsTile, TileFilters } from "../layout";
 import type { DismissibleNoticeKind, NoticeCardAction } from "../notice";
@@ -278,8 +279,11 @@ export interface PageSpec {
   readonly notice?:
     | PageNoticeSpec
     | readonly (PageNoticeSpec | false | null | undefined | "")[];
-  /** The window picker a history screen narrows by. */
-  readonly timeRange?: ReactNode;
+  /**
+   * The time range region as data: the slot a screen stated and the list filters it narrows. The
+   * page draws the strip; nothing hands it a drawn one.
+   */
+  readonly timeRange?: PageTimeRangeSlot & { readonly filters: CrudListFilters };
   /**
    * What has narrowed this page, drawn between the window and the tabs it narrows.
    *

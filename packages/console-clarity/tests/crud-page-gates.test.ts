@@ -43,9 +43,10 @@ describe("crud-page.hbs header actions", () => {
     expect(text).toMatch(/const ownActions = blocks\.spec && "actions" in blocks\.spec \? blocks\.spec\.actions : canCreate \?/);
   });
 
-  it("hands the list to the blocks' window picker and draws it as the page's time range", () => {
+  it("draws the time range region itself from the blocks' data, off unless switched on", () => {
     const text = page({ hasCreate: true, hasUpdate: false, hasDelete: false });
-    expect(text).toContain("const timeRange = blocks.timeRange?.(list);");
+    expect(text).toContain("const timeRange = blocks.timeRange ? { ...blocks.timeRange, filters: list.filters } : undefined;");
+    expect(text).not.toContain("blocks.timeRange?.(list)");
     expect(text).toContain("...(timeRange ? { timeRange } : {})");
   });
 

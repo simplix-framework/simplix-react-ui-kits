@@ -11,6 +11,7 @@ import {
 } from "../layout";
 import { Badge, Button, Flex } from "@simplix-react/ui";
 import { Container, Heading, TabsTrigger } from "@simplix-react/ui";
+import { PageTimeRange } from "../datetime/page-time-range";
 import { NoticeCard, UnbuiltTab } from "../notice";
 import { PhoneScreenColumn, useConsoleOnAPhone } from "../shell";
 import { usePageBackLink } from "./page-back";
@@ -229,7 +230,7 @@ export function ConsolePage({
           follows, never as a banner the figures hang under. */}
       {notice}
       {seam("afterNotice")}
-      {at("timeRange", spec.timeRange)}
+      {at("timeRange", spec.timeRange ? <PageTimeRange filters={spec.timeRange.filters} slot={spec.timeRange} /> : undefined)}
       {helps.map((one) => {
         const field = one.field ?? "help";
         return (

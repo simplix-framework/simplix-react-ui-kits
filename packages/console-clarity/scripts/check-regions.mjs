@@ -15,6 +15,14 @@ export function controlsIn(source) {
   return source.split("\n").flatMap((line, i) => (CONTROL.test(line) && !line.trim().startsWith("//") && !line.trim().startsWith("*") ? [`${i + 1}: ${line.trim()}`] : []));
 }
 
+/** The type text of one member of the named interface, or null when it is missing. */
+export function memberType(source, name, member) {
+  const start = source.search(new RegExp(`export interface ${name}\\b`));
+  if (start < 0) return null;
+  const m = source.slice(start).match(new RegExp(`\\n\\s*(?:readonly\\s+)?${member}\\??:\\s*([^;]*);`));
+  return m ? m[1] : null;
+}
+
 /** The boolean props of the named interface, as "Interface.prop". */
 export function booleanProps(source, name) {
   const start = source.search(new RegExp(`export interface ${name}\\b[^{]*\\{`));
@@ -54,17 +62,25 @@ export function check(contract, read) {
       for (const prop of props) if (!listed[prop]) problems.push(`${file}: ${prop} is a boolean slot prop with no reason in regions.json; a prop that changes look per screen is removed`);
     }
   }
+  for (const [file, byInterface] of Object.entries(contract.dataSlots?.members ?? {})) {
+    const source = read(file);
+    for (const [name, members] of Object.entries(byInterface)) for (const member of members) {
+      const type = memberType(source, name, member);
+      if (type === null) problems.push(`${file}: ${name}.${member} named in regions.json dataSlots is missing`);
+      else if (/ReactNode|JSX\.Element|ReactElement/.test(type)) problems.push(`${file}: ${name}.${member} takes ${type.trim()}; a region slot takes data and the template draws the part`);
+    }
+  }
   return problems;
 }
 
 function selftest() {
-  const contract = { valueParts: { files: ["v.tsx"] }, slotProps: { interfaces: { "t.ts": ["A"] }, flags: { "A.when": "exists for this reader" } } };
-  const hit = { "v.tsx": `<span>{x}</span>\n<Button onClick={copy}>`, "t.ts": `export interface A {\n  readonly when?: boolean;\n  readonly labelled?: boolean;\n  readonly nested?: { readonly deep?: boolean };\n}` };
-  const miss = { "v.tsx": `// draws no <Button here\n<span title={x}>{x}</span>\n<Button variant="link" size="link">{name}</Button>`, "t.ts": `export interface A {\n  readonly when?: boolean;\n  readonly nested?: { readonly deep?: boolean };\n}` };
+  const contract = { valueParts: { files: ["v.tsx"] }, slotProps: { interfaces: { "t.ts": ["A"] }, flags: { "A.when": "exists for this reader" } }, dataSlots: { members: { "t.ts": { A: ["range"] } } } };
+  const hit = { "v.tsx": `<span>{x}</span>\n<Button onClick={copy}>`, "t.ts": `export interface A {\n  readonly when?: boolean;\n  readonly labelled?: boolean;\n  readonly nested?: { readonly deep?: boolean };\n  readonly range?: (list: L) => ReactNode;\n}` };
+  const miss = { "v.tsx": `// draws no <Button here\n<span title={x}>{x}</span>\n<Button variant="link" size="link">{name}</Button>`, "t.ts": `export interface A {\n  readonly when?: boolean;\n  readonly nested?: { readonly deep?: boolean };\n  readonly range?: RangeSlot;\n}` };
   const h = check(contract, (f) => hit[f]);
   const m = check(contract, (f) => miss[f]);
-  const ok = h.length === 2 && h.some((p) => p.includes("v.tsx:2")) && h.some((p) => p.includes("A.labelled")) && m.length === 0;
-  console.log(ok ? "check-regions selftest: hit 2, miss 0" : `check-regions selftest FAILED\nhit: ${h.join("\n")}\nmiss: ${m.join("\n")}`);
+  const ok = h.length === 3 && h.some((p) => p.includes("A.range")) && h.some((p) => p.includes("v.tsx:2")) && h.some((p) => p.includes("A.labelled")) && m.length === 0;
+  console.log(ok ? "check-regions selftest: hit 3, miss 0" : `check-regions selftest FAILED\nhit: ${h.join("\n")}\nmiss: ${m.join("\n")}`);
   process.exit(ok ? 0 : 1);
 }
 

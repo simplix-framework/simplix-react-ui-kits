@@ -108,7 +108,8 @@ export function {{EntityPascal}}CrudPage({ search, onNavigate }: {{EntityPascal}
   // the list (an export bound to its filters) are drawn after whichever stand.
   const ownActions = blocks.spec && "actions" in blocks.spec ? blocks.spec.actions : {{#if hasCreate}}canCreate ? <PageAction kind="add" label={words.add} onClick={() => onNavigate({ ...search, mode: "new", id: undefined })} /> : undefined{{else}}undefined{{/if}};
   const listActions = blocks.headerActions?.(list);
-  const timeRange = blocks.timeRange?.(list);
+  // The time range region is off unless the blocks switch it on with data; the page draws the strip.
+  const timeRange = blocks.timeRange ? { ...blocks.timeRange, filters: list.filters } : undefined;
 
   return (
     <>
