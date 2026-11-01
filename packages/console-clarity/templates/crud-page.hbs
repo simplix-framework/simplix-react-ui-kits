@@ -1,12 +1,13 @@
 /**
  * @simplix-generated page/clarity-crud-page
  *
- * Laid down from the console-clarity kit's `crud-page.hbs`. This file is the generator's and is
- * rewritten on every run while its `@simplix-render` fingerprint matches; what this screen does
- * differently goes inside the keys of `./page.blocks.tsx`, which is tracked the same way and merged
- * three ways when its template changes.
+ * Laid down from the console-clarity kit's `crud-page.hbs` as the whole screen: its title and the
+ * description its catalog states, the figures its Meta counts, the time range where its Meta names
+ * one, the list with its row actions, the record, and the new and edit panels. The screen is
+ * customised here, in this file, by hand; a later template change is merged into it three ways.
  */
-import { CrudPage, {{#if hasCreate}}PageAction, {{/if}}type ConsoleSearch, type CrudPageBlocks, useDetailPresentationSetting } from "@simplix-react-ui-kits/console-clarity/page";
+import { useTranslation } from "@simplix-react/i18n/react";
+import { CrudPage, {{#if hasCreate}}PageAction, {{/if}}type ConsoleSearch, useDetailPresentationSetting } from "@simplix-react-ui-kits/console-clarity/page";
 import { {{#if (or hasCreate hasUpdate hasDelete)}}useAllowed, {{/if}}{{#if hasDelete}}{{#if displayNameField}}useRecordContract, {{/if}}{{/if}}{{#if figureTiles}}useFigureTiles, {{/if}}useScreenWords{{#if hasDelete}}{{#if displayNameField}}, type ContractField{{/if}}{{/if}} } from "@simplix-react-ui-kits/console-clarity/entity";
 {{#if figureTiles}}
 import { {{#if figureTiles.status}}{{figureTiles.status.hook}}{{/if}}{{#if figureTiles.status}}{{#if figureTiles.aggregates}}, {{/if}}{{/if}}{{#if figureTiles.aggregates}}{{figureTiles.aggregates.hook}}{{/if}} } from "{{packageName}}";
@@ -25,12 +26,11 @@ import { {{accessUpdate}} } from "{{packageName}}";
 import { {{accessDelete}} } from "{{packageName}}";
 {{/if}}
 
-import { {{EntityPascal}}Detail, {{#if hasForm}}{{EntityPascal}}Form, {{/if}}{{EntityPascal}}List, use{{EntityPascal}}List, type {{EntityPascal}}DetailProps, type {{EntityPascal}}ListProps, type {{EntityPascal}}Row } from "../../widgets/{{entityKebab}}";
+import { {{EntityPascal}}Detail, {{#if hasForm}}{{EntityPascal}}Form, {{/if}}{{EntityPascal}}List, use{{EntityPascal}}List{{#if (or hasUpdate hasDelete)}}, type {{EntityPascal}}Row{{/if}} } from "../../widgets/{{entityKebab}}";
 {{#if timeBuckets}}
 import { readCounts, type TimeRangeCountQuery } from "@simplix-react-ui-kits/console-clarity/datetime";
 import { {{timeBuckets.fetch}} } from "{{packageName}}";
 {{/if}}
-import { usePageBlocks } from "./page.blocks";
 
 interface {{EntityPascal}}CrudPageProps {
   readonly search: ConsoleSearch;
@@ -51,14 +51,13 @@ const NAME_FIELDS: readonly ContractField[] = [
 {{/if}}
 export function {{EntityPascal}}CrudPage({ search, onNavigate }: {{EntityPascal}}CrudPageProps) {
   const words = useScreenWords("{{entity}}");
-  // Every key of the kit's blocks contract is optional here, so a blocks file written before the
-  // contract gained a key still compiles.
-  const blocks: ReturnType<typeof usePageBlocks> & CrudPageBlocks<{{EntityPascal}}Row, {{EntityPascal}}ListProps, {{EntityPascal}}DetailProps, ReturnType<typeof use{{EntityPascal}}List>> = usePageBlocks({ search, onNavigate });
-  const list = use{{EntityPascal}}List(blocks.listParams);
+  // The line under the title is the screen's own, from its catalog; an empty value draws none.
+  const { t } = useTranslation("{{moduleNamespace}}/widgets");
+  const description = t("screen.{{entity}}.description") || undefined;
+  const list = use{{EntityPascal}}List();
   const presentation = useDetailPresentationSetting();
 {{#if figureTiles}}
-  // The figures the entity's SimpliX Meta says it counts and sums, drawn as the page's figure row;
-  // a blocks file that states `spec.tiles` draws its own instead.
+  // The figures the entity's SimpliX Meta says it counts and sums, drawn as the page's figure row.
   const figures = useFigureTiles("{{entity}}", {
 {{#if figureTiles.status}}
     status: { query: {{figureTiles.status.hook}}({ field: "{{figureTiles.status.field}}" }), field: "{{figureTiles.status.field}}", enumName: "{{figureTiles.status.enumName}}", values: [{{#each figureTiles.status.options}}"{{this}}"{{#unless @last}}, {{/unless}}{{/each}}] },
@@ -109,31 +108,38 @@ export function {{EntityPascal}}CrudPage({ search, onNavigate }: {{EntityPascal}
   const nameOf = (row: { readonly {{rowIdField}}?: unknown }) => String(row.{{rowIdField}} ?? "");
 {{/if}}
 {{/if}}
-  // A blocks file that states the header's actions replaces the generated ones; actions that read
-  // the list (an export bound to its filters) are drawn after whichever stand.
-  const ownActions = blocks.spec && "actions" in blocks.spec ? blocks.spec.actions : {{#if hasCreate}}canCreate ? <PageAction kind="add" label={words.add} onClick={() => onNavigate({ ...search, mode: "new", id: undefined })} /> : undefined{{else}}undefined{{/if}};
-  const listActions = blocks.headerActions?.(list);
-  // The time range region is off unless the blocks switch it on with data; the page draws the strip.
 {{#if timeBuckets}}
-  // The counts per slice come from the list's own counts read, which its Meta names; a blocks file states only the field and the windows.
-  const timeRange = blocks.timeRange ? { counts: (query: TimeRangeCountQuery) => readCounts({{timeBuckets.fetch}}({ ...query.conditions, from: query.from, to: query.to, buckets: query.buckets } as Parameters<typeof {{timeBuckets.fetch}}>[0])), ...blocks.timeRange, filters: list.filters } : undefined;
-{{else}}
-  const timeRange = blocks.timeRange ? { ...blocks.timeRange, filters: list.filters } : undefined;
+  // The entity's Meta names the field its rows are read by in time, so the page offers the time
+  // range over it, counted per slice by the list's own counts read.
+  const timeRange = {
+    field: "{{timeBuckets.field}}",
+    counts: (query: TimeRangeCountQuery) => readCounts({{timeBuckets.fetch}}({ ...query.conditions, from: query.from, to: query.to, buckets: query.buckets } as Parameters<typeof {{timeBuckets.fetch}}>[0])),
+    filters: list.filters,
+  };
 {{/if}}
 
   return (
     <>
       <CrudPage
-        // The header's line is the entity's description unless the blocks state one; `""` states none.
-        spec={{ldb}} title: words.plural, {{#if figureTiles}}tiles: figures.tiles, tilesLoading: figures.loading, {{/if}}...blocks.spec, description: blocks.spec?.description ?? words.description, actions: listActions ? <>{ownActions}{listActions}</> : ownActions, ...(timeRange ? { timeRange } : {}) {{rdb}}
+        spec={{ldb}}
+          title: words.plural,
+          description,
+{{#if figureTiles}}
+          tiles: figures.tiles,
+          tilesLoading: figures.loading,
+{{/if}}
+{{#if hasCreate}}
+          actions: canCreate ? <PageAction kind="add" label={words.add} onClick={() => onNavigate({ ...search, mode: "new", id: undefined })} /> : undefined,
+{{/if}}
+{{#if timeBuckets}}
+          timeRange,
+{{/if}}
+        {{rdb}}
         search={search}
         onNavigate={onNavigate}
         {...presentation}
-        detailWidth={blocks.detailWidth}
-        // The figures (`spec.tiles`) narrow the list through its own filter state, and the notices
-        // its state raises are read from the list.
+        // The figures (`spec.tiles`) narrow the list through its own filter state.
         tileFilters={list.filters}
-        notices={blocks.notices?.(list)}
         renderList={(nav) => (
           <{{EntityPascal}}List
             list={list}
@@ -142,14 +148,12 @@ export function {{EntityPascal}}CrudPage({ search, onNavigate }: {{EntityPascal}
             actions={[
               { type: "view", label: words.view, onClick: (row) => nav.showDetail(String(row.{{rowIdField}})) },
 {{#if hasUpdate}}
-              ...(canEdit ? [{ type: "edit" as const, label: words.edit, disabled: blocks.editDisabled, onClick: (row: {{EntityPascal}}Row) => nav.showEdit(String(row.{{rowIdField}})) }] : []),
+              ...(canEdit ? [{ type: "edit" as const, label: words.edit, onClick: (row: {{EntityPascal}}Row) => nav.showEdit(String(row.{{rowIdField}})) }] : []),
 {{/if}}
-              ...(blocks.rowActions?.(nav) ?? []),
 {{#if hasDelete}}
-              ...(canDelete ? [{ type: "delete" as const, label: words.delete, disabled: blocks.deleteDisabled, onClick: (row: {{EntityPascal}}Row) => requestDelete({ id: String(row.{{rowIdField}}), name: nameOf(row) }) }] : []),
+              ...(canDelete ? [{ type: "delete" as const, label: words.delete, onClick: (row: {{EntityPascal}}Row) => requestDelete({ id: String(row.{{rowIdField}}), name: nameOf(row) }) }] : []),
 {{/if}}
             ]}
-            {...blocks.listProps?.(nav)}
           />
         )}
         renderDetail={(id, nav) => (
@@ -163,7 +167,6 @@ export function {{EntityPascal}}CrudPage({ search, onNavigate }: {{EntityPascal}
             onDelete={canDelete ? (name) => requestDelete({ id, name }) : undefined}
             onDeleted={nav.showList}
 {{/if}}
-            {...blocks.detailProps?.(id, nav)}
           />
         )}
 {{#if hasCreate}}
@@ -178,7 +181,6 @@ export function {{EntityPascal}}CrudPage({ search, onNavigate }: {{EntityPascal}
 {{#if hasDelete}}
       {deleteDialog}
 {{/if}}
-      {blocks.dialogs}
     </>
   );
 }

@@ -35,31 +35,23 @@ describe("crud-page.hbs permission gates", () => {
   });
 });
 
-describe("crud-page.hbs header actions", () => {
-  it("hands the list to the blocks' header actions and draws them after the create action", () => {
+describe("crud-page.hbs header and time range", () => {
+  it("lays down the gated create action as the header's verb", () => {
     const text = page({ hasCreate: true, hasUpdate: false, hasDelete: false });
-    expect(text).toContain("const listActions = blocks.headerActions?.(list);");
-    expect(text).toContain("actions: listActions ? <>{ownActions}{listActions}</> : ownActions");
-    expect(text).toMatch(/const ownActions = blocks\.spec && "actions" in blocks\.spec \? blocks\.spec\.actions : canCreate \?/);
+    expect(text).toContain('actions: canCreate ? <PageAction kind="add"');
   });
 
-  it("draws the time range region itself from the blocks' data, off unless switched on", () => {
-    const text = page({ hasCreate: true, hasUpdate: false, hasDelete: false });
-    expect(text).toContain("const timeRange = blocks.timeRange ? { ...blocks.timeRange, filters: list.filters } : undefined;");
-    expect(text).not.toContain("blocks.timeRange?.(list)");
-    expect(text).toContain("...(timeRange ? { timeRange } : {})");
-  });
-
-  it("wires the counts per slice from the list's counts read where its Meta names one", () => {
+  it("offers the time range over the field the Meta names, counted by the list's counts read", () => {
     const text = page({ hasCreate: false, hasUpdate: false, hasDelete: false, timeBuckets: { field: "runAt", fetch: "getJobCounts" } });
-    expect(text).toContain("import { getJobCounts } from");
-    expect(text).toContain("counts: (query: TimeRangeCountQuery) => readCounts(getJobCounts(");
-    expect(page({ hasCreate: false, hasUpdate: false, hasDelete: false })).not.toContain("readCounts");
+    expect(text).toContain('field: "runAt",');
+    expect(text).toContain("readCounts(getJobCounts(");
+    expect(text).toContain("          timeRange,");
   });
 
-  it("starts from no action where the entity has no create", () => {
+  it("draws no time range and no header verb where the entity has neither", () => {
     const text = page({ hasCreate: false, hasUpdate: false, hasDelete: false });
-    expect(text).toContain('const ownActions = blocks.spec && "actions" in blocks.spec ? blocks.spec.actions : undefined;');
+    expect(text).not.toContain("timeRange");
+    expect(text).not.toContain("actions:");
   });
 });
 

@@ -1,9 +1,9 @@
 /**
  * @simplix-generated blocks/page.blocks
- * What `{{EntityPascal}}CrudPage` does differently from the generated page: the header's actions
- * (and those that read the list), tiles and tabs, the list's request and its props, the detail's
- * props, and dialogs.
- * Generated from the kit's page.blocks template and tracked: edit inside its keys, and a template change is merged into it three ways on regeneration.
+ * A departure of `{{EntityPascal}}CrudPage` worth naming apart from the page: the page itself is
+ * generated whole and customised in its own file, so this file exists only where a part is shared
+ * or long enough to read on its own.
+ * Generated from the kit's page.blocks template and tracked: a template change is merged into it three ways on regeneration.
  */
 import type { ConsoleSearch, CrudPageBlocks } from "@simplix-react-ui-kits/console-clarity/page";
 
@@ -13,16 +13,5 @@ import type { {{EntityPascal}}DetailProps, {{EntityPascal}}ListProps, {{EntityPa
 export type PageBlocks = CrudPageBlocks<{{EntityPascal}}Row, {{EntityPascal}}ListProps, {{EntityPascal}}DetailProps, ReturnType<typeof use{{EntityPascal}}List>>;
 
 export function usePageBlocks(_page: { readonly search: ConsoleSearch; readonly onNavigate: (search: ConsoleSearch) => void }): PageBlocks {
-  // `spec.description`: the line under the title. Absent, it is the entity's description from
-  // SimpliX Meta, empty until the backend states one. State one or two sentences where the screen's
-  // task is rare or an action on it has a consequence to understand first; state `""` on a screen
-  // read every day.
-  // `spec.tiles`: the figures the list is cut by, `SettingsTile[]` (`statusTiles(...)` for a count
-  // per value, each with the `filter` its chip writes; `spec.tilesLoading` while they are read).
-  // `notices`: what the list's state raises, `(list) => CrudPageNotice[]`, each with its `when`. The
-  // page draws the figure row first, folded and unfolded by the console's one tile fold, and the
-  // notices directly under it.
-  // `timeRange`: the time range region, off unless switched on with data: `{ field, presets?,
-  // defaultWindow?, counts? }`. The page draws the strip under the notices; never import it here.
   return {};
 }

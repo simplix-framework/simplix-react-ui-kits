@@ -23,13 +23,13 @@ const figureTiles = {
 };
 
 describe("crud-page.hbs default figure tiles", () => {
-  it("reads the counts and sums Meta names and draws them before the blocks' own spec", () => {
+  it("reads the counts and sums Meta names and draws them as the page's figures", () => {
     const text = render("crud-page.hbs", { ...base, figureTiles });
     expect(text).toContain('import { useGetJobStatusCounts, useGetJobAggregates } from "@test/domain-job";');
     expect(text).toContain('status: { query: useGetJobStatusCounts({ field: "status" }), field: "status", enumName: "JobStatus", values: ["QUEUED", "FAILED"] },');
     expect(text).toContain('{ field: { name: "costMicros", kind: "money", currency: "USD", scale: 6 }, op: "sum" },');
     expect(text).toContain('{ field: { name: "jobId", kind: "number" }, op: "count", rowCount: true },');
-    expect(text).toMatch(/tiles: figures\.tiles, tilesLoading: figures\.loading, \.\.\.blocks\.spec/);
+    expect(text).toContain("tiles: figures.tiles,\n          tilesLoading: figures.loading,");
   });
 
   it("draws no figures where Meta names none", () => {

@@ -119,68 +119,12 @@ function check(blocks: string, pageSource = render("crud-page.hbs", context)): s
   );
 }
 
-describe("the generated CRUD page against a blocks file written before a key existed", () => {
-  it("type-checks against a blocks file that has no editDisabled and no deleteDisabled", () => {
-    expect(check(blocksBeforeRowGates)).toEqual([]);
-  });
-
-  it("type-checks against a blocks file that declares none of the optional keys", () => {
-    expect(check(blocksWithNoKeys)).toEqual([]);
-  });
-
-  it("type-checks against the blocks stub the kit ships beside it", () => {
-    expect(check(render("page.blocks.hbs", context))).toEqual([]);
-  });
-
-  it("is told apart from a page that reads the keys without widening them", () => {
-    // The page as it was before the widening: the blocks hook's own type, with nothing added.
-    const widened = render("crud-page.hbs", context);
-    const unwidened = widened.replace(/const blocks: [^=]+= usePageBlocks/, "const blocks = usePageBlocks");
-    expect(unwidened).not.toBe(widened);
-
-    const messages = check(blocksBeforeRowGates, unwidened);
-    expect(messages.some((line) => line.includes("editDisabled"))).toBe(true);
-    expect(messages.some((line) => line.includes("deleteDisabled"))).toBe(true);
-  });
-});
-
-/** A blocks file that draws a narrowing tile and raises a notice from the list the page hands it. */
-const blocksWithTiles = `
-import type { ConsoleSearch, CrudPageBlocks } from "@simplix-react-ui-kits/console-clarity/page";
-import type { ProductDetailProps, ProductListProps, ProductRow, useProductList } from "../../widgets/product";
-
-export type PageBlocks = CrudPageBlocks<ProductRow, ProductListProps, ProductDetailProps, ReturnType<typeof useProductList>>;
-
-export function usePageBlocks(_page: { readonly search: ConsoleSearch; readonly onNavigate: (search: ConsoleSearch) => void }): PageBlocks {
-  return {
-    spec: { description: "", tiles: [{ key: "active", label: "Active", value: 3, counted: true, filter: { field: "status", value: "ACTIVE" } }] },
-    notices: (list) => [{ key: "empty", kind: "info", title: "Nothing here", when: list.rows.length === 0 }],
-  };
-}
-`;
-
-describe("the generated CRUD page's figure tiles and notices", () => {
-  it("hands the list to the blocks' notices, and the list's filters to the figure tiles", () => {
-    const text = render("crud-page.hbs", context);
-    expect(text).toContain("tileFilters={list.filters}");
-    expect(text).not.toContain("cards=");
-    expect(text).toContain("notices={blocks.notices?.(list)}");
-  });
-
-  it("keeps the entity's description unless the blocks state one", () => {
-    expect(render("crud-page.hbs", context)).toContain("description: blocks.spec?.description ?? words.description");
-  });
-
-  it("type-checks against a blocks file that draws narrowing tiles and raises notices", () => {
-    expect(check(blocksWithTiles)).toEqual([]);
-  });
-
-  it("names the description, cards and notices in the blocks stub", () => {
-    const stub = render("page.blocks.hbs", context);
-    expect(stub).toContain("`spec.description`");
-    expect(stub).toContain("`spec.tiles`");
-    expect(stub).not.toContain("`cards`");
-    expect(stub).toContain("`notices`");
+describe("the generated CRUD page as a whole screen", () => {
+  it("type-checks without a blocks file, reading its description from the screen catalog", () => {
+    const page = render("crud-page.hbs", context);
+    expect(page).not.toContain("page.blocks");
+    expect(page).toContain('t("screen.product.description") || undefined');
+    expect(check(render("page.blocks.hbs", context), page)).toEqual([]);
   });
 });
 
