@@ -1,7 +1,7 @@
 import type { ComponentType, ReactNode } from "react";
 import type { CrudSearch } from "@simplix-react/ui";
 
-import type { SettingsTile } from "../layout";
+import type { SettingsTile, TileFilters } from "../layout";
 import type { DismissibleNoticeKind, NoticeCardAction } from "../notice";
 
 /**
@@ -10,12 +10,12 @@ import type { DismissibleNoticeKind, NoticeCardAction } from "../notice";
  * <p>An override supplies the node the spec would otherwise have produced. `body` is the region a
  * tabless page fills; a tabbed page overrides a tab's own `body` instead.
  */
-export type PageSlot = "actions" | "tiles" | "notice" | "cards" | "timeRange" | "tabStrip" | "body";
+export type PageSlot = "actions" | "tiles" | "notice" | "timeRange" | "tabStrip" | "body";
 
 /**
  * The seams between the parts, named so a page can add something the pattern has no place for.
  *
- * <p>The order the pattern draws in is fixed (header · tiles · cards · notice · timeRange · tabs ·
+ * <p>The order the pattern draws in is fixed (header · tiles · notice · timeRange · tabs ·
  * body), and a seam is a gap between two of those, never a re-ordering of them.
  */
 export type PageSeam =
@@ -263,7 +263,12 @@ export interface PageSpec {
   /** Whether the figures are still being read. */
   readonly tilesLoading?: boolean;
   /**
-   * The cards under the figures and the status cards saying what this screen settles.
+   * The list's filter state the figures narrow, for a figure that counts rows of the list under it
+   * (`FilterSettingsTile`): pressing it writes the filter its rows are found by, as a chip does.
+   */
+  readonly tilesFilters?: TileFilters;
+  /**
+   * The cards directly under the figures saying what this screen settles.
    *
    * <p>A list rather than one card, and a `false` entry is not drawn: a page usually has one
    * standing explanation and sometimes a second that depends on its state — the read failed, this
@@ -273,13 +278,6 @@ export interface PageSpec {
   readonly notice?:
     | PageNoticeSpec
     | readonly (PageNoticeSpec | false | null | undefined | "")[];
-  /**
-   * The status cards the list below is cut by (a `StatusCardStrip`), drawn first, above the notices,
-   * the window, the tabs and the list's chip row. The notices sit directly under the cards, so a
-   * notice reads as being about the figures above it; a figure between the chips and the rows would
-   * read as counting the rows under it (frontend invariant #63).
-   */
-  readonly cards?: ReactNode;
   /** The window picker a history screen narrows by. */
   readonly timeRange?: ReactNode;
   /**

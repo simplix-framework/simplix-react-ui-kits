@@ -1,7 +1,9 @@
 import { useMemo } from "react";
 
 import { enumValueOf } from "./record-contract";
-import type { StatusCard } from "./status-card-strip";
+import type { StatusTone } from "@simplix-react/ui";
+
+import type { FilterSettingsTile } from "../layout/settings-tiles";
 
 /** How {@link statusCounts} reads the rows a `GET <base>/status-counts` read answers with. */
 export interface StatusCountsOptions {
@@ -70,33 +72,46 @@ export function useStatusCounts(
   );
 }
 
-/** What {@link statusCards} draws one card per value from. */
-export interface StatusCardsInput {
-  /** The field the counts are by, which is the filter each card writes. */
+/** What {@link statusTiles} draws one figure tile per value from. */
+export interface StatusTilesInput {
+  /** The field the counts are by, which is the filter each tile writes. */
   readonly field: string;
-  /** The values to draw a card for, in order; every value the enum declares, or the ones a screen leads with. */
+  /** The values to draw a tile for, in order; every value the enum declares, or the ones a screen leads with. */
   readonly values: readonly string[];
   /** The counts by value, `undefined` while the read has not answered. */
   readonly counts: Readonly<Record<string, number>> | undefined;
   /** The value's label, the enum's translated one. */
   readonly label: (value: string) => string;
-  /** The tone of a value's card: `danger` only for a set the reader must act on now. */
-  readonly tones?: Readonly<Record<string, StatusCard["tone"]>>;
+  /**
+   * The tone of a value's tile: `danger` only for a set the reader must act on now (frontend
+   * invariant #48). A tile counting 0 is drawn without it.
+   */
+  readonly tones?: Readonly<Record<string, StatusTone>>;
+  /** What each figure counts, under it. */
+  readonly basis?: (value: string) => string | undefined;
 }
 
 /**
- * One status card per value, each counting its rows and narrowing the list to them on a press.
+ * One figure tile per value for the page's figure row (`spec.tiles`), each counting its rows and
+ * narrowing the list under it to them on a press, as its chip does.
  *
  * @param input the field, the values, the counts and how each value is named and toned
  */
-export function statusCards(input: StatusCardsInput): StatusCard[] {
-  return input.values.map((value) => ({
-    key: value,
-    label: input.label(value),
-    value: input.counts === undefined ? undefined : (input.counts[value] ?? 0),
-    ...(input.tones?.[value] ? { tone: input.tones[value] } : {}),
-    filter: { field: input.field, value },
-  }));
+export function statusTiles(input: StatusTilesInput): FilterSettingsTile[] {
+  return input.values.map((value) => {
+    const count = input.counts === undefined ? undefined : (input.counts[value] ?? 0);
+    const tone = count ? input.tones?.[value] : undefined;
+    const basis = input.basis?.(value);
+    return {
+      key: value,
+      label: input.label(value),
+      value: count,
+      counted: true as const,
+      ...(tone ? { tone } : {}),
+      ...(basis ? { basis } : {}),
+      filter: { field: input.field, value },
+    };
+  });
 }
 
 /** The figures an aggregates read computes over a list's rows: `[{ field, op, value }]`. */

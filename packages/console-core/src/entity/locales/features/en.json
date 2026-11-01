@@ -106,9 +106,5 @@
     "copy": "Copy",
     "showWhole": "Show all",
     "credits": "{{count}} credits"
-  },
-  "statusCards": {
-    "fold": "Hide figures",
-    "unfold": "Show figures"
   }
 }

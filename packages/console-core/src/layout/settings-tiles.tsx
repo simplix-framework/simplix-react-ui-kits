@@ -10,6 +10,7 @@ import {
   Text,
   useMediaQuery,
   usePageHeaderState,
+  type CrudListFilters,
   type StatusTone,
 } from "@simplix-react/ui";
 import { DigitRoll } from "@simplix-react/ui/interaction";
@@ -40,10 +41,12 @@ import {
   tileTickerStyle,
   tileTrendStyle,
   tileTitleStyle,
+  tilePressStyle,
 } from "./settings-tiles.style";
 import { NumericText } from "./numeric-text";
 import { useTileOrder } from "./tile-order";
 import { useTilesCollapse } from "./tiles-collapse";
+import { narrowedValues, pressedTileKeys, pressedValues, type TileFilter } from "../entity/tile-filter";
 import { PHONE_WINDOW, REDUCED_MOTION } from "./window-size";
 import { partAttributes, slotAttributes } from "@simplix-react/ui/design";
 
@@ -182,7 +185,7 @@ interface SettingsTileShape {
  * and 「남은 열람권 12일」 counts nothing at all. A scan that read the counter word would have got
  * both wrong, in opposite directions.
  */
-export type SettingsTile = CountedSettingsTile | UnbuiltListSettingsTile | ComputedSettingsTile;
+export type SettingsTile = CountedSettingsTile | UnbuiltListSettingsTile | ComputedSettingsTile | FilterSettingsTile;
 
 /**
  * A tile whose figure is a count of rows, with the list those rows are in.
@@ -199,6 +202,8 @@ export interface CountedSettingsTile extends SettingsTileShape {
   readonly href: string;
   /** Never — the list is right there in `href`. */
   readonly listUnbuilt?: never;
+  /** Never: only a tile over the list under it narrows that list. */
+  readonly filter?: never;
 }
 
 /**
@@ -228,6 +233,26 @@ export interface UnbuiltListSettingsTile extends SettingsTileShape {
   readonly href?: never;
   /** No address opens the list these rows are in — yet. */
   readonly listUnbuilt: true;
+  /** Never: only a tile over the list under it narrows that list. */
+  readonly filter?: never;
+}
+
+/**
+ * A tile whose figure counts rows of the list right under it, and which narrows that list to them.
+ *
+ * <p>The list is on the screen, so the tile needs no address: pressing it writes the list filter
+ * its rows are found by (the chip row's `<field>.in`, or the keys the filter bar writes), and
+ * pressing it again lifts it. Drawn pressed while the list stands on it. The page hands the row the
+ * list's filter state (`PageSpec.tilesFilters`); without it the tile is drawn as a figure only.
+ */
+export interface FilterSettingsTile extends SettingsTileShape {
+  /** The figure is a count of rows. */
+  readonly counted: true;
+  /** The rows the figure counts, as the list's filter finds them. */
+  readonly filter: TileFilter;
+  /** Never: the list is the one under the tile. */
+  readonly href?: never;
+  readonly listUnbuilt?: never;
 }
 
 /**
@@ -244,6 +269,8 @@ export interface ComputedSettingsTile extends SettingsTileShape {
   readonly href?: never;
   /** Never — there is no list to be unbuilt. */
   readonly listUnbuilt?: never;
+  /** Never: only a tile over the list under it narrows that list. */
+  readonly filter?: never;
 }
 
 /** What an absent figure reads as. Centralized so no screen invents its own placeholder. */
@@ -346,9 +373,14 @@ interface SettingsTilesProps {
    * does not change the console's choice.
    */
   readonly folded?: boolean;
+  /** The list's filter state a {@link FilterSettingsTile} narrows: the one its chip row reads. */
+  readonly filters?: TileFilters;
 }
 
-export function SettingsTiles({ tiles, columns = 4, reorderKey, title, loading = false, folded = false }: SettingsTilesProps) {
+/** The part of a list's filter state the tiles read and write. */
+export type TileFilters = Pick<CrudListFilters, "committedValues" | "commitValues">;
+
+export function SettingsTiles({ tiles, columns = 4, reorderKey, title, loading = false, folded = false, filters }: SettingsTilesProps) {
   const { t } = useTranslation(PACKAGE_NAMESPACE + "/tiles");
   const shared = useTilesCollapse();
   const [unfolded, setUnfolded] = useState(false);
@@ -451,7 +483,7 @@ export function SettingsTiles({ tiles, columns = 4, reorderKey, title, loading =
         <div className="tiles-fold" data-open={collapsed ? "false" : "true"} aria-hidden={collapsed}>
           <div {...slotAttributes(tileGutterStyle, {})}>
             <div {...slotAttributes(tileRowStyle, {})}>
-              <TileGrid tiles={tiles} columns={columns} reorderKey={reorderKey} loading={loading} className="tiles-cascade" />
+              <TileGrid tiles={tiles} columns={columns} reorderKey={reorderKey} loading={loading} filters={filters} className="tiles-cascade" />
             </div>
           </div>
         </div>
@@ -464,7 +496,7 @@ export function SettingsTiles({ tiles, columns = 4, reorderKey, title, loading =
   if (!folding) {
     return (
       <div ref={anchor}>
-        <TileGrid tiles={tiles} columns={columns} reorderKey={reorderKey} loading={loading} />
+        <TileGrid tiles={tiles} columns={columns} reorderKey={reorderKey} loading={loading} filters={filters} />
       </div>
     );
   }
@@ -502,7 +534,7 @@ export function SettingsTiles({ tiles, columns = 4, reorderKey, title, loading =
           {/* Paying back exactly what the wrapper reached up by, so the tiles stand where they
               stood before this wrapper existed and no screen moved by adopting it. */}
           <div {...slotAttributes(tileRowStyle, { leads: reachFrom })}>
-            <TileGrid tiles={tiles} columns={columns} reorderKey={reorderKey} loading={loading} className="tiles-cascade" />
+            <TileGrid tiles={tiles} columns={columns} reorderKey={reorderKey} loading={loading} filters={filters} className="tiles-cascade" />
           </div>
         </div>
       </div>
@@ -694,12 +726,14 @@ function TileGrid({
   columns,
   reorderKey,
   loading,
+  filters,
   className,
 }: {
   readonly tiles: readonly SettingsTile[];
   readonly columns: 1 | 2 | 3 | 4;
   readonly reorderKey?: string;
   readonly loading: boolean;
+  readonly filters?: TileFilters;
   /**
    * Put on the grid itself rather than on a wrapper, so the cascade animation selects the cards as
    * its own children — a selector written two levels up breaks the day anything is put in between.
@@ -707,6 +741,8 @@ function TileGrid({
   readonly className?: string;
 }) {
   const keys = useMemo(() => tiles.map((t) => t.key), [tiles]);
+  const committed = filters?.committedValues ?? {};
+  const pressedKeys = pressedTileKeys(tiles, committed);
   const { order, moveTo, step, enabled } = useTileOrder(reorderKey, keys);
   const [dragging, setDragging] = useState<string | null>(null);
   const [over, setOver] = useState<string | null>(null);
@@ -812,7 +848,20 @@ function TileGrid({
               drop: enabled && dragging !== null && dragging !== tile.key && over === tile.key,
             })}
           >
-            {tile.href ? (
+            {tile.filter && filters ? (
+              <button
+                type="button"
+                aria-pressed={pressedKeys.has(tile.key)}
+                onClick={() => {
+                  const filter = tile.filter as TileFilter;
+                  filters.commitValues(pressedKeys.has(tile.key) ? pressedValues(filter, committed) : narrowedValues(filter, tiles, committed));
+                }}
+                className="block h-full w-full"
+                {...slotAttributes(tilePressStyle, { pressed: pressedKeys.has(tile.key) })}
+              >
+                {card}
+              </button>
+            ) : tile.href ? (
               <MenuLink href={tile.href} className="block h-full">
                 {card}
                 {/* Where the press goes, shown under the pointer on a tile that leads to a list. */}

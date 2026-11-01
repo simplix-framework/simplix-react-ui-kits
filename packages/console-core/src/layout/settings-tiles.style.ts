@@ -265,3 +265,17 @@ export const tileGoStyle = defineSlotStyle({
   variants: {},
   defaultVariants: {},
 });
+
+/**
+ * A tile that narrows the list under it: the press over the card. It carries the card's own ground
+ * and radius, so the control the reader presses paints what it is; pressed, it is ringed the way
+ * a chosen chip is.
+ */
+export const tilePressStyle = defineSlotStyle({
+  slot: "console-tile-press",
+  base: "rounded-lg bg-card text-left transition-shadow duration-[var(--dur-fast)] focus-visible:outline-none focus-visible:shadow-[var(--focus-halo)]",
+  variants: {
+    pressed: { true: "ring-2 ring-ring", false: "" },
+  },
+  defaultVariants: { pressed: false },
+});

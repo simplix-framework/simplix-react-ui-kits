@@ -10,12 +10,12 @@ Object.assign(globalThis, {
 const { ConsolePage } = await import("./console-page");
 
 describe("the console page's order", () => {
-  it("draws the status cards first and the notices directly under them", () => {
+  it("draws the figure tiles first and the notices directly under them", () => {
     const html = renderToStaticMarkup(
       createElement(ConsolePage, {
         spec: {
           title: "Jobs",
-          cards: createElement("div", { "data-testid": "cards" }, "cards"),
+          tiles: [{ key: "failed", label: "Failed", value: 2, counted: true, filter: { field: "status", value: "FAILED" } }],
           notice: { key: "failed", kind: "danger", title: "2 jobs failed" },
           body: createElement("div", { "data-testid": "body" }, "rows"),
         },
@@ -23,7 +23,7 @@ describe("the console page's order", () => {
         onNavigate: () => {},
       }),
     );
-    const cards = html.indexOf('data-testid="cards"');
+    const cards = html.indexOf(">Failed<");
     const notice = html.indexOf("2 jobs failed");
     const body = html.indexOf('data-testid="body"');
     expect(cards).toBeGreaterThan(-1);

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { aggregateValue, statusCards, statusCounts } from "./status-counts";
+import { aggregateValue, statusCounts, statusTiles } from "./status-counts";
 
 describe("statusCounts", () => {
   it("reads the generic value and count shape", () => {
@@ -23,16 +23,16 @@ describe("statusCounts", () => {
   });
 });
 
-describe("statusCards", () => {
-  it("draws one card per value, each narrowing the list to it", () => {
-    const cards = statusCards({ field: "status", values: ["FAILED", "QUEUED"], counts: { FAILED: 2 }, label: (value) => value.toLowerCase(), tones: { FAILED: "danger" } });
-    expect(cards).toEqual([
-      { key: "FAILED", label: "failed", value: 2, tone: "danger", filter: { field: "status", value: "FAILED" } },
-      { key: "QUEUED", label: "queued", value: 0, filter: { field: "status", value: "QUEUED" } },
+describe("statusTiles", () => {
+  it("draws one counted tile per value, each narrowing the list to it", () => {
+    const tiles = statusTiles({ field: "status", values: ["FAILED", "QUEUED"], counts: { FAILED: 2 }, label: (value) => value.toLowerCase(), tones: { FAILED: "danger", QUEUED: "warning" } });
+    expect(tiles).toEqual([
+      { key: "FAILED", label: "failed", value: 2, counted: true, tone: "danger", filter: { field: "status", value: "FAILED" } },
+      { key: "QUEUED", label: "queued", value: 0, counted: true, filter: { field: "status", value: "QUEUED" } },
     ]);
   });
   it("leaves each figure unread before the counts answer", () => {
-    expect(statusCards({ field: "status", values: ["FAILED"], counts: undefined, label: String })[0]?.value).toBeUndefined();
+    expect(statusTiles({ field: "status", values: ["FAILED"], counts: undefined, label: String })[0]?.value).toBeUndefined();
   });
 });
 

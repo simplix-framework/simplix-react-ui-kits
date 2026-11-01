@@ -1,7 +1,6 @@
 import type { ReactNode } from "react";
 
 import type { RecordAction } from "../entity/record-list";
-import type { StatusCard } from "../entity/status-card-strip";
 
 import type { CrudPageNavigation, CrudPageNotice } from "./crud-page";
 import type { DetailWidth } from "./detail-width";
@@ -45,16 +44,8 @@ export interface CrudPageBlocks<TRow, TListProps, TDetailProps, TList = unknown>
    */
   readonly headerActions?: (list: TList) => ReactNode;
   /**
-   * The figures the list is cut by, read from the list's own state (a status-counts or an
-   * aggregates read under the list's search). A card with a `filter` narrows the list the way its
-   * chip does. Drawn first, above the notices, the tabs and the chip row.
-   */
-  readonly cards?: (list: TList) => readonly StatusCard[];
-  /** Whether the cards' figures are still being read. */
-  readonly cardsLoading?: boolean;
-  /**
    * Every notice the list's state can raise, each with the condition that raises it. A notice
-   * whose condition is false is not drawn; drawn ones sit directly under the cards.
+   * whose condition is false is not drawn; drawn ones sit directly under the figures (`spec.tiles`).
    */
   readonly notices?: (list: TList) => readonly CrudPageNotice[];
   /** Dialogs this screen's own actions open, drawn beside the page. */

@@ -18,7 +18,7 @@ A kit is named `<area>-<design>`, because one area (a console, a kiosk, a field 
 
 ## Console page order
 
-A console page draws its parts in one order: header, figure tiles, status cards, notices, time range, tabs, chips, rows. The status cards come first and the page notices sit directly under them, so a notice reads as being about the figures above it. A record's notices sit under its head figures the same way. The card strip folds from its own control into one line of each card's label and figure, and the fold is remembered per page in the browser. `ConsolePage` holds the order, and `audit-rendered.mjs --check noticesFollowTheStatusCards` refuses a painted page whose notice stands above its cards.
+A console page draws its parts in one order: header, figure tiles, notices, time range, tabs, chips, rows. The figures come first and the page notices sit directly under them, so a notice reads as being about the figures above it. A record's notices sit under its head figures the same way. A screen hands its figures to the page as `spec.tiles`: a count per value is `statusTiles(...)`, and a tile with a `filter` narrows the list under it as its chip does. The figure row has one fold, the console's `TilesCollapse`, shared by every page and remembered as the reader's preference. `ConsolePage` holds the order, the kit fence refuses a screen importing `SettingsTiles` or the fold, and `audit-rendered.mjs --check noticesFollowTheStatusCards` refuses a painted page whose notice stands above its figures.
 
 ## Using a kit in a product
 

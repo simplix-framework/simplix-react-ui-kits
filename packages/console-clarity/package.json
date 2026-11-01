@@ -165,6 +165,15 @@
           "useCrudNavigation"
         ],
         "message": "Screens compose the console kit's parts (CrudPage, RecordList, RecordDetail, RecordForm from @simplix-react-ui-kits/console-clarity), never the framework's screen-composition parts directly."
+      },
+      {
+        "name": "@simplix-react-ui-kits/console-clarity/layout",
+        "importNames": [
+          "SettingsTiles",
+          "TilesCollapseProvider",
+          "useTilesCollapse"
+        ],
+        "message": "A screen hands its figures to the page as spec.tiles; the page shell draws the figure row and its one fold. Never draw SettingsTiles or a tile fold yourself."
       }
     ]
   }

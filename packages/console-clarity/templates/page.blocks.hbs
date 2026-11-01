@@ -15,9 +15,10 @@ export function usePageBlocks(_page: { readonly search: ConsoleSearch; readonly 
   // SimpliX Meta, empty until the backend states one. State one or two sentences where the screen's
   // task is rare or an action on it has a consequence to understand first; state `""` on a screen
   // read every day.
-  // `cards`: the figures the list is cut by, `(list) => StatusCard[]`, each with the `filter` its
-  // chip writes. `notices`: what the list's state raises, `(list) => CrudPageNotice[]`, each with
-  // its `when`. The cards come first and the notices directly under them, both above the tabs
-  // and the chip row.
+  // `spec.tiles`: the figures the list is cut by, `SettingsTile[]` (`statusTiles(...)` for a count
+  // per value, each with the `filter` its chip writes; `spec.tilesLoading` while they are read).
+  // `notices`: what the list's state raises, `(list) => CrudPageNotice[]`, each with its `when`. The
+  // page draws the figure row first, folded and unfolded by the console's one tile fold, and the
+  // notices directly under it.
   return {};
 }

@@ -95,11 +95,9 @@ export function {{EntityPascal}}CrudPage({ search, onNavigate }: {{EntityPascal}
         onNavigate={onNavigate}
         {...presentation}
         detailWidth={blocks.detailWidth}
-        // The figures the list is cut by and the notices its state raises, both read from the list.
-        cards={blocks.cards?.(list)}
-        cardFilters={list.filters}
-        cardsLoading={blocks.cardsLoading}
-        cardsKey="{{entity}}"
+        // The figures (`spec.tiles`) narrow the list through its own filter state, and the notices
+        // its state raises are read from the list.
+        tileFilters={list.filters}
         notices={blocks.notices?.(list)}
         renderList={(nav) => (
           <{{EntityPascal}}List

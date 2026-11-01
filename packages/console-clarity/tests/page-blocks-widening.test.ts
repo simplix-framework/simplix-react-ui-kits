@@ -142,8 +142,8 @@ describe("the generated CRUD page against a blocks file written before a key exi
   });
 });
 
-/** A blocks file that raises a notice and draws cards from the list the page hands it. */
-const blocksWithCards = `
+/** A blocks file that draws a narrowing tile and raises a notice from the list the page hands it. */
+const blocksWithTiles = `
 import type { ConsoleSearch, CrudPageBlocks } from "@simplix-react-ui-kits/console-clarity/page";
 import type { ProductDetailProps, ProductListProps, ProductRow, useProductList } from "../../widgets/product";
 
@@ -151,18 +151,17 @@ export type PageBlocks = CrudPageBlocks<ProductRow, ProductListProps, ProductDet
 
 export function usePageBlocks(_page: { readonly search: ConsoleSearch; readonly onNavigate: (search: ConsoleSearch) => void }): PageBlocks {
   return {
-    spec: { description: "" },
-    cards: (list) => [{ key: "all", label: "All", value: list.rows.length, filter: { field: "status", value: "ACTIVE" } }],
+    spec: { description: "", tiles: [{ key: "active", label: "Active", value: 3, counted: true, filter: { field: "status", value: "ACTIVE" } }] },
     notices: (list) => [{ key: "empty", kind: "info", title: "Nothing here", when: list.rows.length === 0 }],
   };
 }
 `;
 
-describe("the generated CRUD page's cards and notices", () => {
-  it("hands the list to the blocks' cards and notices, and the list's filters to the cards", () => {
+describe("the generated CRUD page's figure tiles and notices", () => {
+  it("hands the list to the blocks' notices, and the list's filters to the figure tiles", () => {
     const text = render("crud-page.hbs", context);
-    expect(text).toContain("cards={blocks.cards?.(list)}");
-    expect(text).toContain("cardFilters={list.filters}");
+    expect(text).toContain("tileFilters={list.filters}");
+    expect(text).not.toContain("cards=");
     expect(text).toContain("notices={blocks.notices?.(list)}");
   });
 
@@ -170,14 +169,15 @@ describe("the generated CRUD page's cards and notices", () => {
     expect(render("crud-page.hbs", context)).toContain("description: blocks.spec?.description ?? words.description");
   });
 
-  it("type-checks against a blocks file that draws cards and raises notices", () => {
-    expect(check(blocksWithCards)).toEqual([]);
+  it("type-checks against a blocks file that draws narrowing tiles and raises notices", () => {
+    expect(check(blocksWithTiles)).toEqual([]);
   });
 
   it("names the description, cards and notices in the blocks stub", () => {
     const stub = render("page.blocks.hbs", context);
     expect(stub).toContain("`spec.description`");
-    expect(stub).toContain("`cards`");
+    expect(stub).toContain("`spec.tiles`");
+    expect(stub).not.toContain("`cards`");
     expect(stub).toContain("`notices`");
   });
 });

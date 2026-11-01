@@ -3,7 +3,7 @@ import { ListDetail, useCrudNavigation, useCrudPageState, useMediaQuery, useUIDe
 
 import { PHONE_WINDOW } from "../layout/window-size";
 
-import { StatusCardStrip, type StatusCard, type StatusCardStripProps } from "../entity/status-card-strip";
+import type { TileFilters } from "../layout";
 
 import { ConsolePage } from "./console-page";
 import type { DetailPresentationSwitchProps } from "./detail-presentation-switch";
@@ -91,15 +91,9 @@ export interface CrudPageProps {
    * {@link useDetailPresentationSetting} hands one that the browser remembers when the reader asks.
    */
   readonly detailWidths?: DetailWidthSetting;
-  /** The figures the list is cut by, drawn first, above the notices, the tabs and the chips. */
-  readonly cards?: readonly StatusCard[];
-  /** The list's filter state the cards narrow: the state its chip row reads. */
-  readonly cardFilters?: StatusCardStripProps["filters"];
-  /** Whether the cards' figures are still being read. */
-  readonly cardsLoading?: boolean;
-  /** The page the cards stand on, under which the reader's fold of them is remembered. */
-  readonly cardsKey?: string;
-  /** Notices raised by the list's state, drawn directly under the cards after the spec's own notices. */
+  /** The list's filter state the page's figures narrow: the state its chip row reads. */
+  readonly tileFilters?: TileFilters;
+  /** Notices raised by the list's state, drawn directly under the figures after the spec's own notices. */
   readonly notices?: readonly CrudPageNotice[];
   readonly renderList: (nav: CrudPageNavigation) => ReactNode;
   readonly renderDetail: (id: string, nav: CrudPageNavigation) => ReactNode;
@@ -123,10 +117,7 @@ export function CrudPage({
   presentationSwitch,
   listWidth,
   detailWidths,
-  cards,
-  cardFilters,
-  cardsLoading,
-  cardsKey,
+  tileFilters,
   notices,
   renderList,
   renderDetail,
@@ -193,7 +184,7 @@ export function CrudPage({
   const listSpec: Omit<PageSpec, "body"> = {
     ...spec,
     notice: raised.length > 0 ? [...declared, ...raised] : spec.notice,
-    cards: cards && cards.length > 0 ? <StatusCardStrip cards={cards} filters={cardFilters} loading={cardsLoading} foldKey={cardsKey} /> : spec.cards,
+    tilesFilters: spec.tilesFilters ?? tileFilters,
   };
   const pageSpec = recordAsPage ? { title: "", layout: spec.layout, width: spec.width } : listSpec;
   return <ConsolePage spec={{ ...pageSpec, body }} search={search} onNavigate={onNavigate} />;
