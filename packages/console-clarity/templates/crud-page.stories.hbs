@@ -9,7 +9,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
 import { CrudPage, {{#if hasCreate}}PageAction, {{/if}}type ConsoleSearch, useDetailPresentationSetting } from "@simplix-react-ui-kits/console-clarity/page";
-import { RecordDetail, RecordList, useRecordContract, useScreenWords, type ContractField, type ContractFilter } from "@simplix-react-ui-kits/console-clarity/entity";
+import { RecordDetail, RecordList, useRecordContract, useScreenWords, type ContractField, type ContractFilter{{#if statusField}}, type RecordBadge, type RecordValue{{/if}} } from "@simplix-react-ui-kits/console-clarity/entity";
 import { useMockRecords } from "@simplix-react-ui-kits/console-clarity/mock";
 
 type Row = Readonly<Record<string, unknown>>;
@@ -76,6 +76,15 @@ const DETAIL_FIELDS: readonly ContractField[] = [
 const ROWS: readonly Row[] = {{{fixtureRowsJson}}};
 
 const idOf = (row: Row) => String(row.{{rowIdField}});
+{{#if statusField}}
+
+/** The record's standing, drawn in the header as the badge its field is drawn as. */
+const STATUS_FIELD = DETAIL_FIELDS.find((field) => field.name === "{{statusField}}");
+
+function statusBadge(value: RecordValue): RecordBadge | undefined {
+  return value && typeof value === "object" && "badge" in value ? value.badge : undefined;
+}
+{{/if}}
 
 interface Args {
   /** The record standing open when the story starts. */
@@ -133,6 +142,14 @@ function Screen({ open }: Args) {
           <RecordDetail
             title={row ? ({{#if displayNameField}}contract.recordName(NAME_FIELDS, row){{else}}String(row.{{rowIdField}} ?? ""){{/if}} || id) : id}
             sections={[{ key: "overview", fields: row ? DETAIL_FIELDS.map((field) => contract.detailField(field, row)) : [] }]}
+{{#if statusField}}
+            // The generated detail's header badge, so the frame draws the standing the screen draws.
+            status={row && STATUS_FIELD ? statusBadge(contract.value(STATUS_FIELD, row)) : undefined}
+{{/if}}
+{{#if hasAuditFields}}
+            // The generated detail's audit strip, so the frame draws the stamps the screen draws.
+            audit={row ? { id: row.{{rowIdField}} == null ? undefined : String(row.{{rowIdField}}), createdAt: row.createdAt == null ? undefined : String(row.createdAt), updatedAt: row.updatedAt == null ? undefined : String(row.updatedAt) } : undefined}
+{{/if}}
 {{#if (or hasUpdate hasDelete)}}
             // The generated detail's footer verbs, so the frame draws the footer the screen draws.
             actions={[

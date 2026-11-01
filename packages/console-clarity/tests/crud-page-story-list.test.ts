@@ -60,4 +60,15 @@ describe("the generated board frame's list", () => {
     expect(readOnly).not.toContain("reorder=");
     expect(readOnly).not.toContain("actions={[\n              { label");
   });
+
+  it("draws the header standing and the audit strip the generated detail draws", () => {
+    const full = render("crud-page.stories.hbs", { ...context, statusField: "status", hasAuditFields: true });
+    expect(full).toContain('const STATUS_FIELD = DETAIL_FIELDS.find((field) => field.name === "status");');
+    expect(full).toContain("status={row && STATUS_FIELD ? statusBadge(contract.value(STATUS_FIELD, row)) : undefined}");
+    expect(full).toContain("audit={row ? { id: row.productId == null ? undefined : String(row.productId)");
+    expect(full).toContain("type RecordBadge, type RecordValue }");
+    const plain = render("crud-page.stories.hbs", { ...context });
+    expect(plain).not.toContain("STATUS_FIELD");
+    expect(plain).not.toContain("audit=");
+  });
 });
