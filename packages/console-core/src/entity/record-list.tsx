@@ -749,6 +749,9 @@ export function RecordList<Row>({
           <CrudList.Column<Row>
             key={column.key}
             field={column.field}
+            // A column with no field (a cell built from several) is known by its key, so the columns
+            // menu can offer it and a narrower pane dropping the column before it cannot rename it.
+            id={column.field === undefined ? column.key : undefined}
             header={column.header}
             width={column.width}
             minWidth={column.width === undefined ? column.minWidth : undefined}
