@@ -11,7 +11,7 @@ import { useState } from "react";
 import { CrudPage, {{#if hasCreate}}PageAction, {{/if}}type ConsoleSearch, useDetailPresentationSetting } from "@simplix-react-ui-kits/console-clarity/page";
 import { {{#if figureTiles}}figureTiles, statusCounts, {{/if}}RecordDetail, {{#if hasForm}}RecordForm, {{/if}}RecordList, useRecordContract, useScreenWords, type ContractField, type ContractFilter{{#if statusField}}, type RecordBadge, type RecordValue{{/if}} } from "@simplix-react-ui-kits/console-clarity/entity";
 import { useOptionalTranslation } from "@simplix-react-ui-kits/console-clarity/i18n";
-import { {{#if hasCreate}}mockId, {{/if}}{{#if figureTiles}}useMockList, {{/if}}useMockRecords } from "@simplix-react-ui-kits/console-clarity/mock";
+import { {{#if hasCreate}}mockId, {{/if}}{{#if timeBuckets}}mockCounts, {{/if}}{{#if (or figureTiles timeBuckets)}}useMockList, {{/if}}useMockRecords } from "@simplix-react-ui-kits/console-clarity/mock";
 
 type Row = Readonly<Record<string, unknown>>;
 
@@ -142,10 +142,12 @@ function Screen({ open{{#if hasCreate}}, mode{{/if}} }: Args) {
   const [search, setSearch] = useState<ConsoleSearch>({{#if hasCreate}}mode ? { mode } : {{/if}}open ? { id: open } : {});
   const contract = useRecordContract("{{entity}}");
   const columns = contract.columns<Row>(COLUMN_FIELDS);
-{{#if figureTiles}}
-  // The list's state in the frame's hands, so a pressed figure narrows the rows under it, as the
-  // generated page hands its list's filters to the tiles.
+{{#if (or figureTiles timeBuckets)}}
+  // The list's state in the frame's hands, so a pressed figure or a chosen window narrows the rows
+  // under it, as the generated page hands its list's filters to the tiles and the time range.
   const list = useMockList(records.rows);
+{{/if}}
+{{#if figureTiles}}
   // The generated page's figure row, counted and summed over the sample rows.
   const figures = figureTiles(
     {
@@ -184,7 +186,7 @@ function Screen({ open{{#if hasCreate}}, mode{{/if}} }: Args) {
 {{/each}}
   return (
     <CrudPage
-      spec={{ldb}} title: words.plural, description{{#if figureTiles}}, tiles: figures{{/if}}{{#if hasCreate}}, actions: <PageAction kind="add" label={words.add} onClick={() => setSearch({ mode: "new" })} />{{/if}} {{rdb}}
+      spec={{ldb}} title: words.plural, description{{#if figureTiles}}, tiles: figures{{/if}}{{#if timeBuckets}}, timeRange: { field: "{{timeBuckets.field}}", counts: mockCounts(records.rows, "{{timeBuckets.field}}"), filters: list.filters }{{/if}}{{#if hasCreate}}, actions: <PageAction kind="add" label={words.add} onClick={() => setSearch({ mode: "new" })} />{{/if}} {{rdb}}
       search={search}
       onNavigate={setSearch}
       {...presentation}
@@ -193,7 +195,7 @@ function Screen({ open{{#if hasCreate}}, mode{{/if}} }: Args) {
 {{/if}}
       renderList={(nav) => (
         <RecordList<Row>
-          {{#if figureTiles}}list={list}{{else}}rows={records.rows}{{/if}}
+          {{#if (or figureTiles timeBuckets)}}list={list}{{else}}rows={records.rows}{{/if}}
           rowId={idOf}
           columns={columns}
           filters={contract.filters<Row>(FILTERS)}
