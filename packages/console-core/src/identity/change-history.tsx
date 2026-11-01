@@ -1,6 +1,6 @@
 import { AlertTriangleIcon, HistoryIcon, LockIcon } from "lucide-react";
 import { useCan } from "@simplix-react/access/react";
-import { useEntityTranslation, useTranslation } from "@simplix-react/i18n/react";
+import { useEntityTranslation, useLocale, useTranslation } from "@simplix-react/i18n/react";
 import {
   CrudList,
   EmptyState,
@@ -18,10 +18,10 @@ import { adaptOrvalList } from "@simplix-react/ui";
 import type { OrvalListHookLike } from "@simplix-react/ui";
 
 import { EnumBadge } from "../badge";
-import { useChangeHistorySource, type ChangeHistoryEvent } from "./change-history-source";
+import { useChangeHistorySource, useOptionalChangeHistorySource, type ChangeHistoryEvent } from "./change-history-source";
 import { createContext, useContext } from "react";
 import { EllipsisText, PanelList, StrongText, useWideList, WIDE_LIST_WIDTH } from "../layout";
-import { useAppTimeZone } from "../datetime";
+import { useAppTimeZone, zoneDateTimeText } from "../datetime";
 
 import { useConsoleSubject } from "./console-product";
 
@@ -77,8 +77,16 @@ export interface ChangeHistoryScope {
  * @param scope which record to narrow to, when the type holds more than one
  * @returns the events newest first, how many there are in total, and whether the read has answered
  */
-/** Where the audit log answers, so a save can tell every history over it to read again. */
-const AUDIT_EVENT_ENTITY = "/api/v1/admin/audit-log";
+/**
+ * Where the audit log answers when the mounted reader names no address of its own, so a save can
+ * tell every history over it to read again.
+ */
+const DEFAULT_AUDIT_ADDRESS = "/api/v1/admin/audit-log";
+
+/** The prefix a save invalidates: the mounted reader's own address, else the default. */
+function useAuditAddress(): string {
+  return useOptionalChangeHistorySource()?.address ?? DEFAULT_AUDIT_ADDRESS;
+}
 
 /**
  * Tells every change history to read itself again.
@@ -95,7 +103,7 @@ const AUDIT_EVENT_ENTITY = "/api/v1/admin/audit-log";
  * @returns a function to call once the save has answered
  */
 export function useRefreshChangeHistory(): () => Promise<void> {
-  return useInvalidateEntity(AUDIT_EVENT_ENTITY);
+  return useInvalidateEntity(useAuditAddress());
 }
 
 export function useChangeHistory(
@@ -106,7 +114,7 @@ export function useChangeHistory(
   const mayReadAudit = useCan("list", useConsoleSubject("auditLog"));
   // By the audit log's own address rather than by this tab's parameters: a save writes a row that
   // every history over that entity may want, and naming the prefix takes them all.
-  const invalidateAudit = useInvalidateEntity(AUDIT_EVENT_ENTITY);
+  const invalidateAudit = useInvalidateEntity(useAuditAddress());
   const asked = enabled && mayReadAudit;
   const read = useChangeHistorySource();
   // A caller that narrows to a record has nothing to ask until it knows which record.
@@ -267,6 +275,17 @@ interface ChangeHistoryTableProps {
    * fills from its field table.
    */
   readonly fieldEnums?: Readonly<Record<string, string>>;
+  /**
+   * What a changed field is called, for a field the entity's catalogue cannot name.
+   *
+   * <p>A key-value catalogue (an installation's settings) records each change under the key that
+   * moved, and the key's label lives in the owning screen's catalogue rather than in the entity's
+   * `fields`. Return `undefined` for a field this caller does not name; the entity's catalogue,
+   * then the stored name, answer for it.
+   *
+   * @param field the changed field's name, as the record stores it
+   */
+  readonly resolveField?: (field: string) => string | undefined;
 }
 
 /** What {@link changeValueLabel} reads a value through. */
@@ -278,7 +297,17 @@ export interface ChangeValueReaders {
   readonly nothing: string;
   /** What a stored boolean reads as. */
   readonly switched: (on: boolean) => string;
+  /**
+   * What a stored instant reads as in the reader's zone, else `undefined` to show it as stored.
+   *
+   * <p>A recorder writes an instant as ISO-8601 (`2026-11-01T06:13:37.117945Z`), which no operator
+   * reads as a time; it is printed the way every other instant on the screen is.
+   */
+  readonly instant?: (value: string) => string | undefined;
 }
+
+/** An ISO-8601 instant as a recorder stores it: a date, a time, and `Z` or an offset. */
+const STORED_INSTANT = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2}(\.\d+)?)?(Z|[+-]\d{2}:\d{2})$/;
 
 /**
  * One side of a change, as a reader reads it: the enum the recorder names, else the enum the
@@ -299,6 +328,7 @@ export function changeValueLabel(
   // operator reading what somebody switched. It is not an enum, so the recorder names no
   // catalogue for it and nothing else in this pair can tell the reader which way it went.
   if (value === "true" || value === "false") return readers.switched(value === "true");
+  if (STORED_INSTANT.test(value)) return readers.instant?.(value) ?? value;
   return value;
 }
 
@@ -322,6 +352,7 @@ export function ChangeHistoryTable({
   denied,
   emptyBody,
   resolveValue,
+  resolveField,
   fieldEnums: givenFieldEnums,
 }: ChangeHistoryTableProps) {
   const providedFieldEnums = useContext(FieldEnumsContext);
@@ -344,6 +375,7 @@ export function ChangeHistoryTable({
   // The reader's own zone, never the browser's: a history read eight hours off is indistinguishable
   // from one that is right.
   const zone = useAppTimeZone();
+  const locale = useLocale();
   // 「사유」 is dropped on a narrow table and the row carries it instead. Measured on the same
   // element the table measures, because a detail panel's width is not the window's.
   const { ref, wide } = useWideList();
@@ -374,6 +406,7 @@ export function ChangeHistoryTable({
         resolveValue,
         nothing: NOTHING,
         switched: (on) => tUi(`common.${on ? "on" : "off"}`),
+        instant: (stored) => zoneDateTimeText(zone, stored, locale) ?? undefined,
       },
     );
 
@@ -457,7 +490,9 @@ export function ChangeHistoryTable({
         {({ row }) => <EllipsisText>{row.actor || NOTHING}</EllipsisText>}
       </CrudList.Column>
 
-      <CrudList.Column<ChangeHistoryEvent> field="action" header={t("history.action")} width={120}>
+      {/* As wide as the audit log's own action column: the same badges, and a narrower column cuts
+          the longer action names mid-word. */}
+      <CrudList.Column<ChangeHistoryEvent> field="action" header={t("history.action")} width={180}>
         {({ row }) => (
           <EnumBadge
             enumName="AuditAction"
@@ -489,7 +524,7 @@ export function ChangeHistoryTable({
             <Stack gap="none" minSize>
               {(row.changes ?? []).map((change, at) => (
                 <Flex key={`${row.eventId}:${at}`} gap="xs" align="start" wrap minSize>
-                  <StrongText size="caption">{fieldLabel(change.field ?? "")}</StrongText>
+                  <StrongText size="caption">{resolveField?.(change.field ?? "") ?? fieldLabel(change.field ?? "")}</StrongText>
                   {/* Wrapping rather than clipping. A pair of values can be any length and this
                       cell is 164px inside a detail panel, so a line that will not wrap is cut at
                       the cell's edge with no ellipsis and no `title` — 「현장 점검 출장 - 편집 확인

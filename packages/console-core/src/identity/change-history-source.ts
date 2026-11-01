@@ -91,10 +91,19 @@ export interface ChangeHistoryAnswer {
  * that the installation registers once, so it is the same function on every render and the rules
  * of hooks hold — {@link useChangeHistory} calls it exactly once, unconditionally.
  */
-export type ChangeHistoryReader = (
+export type ChangeHistoryReader = ((
   request: ChangeHistoryRequest,
   enabled: boolean,
-) => ChangeHistoryAnswer;
+) => ChangeHistoryAnswer) & {
+  /**
+   * The prefix of the reader's query keys (the audit endpoint's path), which a save invalidates so
+   * every history over it reads again.
+   *
+   * <p>The installation owns the audit endpoint, so the installation names it; a history whose
+   * reader names a different address than the one invalidated never refreshes after a save.
+   */
+  readonly address?: string;
+};
 
 const MISSING_SOURCE =
   "No ChangeHistorySourceProvider is mounted. The change-history panel (P-18) is a pattern and " +
@@ -116,6 +125,13 @@ export const ChangeHistorySourceProvider = ChangeHistorySourceContext.Provider;
  * @returns the installation's audit reader
  * @throws when no {@link ChangeHistorySourceProvider} is mounted
  */
+/**
+ * @returns the mounted reader, or `null` where none is mounted (a save outside any history)
+ */
+export function useOptionalChangeHistorySource(): ChangeHistoryReader | null {
+  return useContext(ChangeHistorySourceContext);
+}
+
 export function useChangeHistorySource(): ChangeHistoryReader {
   const reader = useContext(ChangeHistorySourceContext);
   if (!reader) throw new Error(MISSING_SOURCE);
