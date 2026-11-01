@@ -1,12 +1,12 @@
 /**
- * What the app's shell holds: its brand, its menu, the controls in its top bar, the account menu
- * and what wraps the routed screens. Written by hand and never regenerated; every value below is a
- * start for the app to replace.
+ * What the app's shell holds: its brand, its menu, the controls in its top bar, the account menu,
+ * what wraps the routed screens and the pages it draws in place of the window for a refused self
+ * read. Written by hand and never regenerated; every value below is a start for the app to replace.
  */
 import type { ComponentType, ReactNode } from "react";
 import { useTranslation } from "@simplix-react/i18n/react";
 import { UNBUILT } from "@simplix-react-ui-kits/console-clarity/notice";
-import { DarkModeToggle, LocalePicker, type ConsolePhoneTab, type ConsoleStatusStripProps, type ConsoleTopBarAccount, type ConsoleTopBarProps } from "@simplix-react-ui-kits/console-clarity/shell";
+import { DarkModeToggle, LocalePicker, type ConsolePhoneTab, type ConsoleStatusStripProps, type ConsoleTopBarAccount, type ConsoleTopBarProps, type ShellRefusalPages } from "@simplix-react-ui-kits/console-clarity/shell";
 
 /** One destination in the menu. */
 export interface ShellMenuEntry {
@@ -45,6 +45,11 @@ export interface ShellBlocks {
   readonly isOutsideTheConsole: (route: string) => boolean;
   /** Providers the routed screens need inside the shell. */
   readonly wrap: (shell: ReactNode) => ReactNode;
+  /**
+   * The page drawn in place of the whole shell while the server refuses the signed-in identity's own
+   * read, by the error code its envelope carries. Absent, no refusal changes the shell.
+   */
+  readonly refusalPages?: ShellRefusalPages;
 }
 
 export function useShellBlocks(): ShellBlocks {

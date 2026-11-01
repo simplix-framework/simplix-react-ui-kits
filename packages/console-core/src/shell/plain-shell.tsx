@@ -7,6 +7,7 @@ import { PeekHost } from "../peek";
 import { AuthLayout } from "./auth-layout";
 import { ConsoleWindow } from "./console-window";
 import { ConsoleContentColumn } from "./content-column";
+import { useShellRefusalScreen, type ShellRefusalPages } from "./shell-refusal";
 
 /** Props for {@link PlainConsoleShell}. */
 export interface PlainConsoleShellProps {
@@ -54,10 +55,13 @@ export function PlainConsoleShell({ route, children }: PlainConsoleShellProps) {
  * fix to one of them stops at that one.
  *
  * @param authRoutes the paths reached before there is a session
+ * @param refusalPages the pages drawn in place of the shell for a refused self read, by error code;
+ *   none by default
  * @returns the component the app's root route mounts
  */
-export function createPlainConsoleRoot(authRoutes: ReadonlySet<string>) {
+export function createPlainConsoleRoot(authRoutes: ReadonlySet<string>, refusalPages?: ShellRefusalPages) {
   return function RootLayout() {
+    const refusal = useShellRefusalScreen(refusalPages);
     // What the outlet is RENDERING, not where the router is heading. The location changes the
     // moment a navigation starts while the previous route stays on screen until the next one has
     // loaded, so reading it wrapped the console's shell around the sign-in form for as long as
@@ -67,6 +71,7 @@ export function createPlainConsoleRoot(authRoutes: ReadonlySet<string>) {
         state.matches[state.matches.length - 1]?.pathname ?? state.location.pathname,
     });
 
+    if (refusal) return refusal;
     if (authRoutes.has(pathname)) return <AuthLayout />;
 
     return (

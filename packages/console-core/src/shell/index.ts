@@ -123,4 +123,5 @@ export { RouteErrorFallback } from "./route-error";
 export { useSidebarCollapse, type SidebarCollapse } from "./sidebar-collapse";
 export { createRememberMe, type RememberMe } from "@simplix-react/auth";
 export { createSelfAccessPolicy, currentSelfAccessRefusal, useSelfAccessRefusal, type SelfAccessConfig, type SelfAccessRefusal } from "./self-access";
+export { refusalScreenFor, useShellRefusalScreen, type ShellRefusalBlocks, type ShellRefusalPages } from "./shell-refusal";
 export type { ConsoleContextValue, ConsoleSite } from "./console-context";

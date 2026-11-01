@@ -6,7 +6,8 @@
  * routed screen beside it, and the status strip under them. On a phone: one screen at a time, the
  * destinations marked as phone tabs along the bottom, and a menu sheet holding every group with
  * the window-level controls. The menu, the brand, the top-bar controls and the account menu come
- * from `./root-layout.blocks.tsx`; the screens reached without a session wear `AuthLayout`.
+ * from `./root-layout.blocks.tsx`, with the pages drawn in place of the window for a refused self
+ * read; the screens reached without a session wear `AuthLayout`.
  */
 import { Outlet, useRouterState } from "@tanstack/react-router";
 import { useState, type ReactNode } from "react";
@@ -36,7 +37,9 @@ import {
   ConsoleTopBar,
   type ConsolePhoneTab,
   ConsoleWindow,
+  type ShellRefusalBlocks,
   useConsoleOnAPhone,
+  useShellRefusalScreen,
   useSidebarCollapse,
 } from "@simplix-react-ui-kits/console-clarity/shell";
 
@@ -47,9 +50,15 @@ export function RootLayout() {
   // What the outlet renders, not where the router is heading: the previous route stays on screen
   // until the next one loads.
   const route = useRouterState({ select: (s) => s.matches[s.matches.length - 1]?.pathname ?? s.location.pathname });
-  const blocks = useShellBlocks();
-  // Read before the branch below, so the hooks run in one order on every route.
+  // Every key of the kit's blocks contract is optional here, so a blocks file written before the
+  // contract gained a key still compiles.
+  const blocks: ReturnType<typeof useShellBlocks> & ShellRefusalBlocks = useShellBlocks();
+  // Read before the branches below, so the hooks run in one order on every route.
   const onAPhone = useConsoleOnAPhone();
+  // A refusal the blocks name a page for replaces the whole shell, sign-in included: every read
+  // behind it is refused the same way.
+  const refusal = useShellRefusalScreen(blocks.refusalPages);
+  if (refusal) return refusal;
   if (blocks.isOutsideTheConsole(route)) return <AuthLayout />;
   return (
     <PeekHost>
