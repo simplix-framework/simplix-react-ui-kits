@@ -74,6 +74,8 @@ export function useStatusCounts(
 
 /** What {@link statusTiles} draws one figure tile per value from. */
 export interface StatusTilesInput {
+  /** The field's name as the filter bar labels it, where the list offers no filter of its own on it. */
+  readonly fieldLabel?: string;
   /** The field the counts are by, which is the filter each tile writes. */
   readonly field: string;
   /** The values to draw a tile for, in order; every value the enum declares, or the ones a screen leads with. */
@@ -109,7 +111,7 @@ export function statusTiles(input: StatusTilesInput): FilterSettingsTile[] {
       counted: true as const,
       ...(tone ? { tone } : {}),
       ...(basis ? { basis } : {}),
-      filter: { field: input.field, value },
+      filter: { field: input.field, value, ...(input.fieldLabel ? { fieldLabel: input.fieldLabel } : {}) },
     };
   });
 }

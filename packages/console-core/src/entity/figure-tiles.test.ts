@@ -26,7 +26,7 @@ describe("figureTiles", () => {
       { FAILED: 3 },
     );
     expect(tiles).toEqual([
-      { key: "FAILED", label: "failed", value: 3, counted: true, filter: { field: "status", value: "FAILED" } },
+      { key: "FAILED", label: "failed", value: 3, counted: true, filter: { field: "status", value: "FAILED", fieldLabel: "label:status" } },
       { key: "jobId:count", label: "Jobs", value: 12, counted: false },
       { key: "costMicros:sum", label: "label:costMicros", value: "$2.5", counted: false },
     ]);

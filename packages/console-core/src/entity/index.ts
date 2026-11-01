@@ -29,6 +29,7 @@ export { RecordList, countedChips, orderUpdates, useAnnounceOutcome } from "./re
 export type { RecordAction, RecordBulkAction, RecordColumn, RecordFilter, RecordListFeatures, RecordListMore, RecordListProps, RecordOutcome, RecordReorder, RecordVerbType } from "./record-list";
 export { isTilePressed, narrowedValues, pressedTileKeys, pressedValue, pressedValues, tileFilterKey, tileFilterValues } from "./tile-filter";
 export type { TileFilter, TileValueFilter, TileValuesFilter } from "./tile-filter";
+export { missingTileFacets, TileFacetsProvider, tileFacets, useTileFacets, type TileFacet } from "./tile-facets";
 export { aggregateValue, statusCounts, statusTiles, useStatusCounts } from "./status-counts";
 export { figureTiles, useFigureTiles } from "./figure-tiles";
 export type { FigureQuery, FigureTilesSpec, FigureWords } from "./figure-tiles";

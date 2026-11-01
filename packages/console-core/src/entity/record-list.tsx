@@ -29,6 +29,7 @@ import { recordListStyle, recordListToolbarStyle } from "./record-list.style";
 import { cardLayout, isBadge, isEmpty, keptColumns, packedLines, wideColumns, type CardPlace } from "./record-card";
 import { RecordValueView, type RecordValue } from "./record-value";
 import { enumValueOf } from "./record-contract";
+import { missingTileFacets, useTileFacets } from "./tile-facets";
 
 /** One column of a {@link RecordList}. */
 export interface RecordColumn<Row> {
@@ -563,7 +564,19 @@ export function RecordList<Row>({
   // detail panel keeps the count, the chips, the search and the filter on one row instead of wrapping
   // at the search's full width. Below the toolbar's fold the count keeps the first row and the search
   // takes the whole second row with its filter and column controls.
-  const filtered = on("filters") && filters.length > 0;
+  // A field the page's figure tiles narrow and this list offers no way to narrow by gets a faceted
+  // filter of its tiles' values, so a pressed tile shows in the bar as an active value and clears
+  // there. A chip row on the field stays the one place it is chosen.
+  const tileFacets = missingTileFacets(useTileFacets(), {
+    filterFields: filters.map((filter) => filter.field),
+    chipField: chips?.field,
+    narrowingKey: narrowing?.field,
+  });
+  const filterDefs: FilterDef[] = [
+    ...filters.map(filterDef),
+    ...tileFacets.map((facet): FilterDef => ({ type: "faceted", field: facet.field, label: facet.label, options: [...facet.options], multiSelect: true })),
+  ];
+  const filtered = on("filters") && filterDefs.length > 0;
   const search = on("search") ? (
     <div
       data-flip-key="search"
@@ -596,7 +609,7 @@ export function RecordList<Row>({
     <CrudList>
       {filtered ? (
         <CrudList.FilterBar
-          filters={filters.map(filterDef)}
+          filters={filterDefs}
           state={list.filters}
           count={counted ? list.pagination.total : undefined}
           leading={

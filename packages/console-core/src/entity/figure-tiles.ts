@@ -41,7 +41,7 @@ export function figureTiles(spec: FigureTilesSpec, words: FigureWords, counts: R
   const tiles: SettingsTile[] = [];
   if (spec.status) {
     const { enumName, field, values } = spec.status;
-    tiles.push(...statusTiles({ field, values, counts, label: (value) => words.enumLabel(enumName, value) }));
+    tiles.push(...statusTiles({ field, values, counts, label: (value) => words.enumLabel(enumName, value), fieldLabel: words.fieldLabel(field) }));
   }
   for (const figure of spec.aggregates?.figures ?? []) {
     const raw = aggregateValue(spec.aggregates?.query.data, figure.field.name, figure.op);

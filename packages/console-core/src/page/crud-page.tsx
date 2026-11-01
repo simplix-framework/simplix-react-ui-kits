@@ -5,6 +5,7 @@ import { PHONE_WINDOW } from "../layout/window-size";
 
 import type { TileFilters } from "../layout";
 
+import { TileFacetsProvider, tileFacets } from "../entity/tile-facets";
 import { ConsolePage } from "./console-page";
 import type { DetailPresentationSwitchProps } from "./detail-presentation-switch";
 import { useDetailWidthLimits, type DetailWidth } from "./detail-width";
@@ -157,9 +158,11 @@ export function CrudPage({
     </CrudPresentationContext.Provider>
   );
 
+  // The list learns which fields the figure row narrows, so its filter bar can show a pressed tile.
+  const listed = <TileFacetsProvider facets={tileFacets(spec.tiles)}>{renderList(handed)}</TileFacetsProvider>;
   const body =
     shown === "page" ? (
-      nav.view === "list" ? renderList(handed) : record
+      nav.view === "list" ? listed : record
     ) : (
       <ListDetail
         variant={shown}
@@ -171,7 +174,7 @@ export function CrudPage({
         onDetailWidthReset={detailWidths ? () => detailWidths.onWidthReset(shown) : undefined}
         {...(listWidth ? { listWidth } : { detailWidth: detailWidths?.widths[shown] ?? widthLimits.width })}
       >
-        <ListDetail.List>{renderList(handed)}</ListDetail.List>
+        <ListDetail.List>{listed}</ListDetail.List>
         <ListDetail.Detail>{record}</ListDetail.Detail>
       </ListDetail>
     );

@@ -9,6 +9,8 @@ import { SearchOperator } from "@simplix-react/ui";
 export interface TileValueFilter {
   readonly field: string;
   readonly value: string;
+  /** The field's name as the filter bar labels it, where the list offers no filter of its own on it. */
+  readonly fieldLabel?: string;
 }
 
 /**
