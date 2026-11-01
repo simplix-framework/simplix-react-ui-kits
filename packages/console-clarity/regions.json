@@ -23,7 +23,8 @@
         "console-tile-chip",
         "console-tile-handle",
         "console-tile-strip",
-        "console-tile-press"
+        "console-tile-press",
+        "link"
       ]
     },
     "notices": {

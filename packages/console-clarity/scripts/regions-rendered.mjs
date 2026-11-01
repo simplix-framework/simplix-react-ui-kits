@@ -112,7 +112,10 @@ if (process.argv.includes("--selftest")) {
   const vacuous = compare({ missing: "main" }, "list-detail");
   const rampHit = compareTokens([{ selector: "rect", attr: "fill", ramp: ["--muted", "--primary"], measured: "#f1f5f9", expected: "#eef2f2,#0f766e", outside: ["#f1f5f9"] }]);
   const rampMiss = compareTokens([{ selector: "rect", attr: "fill", ramp: ["--muted", "--primary"], measured: "#eef2f2", expected: "#eef2f2,#0f766e", outside: [] }]);
-  const ok = rampHit.length === 1 && rampMiss.length === 0 && vacuous.length === 1 && tokHit.length === 1 && tokMiss.length === 0 && miss.length === 0 && noStrip.length === 1 && empty.length === 0 && hit.length === 4 && compare(good, "system").length === 4;
-  console.log(ok ? "regions-rendered selftest: hit 8, miss 0" : `regions-rendered selftest FAILED\nhit: ${hit.join("\n")}\nmiss: ${miss.join("\n")}`);
+  // A figure that counts the rows of another screen opens it: a link is a control of the figures region, a bare button is not.
+  const linkTile = compare({ figures: { kinds: ["console-tile-chip", "link"], perCard: 0 }, rows: 0 }, "dashboard");
+  const buttonTile = compare({ figures: { kinds: ["button"], perCard: 0 }, rows: 0 }, "dashboard");
+  const ok = linkTile.length === 0 && buttonTile.length === 1 && rampHit.length === 1 && rampMiss.length === 0 && vacuous.length === 1 && tokHit.length === 1 && tokMiss.length === 0 && miss.length === 0 && noStrip.length === 1 && empty.length === 0 && hit.length === 4 && compare(good, "system").length === 4;
+  console.log(ok ? "regions-rendered selftest: hit 9, miss 0" : `regions-rendered selftest FAILED\nhit: ${hit.join("\n")}\nmiss: ${miss.join("\n")}`);
   process.exit(ok ? 0 : 1);
 }
