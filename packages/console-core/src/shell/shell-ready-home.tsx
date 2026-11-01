@@ -1,5 +1,5 @@
 import { useTranslation } from "@simplix-react/i18n/react";
-import { Card, Stack, Text, usePageHeader } from "@simplix-react/ui";
+import { Text, usePageHeader } from "@simplix-react/ui";
 
 /**
  * Where a signed-in operator lands in an app whose own screens are not built yet.
@@ -10,16 +10,13 @@ import { Card, Stack, Text, usePageHeader } from "@simplix-react/ui";
  */
 export function ShellReadyHome() {
   const { t } = useTranslation("common");
-  usePageHeader({ title: t("app.title") });
+  // The app's purpose is the page's lede, drawn under the title the way every list draws its own;
+  // a card holding it reads as a standing message the reader cannot put away (invariant #73).
+  usePageHeader({ title: t("app.title"), description: t("home.ready") });
 
   return (
-    <Card>
-      <Stack gap="sm">
-        <Text>{t("home.ready")}</Text>
-        <Text size="sm" tone="muted">
-          {t("home.screensPending")}
-        </Text>
-      </Stack>
-    </Card>
+    <Text size="sm" tone="muted">
+      {t("home.screensPending")}
+    </Text>
   );
 }

@@ -516,7 +516,9 @@ export function RecordDetail({
         presentationSwitch,
       )}
       onClose={onClose}
-      auditData={audit}
+      // The audit line belongs to the record, so it sits under the first tab only: under a tab
+      // listing other rows it reads as those rows' stamps (frontend invariant #72).
+      auditData={tabs && tabs.length > 1 && openTab !== tabs[0]?.key ? undefined : audit}
       displayZone="Asia/Seoul"
       footer={
         <CrudDetail.DefaultActions {...(onBack ? { onBack } : { onClose })}>
