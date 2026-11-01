@@ -1,6 +1,6 @@
 export { ConsolePage } from "./console-page";
 export { validateConsoleSearch } from "./console-search";
-export { CrudPage, useCrudPresentation } from "./crud-page";
+export { CrudPage, raisedNotices, useCrudPresentation } from "./crud-page";
 export { REGULAR_DETAIL_WIDTH, detailWidthFor, detailWidthLimits, detailWidthPx, useDetailWidthLimits, type DetailWidth, type DetailWidthLimits, type ResizablePresentation } from "./detail-width";
 export { DETAIL_WIDTH_STORAGE_KEY, forgetRememberedWidths, persistWidths, readRememberedWidths, useDetailWidthMemory, withWidth, withoutWidth, writeRememberedWidths, type DetailWidthMemoryOptions, type DetailWidths, type DetailWidthSetting } from "./detail-width-memory";
 export { RecordPage } from "./record-page";
@@ -13,7 +13,7 @@ export type { ExplanationCardProps } from "./explanation-card";
 export { ActionDialog } from "./action-dialog";
 export type { ActionDialogProps, ActionStep } from "./action-dialog";
 export type { PageActionKind, PageActionProps } from "./page-action";
-export type { CrudPresentation, CrudPageNavigation, CrudPagePresentation, CrudPageProps } from "./crud-page";
+export type { CrudPresentation, CrudPageNavigation, CrudPageNotice, CrudPagePresentation, CrudPageProps } from "./crud-page";
 export type { CrudPageBlocks } from "./crud-page-blocks";
 export { PageBackProvider, usePageBackLink } from "./page-back";
 export type { PageBackTarget } from "./page-back";

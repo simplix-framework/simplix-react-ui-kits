@@ -10,13 +10,13 @@ import type { DismissibleNoticeKind, NoticeCardAction } from "../notice";
  * <p>An override supplies the node the spec would otherwise have produced. `body` is the region a
  * tabless page fills; a tabbed page overrides a tab's own `body` instead.
  */
-export type PageSlot = "actions" | "tiles" | "notice" | "timeRange" | "tabStrip" | "body";
+export type PageSlot = "actions" | "tiles" | "notice" | "cards" | "timeRange" | "tabStrip" | "body";
 
 /**
  * The seams between the parts, named so a page can add something the pattern has no place for.
  *
- * <p>The order the pattern draws in is fixed — header · tiles · notice · timeRange · tabs · body —
- * and a seam is a gap between two of those, never a re-ordering of them.
+ * <p>The order the pattern draws in is fixed (header · tiles · notice · cards · timeRange · tabs ·
+ * body), and a seam is a gap between two of those, never a re-ordering of them.
  */
 export type PageSeam =
   | "beforeTiles"
@@ -273,6 +273,12 @@ export interface PageSpec {
   readonly notice?:
     | PageNoticeSpec
     | readonly (PageNoticeSpec | false | null | undefined | "")[];
+  /**
+   * The status cards the list below is cut by (a `StatusCardStrip`), drawn under the notices and
+   * above the window, the tabs and the list's chip row: a figure between the chips and the rows
+   * would read as counting the rows under it (frontend invariant #63).
+   */
+  readonly cards?: ReactNode;
   /** The window picker a history screen narrows by. */
   readonly timeRange?: ReactNode;
   /**

@@ -11,5 +11,12 @@ import type { {{EntityPascal}}DetailProps, {{EntityPascal}}ListProps, {{EntityPa
 export type PageBlocks = CrudPageBlocks<{{EntityPascal}}Row, {{EntityPascal}}ListProps, {{EntityPascal}}DetailProps, ReturnType<typeof use{{EntityPascal}}List>>;
 
 export function usePageBlocks(_page: { readonly search: ConsoleSearch; readonly onNavigate: (search: ConsoleSearch) => void }): PageBlocks {
+  // `spec.description`: the line under the title. Absent, it is the entity's description from
+  // SimpliX Meta, empty until the backend states one. State one or two sentences where the screen's
+  // task is rare or an action on it has a consequence to understand first; state `""` on a screen
+  // read every day.
+  // `cards`: the figures the list is cut by, `(list) => StatusCard[]`, each with the `filter` its
+  // chip writes. `notices`: what the list's state raises, `(list) => CrudPageNotice[]`, each with
+  // its `when`. Both are drawn above the tabs and the chip row.
   return {};
 }

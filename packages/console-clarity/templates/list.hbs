@@ -30,7 +30,11 @@ export function use{{EntityPascal}}List(params?: Readonly<Record<string, unknown
 {{/if}}
     stateMode: "server",
     defaultPageSize: 20,
-    defaultSort: { field: "{{#if orderField}}{{orderField}}{{else}}{{rowIdField}}{{/if}}", direction: "{{#if orderField}}asc{{else}}desc{{/if}}" },
+{{#if orderField}}
+    defaultSort: { field: "{{orderField}}", direction: "asc" },
+{{else if defaultSort}}
+    defaultSort: { field: "{{defaultSort.field}}", direction: "{{defaultSort.direction}}" },
+{{/if}}
     filterMode: "immediate",
   });
 }

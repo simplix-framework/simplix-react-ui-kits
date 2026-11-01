@@ -89,11 +89,17 @@ export function {{EntityPascal}}CrudPage({ search, onNavigate }: {{EntityPascal}
   return (
     <>
       <CrudPage
-        spec={{ldb}} title: words.plural, description: words.description, ...blocks.spec, actions: listActions ? <>{ownActions}{listActions}</> : ownActions {{rdb}}
+        // The header's line is the entity's description unless the blocks state one; `""` states none.
+        spec={{ldb}} title: words.plural, ...blocks.spec, description: blocks.spec?.description ?? words.description, actions: listActions ? <>{ownActions}{listActions}</> : ownActions {{rdb}}
         search={search}
         onNavigate={onNavigate}
         {...presentation}
         detailWidth={blocks.detailWidth}
+        // The figures the list is cut by and the notices its state raises, both read from the list.
+        cards={blocks.cards?.(list)}
+        cardFilters={list.filters}
+        cardsLoading={blocks.cardsLoading}
+        notices={blocks.notices?.(list)}
         renderList={(nav) => (
           <{{EntityPascal}}List
             list={list}

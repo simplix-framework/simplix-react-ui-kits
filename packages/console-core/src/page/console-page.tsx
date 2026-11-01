@@ -226,6 +226,7 @@ export function ConsolePage({
       {seam("afterTiles")}
       {notice}
       {seam("afterNotice")}
+      {at("cards", spec.cards)}
       {at("timeRange", spec.timeRange)}
       {helps.map((one) => {
         const field = one.field ?? "help";

@@ -3,11 +3,31 @@ import { ListDetail, useCrudNavigation, useCrudPageState, useMediaQuery, useUIDe
 
 import { PHONE_WINDOW } from "../layout/window-size";
 
+import { StatusCardStrip, type StatusCard, type StatusCardStripProps } from "../entity/status-card-strip";
+
 import { ConsolePage } from "./console-page";
 import type { DetailPresentationSwitchProps } from "./detail-presentation-switch";
 import { useDetailWidthLimits, type DetailWidth } from "./detail-width";
 import type { DetailWidthSetting } from "./detail-width-memory";
-import type { ConsoleSearch, PageSpec } from "./types";
+import type { ConsoleSearch, PageNoticeSpec, PageSpec } from "./types";
+
+/**
+ * A page notice raised by a state: drawn while `when` holds and not at all otherwise, so a screen
+ * declares every notice it can raise in one list instead of building the list conditionally.
+ */
+export interface CrudPageNotice extends PageNoticeSpec {
+  /** Whether the state the notice is about holds now. A count still being read is `false`. */
+  readonly when: boolean;
+}
+
+/**
+ * The notices whose state holds, in their declared order.
+ *
+ * @param notices every notice the page can raise
+ */
+export function raisedNotices(notices: readonly CrudPageNotice[] | undefined): PageNoticeSpec[] {
+  return (notices ?? []).filter((one) => one.when).map(({ when: _when, ...notice }) => notice);
+}
 
 /** Where a {@link CrudPage} opens the record a reader picked. */
 export type CrudPagePresentation = "panel" | "drawer" | "dialog" | "page";
@@ -71,6 +91,14 @@ export interface CrudPageProps {
    * {@link useDetailPresentationSetting} hands one that the browser remembers when the reader asks.
    */
   readonly detailWidths?: DetailWidthSetting;
+  /** The figures the list is cut by, drawn under the notices and above the tabs and the chips. */
+  readonly cards?: readonly StatusCard[];
+  /** The list's filter state the cards narrow: the state its chip row reads. */
+  readonly cardFilters?: StatusCardStripProps["filters"];
+  /** Whether the cards' figures are still being read. */
+  readonly cardsLoading?: boolean;
+  /** Notices raised by the list's state, drawn after the spec's own notices. */
+  readonly notices?: readonly CrudPageNotice[];
   readonly renderList: (nav: CrudPageNavigation) => ReactNode;
   readonly renderDetail: (id: string, nav: CrudPageNavigation) => ReactNode;
   readonly renderNew?: (nav: CrudPageNavigation) => ReactNode;
@@ -93,6 +121,10 @@ export function CrudPage({
   presentationSwitch,
   listWidth,
   detailWidths,
+  cards,
+  cardFilters,
+  cardsLoading,
+  notices,
   renderList,
   renderDetail,
   renderNew,
@@ -153,6 +185,13 @@ export function CrudPage({
   // A record opened in the list's place is the page: its own identifier is the heading and the way
   // back names the list, so the list's title, figures, tabs and create action are not drawn over it.
   const recordAsPage = shown === "page" && nav.view === "detail";
-  const pageSpec = recordAsPage ? { title: "", layout: spec.layout, width: spec.width } : spec;
+  const raised = raisedNotices(notices);
+  const declared = spec.notice === undefined ? [] : Array.isArray(spec.notice) ? spec.notice : [spec.notice];
+  const listSpec: Omit<PageSpec, "body"> = {
+    ...spec,
+    notice: raised.length > 0 ? [...declared, ...raised] : spec.notice,
+    cards: cards && cards.length > 0 ? <StatusCardStrip cards={cards} filters={cardFilters} loading={cardsLoading} /> : spec.cards,
+  };
+  const pageSpec = recordAsPage ? { title: "", layout: spec.layout, width: spec.width } : listSpec;
   return <ConsolePage spec={{ ...pageSpec, body }} search={search} onNavigate={onNavigate} />;
 }

@@ -382,6 +382,15 @@
   [data-slot="console-record-list"][data-nested="false"][data-s-console-record-list] {
     @apply shrink-0 overflow-clip border bg-card rounded-[var(--radius-surface)] border-[var(--border)];
   }
+  [data-slot="status-card"][data-slot][data-s-status-card] {
+    @apply h-full rounded-[var(--radius-surface)] text-left transition-shadow duration-[var(--dur-fast)];
+  }
+  [data-slot="status-card"][data-pressed="true"][data-s-status-card] {
+    @apply ring-2 ring-ring;
+  }
+  [data-slot="status-card"][data-pressable="true"][data-s-status-card] {
+    @apply cursor-pointer;
+  }
   [data-slot="console-error-glyph"][data-kind="server"][data-s-console-error-glyph] {
     @apply text-red-500;
   }
@@ -1595,6 +1604,9 @@
   }
   :where([data-slot="console-record-list"][data-nested="false"])[data-s-console-record-list] {
     @apply [&>[data-testid=crud-list]]:gap-0;
+  }
+  :where([data-slot="status-card"])[data-s-status-card] {
+    @apply [&_[data-slot=stat-card]]:h-full [&_[data-slot=stat-card]]:min-h-0 focus-visible:outline-none focus-visible:shadow-[var(--focus-halo)];
   }
   :where([data-slot="console-admin-destination-link"])[data-s-console-admin-destination-link] {
     @apply hover:underline;

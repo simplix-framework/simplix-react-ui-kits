@@ -60,7 +60,8 @@
     "reorder": "Reorder",
     "reorderDone": "Done",
     "more": "Show more",
-    "loadingMore": "Loading…"
+    "loadingMore": "Loading…",
+    "chipCount": "{{label}} · {{count}}"
   },
   "stageGate": {
     "title": "Left before {{command}}",

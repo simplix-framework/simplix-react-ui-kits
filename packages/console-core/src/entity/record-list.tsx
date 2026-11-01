@@ -202,6 +202,11 @@ export interface RecordListProps<Row> {
   readonly chips?: {
     readonly field: keyof Row & string;
     readonly options: readonly { readonly value: string; readonly label: string }[];
+    /**
+     * How many rows each option holds, drawn after its label (「Failed · 12」). An option the
+     * record leaves out draws its bare label; `useStatusCounts` gives one with every value filled.
+     */
+    readonly counts?: Readonly<Record<string, number>>;
   };
   /**
    * Group headings by one field, in this order. An enum field groups by its constant, whatever
@@ -408,6 +413,24 @@ const TOOLBAR_ITEMS =
  */
 const NO_ROWS: readonly never[] = [];
 
+/**
+ * The chip options with each option's count after its label, where the chips carry counts.
+ *
+ * @param chips the chip row
+ * @param format how a label and its count are joined, in the reader's language
+ * @returns the options the chip row draws
+ */
+export function countedChips(
+  chips: { readonly options: readonly { readonly value: string; readonly label: string }[]; readonly counts?: Readonly<Record<string, number>> },
+  format: (label: string, count: number) => string,
+): { value: string; label: string }[] {
+  const { counts } = chips;
+  return chips.options.map((option) => {
+    const count = counts?.[option.value];
+    return { value: option.value, label: count === undefined ? option.label : format(option.label, count) };
+  });
+}
+
 export function RecordList<Row>({
   rows = NO_ROWS,
   list: serverList,
@@ -510,7 +533,7 @@ export function RecordList<Row>({
 
   const chipRow =
     on("chips") && chips ? (
-      <CrudList.ChipFilter field={`${chips.field}.${SearchOperator.IN}`} state={list.filters} options={[...chips.options]} />
+      <CrudList.ChipFilter field={`${chips.field}.${SearchOperator.IN}`} state={list.filters} options={countedChips(chips, (label, count) => t("recordList.chipCount", { label, count }))} />
     ) : null;
   // Beside a filter control the search starts narrow and grows to its full width, so a list beside a
   // detail panel keeps the count, the chips, the search and the filter on one row instead of wrapping

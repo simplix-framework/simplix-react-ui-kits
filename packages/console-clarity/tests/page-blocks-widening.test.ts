@@ -37,6 +37,7 @@ const widgetsDir = join(virtualRoot, "modules", "mymod", "src", "widgets", "prod
 
 const widgetsStub = `
 import type { ReactNode } from "react";
+import type { CrudListFilters } from "@simplix-react/ui";
 import type { RecordAction } from "@simplix-react-ui-kits/console-clarity/entity";
 
 export interface ProductRow { readonly productId: string; readonly name?: string }
@@ -59,7 +60,7 @@ export interface ProductFormProps {
   readonly onSuccess?: () => void;
   readonly onCancel?: () => void;
 }
-export declare function useProductList(params?: Readonly<Record<string, unknown>>): { readonly rows: readonly ProductRow[] };
+export declare function useProductList(params?: Readonly<Record<string, unknown>>): { readonly rows: readonly ProductRow[]; readonly filters: CrudListFilters };
 export declare function ProductList(props: ProductListProps): ReactNode;
 export declare function ProductDetail(props: ProductDetailProps): ReactNode;
 export declare function ProductForm(props: ProductFormProps): ReactNode;
@@ -138,5 +139,45 @@ describe("the generated CRUD page against a blocks file written before a key exi
     const messages = check(blocksBeforeRowGates, unwidened);
     expect(messages.some((line) => line.includes("editDisabled"))).toBe(true);
     expect(messages.some((line) => line.includes("deleteDisabled"))).toBe(true);
+  });
+});
+
+/** A blocks file that raises a notice and draws cards from the list the page hands it. */
+const blocksWithCards = `
+import type { ConsoleSearch, CrudPageBlocks } from "@simplix-react-ui-kits/console-clarity/page";
+import type { ProductDetailProps, ProductListProps, ProductRow, useProductList } from "../../widgets/product";
+
+export type PageBlocks = CrudPageBlocks<ProductRow, ProductListProps, ProductDetailProps, ReturnType<typeof useProductList>>;
+
+export function usePageBlocks(_page: { readonly search: ConsoleSearch; readonly onNavigate: (search: ConsoleSearch) => void }): PageBlocks {
+  return {
+    spec: { description: "" },
+    cards: (list) => [{ key: "all", label: "All", value: list.rows.length, filter: { field: "status", value: "ACTIVE" } }],
+    notices: (list) => [{ key: "empty", kind: "info", title: "Nothing here", when: list.rows.length === 0 }],
+  };
+}
+`;
+
+describe("the generated CRUD page's cards and notices", () => {
+  it("hands the list to the blocks' cards and notices, and the list's filters to the cards", () => {
+    const text = render("crud-page.hbs", context);
+    expect(text).toContain("cards={blocks.cards?.(list)}");
+    expect(text).toContain("cardFilters={list.filters}");
+    expect(text).toContain("notices={blocks.notices?.(list)}");
+  });
+
+  it("keeps the entity's description unless the blocks state one", () => {
+    expect(render("crud-page.hbs", context)).toContain("description: blocks.spec?.description ?? words.description");
+  });
+
+  it("type-checks against a blocks file that draws cards and raises notices", () => {
+    expect(check(blocksWithCards)).toEqual([]);
+  });
+
+  it("names the description, cards and notices in the blocks stub", () => {
+    const stub = render("page.blocks.hbs", context);
+    expect(stub).toContain("`spec.description`");
+    expect(stub).toContain("`cards`");
+    expect(stub).toContain("`notices`");
   });
 });
