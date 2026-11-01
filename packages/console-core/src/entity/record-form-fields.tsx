@@ -188,6 +188,8 @@ function FieldBody({ field, value, onChange, error, errorsShown, serverError }: 
       return <ChoiceDetailField field={field} common={common} error={error} value={(value ?? { choice: null }) as ChoiceDetailValue} onChange={onChange} />;
     case "repeat":
       return <RepeatField field={field} common={common} errorsShown={Boolean(errorsShown)} value={(value as readonly Record<string, unknown>[]) ?? []} onChange={onChange} />;
+    case "password":
+      return <FormFields.TextField {...common} type="password" value={(value as string) ?? ""} onChange={onChange} placeholder={field.placeholder} />;
     default:
       return <FormFields.TextField {...common} type={field.kind === "email" ? "email" : "text"} value={(value as string) ?? ""} onChange={onChange} placeholder={field.placeholder} />;
   }

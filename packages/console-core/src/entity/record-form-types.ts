@@ -98,6 +98,8 @@ export interface RangeValue {
 /** One field of a {@link RecordForm} or a {@link SettingsForm}, declared rather than drawn. */
 export type RecordFormField =
   | ({ readonly kind: "text" | "email" | "textarea"; readonly value?: string } & FieldCommon)
+  /** A value written and never read back: drawn as a password input, opened empty every time. */
+  | ({ readonly kind: "password"; readonly value?: string } & FieldCommon)
   /** One text per content language, edited a language at a time; filled when any language is. */
   /**
    * `languageSelectorPlacement` overrides the installation's choice (`UIProvider`

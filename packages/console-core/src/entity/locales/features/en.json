@@ -50,7 +50,8 @@
     "signAgain": "Sign again",
     "fillBeforeSubmit": "Fill in {{count, number}} required field(s) first",
     "otpDigit": "Digit {{index, number}} of {{count, number}}",
-    "refused": "The server did not accept this. Change what it names and save again."
+    "refused": "The server did not accept this. Change what it names and save again.",
+    "secretKeep": "Leave blank to keep the stored value"
   },
   "recordList": {
     "selected": "selected",

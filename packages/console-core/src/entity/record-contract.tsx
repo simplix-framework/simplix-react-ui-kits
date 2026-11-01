@@ -35,7 +35,9 @@ export type ContractFieldKind =
   | "money"
   | "reference"
   /** A text written once per content language (`<field>I18n`), whose plain sibling the server reads. */
-  | "i18nText";
+  | "i18nText"
+  /** A value the client writes and no response returns (SimpliX Meta's `format: "secret"`), such as a provider key. */
+  | "secret";
 
 export interface ContractField {
   readonly name: string;
@@ -117,6 +119,7 @@ export const CONTRACT_COLUMN_SIZE: Readonly<Record<ContractFieldKind, { readonly
   money: { width: 128, align: "end" },
   reference: { minWidth: 160 },
   i18nText: { minWidth: 140 },
+  secret: { minWidth: 140 },
 };
 
 /** A searchable field as the generator writes it, which {@link useRecordContract}'s `filters` turns into a list filter. */
@@ -191,6 +194,23 @@ export function moneyStored(field: Pick<ContractField, "scale">, amount: unknown
   if (amount === null || amount === undefined || amount === "") return null;
   const value = typeof amount === "number" ? amount : Number(amount);
   return Number.isFinite(value) ? Math.round(value * 10 ** (field.scale ?? 0)) : null;
+}
+
+/**
+ * A `secret` field's input: a password input that opens empty, so a stored value never reaches the
+ * screen. On an existing record it is optional and says that a blank entry keeps the stored value.
+ */
+export function secretFormField(
+  common: { readonly key: string; readonly label: string; readonly required?: boolean },
+  editing: boolean,
+  keepText: string,
+): RecordFormField {
+  return { ...common, kind: "password", value: "", ...(editing ? { required: false, placeholder: keepText } : {}) };
+}
+
+/** Whether a `secret` entry is blank, which a request leaves out so the stored value stays. */
+export function isBlankSecret(value: unknown): boolean {
+  return value === undefined || value === null || (typeof value === "string" && value.trim() === "");
 }
 
 /**
@@ -321,6 +341,10 @@ export function useRecordContract(entity: string, overrides: ContractOverrides =
           const map = raw && typeof raw === "object" ? (raw as I18nMap) : undefined;
           return { ...common, kind: "i18nText", multiline: field.multiline === true, languageSelectorPlacement: field.languageSelectorPlacement, value: seedI18nDefaults(map, typeof plain === "string" ? plain : undefined, languages) };
         }
+        // Opened empty every time, so a stored value is never put on the screen; on an existing
+        // record a blank entry keeps it, which the placeholder says.
+        case "secret":
+          return secretFormField(common, record !== undefined, t("recordForm.secretKeep"));
         case "longText":
           return { ...common, kind: "textarea", value: raw == null ? "" : String(raw) };
         case "email":
@@ -329,7 +353,7 @@ export function useRecordContract(entity: string, overrides: ContractOverrides =
           return { ...common, kind: "text", value: raw == null ? "" : String(raw) };
       }
     },
-    [enumLabel, fieldLabel, languages, searches, zone],
+    [enumLabel, fieldLabel, languages, searches, t, zone],
   );
 
   /**
@@ -342,6 +366,7 @@ export function useRecordContract(entity: string, overrides: ContractOverrides =
       const body: Record<string, unknown> = { ...values };
       for (const field of fields) {
         if (field.kind === "money" && field.name in values) body[field.name] = moneyStored(field, values[field.name]);
+        if (field.kind === "secret" && isBlankSecret(values[field.name])) delete body[field.name];
         if (field.kind !== "i18nText" || !field.plainField) continue;
         const map = values[field.name];
         body[field.plainField] = i18nBaseValue(map && typeof map === "object" ? (map as I18nMap) : undefined, languages);
