@@ -3,7 +3,8 @@
  *
  * Laid down from the console-clarity kit's `crud-page.hbs`. This file is the generator's and is
  * rewritten on every run while its `@simplix-render` fingerprint matches; what this screen does
- * differently goes in `./page.blocks.tsx`, which the generator writes once and never again.
+ * differently goes inside the keys of `./page.blocks.tsx`, which is tracked the same way and merged
+ * three ways when its template changes.
  */
 import { CrudPage, {{#if hasCreate}}PageAction, {{/if}}type ConsoleSearch, type CrudPageBlocks, useDetailPresentationSetting } from "@simplix-react-ui-kits/console-clarity/page";
 import { {{#if (or hasCreate hasUpdate hasDelete)}}useAllowed, {{/if}}{{#if hasDelete}}{{#if displayNameField}}useRecordContract, {{/if}}{{/if}}{{#if figureTiles}}useFigureTiles, {{/if}}useScreenWords{{#if hasDelete}}{{#if displayNameField}}, type ContractField{{/if}}{{/if}} } from "@simplix-react-ui-kits/console-clarity/entity";
