@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 
-import { actionsNeedLabels, orderUpdates } from "./record-list";
+import { isValidElement } from "react";
+
+import { actionGlyph, actionsNeedLabels, orderUpdates, type RecordVerbType } from "./record-list";
 
 describe("actionsNeedLabels", () => {
   it("asks for labels when two actions share a type, so they never share one icon", () => {
@@ -17,11 +19,30 @@ describe("actionsNeedLabels", () => {
   });
 
   it("keeps the kit's own verbs in the icon strip, each with its glyph", () => {
-    expect(actionsNeedLabels([{ type: "view" }, { type: "retry" }, { type: "reset" }, { type: "test" }])).toBe(false);
+    expect(actionsNeedLabels([{ type: "view" }, { type: "retry" }, { type: "reset" }, { type: "test" }, { type: "reprocess" }])).toBe(false);
   });
 
   it("still labels two actions that both draw their type's icon", () => {
     expect(actionsNeedLabels([{ type: "view" }, { type: "view" }, { type: "view", icon: "users" }])).toBe(true);
+  });
+});
+
+describe("actionGlyph", () => {
+  const verbs: RecordVerbType[] = ["retry", "reset", "test", "reprocess"];
+
+  it("draws every kit verb through the view type with a glyph of its own", () => {
+    const glyphs = verbs.map((verb) => actionGlyph({ type: verb }));
+    for (const glyph of glyphs) {
+      expect(glyph.type).toBe("view");
+      expect(isValidElement(glyph.icon)).toBe(true);
+    }
+    const components = glyphs.map((glyph) => (isValidElement(glyph.icon) ? glyph.icon.type : null));
+    expect(new Set(components).size).toBe(verbs.length);
+  });
+
+  it("lets an icon the screen passes win over the verb's glyph, and leaves a framework type alone", () => {
+    expect(actionGlyph({ type: "reprocess", icon: "own" })).toEqual({ type: "view", icon: "own" });
+    expect(actionGlyph({ type: "edit" })).toEqual({ type: "edit", icon: undefined });
   });
 });
 

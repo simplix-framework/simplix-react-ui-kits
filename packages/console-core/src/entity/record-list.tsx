@@ -21,7 +21,7 @@ import {
 } from "@simplix-react/ui";
 import { partAttributes, slotAttributes } from "@simplix-react/ui/design";
 import { BulkActionBar } from "@simplix-react/ui/interaction";
-import { FlaskConical, RotateCcw, TimerReset } from "lucide-react";
+import { FlaskConical, RefreshCw, RotateCcw, TimerReset } from "lucide-react";
 
 import { useReflowFlip } from "../layout/use-reflow-flip";
 import { PACKAGE_NAMESPACE } from "./locales";
@@ -104,12 +104,13 @@ export type RecordFilter<Row> =
  * The verbs the kit names beyond the framework's action types, each with its own glyph, so a screen
  * never borrows an unrelated type (`duplicate` for a retry) to reach the icon strip.
  */
-export type RecordVerbType = "retry" | "reset" | "test";
+export type RecordVerbType = "retry" | "reset" | "test" | "reprocess";
 
 const VERB_GLYPHS: Record<RecordVerbType, { readonly type: ActionType; readonly icon: ReactNode }> = {
   retry: { type: "view", icon: <RotateCcw /> },
   reset: { type: "view", icon: <TimerReset /> },
   test: { type: "view", icon: <FlaskConical /> },
+  reprocess: { type: "view", icon: <RefreshCw /> },
 };
 
 /** A row action, in the row's action cell. */
