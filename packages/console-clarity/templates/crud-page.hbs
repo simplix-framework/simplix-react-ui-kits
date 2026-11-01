@@ -66,8 +66,7 @@ export function {{EntityPascal}}CrudPage({ search, onNavigate }: {{EntityPascal}
 {{/if}}
 {{#if figureTiles.aggregates}}
     aggregates: {
-      // The sums are read over the rows the list is showing: its filters, search text and forced
-      // scope. The status counts above stay over every row, the census the reader slices by.
+      // The sums are read over the rows the list is showing: its filters, search text and forced scope.
       query: {{figureTiles.aggregates.hook}}(list.requestParams as Parameters<typeof {{figureTiles.aggregates.hook}}>[0]),
       figures: [
 {{#each figureTiles.aggregates.figures}}
