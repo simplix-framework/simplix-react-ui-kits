@@ -37,7 +37,9 @@ export type ContractFieldKind =
   /** A text written once per content language (`<field>I18n`), whose plain sibling the server reads. */
   | "i18nText"
   /** A value the client writes and no response returns (SimpliX Meta's `format: "secret"`), such as a provider key. */
-  | "secret";
+  | "secret"
+  /** A structured value (an object or an array), drawn and edited as indented JSON. */
+  | "json";
 
 export interface ContractField {
   readonly name: string;
@@ -120,6 +122,7 @@ export const CONTRACT_COLUMN_SIZE: Readonly<Record<ContractFieldKind, { readonly
   reference: { minWidth: 160 },
   i18nText: { minWidth: 140 },
   secret: { minWidth: 140 },
+  json: { minWidth: 220, wrap: true },
 };
 
 /** A searchable field as the generator writes it, which {@link useRecordContract}'s `filters` turns into a list filter. */
@@ -146,6 +149,22 @@ type Row = Readonly<Record<string, unknown>>;
 /** A value no other kind draws, as text: in the monospaced face where the contract marks it as a code. */
 export function textValueOf(field: Pick<ContractField, "code">, raw: unknown): RecordValue {
   return field.code ? { text: String(raw), code: true } : String(raw);
+}
+
+/** A structured value as indented JSON, or the value itself where it is already text. */
+export function jsonText(raw: unknown): string {
+  return typeof raw === "string" ? raw : JSON.stringify(raw, null, 2);
+}
+
+/** Text written in a JSON field as the value it spells, blank as absent, and unparseable text as written. */
+function parsedJson(text: string): unknown {
+  if (text.trim() === "") return undefined;
+  try {
+    return JSON.parse(text);
+  } catch (error) {
+    if (!(error instanceof SyntaxError)) throw error;
+    return text;
+  }
 }
 
 /** The enum's value as text, whether the server sent the constant or the boot enum object. */
@@ -297,6 +316,8 @@ export function useRecordContract(entity: string, overrides: ContractOverrides =
           const kind = field.peekKind;
           return { link: text, onClick: () => peek.open({ kind, target: peekTargetOf(field, String(raw), text) }) };
         }
+        case "json":
+          return { text: jsonText(raw), code: true };
         default:
           return textValueOf(field, raw);
       }
@@ -347,6 +368,8 @@ export function useRecordContract(entity: string, overrides: ContractOverrides =
           return secretFormField(common, record !== undefined, t("recordForm.secretKeep"));
         case "longText":
           return { ...common, kind: "textarea", value: raw == null ? "" : String(raw) };
+        case "json":
+          return { ...common, kind: "textarea", value: raw == null ? "" : jsonText(raw) };
         case "email":
           return { ...common, kind: "email", value: raw == null ? "" : String(raw) };
         default:
@@ -367,6 +390,8 @@ export function useRecordContract(entity: string, overrides: ContractOverrides =
       for (const field of fields) {
         if (field.kind === "money" && field.name in values) body[field.name] = moneyStored(field, values[field.name]);
         if (field.kind === "secret" && isBlankSecret(values[field.name])) delete body[field.name];
+        // Text that does not parse is sent as written, so the server's refusal names the field.
+        if (field.kind === "json" && typeof values[field.name] === "string") body[field.name] = parsedJson(values[field.name] as string);
         if (field.kind !== "i18nText" || !field.plainField) continue;
         const map = values[field.name];
         body[field.plainField] = i18nBaseValue(map && typeof map === "object" ? (map as I18nMap) : undefined, languages);
