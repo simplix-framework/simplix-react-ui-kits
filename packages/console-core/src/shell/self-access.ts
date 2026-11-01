@@ -1,5 +1,6 @@
 import type { AccessAdapter, AccessPolicy, DefaultActions } from "@simplix-react/access";
 import { createAccessPolicy, createApiAdapter } from "@simplix-react/access";
+import { useSyncExternalStore } from "react";
 
 /** What `GET /user/me/permissions` answers, inside the product's response envelope. */
 interface SelfPermissions {
@@ -9,6 +10,63 @@ interface SelfPermissions {
   readonly isSuperAdmin?: boolean;
   readonly roles?: ReadonlyArray<{ readonly roleCode: string }>;
   readonly permissions?: Record<string, string[]>;
+}
+
+/** How the server last refused the self read: its status and the envelope's error code. */
+export interface SelfAccessRefusal {
+  readonly status: number;
+  readonly errorCode?: string;
+}
+
+let refusal: SelfAccessRefusal | null = null;
+const listeners = new Set<() => void>();
+
+function setRefusal(next: SelfAccessRefusal | null) {
+  if (refusal === next || (refusal && next && refusal.status === next.status && refusal.errorCode === next.errorCode)) return;
+  refusal = next;
+  for (const listener of listeners) listener();
+}
+
+function refusalOf(error: unknown): SelfAccessRefusal | null {
+  if (typeof error !== "object" || error === null) return null;
+  // The error code arrives on the error itself (an envelope-aware fetch), in its structured data,
+  // or inside the raw body text a plain fetch keeps.
+  const { status, errorCode, data, body } = error as { status?: unknown; errorCode?: unknown; data?: unknown; body?: unknown };
+  if (typeof status !== "number") return null;
+  let code: unknown = errorCode ?? (data as { errorCode?: unknown } | undefined)?.errorCode;
+  if (code === undefined && typeof body === "string") {
+    try {
+      code = (JSON.parse(body) as { errorCode?: unknown } | null)?.errorCode;
+    } catch (unreadable) {
+      if (!(unreadable instanceof SyntaxError)) throw unreadable;
+    }
+  }
+  return { status, errorCode: typeof code === "string" ? code : undefined };
+}
+
+/** The last refusal of the self read, outside React; {@link useSelfAccessRefusal} subscribes to it. */
+export function currentSelfAccessRefusal(): SelfAccessRefusal | null {
+  return refusal;
+}
+
+/**
+ * How the server refused the operator's own read, or null while it answers.
+ *
+ * <p>A shell reads this to draw a page of its own for a refusal it can name - an account the
+ * server will not let this identity act as - instead of the console behind an error dialog,
+ * where every screen's read is refused the same way and nothing on screen says why.
+ *
+ * @returns the last refusal of the self read, cleared by its next success
+ */
+export function useSelfAccessRefusal(): SelfAccessRefusal | null {
+  return useSyncExternalStore(
+    (listener) => {
+      listeners.add(listener);
+      return () => listeners.delete(listener);
+    },
+    currentSelfAccessRefusal,
+    () => null,
+  );
 }
 
 /** What one app needs to read its own operator's grants. */
@@ -52,7 +110,18 @@ export interface SelfAccessConfig {
 export function createSelfAccessPolicy(config: SelfAccessConfig): AccessPolicy<DefaultActions> {
   const selfAdapter = createApiAdapter({
     endpoint: config.endpoint,
-    fetchFn: config.fetchFn,
+    // The refusal is recorded on its way through, so a shell can name it; the error still reaches
+    // the policy unchanged.
+    fetchFn: async (path, options) => {
+      try {
+        const answer = await config.fetchFn(path, options);
+        setRefusal(null);
+        return answer;
+      } catch (error) {
+        setRefusal(refusalOf(error));
+        throw error;
+      }
+    },
     transformResponse: (response: unknown) => {
       const body = ((response as { body?: SelfPermissions })?.body ?? response) as SelfPermissions;
       const roles = (body.roles ?? []).map((role) => role.roleCode);

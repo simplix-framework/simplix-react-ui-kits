@@ -1,0 +1,24 @@
+/**
+ * @simplix-generated story/clarity-error-page
+ *
+ * The board frame for {{NamePascal}}Page, laid down from the console-clarity kit's
+ * `error-page.stories.hbs` and rewritten while its fingerprint matches. It draws the failure the
+ * page draws by default (not found); customise it to the failure the page's blocks pick, with the
+ * same words, and once edited it is kept, and `simplix generated` lists it.
+ */
+import type { Meta, StoryObj } from "@storybook/react";
+import { NotFoundPage } from "@simplix-react-ui-kits/console-clarity/error";
+
+function Screen() {
+  return <NotFoundPage />;
+}
+
+const meta: Meta<typeof Screen> = {
+  title: "Generated/{{storyTitle}}",
+  component: Screen,
+};
+export default meta;
+type Story = StoryObj<typeof Screen>;
+
+/** The page as it opens. */
+export const Page: Story = {};

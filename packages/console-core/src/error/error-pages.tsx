@@ -24,7 +24,10 @@ interface ErrorPageLayoutProps {
    * failure, slate for a refusal, blue for a sign-in. See {@link errorPageIconStyle}.
    */
   iconTint: "amber" | "red" | "slate" | "blue";
-  titleKey: string;
+  /** Catalogue key for the title; ignored when {@link title} is supplied. */
+  titleKey?: string;
+  /** Already-composed title, for a page whose words are the caller's own. */
+  title?: string;
   /** Catalogue key for the body line; ignored when {@link description} is supplied. */
   descriptionKey?: string;
   /** Already-composed body line, for pages whose text depends on what was refused. */
@@ -37,6 +40,7 @@ function ErrorPageLayout({
   icon,
   iconTint,
   titleKey,
+  title,
   descriptionKey,
   description,
   actions,
@@ -67,13 +71,34 @@ function ErrorPageLayout({
         className="w-full max-w-md"
         icon={icon}
         iconAttributes={partAttributes(errorPageIconStyle, { tint: iconTint })}
-        title={t(titleKey)}
+        title={title ?? (titleKey ? t(titleKey) : "")}
         description={description ?? (descriptionKey ? t(descriptionKey) : undefined)}
         action={<Flex gap="sm">{actions}</Flex>}
         footer={code || undefined}
       />
     </Flex>
   );
+}
+
+export interface FailurePageProps {
+  /** The status or reason support asks for, drawn quietly under the actions; empty draws none. */
+  readonly code?: string;
+  readonly icon: React.ReactNode;
+  /** The tint the kind of failure is read by (see {@link errorPageIconStyle}). */
+  readonly tint: "amber" | "red" | "slate" | "blue";
+  readonly title: string;
+  readonly description?: string;
+  /** What the reader can do next: the page's only way forward. */
+  readonly actions: React.ReactNode;
+}
+
+/**
+ * A failure page whose words and actions are the caller's own, drawn in the same panel as the
+ * kit's fixed failure pages. For a failure only the product can name - a refusal whose reason and
+ * way out belong to one installation - where none of the fixed pages says the right thing.
+ */
+export function FailurePage({ code = "", icon, tint, title, description, actions }: FailurePageProps) {
+  return <ErrorPageLayout code={code} icon={icon} iconTint={tint} title={title} description={description} actions={actions} />;
 }
 
 /** 404 — Not Yet Implemented */
