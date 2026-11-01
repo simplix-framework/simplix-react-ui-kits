@@ -5,11 +5,23 @@ import { DigitRoll } from "@simplix-react/ui/interaction";
 
 import { statusCardStripStyle, statusCardStyle } from "./status-card-strip.style";
 
-/** The list narrowing a {@link StatusCard} stands for: one value of one field. */
-export interface StatusCardFilter {
+/** The list narrowing a {@link StatusCard} stands for: one value of one field, written as the chip row's `<field>.in`. */
+export interface StatusCardValueFilter {
   readonly field: string;
   readonly value: string;
 }
+
+/**
+ * A narrowing no chip writes: a set of filter keys and their values, each written as the filter
+ * bar writes it (`occurredAt.greaterThanOrEqualTo`, `httpStatus.greaterThanOrEqualTo`), so the
+ * filter bar's own badges show what the card chose and can lift it.
+ */
+export interface StatusCardValuesFilter {
+  readonly values: Readonly<Record<string, string | number>>;
+}
+
+/** The list narrowing a {@link StatusCard} stands for. */
+export type StatusCardFilter = StatusCardValueFilter | StatusCardValuesFilter;
 
 /** One figure over a list. */
 export interface StatusCard {
@@ -38,14 +50,27 @@ export interface StatusCard {
 export interface StatusCardStripProps {
   readonly cards: readonly StatusCard[];
   /** The list's filter state the cards narrow, the one its chip row reads. */
-  readonly filters?: Pick<CrudListFilters, "committedValues" | "commitValue">;
+  readonly filters?: Pick<CrudListFilters, "committedValues" | "commitValue" | "commitValues">;
   readonly loading?: boolean;
   readonly columns?: 1 | 2 | 3 | 4;
 }
 
-/** The filter key a card's narrowing is written under: the chip row's, so both read one state. */
-export function cardFilterKey(filter: StatusCardFilter): string {
+/**
+ * The filter key a card's narrowing is written under: the chip row's, so both read one state.
+ *
+ * @param filter a one-value narrowing
+ */
+export function cardFilterKey(filter: StatusCardValueFilter): string {
   return `${filter.field}.${SearchOperator.IN}`;
+}
+
+/**
+ * The filter values a card's narrowing writes, by filter key.
+ *
+ * @param filter the card's narrowing
+ */
+export function cardFilterValues(filter: StatusCardFilter): Readonly<Record<string, unknown>> {
+  return "values" in filter ? filter.values : { [cardFilterKey(filter)]: [filter.value] };
 }
 
 /**
@@ -55,19 +80,36 @@ export function cardFilterKey(filter: StatusCardFilter): string {
  * @param committed the list's committed filter values
  */
 export function isCardPressed(filter: StatusCardFilter, committed: Readonly<Record<string, unknown>>): boolean {
+  if ("values" in filter) {
+    const keys = Object.keys(filter.values);
+    return keys.length > 0 && keys.every((key) => committed[key] !== undefined && String(committed[key]) === String(filter.values[key]));
+  }
   const chosen = committed[cardFilterKey(filter)];
   if (Array.isArray(chosen)) return chosen.length === 1 && String(chosen[0]) === filter.value;
   return chosen === filter.value;
 }
 
 /**
- * The value a press writes: the card's rows, or nothing when the list already stands on them.
+ * The value a one-value press writes: the card's rows, or nothing when the list already stands on them.
  *
  * @param filter the card's narrowing
  * @param committed the list's committed filter values
  */
-export function pressedValue(filter: StatusCardFilter, committed: Readonly<Record<string, unknown>>): string[] | undefined {
+export function pressedValue(filter: StatusCardValueFilter, committed: Readonly<Record<string, unknown>>): string[] | undefined {
   return isCardPressed(filter, committed) ? undefined : [filter.value];
+}
+
+/**
+ * Every filter value a press writes, by key: the card's narrowing, or each of its keys lifted
+ * when the list already stands on it.
+ *
+ * @param filter the card's narrowing
+ * @param committed the list's committed filter values
+ */
+export function pressedValues(filter: StatusCardFilter, committed: Readonly<Record<string, unknown>>): Record<string, unknown> {
+  const values = cardFilterValues(filter);
+  const lift = isCardPressed(filter, committed);
+  return Object.fromEntries(Object.entries(values).map(([key, value]) => [key, lift ? undefined : value]));
 }
 
 /**
@@ -82,8 +124,10 @@ export function shownCardTone(card: Pick<StatusCard, "value" | "tone">): StatusT
 /**
  * The figures a list's rows are cut by, drawn above the page's tabs and the list's chips.
  *
- * <p>A card with a `filter` is a toggle over the list: it writes the same `<field>.in` filter the
- * chip row writes, so a pressed card and its chosen chip are one state and either can lift it.
+ * <p>A card with a `filter` is a toggle over the list: a one-value card writes the same `<field>.in`
+ * filter the chip row writes, so a pressed card and its chosen chip are one state and either can
+ * lift it; a card over a range or a threshold writes the keys the filter bar writes, so the bar's
+ * badges show it and can lift it.
  * The page draws the strip above its tab strip (frontend invariant #63), never between the chips
  * and the rows.
  */
@@ -121,7 +165,7 @@ export function StatusCardStrip({ cards, filters, loading = false, columns = 4 }
             key={card.key}
             type="button"
             aria-pressed={pressed}
-            onClick={() => filters.commitValue(cardFilterKey(filter), pressedValue(filter, committed))}
+            onClick={() => filters.commitValues(pressedValues(filter, committed))}
             {...slotAttributes(statusCardStyle, { pressed, pressable: true })}
           >
             {body}

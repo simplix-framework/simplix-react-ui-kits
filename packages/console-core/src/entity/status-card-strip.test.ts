@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { countedChips } from "./record-list";
-import { cardFilterKey, isCardPressed, pressedValue, shownCardTone } from "./status-card-strip";
+import { cardFilterKey, isCardPressed, pressedValue, pressedValues, shownCardTone } from "./status-card-strip";
 
 const failed = { field: "status", value: "FAILED" };
 
@@ -24,6 +24,21 @@ describe("status cards and the chip row share one filter", () => {
   });
   it("replaces a wider chip choice with its own rows", () => {
     expect(pressedValue(failed, { "status.in": ["FAILED", "QUEUED"] })).toEqual(["FAILED"]);
+  });
+});
+
+describe("a card over a range or a threshold", () => {
+  const serverErrors = { values: { "occurredAt.greaterThanOrEqualTo": "2026-11-01T00:00:00Z", "httpStatus.greaterThanOrEqualTo": 500 } };
+  it("is pressed only when every key stands on its value", () => {
+    expect(isCardPressed(serverErrors, { "occurredAt.greaterThanOrEqualTo": "2026-11-01T00:00:00Z", "httpStatus.greaterThanOrEqualTo": "500" })).toBe(true);
+    expect(isCardPressed(serverErrors, { "occurredAt.greaterThanOrEqualTo": "2026-11-01T00:00:00Z" })).toBe(false);
+  });
+  it("writes every key on a press and lifts every key on a second", () => {
+    expect(pressedValues(serverErrors, {})).toEqual(serverErrors.values);
+    expect(pressedValues(serverErrors, { ...serverErrors.values })).toEqual({ "occurredAt.greaterThanOrEqualTo": undefined, "httpStatus.greaterThanOrEqualTo": undefined });
+  });
+  it("writes a one-value card as the chip row's key", () => {
+    expect(pressedValues(failed, {})).toEqual({ "status.in": ["FAILED"] });
   });
 });
 
