@@ -1,6 +1,6 @@
 import { defineSlotStyle } from "@simplix-react/ui/design";
 
-/** A machine message drawn in one line: its start, a copy control and a control that shows it whole. */
+/** A machine message drawn in one line: its start, with the whole message on hover. */
 export const recordExcerptStyle = defineSlotStyle({
   slot: "record-excerpt",
   base: "inline-flex min-w-0 max-w-full items-center gap-1",

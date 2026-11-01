@@ -104,11 +104,6 @@ export interface RecordAction<Row> {
   /** Rows the action is drawn for but cannot run on, with the reason a reader hovers to see. */
   readonly disabled?: (row: Row) => string | false | undefined;
   /**
-   * Draws the action as a button carrying its label rather than its type's icon, for a verb whose
-   * label an icon cannot say (「이 항목 확정」). Any labelled action draws every action labelled.
-   */
-  readonly labelled?: boolean;
-  /**
    * The glyph the icon strip draws instead of the type's. An action with its own glyph is told
    * apart from another of its type by that glyph, so the strip stays icon-only.
    */
@@ -308,11 +303,10 @@ const LABEL_GAP = 8;
 /**
  * Whether the row actions must carry their labels. An icon stands for the action's type, so two
  * actions drawing the type's own icon for one type would show the same glyph for different verbs;
- * then, or when an action asks for its label, every action is a labelled button instead. An action
- * carrying its own icon is distinct by that icon and never forces labels.
+ * then every action is a labelled button instead, which the region contract refuses: give the
+ * second verb its own icon. An action carrying its own icon is distinct by that icon and never forces labels.
  */
-export function actionsNeedLabels(actions: readonly { readonly type: string; readonly labelled?: boolean; readonly icon?: unknown }[]): boolean {
-  if (actions.some((action) => action.labelled)) return true;
+export function actionsNeedLabels(actions: readonly { readonly type: string; readonly icon?: unknown }[]): boolean {
   const typeGlyphs = actions.filter((action) => action.icon === undefined || action.icon === null).map((action) => action.type);
   return new Set(typeGlyphs).size < typeGlyphs.length;
 }
@@ -490,7 +484,6 @@ export function RecordList<Row>({
       }))
     : [];
 
-  // Judged on the actions as given, which still carry whether one asks for its label.
   const labelled = rowActions.length > 0 && actionsNeedLabels(actions);
   const actionCell =
     rowActions.length === 0 ? 0 : labelled ? labelledActionWidth(rowActions.map((action) => action.label ?? "")) : rowActions.length * ACTION_WIDTH + ACTION_CELL_INSET;

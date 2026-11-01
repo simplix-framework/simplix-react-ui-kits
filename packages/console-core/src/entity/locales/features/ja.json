@@ -102,8 +102,6 @@
     }
   },
   "recordValue": {
-    "copy": "コピー",
-    "showWhole": "全文を表示",
     "credits": "{{count}}クレジット"
   }
 }

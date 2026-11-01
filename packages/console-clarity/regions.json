@@ -1,0 +1,53 @@
+{
+  "$comment": "The console page region contract. Per page type: the regions in drawing order, the one part that fills each, the page.blocks slot that feeds it, the DOM marks (data-slot or data-part) that place a control in it, and the control kinds it may hold. Agents read it before composing a page; scripts/check-regions.mjs enforces it on the kit source and scripts/regions-rendered.mjs on a rendered page.",
+  "version": 1,
+  "regions": {
+    "header": { "part": "ConsolePageHeader", "slot": "actions", "marks": ["console-page-header-actions", "console-page-header"], "controls": ["button"] },
+    "figures": { "part": "SettingsTiles", "slot": "tiles", "marks": ["console-tile-*"], "controls": ["console-tile-chip", "console-tile-handle", "console-tile-strip", "console-tile-press"] },
+    "notices": { "part": "NoticeCard", "slot": "notices", "marks": ["console-notice-card"], "controls": ["button"], "maxControls": 1, "$comment": "maxControls counts labelled actions; the card's own icon-only dismiss is the part's." },
+    "help": { "part": "ExplanationCard", "slot": "help", "marks": ["console-explanation-card"], "controls": ["button"] },
+    "timeRange": { "part": "TimeRange", "slot": "timeRange", "marks": ["time-range-*"], "controls": ["time-range-action", "time-range-nav-button", "time-range-preset", "button"] },
+    "tabs": { "part": "PageTabStrip", "slot": "tabs", "marks": ["console-page-tabs", "tabs-list"], "controls": ["tabs-trigger"] },
+    "toolbar": { "part": "RecordList toolbar", "slot": "toolbar", "marks": ["crud-filter-bar-*", "console-record-list-toolbar"], "controls": ["crud-filter-bar-trigger", "crud-filter-bar-columns-button", "crud-chip-filter-chip", "button"] },
+    "columnHeads": { "part": "RecordList header", "slot": "columns", "marks": ["table-header"], "controls": ["crud-list-sort-button"] },
+    "rowActions": { "part": "RecordList action strip", "slot": "rowActions", "marks": ["row-actions-strip"], "controls": ["button:icon"] },
+    "cell": { "part": "RecordValue", "slot": "columns", "marks": ["table-cell", "td"], "controls": ["link"], "$comment": "A cell shows a value; a reference to another record is a link and is the value itself, every other control is refused." },
+    "pagination": { "part": "RecordList pagination", "slot": "pagination", "marks": ["crud-list-pagination*"], "controls": ["crud-list-page-button", "select-trigger"] },
+    "unassigned": { "part": null, "slot": null, "marks": [], "controls": [] }
+  },
+  "types": {
+    "list-detail": { "template": "crud-page.hbs", "regions": ["header", "figures", "notices", "help", "timeRange", "tabs", "toolbar", "columnHeads", "rowActions", "cell", "pagination"] },
+    "dashboard": { "template": "dashboard-page.hbs", "regions": ["header", "figures", "notices", "help", "timeRange", "tabs"] },
+    "tabbed": { "template": "static-page.hbs", "regions": ["header", "figures", "notices", "help", "tabs"] },
+    "record": { "template": "record-page.hbs", "regions": ["header", "figures", "notices", "help", "tabs"] },
+    "system": { "template": "auth-page.hbs", "regions": ["header", "notices"] }
+  },
+  "valueParts": {
+    "$comment": "Files that draw a value (a list cell or a detail value). A value part draws no control: a row's verbs live in its action strip, copy and the whole text in the detail.",
+    "files": ["../console-core/src/entity/record-value.tsx", "../console-core/src/entity/record-excerpt.tsx", "../console-core/src/entity/record-meter.tsx", "../console-core/src/entity/option-label.tsx"]
+  },
+  "slotProps": {
+    "$comment": "Interfaces a page fills its slots through. Every boolean prop in them is listed here with the reason it changes content (a region on or off, behaviour) rather than look; an unlisted boolean is a per-screen presentation flag and fails the check.",
+    "interfaces": {
+      "../console-core/src/entity/record-list.tsx": ["RecordColumn", "RecordAction", "RecordListFeatures"],
+      "../console-core/src/page/types.ts": ["PageTabSpec", "PageNoticeSpec", "PageSpec"]
+    },
+    "flags": {
+      "RecordColumn.wrap": "a column whose values are prose wraps instead of truncating; decided by the value, not by the screen's look",
+      "RecordColumn.sortable": "behaviour: whether the server sorts by the column",
+      "RecordColumn.cardKeep": "content: the column stays on the card presentation because the card is unreadable without it",
+      "RecordListFeatures.search": "turns the search region on or off",
+      "RecordListFeatures.filters": "turns the filter region on or off",
+      "RecordListFeatures.chips": "turns the chip filters on or off",
+      "RecordListFeatures.sort": "turns sorting on or off",
+      "RecordListFeatures.groups": "turns grouping on or off",
+      "RecordListFeatures.rowActions": "turns the row action strip on or off",
+      "RecordListFeatures.count": "turns the count on or off",
+      "RecordListFeatures.pagination": "turns pagination on or off",
+      "PageTabSpec.when": "whether the tab exists for this reader",
+      "PageTabSpec.unbuilt": "content: the tab names a capability the server does not offer yet",
+      "PageSpec.tilesLoading": "state: the figures are still loading",
+      "PageSpec.tabClosesRecord": "behaviour: switching the tab closes the open record"
+    }
+  }
+}

@@ -103,8 +103,6 @@
     }
   },
   "recordValue": {
-    "copy": "Copy",
-    "showWhole": "Show all",
     "credits": "{{count}} credits"
   }
 }

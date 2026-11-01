@@ -102,8 +102,6 @@
     }
   },
   "recordValue": {
-    "copy": "복사",
-    "showWhole": "전체 보기",
     "credits": "{{count}}크레딧"
   }
 }

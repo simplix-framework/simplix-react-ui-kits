@@ -78,7 +78,7 @@ export function ConsolePageHeader() {
         {metadata && <Stack {...partAttributes(pageHeaderMetadataStyle, {})}>{metadata}</Stack>}
       </Stack>
       {center && <Stack className="absolute left-1/2 -translate-x-1/2 bottom-2">{center}</Stack>}
-      <Flex align="center" gap="sm" shrink={false}>
+      <Flex align="center" gap="sm" shrink={false} {...partAttributes(pageHeaderActionsStyle, {})}>
         <NoticeMenu />
         {actions}
       </Flex>

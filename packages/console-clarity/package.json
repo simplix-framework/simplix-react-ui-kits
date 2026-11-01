@@ -107,19 +107,23 @@
       "import": "./dist/shell/index.js"
     },
     "./styles/*": "./src/styles/*",
-    "./templates/*": "./templates/*"
+    "./templates/*": "./templates/*",
+    "./regions.json": "./regions.json",
+    "./scripts/regions-rendered.mjs": "./scripts/regions-rendered.mjs"
   },
   "files": [
     "dist",
     "src",
-    "templates"
+    "templates",
+    "regions.json",
+    "scripts"
   ],
   "scripts": {
     "build": "NODE_OPTIONS=--max-old-space-size=4096 tsup",
     "dev": "tsup --no-clean --no-dts",
     "typecheck": "tsc --noEmit",
-    "lint": "oxlint src",
-    "test": "vitest run --passWithNoTests",
+    "lint": "node scripts/check-regions.mjs && oxlint src",
+    "test": "node scripts/check-regions.mjs --selftest && node scripts/regions-rendered.mjs --selftest && vitest run --passWithNoTests",
     "clean": "rm -rf dist .turbo"
   },
   "dependencies": {
