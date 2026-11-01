@@ -378,31 +378,13 @@
       "../console-core/src/entity/record-list.tsx": [
         "RecordListProps"
       ],
-      "templates/list.blocks.hbs": [
-        "ListBlocks"
-      ],
-      "templates/auth-page.blocks.hbs": [
-        "PageBlocks"
-      ],
-      "templates/dashboard-page.blocks.hbs": [
-        "PageBlocks"
-      ],
-      "templates/error-page.blocks.hbs": [
-        "PageBlocks"
-      ],
-      "templates/static-page.blocks.hbs": [
-        "PageBlocks"
-      ],
-      "templates/record-page.blocks.hbs": [
-        "PageBlocks"
-      ],
-      "templates/app-shell.blocks.hbs": [
-        "ShellBlocks",
+      "templates/app-shell.hbs": [
+        "ShellParts",
         "ShellMenuEntry",
         "ShellMenuGroup"
       ],
-      "templates/app-shell.top-bar.blocks.hbs": [
-        "ShellBlocks"
+      "templates/app-shell.top-bar.hbs": [
+        "ShellParts"
       ]
     },
     "members": {
@@ -446,42 +428,6 @@
         "class": "dialogs",
         "reason": "dialogs the page opens"
       },
-      "auth-page.PageBlocks.description": {
-        "class": "content",
-        "slot": "header",
-        "reason": "the sentence under the panel's heading"
-      },
-      "auth-page.PageBlocks.body": {
-        "class": "body",
-        "reason": "the sign-in step's form or message"
-      },
-      "auth-page.PageBlocks.foot": {
-        "class": "content",
-        "slot": "foot",
-        "reason": "the links under the panel"
-      },
-      "dashboard-page.PageBlocks.panels": {
-        "class": "body",
-        "reason": "the dashboard's cards, its content area"
-      },
-      "dashboard-page.PageBlocks.action": {
-        "class": "content",
-        "slot": "actions",
-        "reason": "the header's verb"
-      },
-      "error-page.PageBlocks.page": {
-        "class": "body",
-        "reason": "the kit failure page the screen picks"
-      },
-      "static-page.PageBlocks.body": {
-        "class": "body",
-        "reason": "the page's content area"
-      },
-      "static-page.PageBlocks.action": {
-        "class": "content",
-        "slot": "actions",
-        "reason": "the header's verb"
-      },
       "app-shell.ShellMenuEntry.icon": {
         "class": "content",
         "slot": "menu",
@@ -497,32 +443,32 @@
         "slot": "menu",
         "reason": "a menu group's glyph"
       },
-      "app-shell.ShellBlocks.brand": {
+      "app-shell.ShellParts.brand": {
         "class": "content",
         "slot": "brand",
         "reason": "the product mark and badge inside the shell's brand slot"
       },
-      "app-shell.ShellBlocks.menuTitle": {
+      "app-shell.ShellParts.menuTitle": {
         "class": "content",
         "slot": "menu",
         "reason": "the menu column's heading"
       },
-      "app-shell.ShellBlocks.phoneFooter": {
+      "app-shell.ShellParts.phoneFooter": {
         "class": "content",
         "slot": "phoneFooter",
         "reason": "what a phone draws under the menu"
       },
-      "app-shell.ShellBlocks.wrap": {
+      "app-shell.ShellParts.wrap": {
         "class": "content",
         "slot": "providers",
         "reason": "the providers the routed screens need, wrapping the shell"
       },
-      "app-shell.top-bar.ShellBlocks.topBar": {
+      "app-shell.top-bar.ShellParts.topBar": {
         "class": "content",
         "slot": "topBar",
         "reason": "the band's mark, destinations and controls, inside the top bar region the shell draws"
       },
-      "app-shell.top-bar.ShellBlocks.wrap": {
+      "app-shell.top-bar.ShellParts.wrap": {
         "class": "content",
         "slot": "providers",
         "reason": "the providers the routed screens need"

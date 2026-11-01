@@ -2,20 +2,15 @@
  * @simplix-generated widget/clarity-form
  *
  * Laid down from the console-clarity kit's `form.hbs` and rewritten while its fingerprint
- * matches. Sections, rules and the request this form sends go in `./form.blocks.tsx`.
+ * matches. It is the form's start: its sections, rules and the request it sends are customised
+ * here, in this file, and a later template change is merged into it three ways.
  */
-import { RecordForm, useRecordContract, useScreenWords, type ContractField, type CrudFormBlocks, type RecordFormField } from "@simplix-react-ui-kits/console-clarity/entity";
+import { RecordForm, useRecordContract, useScreenWords, type ContractField, type RecordFormField } from "@simplix-react-ui-kits/console-clarity/entity";
 import { QueryFallback, useInvalidateEntity } from "@simplix-react/ui";
 
 import { {{#if hookGetForEdit}}{{hookGetForEdit}}, {{else}}{{#if hookGet}}{{hookGet}}, {{/if}}{{/if}}{{#if hookCreate}}{{hookCreate}}{{/if}}{{#if hookUpdate}}{{#if hookCreate}}, {{/if}}{{hookUpdate}}{{/if}} } from "{{packageName}}";
-import { useFormBlocks, useFormContract } from "./form.blocks";
 
-/**
- * The fields the contract lets this form write, each edited by its kind. Not exported:
- * `./form.blocks` is imported by this file, so it takes the table as the `fields` argument of its
- * hook (a value import back is a module cycle, and a cycle turns every edit of either file into a
- * full page reload).
- */
+/** The fields the contract lets this form write, each edited by its kind. */
 const {{EntityPascal}}FormFields: readonly ContractField[] = [
 {{#each fields}}
 {{!-- An i18n pair is written through its map, and the request fills the plain field from it. The
@@ -72,28 +67,18 @@ export function {{EntityPascal}}Form(props: {{EntityPascal}}FormProps) {
   const update = {{hookUpdate}}({ mutation: { onSettled: invalidate, meta: { handledByForm: true } } });
 {{/if}}
   const record = editing ? data ?? undefined : undefined;
-  const preBlocks = useFormContract();
-  const contract = useRecordContract("{{entity}}", preBlocks);
+  const contract = useRecordContract("{{entity}}");
   const row = record as Readonly<Record<string, unknown>> | undefined;
   const generated: RecordFormField[] = {{EntityPascal}}FormFields.map((field) => contract.formField(field, row));
-  // Every key of the kit's form blocks contract is optional here, so a blocks file written before
-  // a key existed still compiles. The input is held in a variable for the same reason: an object
-  // literal written inline would refuse a blocks hook that does not declare `fields`.
-  const blocksInput = { record, editing, generated, fields: {{EntityPascal}}FormFields };
-  const blocks: ReturnType<typeof useFormBlocks> & CrudFormBlocks = useFormBlocks(blocksInput);
   if (editing && (isLoading || !data)) return <QueryFallback isLoading={isLoading} />;
   return (
     <RecordForm
-      title={blocks.title ?? (editing ? words.editTitle : words.add)}
-      sections={blocks.sections ?? [{ key: "main", fields: generated }]}
-      notices={blocks.notices}
-      note={blocks.note}
-      fieldNotices={blocks.fieldNotices}
-      submitLabel={blocks.submitLabel ?? words.save}
+      title={editing ? words.editTitle : words.add}
+      sections={[{ key: "main", fields: generated }]}
+      submitLabel={words.save}
       onCancel={props.onCancel}
       onSubmit={async (values) => {
-        const contracted = contract.request({{EntityPascal}}FormFields, values);
-        const written = blocks.toRequest ? blocks.toRequest(contracted, row) : contracted;
+        const written = contract.request({{EntityPascal}}FormFields, values);
 {{#if formOrderField}}
         // The list's drag sets the order, so a new record starts first and an edit keeps its place.
         const body = editing && row ? { ...row, ...written } : { {{formOrderField}}: 0, ...written };

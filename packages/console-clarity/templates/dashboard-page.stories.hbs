@@ -1,0 +1,31 @@
+/**
+ * @simplix-generated story/clarity-dashboard-page
+ *
+ * The board frame for {{NamePascal}}Page, laid down from the console-clarity kit's
+ * `dashboard-page.stories.hbs` with the page's own context, and rewritten while its fingerprint matches.
+ * Customise it to the frame the page is measured against; once edited it is kept, and
+ * `simplix generated` lists it.
+ */
+import type { Meta, StoryObj } from "@storybook/react";
+import { useTranslation } from "@simplix-react-ui-kits/console-clarity/i18n";
+import { DashboardColumns } from "@simplix-react-ui-kits/console-clarity/dashboard";
+import { ConsolePage } from "@simplix-react-ui-kits/console-clarity/page";
+
+function Screen() {
+  const { t } = useTranslation("{{namespace}}");
+  return (
+    <ConsolePage
+      spec={{ldb}} title: t("{{nameCamel}}.title"), description: t("{{nameCamel}}.description"), tiles: [], body: <DashboardColumns>{null}</DashboardColumns> {{rdb}}
+    />
+  );
+}
+
+const meta: Meta<typeof Screen> = {
+  title: "Generated/{{storyTitle}}",
+  component: Screen,
+};
+export default meta;
+type Story = StoryObj<typeof Screen>;
+
+/** The page as it opens. */
+export const Page: Story = {};

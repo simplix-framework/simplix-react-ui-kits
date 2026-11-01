@@ -2,13 +2,13 @@
  * @simplix-generated widget/clarity-list
  *
  * Laid down from the console-clarity kit's `list.hbs` and rewritten while its fingerprint
- * matches. Columns, filters, chips and row actions this list departs in go in `./list.blocks.tsx`.
+ * matches. It is the list's start: its columns, filters, chips and empty state are customised
+ * here, in this file, and a later template change is merged into it three ways.
  */
 import { adaptForcedList, adaptOrvalList{{#if hasKeywordSearch}}, SEARCHABLE_KEYWORD_PARAM{{/if}}, useCrudList{{#if hookOrder}}{{#if orderField}}, useInvalidateEntity{{/if}}{{/if}} } from "@simplix-react/ui";
 import { {{#if hasMoneyFilter}}moneyFilterTransform, {{/if}}RecordList, {{#if hookOrder}}{{#if orderField}}useAllowed, {{/if}}{{/if}}useRecordContract, useScreenWords, type ContractField, type ContractFilter, type ContractOverrides, type RecordAction, type RecordColumn, type RecordFilter, type RecordListProps } from "@simplix-react-ui-kits/console-clarity/entity";
 
 import { {{hookList}}, {{#if hookOrder}}{{#if orderField}}{{hookOrder}}, {{#if accessOrder}}{{accessOrder}}, {{/if}}{{/if}}{{/if}}type {{listRowType}} } from "{{packageName}}";
-import { useListBlocks } from "./list.blocks";
 
 export type {{EntityPascal}}Row = {{listRowType}};
 
@@ -48,7 +48,7 @@ export interface {{EntityPascal}}ListProps {
 }
 
 /**
- * The fields a row carries, each drawn by its contract kind. Not exported: `./list.blocks` is
+ * The fields a row carries, each drawn by its contract kind. Not exported: nothing but this file
  * imported by this file, so it takes the table as the `fields` argument of its hook and imports
  * only types back from here (a value import back is a module cycle, and a cycle turns every edit
  * of either file into a full page reload).
@@ -82,7 +82,7 @@ const {{EntityPascal}}Filters: readonly ContractFilter[] = [
 {{/each}}
 ];
 
-/** The generated columns, in the order the fields arrive; the blocks keep, reorder or replace them. */
+/** The generated columns, in the order the fields arrive. */
 export function use{{EntityPascal}}Columns(overrides?: ContractOverrides): RecordColumn<{{EntityPascal}}Row>[] {
   const contract = useRecordContract("{{entity}}", overrides);
   return contract.columns<{{EntityPascal}}Row>({{EntityPascal}}ColumnFields);
@@ -92,12 +92,8 @@ export function use{{EntityPascal}}Columns(overrides?: ContractOverrides): Recor
 export function {{EntityPascal}}List({ list, activeRowId, onRowClick, actions, narrowing }: {{EntityPascal}}ListProps) {
   const words = useScreenWords("{{entity}}");
   const generated = use{{EntityPascal}}Columns();
-  // The input is held in a variable so a blocks hook written before `fields` and `contractFilters`
-  // existed still compiles: an object literal written inline would refuse the extra keys.
-  const blocksInput = { generated, fields: {{EntityPascal}}ColumnFields, contractFilters: {{EntityPascal}}Filters };
-  const blocks = useListBlocks(blocksInput);
   const contract = useRecordContract("{{entity}}");
-  const filters: readonly RecordFilter<{{EntityPascal}}Row>[] = blocks.filters ?? contract.filters<{{EntityPascal}}Row>({{EntityPascal}}Filters);
+  const filters: readonly RecordFilter<{{EntityPascal}}Row>[] = contract.filters<{{EntityPascal}}Row>({{EntityPascal}}Filters);
 {{#if hookOrder}}
 {{#if orderField}}
   // The contract has a reorder, so a reader its rule admits can drag the rows into order.
@@ -110,22 +106,17 @@ export function {{EntityPascal}}List({ list, activeRowId, onRowClick, actions, n
     <RecordList<{{EntityPascal}}Row>
       list={list}
       rowId={(row) => String(row.{{rowIdField}})}
-      columns={blocks.columns ?? generated}
+      columns={generated}
       filters={filters}
-      chips={blocks.chips}
-      groupBy={blocks.groupBy}
-      actions={actions ?? blocks.actions}
+      actions={actions}
       narrowing={narrowing}
       activeRowId={activeRowId}
       onRowClick={onRowClick}
-      searchPlaceholder={blocks.searchPlaceholder}
-      empty={blocks.empty ?? { {{#if hasCreate}}title: words.emptyTitle, description: words.emptyDescription{{else}}title: words.emptyTitleRecorded, description: words.emptyDescriptionRecorded{{/if}} }}
-{{#if hasKeywordSearch}}
-      features={blocks.features}
-{{else}}
+      empty={ { {{#if hasCreate}}title: words.emptyTitle, description: words.emptyDescription{{else}}title: words.emptyTitleRecorded, description: words.emptyDescriptionRecorded{{/if}} }}
+{{#unless hasKeywordSearch}}
       // The route declares no keyword field, so there is nothing for a search box to send.
-      features={ { search: false, ...blocks.features } }
-{{/if}}
+      features={ { search: false } }
+{{/unless}}
 {{#if hookOrder}}
 {{#if orderField}}
       reorder={canOrder ? { orderField: "{{orderField}}", idField: "{{rowIdField}}", onReorder: (updates) => order.mutateAsync({ data: updates as never }) } : undefined}

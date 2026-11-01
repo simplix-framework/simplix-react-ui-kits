@@ -2,9 +2,10 @@
  * @simplix-generated widget/clarity-detail
  *
  * Laid down from the console-clarity kit's `detail.hbs` and rewritten while its fingerprint
- * matches. Tabs, verbs, notices and fields this record departs in go in `./detail.blocks.tsx`.
+ * matches. It is the record's start: its tabs, verbs, notices and fields are customised here, in
+ * this file, and a later template change is merged into it three ways.
  */
-import { fieldEnumsOf, RecordDetail, {{#if holders.length}}useAllowed, {{/if}}useRecordContract, useScreenWords, type ContractField, type CrudDetailBlocks, {{#if statusField}}type RecordBadge, {{/if}}type RecordField{{#if holders.length}}, type RecordTab{{/if}}{{#if statusField}}, type RecordValue{{/if}} } from "@simplix-react-ui-kits/console-clarity/entity";
+import { fieldEnumsOf, RecordDetail, {{#if holders.length}}useAllowed, {{/if}}useRecordContract, useScreenWords, type ContractField, {{#if statusField}}type RecordBadge, {{/if}}type RecordField{{#if holders.length}}, type RecordTab{{/if}}{{#if statusField}}, type RecordValue{{/if}} } from "@simplix-react-ui-kits/console-clarity/entity";
 {{#if holders.length}}
 import { adaptForcedList, forcedScope, {{#if holdersKeywordSearch}}SEARCHABLE_KEYWORD_PARAM, {{/if}}useCrudList } from "@simplix-react/ui";
 {{/if}}
@@ -13,14 +14,8 @@ import { {{hookGet}} } from "{{packageName}}";
 {{#each holders}}
 import { {{this.accessList}}, {{this.hookList}} } from "{{this.packageName}}";
 {{/each}}
-import { useDetailBlocks } from "./detail.blocks";
 
-/**
- * The fields the contract gives this record, each drawn by its kind. Not exported: `./detail.blocks`
- * is imported by this file, so it takes the table as the `fields` argument of its hook and imports
- * only types back from here (a value import back is a module cycle, and a cycle turns every edit
- * of either file into a full page reload).
- */
+/** The fields the contract gives this record, each drawn by its kind. */
 const {{EntityPascal}}DetailFields: readonly ContractField[] = [
 {{#each detailFields}}
 {{#unless this.isI18nPair}}
@@ -94,13 +89,8 @@ const NAME_FIELDS: readonly ContractField[] = [
 export function {{EntityPascal}}Detail(props: {{EntityPascal}}DetailProps) {
   const words = useScreenWords("{{entity}}");
   const { data, isLoading, isError } = {{hookGet}}(props.{{entity}}Id);
-  // Every key of the kit's detail blocks contract is optional here, so a blocks file written
-  // before a key existed still compiles. The input is held in a variable for the same reason: an
-  // object literal written inline would refuse a blocks hook that does not declare `fields`.
-  const blocksInput = { record: data ?? undefined, props, fields: {{EntityPascal}}DetailFields };
-  const blocks: ReturnType<typeof useDetailBlocks> & CrudDetailBlocks = useDetailBlocks(blocksInput);
   const record = data ?? undefined;
-  const contract = useRecordContract("{{entity}}", blocks.contract);
+  const contract = useRecordContract("{{entity}}");
   const row = record as Readonly<Record<string, unknown>> | undefined;
   const generated: RecordField[] = record
     ? {{EntityPascal}}DetailFields.map((field) => contract.detailField(field, row))
@@ -155,9 +145,9 @@ export function {{EntityPascal}}Detail(props: {{EntityPascal}}DetailProps) {
     }] : []),
 {{/each}}
   ];
-  const tabs = typeof blocks.tabs === "function" ? blocks.tabs(generatedTabs) : blocks.tabs ?? generatedTabs;
+  const tabs = generatedTabs;
 {{else}}
-  const tabs = typeof blocks.tabs === "function" ? blocks.tabs([{ key: "overview", label: words.overview, sections: [{ key: "overview", fields: generated }] }]) : blocks.tabs;
+  const tabs = undefined;
 {{/if}}
   const recordName = record ? {{#if displayNameField}}contract.recordName(NAME_FIELDS, row){{else}}String(record.{{rowIdField}} ?? ""){{/if}} : "";
   const generatedActions = [
@@ -165,29 +155,24 @@ export function {{EntityPascal}}Detail(props: {{EntityPascal}}DetailProps) {
     ...(props.onEdit ? [{ label: words.edit, onClick: props.onEdit }] : []),
   ];
   // A read that failed says so in a notice, rather than drawing a record with nothing in it.
-  // The subtitle is the blocks' alone and never the record's key: a panel is titled by what
-  // people call the record (frontend invariant #36).
+  // A panel is titled by what people call the record, never by its key (frontend invariant #36).
   return (
     <>
     <RecordDetail
       isLoading={isLoading}
-      title={blocks.title ?? (record ? recordName : words.label)}
-      subtitle={blocks.subtitle}
-      status={blocks.status ?? headerStatus}
-      notices={[...(isError ? [{ key: "read-failed", tone: "danger" as const, title: words.readFailed }] : []), ...(blocks.notices ?? [])]}
-      verbs={blocks.verbs}
-      actions={blocks.actions ?? generatedActions}
-      defaultTab={props.initialTab ?? blocks.defaultTab}
+      title={record ? recordName : words.label}
+      status={headerStatus}
+      notices={isError ? [{ key: "read-failed", tone: "danger" as const, title: words.readFailed }] : []}
+      actions={generatedActions}
+      defaultTab={props.initialTab}
       tabs={tabs}
-      sections={tabs ? undefined : blocks.sections ?? [{ key: "overview", fields: generated }]}
-      note={blocks.note}
+      sections={tabs ? undefined : [{ key: "overview", fields: generated }]}
       fieldEnums={fieldEnumsOf({{EntityPascal}}DetailFields)}
 {{#if hasAuditFields}}
       audit={record ? { id: record.{{rowIdField}} == null ? undefined : String(record.{{rowIdField}}), createdAt: record.createdAt ?? undefined, updatedAt: record.updatedAt ?? undefined } : undefined}
 {{/if}}
       onClose={props.onClose}
     />
-    {blocks.dialogs}
     </>
   );
 }

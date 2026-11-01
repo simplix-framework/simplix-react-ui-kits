@@ -94,7 +94,7 @@ export function check(contract, read) {
   const classified = contract.pageApi?.members ?? {};
   for (const [file, names] of Object.entries(contract.pageApi?.interfaces ?? {})) {
     const source = read(file);
-    const stem = file.startsWith("templates/") ? file.replace(/^templates\//, "").replace(/\.blocks\.hbs$/, "") + "." : "";
+    const stem = file.startsWith("templates/") ? file.replace(/^templates\//, "").replace(/(\.blocks)?\.hbs$/, "") + "." : "";
     for (const name of names) {
       const found = members(source, name);
       if (found === null) { problems.push(`${file}: interface ${name} named in regions.json pageApi is missing`); continue; }

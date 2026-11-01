@@ -5,13 +5,14 @@
  * app from then on. On a wide window: the top bar, the menu column (folding to a rail) and the
  * routed screen beside it, and the status strip under them. On a phone: one screen at a time, the
  * destinations marked as phone tabs along the bottom, and a menu sheet holding every group with
- * the window-level controls. The menu, the brand, the top-bar controls and the account menu come
- * from `./root-layout.blocks.tsx`; its `SHELL_FRAME` names the routes drawn without the window and
- * the pages drawn in place of it for a refused self read, so the blocks' own reads run only once a
- * session stands. The screens reached without a session wear `AuthLayout`.
+ * the window-level controls. The menu, the brand, the top-bar controls and the account menu are
+ * this file's own, in `useShellParts` below, and are customised here; `SHELL_FRAME` names the
+ * routes drawn without the window and the pages drawn in place of it for a refused self read, so
+ * the shell's own reads run only once a session stands. The screens reached without a session wear
+ * `AuthLayout`.
  */
 import { Outlet, useRouterState } from "@tanstack/react-router";
-import { useState, type ReactNode } from "react";
+import { useState, type ComponentType, type ReactNode } from "react";
 import { PanelLeftCloseIcon, PanelLeftOpenIcon } from "lucide-react";
 import { useTranslation } from "@simplix-react/i18n/react";
 import {
@@ -27,7 +28,7 @@ import {
   usePageHeaderState,
 } from "@simplix-react/ui";
 import { PeekHost } from "@simplix-react-ui-kits/console-clarity/peek";
-import { NoticeRegistryProvider } from "@simplix-react-ui-kits/console-clarity/notice";
+import { NoticeRegistryProvider, UNBUILT } from "@simplix-react-ui-kits/console-clarity/notice";
 import {
   AuthLayout,
   ChromeControlRows,
@@ -48,23 +49,112 @@ import {
   ConsoleStatusStrip,
   ConsoleTopBar,
   type ConsolePhoneTab,
+  type ConsoleStatusStripProps,
+  type ConsoleTopBarAccount,
+  type ConsoleTopBarProps,
   ConsoleWindow,
-  type ShellRefusalBlocks,
+  DarkModeToggle,
+  LocalePicker,
+  type ShellRefusalPages,
   useConsoleOnAPhone,
   useShellRefusalScreen,
   useSidebarCollapse,
 } from "@simplix-react-ui-kits/console-clarity/shell";
 
-import { SHELL_FRAME, useShellBlocks, type ShellBlocks, type ShellMenuEntry, type ShellMenuGroup } from "./root-layout.blocks";
+/** One destination in the menu. */
+export interface ShellMenuEntry {
+  readonly key: string;
+  readonly label: string;
+  readonly icon: ComponentType<{ "aria-hidden"?: boolean }>;
+  /** Where it goes; absent where the screen is not built, and the row is drawn inactive. */
+  readonly href?: string;
+  /** Why an entry with no `href` cannot be opened, announced and shown on hover. */
+  readonly inactiveReason?: string;
+  /** The mark at the end of an entry with no `href`, saying which kind of unavailable it is. */
+  readonly inactiveMark?: ReactNode;
+  /** The icon of its phone tab, where the destination is one. */
+  readonly phoneTab?: ConsolePhoneTab["icon"];
+}
+
+/** One group of destinations, already narrowed to what the signed-in account may open. */
+export interface ShellMenuGroup {
+  readonly key: string;
+  readonly label: string;
+  readonly icon: ComponentType<{ "aria-hidden"?: boolean }>;
+  readonly entries: readonly ShellMenuEntry[];
+}
+
+export interface ShellParts {
+  /** The name the shell keeps its own preferences under (the menu's fold). */
+  readonly namespace: string;
+  readonly brand: { readonly mark?: ReactNode; readonly title: string; readonly badge?: ReactNode };
+  readonly menuTitle?: ReactNode;
+  readonly menu: readonly ShellMenuGroup[];
+  /**
+   * Destinations outside the groups, drawn after them: a row of their own in the column, a mark of
+   * their own on the rail, and a row in the phone sheet's last section (a phone tab where marked).
+   */
+  readonly tail?: readonly ShellMenuEntry[];
+  /** The top bar's areas, search, region, bell, help and settings controls. */
+  readonly topBar: Omit<ConsoleTopBarProps, "mark" | "title" | "badge" | "account">;
+  readonly account: ConsoleTopBarAccount;
+  readonly status?: ConsoleStatusStripProps;
+  /** Rows the phone's menu sheet ends with, after the `tail` entries (signing out). */
+  readonly phoneFooter?: ReactNode;
+  /** Providers the window needs around itself and the routed screens, mounted once per window. */
+  readonly wrap: (shell: ReactNode) => ReactNode;
+}
+
+/** What the root layout decides before a session stands, read without running any of the parts. */
+export interface ShellFrame {
+  /** The routes drawn without the console window (sign-in and the pages around it). */
+  readonly isOutsideTheConsole: (route: string) => boolean;
+  /**
+   * The page drawn in place of the whole shell while the server refuses the signed-in identity's own
+   * read, by the error code its envelope carries. Absent, no refusal changes the shell.
+   */
+  readonly refusalPages?: ShellRefusalPages;
+}
+
+export const SHELL_FRAME: ShellFrame = {
+  isOutsideTheConsole: () => false,
+};
+
+/** The shell's parts, read once per window and only once a session stands. */
+
+export function useShellParts(): ShellParts {
+  const { t } = useTranslation("{{namespace}}");
+  return {
+    namespace: "{{nameKebab}}",
+    brand: { title: t("shell.title") },
+    menu: [],
+    topBar: {
+      areas: [{ key: "main", label: t("shell.area") }],
+      area: "main",
+      onArea: () => undefined,
+      onSearch: UNBUILT,
+      region: { label: t("shell.region"), empty: t("shell.noRegion"), items: [], onSelect: UNBUILT },
+      notifications: { label: t("shell.notifications"), empty: t("shell.noNotifications"), onOpenChange: UNBUILT },
+      onHelp: UNBUILT,
+      unbuiltReason: t("shell.unbuilt"),
+      settings: (
+        <>
+          <LocalePicker />
+          <DarkModeToggle />
+        </>
+      ),
+    },
+    account: { name: "", menu: null },
+    wrap: (shell) => shell,
+  };
+}
 
 /** Picks the shell a screen wears: the sign-in shell outside the console, the window inside it. */
 export function RootLayout() {
   // What the outlet renders, not where the router is heading: the previous route stays on screen
   // until the next one loads.
   const route = useRouterState({ select: (s) => s.matches[s.matches.length - 1]?.pathname ?? s.location.pathname });
-  // Every key of the kit's frame contract is optional here, so a blocks file written before the
-  // contract gained a key still compiles.
-  const frame: typeof SHELL_FRAME & ShellRefusalBlocks = SHELL_FRAME;
+  const frame = SHELL_FRAME;
   // Read before the branches below, so the hooks run in one order on every route.
   const onAPhone = useConsoleOnAPhone();
   // A refusal the frame names a page for replaces the whole shell, sign-in included: every read
@@ -84,19 +174,19 @@ export function RootLayout() {
 }
 
 /**
- * The window once a session stands. The blocks are read here and only here: their reads (the
+ * The window once a session stands. The parts are read here and only here: their reads (the
  * account, its permissions) never run on the sign-in screens, and a block that must have a single
  * writer per window mounts once.
  */
 function Console({ route, onAPhone }: { readonly route: string; readonly onAPhone: boolean }) {
-  const blocks = useShellBlocks();
-  return blocks.wrap(
+  const parts = useShellParts();
+  return parts.wrap(
     onAPhone ? (
-      <PhoneShell blocks={blocks} route={route}>
+      <PhoneShell parts={parts} route={route}>
         <Outlet />
       </PhoneShell>
     ) : (
-      <WindowShell blocks={blocks} route={route}>
+      <WindowShell parts={parts} route={route}>
         <Outlet />
       </WindowShell>
     ),
@@ -104,17 +194,17 @@ function Console({ route, onAPhone }: { readonly route: string; readonly onAPhon
 }
 
 interface ShellProps {
-  readonly blocks: ShellBlocks;
+  readonly parts: ShellParts;
   readonly route: string;
   readonly children: ReactNode;
 }
 
-function WindowShell({ blocks, route, children }: ShellProps) {
+function WindowShell({ parts, route, children }: ShellProps) {
   const { t } = useTranslation("{{namespace}}");
-  const { collapsed, toggle } = useSidebarCollapse(blocks.namespace);
+  const { collapsed, toggle } = useSidebarCollapse(parts.namespace);
   return (
     <ConsoleWindow>
-      <ConsoleTopBar {...blocks.topBar} mark={blocks.brand.mark} title={blocks.brand.title} badge={blocks.brand.badge} account={blocks.account} />
+      <ConsoleTopBar {...parts.topBar} mark={parts.brand.mark} title={parts.brand.title} badge={parts.brand.badge} account={parts.account} />
       <Flex gap="none" flex overflow="hidden">
         <ConsoleMenuSlot>
           {collapsed ? (
@@ -126,28 +216,28 @@ function WindowShell({ blocks, route, children }: ShellProps) {
                 </Button>
               }
             >
-              {blocks.menu.map((group) => (
+              {parts.menu.map((group) => (
                 <RailGroup key={group.key} group={group} route={route} />
               ))}
               {/* An entry outside the groups is a mark of its own, opening its one row. */}
-              {blocks.tail?.map((entry) => (
+              {parts.tail?.map((entry) => (
                 <RailGroup key={entry.key} group=\{{ key: entry.key, label: entry.label, icon: entry.icon, entries: [entry] }} route={route} />
               ))}
             </ConsoleMenuRail>
           ) : (
             <ConsoleMenuColumn
               label={t("shell.nav.menu")}
-              title={blocks.menuTitle}
+              title={parts.menuTitle}
               action={
                 <Button variant="ghost" size="icon-xs" onClick={toggle} aria-label={t("shell.nav.collapse")} title={t("shell.nav.collapse")}>
                   <PanelLeftCloseIcon />
                 </Button>
               }
             >
-              {blocks.menu.map((group) => (
+              {parts.menu.map((group) => (
                 <ColumnGroup key={group.key} group={group} route={route} />
               ))}
-              {blocks.tail?.map((entry) => (
+              {parts.tail?.map((entry) => (
                 <EntryRow key={entry.key} entry={entry} route={route} />
               ))}
             </ConsoleMenuColumn>
@@ -155,7 +245,7 @@ function WindowShell({ blocks, route, children }: ShellProps) {
         </ConsoleMenuSlot>
         <ConsoleContentColumn>{children}</ConsoleContentColumn>
       </Flex>
-      {blocks.status ? <ConsoleStatusStrip {...blocks.status} /> : null}
+      {parts.status ? <ConsoleStatusStrip {...parts.status} /> : null}
     </ConsoleWindow>
   );
 }
@@ -218,41 +308,41 @@ function EntryRow({ entry, route }: { readonly entry: ShellMenuEntry; readonly r
   return <ConsoleMenuLinkRow icon={<entry.icon aria-hidden />} label={entry.label} href={entry.href} current={holds(entry, route)} />;
 }
 
-function PhoneShell({ blocks, route, children }: ShellProps) {
+function PhoneShell({ parts, route, children }: ShellProps) {
   const { t } = useTranslation("{{namespace}}");
   const header = usePageHeaderState();
   const [menuOpen, setMenuOpen] = useState(false);
-  const tail = blocks.tail ?? [];
-  const entries = [...blocks.menu.flatMap((group) => group.entries), ...tail];
+  const tail = parts.tail ?? [];
+  const entries = [...parts.menu.flatMap((group) => group.entries), ...tail];
   const tabs: ConsolePhoneTab[] = entries.flatMap((entry) =>
     entry.phoneTab && entry.href ? [{ key: entry.key, label: entry.label, icon: entry.phoneTab, to: entry.href }] : [],
   );
   tabs.push({ key: "menu", label: t("shell.nav.menu"), icon: "menu", onPress: () => setMenuOpen(true) });
   const standing = entries.find((entry) => entry.phoneTab && holds(entry, route));
   return (
-    <ConsolePhoneShell brand={blocks.brand.mark} title={header.title ?? blocks.brand.title} tabs={tabs} activeTab={menuOpen ? "menu" : (standing?.key ?? "")}>
+    <ConsolePhoneShell brand={parts.brand.mark} title={header.title ?? parts.brand.title} tabs={tabs} activeTab={menuOpen ? "menu" : (standing?.key ?? "")}>
       <ConsoleContentColumn>{children}</ConsoleContentColumn>
       <ConsolePhoneMenuSheet
         open={menuOpen}
         onOpenChange={setMenuOpen}
-        title={blocks.brand.title}
+        title={parts.brand.title}
         footer={
           <>
             <ConsolePhoneMenuSection title={t("shell.nav.settings")}>
               <ChromeControlRows />
             </ConsolePhoneMenuSection>
-            {tail.length > 0 || blocks.phoneFooter ? (
+            {tail.length > 0 || parts.phoneFooter ? (
               <ConsolePhoneMenuSection>
                 {tail.map((entry) => (
                   <EntryRow key={entry.key} entry={entry} route={route} />
                 ))}
-                {blocks.phoneFooter}
+                {parts.phoneFooter}
               </ConsolePhoneMenuSection>
             ) : null}
           </>
         }
       >
-        {blocks.menu.map((group) => (
+        {parts.menu.map((group) => (
           <ConsolePhoneMenuSection key={group.key} title={group.label}>
             {group.entries.map((entry) => (
               <EntryRow key={entry.key} entry={entry} route={route} />

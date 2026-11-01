@@ -40,7 +40,6 @@ function check(source: string): string[] {
   return typecheck(
     {
       [file]: source,
-      [join(widgetsDir, "list.blocks.tsx")]: render("list.blocks.hbs", context),
       [join(virtualRoot, "domain-product.ts")]: domainStub,
     },
     [file],
@@ -60,7 +59,7 @@ describe("the generated list's search box", () => {
   it("is not drawn where the route declares none, since the text would reach nothing", () => {
     const source = render("list.hbs", { ...context, hasKeywordSearch: false });
     expect(source).not.toContain("SEARCHABLE_KEYWORD_PARAM");
-    expect(source).toContain("features={ { search: false, ...blocks.features } }");
+    expect(source).toContain("features={ { search: false } }");
     expect(check(source)).toEqual([]);
   });
 });
