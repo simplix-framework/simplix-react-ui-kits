@@ -1,6 +1,6 @@
 import type { ComponentType, ReactElement } from "react";
-import { Stack } from "@simplix-react/ui";
 
+import { WindowScreen } from "../error";
 import { useSelfAccessRefusal, type SelfAccessRefusal } from "./self-access";
 
 /** The pages a shell may draw in place of itself, keyed by the error code of a refused self read. */
@@ -30,12 +30,12 @@ export function refusalScreenFor(pages: ShellRefusalPages | undefined, refusal: 
   const code = refusal?.errorCode;
   if (pages === undefined || code === undefined || !Object.hasOwn(pages, code)) return null;
   const Page = pages[code];
-  // The window height is supplied here: a root layout replaces the whole shell, so there is no
-  // console around the page to fill (`RouteErrorFallback` is the same mount).
+  // The window height comes from `WindowScreen`: a root layout replaces the whole shell, so there
+  // is no console around the page to fill (`RouteErrorFallback` is the same mount).
   return (
-    <Stack className="min-h-dvh">
+    <WindowScreen>
       <Page />
-    </Stack>
+    </WindowScreen>
   );
 }
 

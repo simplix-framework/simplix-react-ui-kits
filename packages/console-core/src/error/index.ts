@@ -11,4 +11,5 @@ export {
   ServiceUnavailablePage,
 } from "./error-pages";
 export type { AccessDeniedPageProps, FailurePageProps } from "./error-pages";
+export { WindowScreen } from "./window-screen";
 export { dismissAllErrors, dismissError, dispatchError, useErrorStore } from "@simplix-react/ui";
