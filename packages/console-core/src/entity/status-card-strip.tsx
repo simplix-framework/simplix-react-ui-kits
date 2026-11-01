@@ -90,6 +90,28 @@ export function isCardPressed(filter: StatusCardFilter, committed: Readonly<Reco
 }
 
 /**
+ * Which cards stand pressed. A card whose narrowing another pressed card's narrowing contains is
+ * not pressed itself: pressing 「server errors in the last day」 also satisfies 「errors in the last
+ * day」, and only the card the reader chose is drawn as chosen.
+ *
+ * @param cards the strip's cards
+ * @param committed the list's committed filter values
+ * @returns the keys of the pressed cards
+ */
+export function pressedCardKeys(cards: readonly Pick<StatusCard, "key" | "filter">[], committed: Readonly<Record<string, unknown>>): Set<string> {
+  const matching = cards.filter((card) => card.filter && isCardPressed(card.filter, committed));
+  const keysOf = (card: (typeof matching)[number]) => Object.keys(cardFilterValues(card.filter as StatusCardFilter));
+  return new Set(
+    matching
+      .filter((card) => {
+        const own = keysOf(card);
+        return !matching.some((other) => other !== card && keysOf(other).length > own.length && own.every((key) => keysOf(other).includes(key)));
+      })
+      .map((card) => card.key),
+  );
+}
+
+/**
  * The value a one-value press writes: the card's rows, or nothing when the list already stands on them.
  *
  * @param filter the card's narrowing
@@ -110,6 +132,25 @@ export function pressedValues(filter: StatusCardFilter, committed: Readonly<Reco
   const values = cardFilterValues(filter);
   const lift = isCardPressed(filter, committed);
   return Object.fromEntries(Object.entries(values).map(([key, value]) => [key, lift ? undefined : value]));
+}
+
+/**
+ * Every filter value a press on an unpressed card writes: its own narrowing, with the keys only
+ * the other cards write lifted, so moving from 「server errors in the last day」 to 「errors in the
+ * last day」 drops the status the first one wrote.
+ *
+ * @param filter the pressed card's narrowing
+ * @param cards the strip's cards
+ * @param committed the list's committed filter values
+ */
+export function narrowedValues(filter: StatusCardFilter, cards: readonly Pick<StatusCard, "filter">[], committed: Readonly<Record<string, unknown>>): Record<string, unknown> {
+  const own = cardFilterValues(filter);
+  const lifted: Record<string, unknown> = {};
+  for (const card of cards) {
+    if (!card.filter) continue;
+    for (const key of Object.keys(cardFilterValues(card.filter))) if (!(key in own) && committed[key] !== undefined) lifted[key] = undefined;
+  }
+  return { ...lifted, ...own };
 }
 
 /**
@@ -134,6 +175,7 @@ export function shownCardTone(card: Pick<StatusCard, "value" | "tone">): StatusT
 export function StatusCardStrip({ cards, filters, loading = false, columns = 4 }: StatusCardStripProps) {
   if (cards.length === 0) return null;
   const committed = filters?.committedValues ?? {};
+  const pressedKeys = pressedCardKeys(cards, committed);
   return (
     <Grid columns={columns} gap="md" fit {...partAttributes(statusCardStripStyle, {})}>
       {cards.map((card) => {
@@ -159,13 +201,13 @@ export function StatusCardStrip({ cards, filters, loading = false, columns = 4 }
             </div>
           );
         }
-        const pressed = isCardPressed(filter, committed);
+        const pressed = pressedKeys.has(card.key);
         return (
           <button
             key={card.key}
             type="button"
             aria-pressed={pressed}
-            onClick={() => filters.commitValues(pressedValues(filter, committed))}
+            onClick={() => filters.commitValues(pressed ? pressedValues(filter, committed) : narrowedValues(filter, cards, committed))}
             {...slotAttributes(statusCardStyle, { pressed, pressable: true })}
           >
             {body}

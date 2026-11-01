@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { countedChips } from "./record-list";
-import { cardFilterKey, isCardPressed, pressedValue, pressedValues, shownCardTone } from "./status-card-strip";
+import { cardFilterKey, isCardPressed, narrowedValues, pressedCardKeys, pressedValue, pressedValues, shownCardTone } from "./status-card-strip";
 
 const failed = { field: "status", value: "FAILED" };
 
@@ -39,6 +39,24 @@ describe("a card over a range or a threshold", () => {
   });
   it("writes a one-value card as the chip row's key", () => {
     expect(pressedValues(failed, {})).toEqual({ "status.in": ["FAILED"] });
+  });
+});
+
+describe("a strip whose cards narrow inside each other", () => {
+  const day = { key: "day", filter: { values: { "occurredAt.greaterThanOrEqualTo": "D" } } };
+  const serverDay = { key: "serverDay", filter: { values: { "occurredAt.greaterThanOrEqualTo": "D", "httpStatus.greaterThanOrEqualTo": 500 } } };
+  const cards = [day, serverDay];
+  it("draws only the narrower card pressed when both match", () => {
+    expect([...pressedCardKeys(cards, { "occurredAt.greaterThanOrEqualTo": "D", "httpStatus.greaterThanOrEqualTo": 500 })]).toEqual(["serverDay"]);
+  });
+  it("draws the wider card pressed when only it matches", () => {
+    expect([...pressedCardKeys(cards, { "occurredAt.greaterThanOrEqualTo": "D" })]).toEqual(["day"]);
+  });
+  it("lifts the keys only the other cards write when moving to a wider card", () => {
+    expect(narrowedValues(day.filter, cards, { "occurredAt.greaterThanOrEqualTo": "D", "httpStatus.greaterThanOrEqualTo": 500 })).toEqual({
+      "httpStatus.greaterThanOrEqualTo": undefined,
+      "occurredAt.greaterThanOrEqualTo": "D",
+    });
   });
 });
 

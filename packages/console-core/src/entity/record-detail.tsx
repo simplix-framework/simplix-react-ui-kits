@@ -424,10 +424,10 @@ export function RecordTabBody({ content, count }: { readonly content: RecordTabC
       {content.evidence ? <EvidenceGrid {...content.evidence} /> : null}
       {content.history ? (
         content.historyTitle ? (
-          <Stack gap="xs">
-            <Heading level={5}>{content.historyTitle}</Heading>
+          // Headed as the sections above it are, so the rail reads as one more section of the tab.
+          <CrudDetail.Section title={content.historyTitle} variant="flat">
             <HistoryRail {...content.history} />
-          </Stack>
+          </CrudDetail.Section>
         ) : (
           <HistoryRail {...content.history} />
         )
