@@ -92,6 +92,8 @@ export interface RecordTabContent {
   readonly checkMatrix?: CheckMatrixProps;
   readonly evidence?: EvidenceGridProps;
   readonly history?: HistoryRailProps;
+  /** The rail's own heading, where the tab's sections above it are about something else (「Timeline」 under 「Last error」). */
+  readonly historyTitle?: string;
   /**
    * The record's change history from the audit log, drawn as the kit's history table with its own
    * refusal when the reader may not read the log.
@@ -420,7 +422,16 @@ export function RecordTabBody({ content, count }: { readonly content: RecordTabC
       ) : null}
       <Sections sections={content.afterSections} />
       {content.evidence ? <EvidenceGrid {...content.evidence} /> : null}
-      {content.history ? <HistoryRail {...content.history} /> : null}
+      {content.history ? (
+        content.historyTitle ? (
+          <Stack gap="xs">
+            <Heading level={5}>{content.historyTitle}</Heading>
+            <HistoryRail {...content.history} />
+          </Stack>
+        ) : (
+          <HistoryRail {...content.history} />
+        )
+      ) : null}
       {content.changes ? <ChangeHistoryTable history={content.changes.history} denied={!content.changes.history.readable} emptyBody={content.changes.emptyBody} /> : null}
       <RecordNotices notices={content.notices} />
       <RecordNote text={content.note} />
