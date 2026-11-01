@@ -59,8 +59,11 @@ export interface TileColumnsResult {
  * it follows the page column rather than the window, and again whenever that column resizes.
  *
  * <p>The first measurement is taken before the first paint, so a narrow column never shows the
- * guess. A later resize commits its new count in the same frame, so no frame is drawn with tiles
- * narrower than the minimum.
+ * guess. A window resize commits its new count in the resize event, which runs before the frame's
+ * layout, so no frame is drawn with tiles narrower than the minimum. A column that changes without
+ * the window (the menu folding, a panel opening) is committed from the next animation frame,
+ * because a commit made inside a resize observer's own callback resizes the observed grid again
+ * and the browser reports that as an undelivered notification.
  *
  * @param grid the grid element
  * @param tiles how many tiles the row draws
@@ -77,15 +80,20 @@ export function useTileColumns(grid: RefObject<HTMLElement | null>, tiles: numbe
       const gap = Number.parseFloat(style.columnGap) || 0;
       return tilesThatFit(el.clientWidth, gap, lengthPx(style.getPropertyValue("--tile-min-width"), root), cap);
     };
+    const commit = () => flushSync(() => setFit(read()));
     setFit(read());
-    if (typeof ResizeObserver === "undefined") return;
-    const observer = new ResizeObserver(() => {
-      const next = read();
-      // Outside a React event, so the commit is forced here rather than left for after the paint.
-      flushSync(() => setFit(next));
+    window.addEventListener("resize", commit);
+    let frame = 0;
+    const observer = typeof ResizeObserver === "undefined" ? null : new ResizeObserver(() => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(commit);
     });
-    observer.observe(el);
-    return () => observer.disconnect();
+    observer?.observe(el);
+    return () => {
+      window.removeEventListener("resize", commit);
+      observer?.disconnect();
+      cancelAnimationFrame(frame);
+    };
   }, [grid, cap]);
   return { columns: balancedTileColumns(tiles, fit ?? cap), measured: fit !== null };
 }
