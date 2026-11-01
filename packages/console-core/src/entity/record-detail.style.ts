@@ -18,6 +18,38 @@ export const recordHeadSubtitleStyle = defineSlotStyle({
   defaultVariants: {},
 });
 
+/** The record's key figures under its name: a balance, what is held, the limit. */
+export const recordHeadFiguresStyle = defineSlotStyle({
+  slot: "console-record-head-figures",
+  base: "flex flex-wrap gap-x-6 gap-y-2 pt-2",
+  variants: {},
+  defaultVariants: {},
+});
+
+/** One key figure: its name over its value. */
+export const recordHeadFigureStyle = defineSlotStyle({
+  slot: "console-record-head-figure",
+  base: "flex min-w-0 flex-col",
+  variants: {},
+  defaultVariants: {},
+});
+
+/** A key figure's name. */
+export const recordHeadFigureLabelStyle = defineSlotStyle({
+  slot: "console-record-head-figure-label",
+  base: "text-xs text-muted-foreground",
+  variants: {},
+  defaultVariants: {},
+});
+
+/** A key figure's value, in figures that line up. */
+export const recordHeadFigureValueStyle = defineSlotStyle({
+  slot: "console-record-head-figure-value",
+  base: "text-sm font-semibold tabular-nums",
+  variants: {},
+  defaultVariants: {},
+});
+
 /**
  * The frame around a sub-list in a detail tab. `compact` is a short list the record carries whole;
  * `full` is the main list table with its search, sort and pager.

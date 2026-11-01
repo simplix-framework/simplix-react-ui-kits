@@ -26,6 +26,11 @@ export interface HistoryNode {
   /** What happened, or what has to. */
   readonly label: string;
   readonly state: HistoryNodeState;
+  /**
+   * How the step ended, where reaching it is not the whole story: a payment that failed, a run held
+   * up, a generation that finished. Drawn on the dot; the label says it in words.
+   */
+  readonly tone?: "danger" | "warning" | "success";
   /** When, or how long is left — drawn beside the label rather than under it. */
   readonly trail?: ReactNode;
   /** Who did it and what it says, including the photographs and the reasoning. */
@@ -115,7 +120,7 @@ export function HistoryRail({ nodes }: HistoryRailProps) {
               unbroken between nodes. A `gap` on the outer stack would cut the line into segments,
               which is the one thing the rail cannot do, so the space is inside the row. */}
           <Flex direction="column" align="center" className="w-4 shrink-0">
-            <span className="size-3 shrink-0" {...slotAttributes(historyDotStyle, { state: node.state })} />
+            <span className="size-3 shrink-0" {...slotAttributes(historyDotStyle, { state: node.state, tone: node.tone ?? "none" })} />
             {index < nodes.length - 1 && (
               <span
                 className="w-px flex-1"

@@ -28,6 +28,7 @@ export { StageFlowBar, type FlowStageCount, type StageFlowBarProps } from "./sta
 export { ProgressRing, type ProgressRingProps } from "./progress-ring";
 export { RiskRows, type RiskCell, type RiskColumn, type RiskRowEntry, type RiskRowsProps } from "./risk-rows";
 export { OverdueList, type OverdueEntry, type OverdueListProps } from "./overdue-list";
+export { AttentionList, raisedAttention, type AttentionEntry, type AttentionListProps } from "./attention-list";
 export { Sparkline, type SparklineProps } from "./sparkline";
 export { ObligationMatrix, type ObligationCell, type ObligationMatrixProps, type ObligationRow, type ObligationState } from "./obligation-matrix";
 export { MeterList, type MeterEntry, type MeterListProps } from "./meter-list";

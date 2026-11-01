@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { AlertBanner, Button, Flex, type StatusTone } from "@simplix-react/ui";
-import { InfoIcon } from "lucide-react";
+import { CircleAlertIcon, CircleCheckIcon, InfoIcon, TriangleAlertIcon } from "lucide-react";
 import { slotAttributes } from "@simplix-react/ui/design";
 
 import { recordNoteIconStyle, recordNoteStyle, verbBlockedReasonStyle, verbBlockedStyle } from "./record-blocks.style";
@@ -13,6 +13,24 @@ export interface RecordNotice {
   readonly body?: string;
   /** An action the message offers, such as opening the list it is about. */
   readonly action?: { readonly label: string; readonly onClick?: () => void };
+  /**
+   * Whether the state the notice is about holds (`when: record?.standing === "SUSPENDED"`). A
+   * notice whose `when` is false is not drawn, so a detail declares every notice it can raise in
+   * one list; absent, it is drawn.
+   */
+  readonly when?: boolean;
+}
+
+/** The glyph each tone's notice leads with, so the tone is not carried by colour alone. */
+const NOTICE_ICON = { info: InfoIcon, warning: TriangleAlertIcon, danger: CircleAlertIcon, success: CircleCheckIcon } as const;
+
+/**
+ * The notices whose state holds, in their declared order.
+ *
+ * @param notices every notice the record can raise
+ */
+export function raisedRecordNotices(notices: readonly RecordNotice[] | undefined): RecordNotice[] {
+  return (notices ?? []).filter((notice) => notice.when !== false);
 }
 
 /** A control in a row of verbs: the panel's reading verbs, a tab's own verbs, a dialog's foot. */
@@ -34,13 +52,15 @@ const NOTICE_TONE: Record<RecordNotice["tone"], StatusTone> = {
 
 /** Draws {@link RecordNotice}s, one under the other. */
 export function RecordNotices({ notices }: { readonly notices?: readonly RecordNotice[] }) {
-  if (!notices || notices.length === 0) return null;
+  const raised = raisedRecordNotices(notices);
+  if (raised.length === 0) return null;
   return (
     <>
-      {notices.map((notice) => (
+      {raised.map((notice) => (
         <AlertBanner
           key={notice.key}
           tone={NOTICE_TONE[notice.tone]}
+          icon={NOTICE_ICON[notice.tone]}
           title={notice.title}
           subtitle={notice.body}
           bordered

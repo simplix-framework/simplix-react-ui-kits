@@ -12,6 +12,7 @@ import { PACKAGE_NAMESPACE } from "./locales";
 import { usePeekHost, type PeekTarget } from "../peek";
 import type { RecordFormField } from "./record-form-types";
 import type { RecordFilter } from "./record-list";
+import { bytesText, durationText, figureSign, signedText } from "./record-figure";
 import type { RecordValue } from "./record-value";
 
 /**
@@ -39,7 +40,15 @@ export type ContractFieldKind =
   /** A value the client writes and no response returns (SimpliX Meta's `format: "secret"`), such as a provider key. */
   | "secret"
   /** A structured value (an object or an array), drawn and edited as indented JSON. */
-  | "json";
+  | "json"
+  /** A whole number of credits, written with the word for them (`500 credits`). */
+  | "credits"
+  /** A size in bytes, written in the largest unit that keeps it at 1 or more (`1.5 MB`). */
+  | "bytes"
+  /** A span of milliseconds, written as a reader compares it (`850 ms`, `12.3 sec`, `2 min 5 sec`). */
+  | "duration"
+  /** A machine message (an error, an error code): one monospaced line, copied and shown whole on request. */
+  | "excerpt";
 
 export interface ContractField {
   readonly name: string;
@@ -66,6 +75,11 @@ export interface ContractField {
   /** The server owns it: drawn in a detail, never edited in a form. */
   readonly readOnly?: boolean;
   readonly required?: boolean;
+  /**
+   * For a `number`, `money` or `credits` ledger amount: drawn with its sign written out and tinted
+   * by it, a credit green and a debit red.
+   */
+  readonly signed?: boolean;
   /** Whether the server orders a list by it, as SimpliX Meta's searchable metadata states; absent means unstated. */
   readonly sortable?: boolean;
   /**
@@ -136,6 +150,10 @@ export const CONTRACT_COLUMN_SIZE: Readonly<Record<ContractFieldKind, { readonly
   i18nText: { minWidth: 140 },
   secret: { minWidth: 140 },
   json: { minWidth: 220, wrap: true },
+  credits: { width: 120, align: "end" },
+  bytes: { width: 104, align: "end" },
+  duration: { width: 112, align: "end" },
+  excerpt: { minWidth: 200 },
 };
 
 /** A searchable field as the generator writes it, which {@link useRecordContract}'s `filters` turns into a list filter. */
@@ -212,6 +230,17 @@ export function groupedNumber(raw: unknown, locale: string): string {
   if (raw === null || raw === undefined || raw === "") return "";
   const value = typeof raw === "number" ? raw : Number(raw);
   return Number.isFinite(value) ? new Intl.NumberFormat(locale).format(value) : String(raw);
+}
+
+/**
+ * A figure as a cell draws it: lined up down the column, and for a `signed` ledger amount with its
+ * sign written out and tinted by it.
+ */
+export function figureValue(field: Pick<ContractField, "signed">, raw: unknown, text: string): RecordValue {
+  // An unsigned amount stays plain text, which every cell, card and name already draws.
+  if (!field.signed) return text;
+  const sign = figureSign(raw);
+  return { figure: signedText(text, sign), ...(sign ? { sign } : {}) };
 }
 
 /** The amount a `money` field's stored whole number stands for, in the currency's own units. */
@@ -319,9 +348,17 @@ export function useRecordContract(entity: string, overrides: ContractOverrides =
         case "date":
           return calendarDayLabel(String(raw), locale, "iso") || String(raw);
         case "number":
-          return groupedNumber(raw, locale);
+          return figureValue(field, raw, groupedNumber(raw, locale));
         case "money":
-          return moneyText(field, raw, locale);
+          return figureValue(field, raw, moneyText(field, raw, locale));
+        case "credits":
+          return figureValue(field, raw, t("recordValue.credits", { count: groupedNumber(raw, locale) as never }));
+        case "bytes":
+          return { figure: bytesText(raw, locale) };
+        case "duration":
+          return { figure: durationText(raw, locale) };
+        case "excerpt":
+          return { excerpt: String(raw) };
         case "reference": {
           const name = field.nameField ? valueAtPath(row, field.nameField) : undefined;
           const text = typeof name === "string" && name !== "" ? name : String(raw);
@@ -359,6 +396,9 @@ export function useRecordContract(entity: string, overrides: ContractOverrides =
         case "time":
           return { ...common, kind: "time", value: raw == null ? null : String(raw), clearable: !field.required };
         case "number":
+        case "credits":
+        case "bytes":
+        case "duration":
           return { ...common, kind: "number", value: raw == null || raw === "" ? null : Number(raw) };
         // Edited in the currency's own units; `request` writes it back as the stored whole number.
         case "money":
@@ -381,6 +421,7 @@ export function useRecordContract(entity: string, overrides: ContractOverrides =
         case "secret":
           return secretFormField(common, record !== undefined, t("recordForm.secretKeep"));
         case "longText":
+        case "excerpt":
           return { ...common, kind: "textarea", value: raw == null ? "" : String(raw) };
         case "json":
           return { ...common, kind: "textarea", value: raw == null ? "" : jsonText(raw) };
@@ -494,6 +535,9 @@ export function recordValueText(value: RecordValue): string {
   if (typeof value === "string" || typeof value === "number") return String(value);
   if ("text" in value) return value.text;
   if ("link" in value) return value.link;
+  if ("figure" in value) return value.figure;
+  if ("excerpt" in value) return value.excerpt;
+  if ("meter" in value) return value.meter.text ?? `${value.meter.value} / ${value.meter.total}`;
   if ("badges" in value) return value.badges.map((badge) => badge.label).join(" ");
   if ("badge" in value) return value.badge.label;
   return "";

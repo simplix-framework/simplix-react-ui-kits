@@ -13,8 +13,16 @@ export interface CardLayout<K> {
 export const CARD_WIDE_TEXT = 14;
 
 /** The text a value shows, for judging its length. */
-export const textOf = (value: RecordValue): string =>
-  typeof value === "string" || typeof value === "number" ? String(value) : value && typeof value === "object" && "link" in value ? value.link : value && typeof value === "object" && "text" in value ? value.text : "";
+export const textOf = (value: RecordValue): string => {
+  if (typeof value === "string" || typeof value === "number") return String(value);
+  if (!value || typeof value !== "object") return "";
+  if ("link" in value) return value.link;
+  if ("text" in value) return value.text;
+  if ("figure" in value) return value.figure;
+  if ("excerpt" in value) return value.excerpt;
+  if ("meter" in value) return value.meter.text ?? "";
+  return "";
+};
 
 /** Whether a value draws nothing. */
 export const isEmpty = (value: RecordValue) => value === null || value === undefined || value === "";

@@ -7,6 +7,24 @@
   [data-slot="console-copyable-field"][data-slot][data-s-console-copyable-field] {
     @apply gap-1;
   }
+  [data-slot="attention-glyph"][data-slot][data-s-attention-glyph] {
+    @apply size-4 shrink-0;
+  }
+  [data-slot="attention-glyph"][data-kind="danger"][data-s-attention-glyph] {
+    @apply text-destructive;
+  }
+  [data-slot="attention-glyph"][data-kind="warning"][data-s-attention-glyph] {
+    @apply text-warning;
+  }
+  [data-slot="attention-glyph"][data-kind="info"][data-s-attention-glyph] {
+    @apply text-muted-foreground;
+  }
+  [data-slot="attention-glyph"][data-kind="help"][data-s-attention-glyph] {
+    @apply text-muted-foreground;
+  }
+  [data-slot="attention-row"][data-slot][data-s-attention-row] {
+    @apply min-h-11 gap-3 rounded-md px-2.5 py-1.5 text-left text-(length:--fs-body-sm) leading-(--lh-body-sm) transition-colors;
+  }
   [data-slot="chart-caption"][data-slot][data-s-chart-caption] {
     @apply px-2 text-(length:--fs-badge) leading-(--lh-badge) font-medium text-muted-foreground;
   }
@@ -361,8 +379,35 @@
   [data-slot="console-verb-blocked"][data-slot][data-s-console-verb-blocked] {
     @apply gap-0.5;
   }
+  [data-slot="console-record-head-figure-label"][data-slot][data-s-console-record-head-figure-label] {
+    @apply text-xs text-muted-foreground;
+  }
+  [data-slot="console-record-head-figure"][data-slot][data-s-console-record-head-figure] {
+    @apply flex min-w-0 flex-col;
+  }
+  [data-slot="console-record-head-figure-value"][data-slot][data-s-console-record-head-figure-value] {
+    @apply text-sm font-semibold tabular-nums;
+  }
+  [data-slot="console-record-head-figures"][data-slot][data-s-console-record-head-figures] {
+    @apply flex flex-wrap gap-x-6 gap-y-2 pt-2;
+  }
   [data-slot="console-record-head-subtitle"][data-slot][data-s-console-record-head-subtitle] {
     @apply block truncate pt-0.5 text-xs text-muted-foreground;
+  }
+  [data-slot="record-excerpt"][data-slot][data-s-record-excerpt] {
+    @apply inline-flex min-w-0 max-w-full items-center gap-1;
+  }
+  [data-slot="record-excerpt-text"][data-slot][data-s-record-excerpt-text] {
+    @apply min-w-0 truncate font-mono text-xs;
+  }
+  [data-slot="record-figure"][data-slot][data-s-record-figure] {
+    @apply whitespace-nowrap tabular-nums;
+  }
+  [data-slot="record-figure"][data-sign="positive"][data-s-record-figure] {
+    @apply text-success;
+  }
+  [data-slot="record-figure"][data-sign="negative"][data-s-record-figure] {
+    @apply text-destructive;
   }
   [data-slot="console-attachment-drop"][data-slot][data-s-console-attachment-drop] {
     @apply gap-3 rounded-md bg-muted/40 px-4 py-3 outline-1 outline-dashed outline-muted-foreground/40;
@@ -378,6 +423,18 @@
   }
   [data-slot="console-record-list"][data-nested="false"][data-s-console-record-list] {
     @apply shrink-0 overflow-clip rounded-lg border bg-card;
+  }
+  [data-slot="record-meter-figures"][data-slot][data-s-record-meter-figures] {
+    @apply flex items-baseline justify-between gap-2 text-xs tabular-nums text-muted-foreground;
+  }
+  [data-slot="record-meter-fill"][data-slot][data-s-record-meter-fill] {
+    @apply absolute inset-y-0 left-0 rounded-full bg-[var(--mark)];
+  }
+  [data-slot="record-meter"][data-slot][data-s-record-meter] {
+    @apply inline-flex min-w-0 w-full flex-col gap-1;
+  }
+  [data-slot="record-meter-track"][data-slot][data-s-record-meter-track] {
+    @apply relative h-1.5 w-full overflow-hidden rounded-full bg-muted;
   }
   [data-slot="status-card"][data-slot][data-s-status-card] {
     @apply h-full rounded-lg text-left transition-shadow duration-[var(--dur-fast)];
@@ -771,6 +828,15 @@
   }
   [data-slot="console-history-dot"][data-state="skip"][data-s-console-history-dot] {
     @apply bg-background border-dashed border-muted-foreground/40;
+  }
+  [data-slot="console-history-dot"][data-tone="danger"][data-s-console-history-dot] {
+    @apply bg-destructive border-destructive;
+  }
+  [data-slot="console-history-dot"][data-tone="warning"][data-s-console-history-dot] {
+    @apply bg-warning border-warning;
+  }
+  [data-slot="console-history-dot"][data-tone="success"][data-s-console-history-dot] {
+    @apply bg-success border-success;
   }
   [data-slot="console-history-line"][data-skipped="true"][data-s-console-history-line] {
     @apply border-l border-dashed border-muted-foreground/40;
@@ -1514,6 +1580,9 @@
   }
   :where([data-slot="console-copyable-field"])[data-s-console-copyable-field] {
     @apply [&>[data-slot=button]]:size-[22px] [&>[data-slot=button]]:text-muted-foreground [&>[data-slot=button]]:opacity-0 [&>[data-slot=button]]:transition-opacity [&>[data-slot=button]]:duration-[var(--dur-fast)] hover:[&>[data-slot=button]]:opacity-100 focus-within:[&>[data-slot=button]]:opacity-100 [@media(hover:none)]:[&>[data-slot=button]]:opacity-100 [&>[data-slot=button]_svg]:size-3.5;
+  }
+  :where([data-slot="attention-row"])[data-s-attention-row] {
+    @apply hover:bg-muted/50 focus-visible:outline-none focus-visible:shadow-[var(--focus-halo)] disabled:cursor-default disabled:hover:bg-transparent;
   }
   :where([data-slot="chart-skeleton"])[data-s-chart-skeleton] {
     @apply motion-reduce:animate-none;

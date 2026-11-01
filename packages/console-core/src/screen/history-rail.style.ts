@@ -11,8 +11,15 @@ export const historyDotStyle = defineSlotStyle({
       pending: "bg-background border-muted-foreground/40",
       skip: "bg-background border-dashed border-muted-foreground/40",
     },
+    /** How a reached step ended, where that is more than reached: failed, held up, or finished well. */
+    tone: {
+      none: "",
+      danger: "bg-destructive border-destructive",
+      warning: "bg-warning border-warning",
+      success: "bg-success border-success",
+    },
   },
-  defaultVariants: { state: "pending" },
+  defaultVariants: { state: "pending", tone: "none" },
 });
 
 /** The hairline from one dot to the next; it is dashed where the next node was skipped. */

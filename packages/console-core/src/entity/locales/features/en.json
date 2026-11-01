@@ -101,5 +101,10 @@
       "csv": "CSV (.csv)",
       "xlsx": "Excel (.xlsx)"
     }
+  },
+  "recordValue": {
+    "copy": "Copy",
+    "showWhole": "Show all",
+    "credits": "{{count}} credits"
   }
 }

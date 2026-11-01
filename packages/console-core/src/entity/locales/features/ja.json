@@ -100,5 +100,10 @@
       "csv": "CSV (.csv)",
       "xlsx": "Excel (.xlsx)"
     }
+  },
+  "recordValue": {
+    "copy": "コピー",
+    "showWhole": "全文を表示",
+    "credits": "{{count}}クレジット"
   }
 }

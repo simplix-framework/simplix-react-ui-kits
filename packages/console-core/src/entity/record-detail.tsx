@@ -26,7 +26,7 @@ import { CountedTab } from "../layout/page-tabs";
 import { RecordNote, RecordNotices, RecordVerbButton, RecordVerbs, type RecordNotice, type RecordVerb } from "./record-blocks";
 import { PermissionMatrix, type PermissionMatrixProps } from "./permission-matrix";
 import { BoundedDialogContent } from "../layout/bounded-dialog-content";
-import { recordHeadStyle, recordHeadSubtitleStyle, recordSublistStyle } from "./record-detail.style";
+import { recordHeadFigureLabelStyle, recordHeadFigureStyle, recordHeadFigureValueStyle, recordHeadFiguresStyle, recordHeadStyle, recordHeadSubtitleStyle, recordSublistStyle } from "./record-detail.style";
 import { RecordList, RecordListNestingContext, type RecordAction, type RecordColumn, type RecordListProps } from "./record-list";
 import { RecordValueView, type RecordBadge, type RecordValue } from "./record-value";
 import { StageGate, type StageGateProps } from "./stage-gate";
@@ -128,12 +128,25 @@ function TabToggle({ toggle }: { readonly toggle: RecordTabToggle }) {
   );
 }
 
+/** One key figure in a record's head. */
+export interface RecordHeadFigure {
+  readonly key: string;
+  readonly label: string;
+  readonly value: RecordValue;
+}
+
 /** Props for {@link RecordDetail}. */
 export interface RecordDetailProps {
   /** What the record is called, at the head of the panel. */
   readonly title: string;
   /** What the record is to the reader, under its name: a role and where it belongs. */
   readonly subtitle?: string;
+  /**
+   * The record's key figures under its name, two to four of them (a balance, what is held, the
+   * daily limit), each drawn by its value's own kind, so a meter or a signed amount reads there as
+   * it reads in the list.
+   */
+  readonly figures?: readonly RecordHeadFigure[];
   /** Draws the person the record is beside the name, tinted by this seed (their id). */
   readonly avatar?: string;
   /**
@@ -434,6 +447,7 @@ function withPresentationSwitch(head: ReactNode, presentationSwitch: DetailPrese
 export function RecordDetail({
   title,
   subtitle,
+  figures,
   avatar,
   status,
   tabs,
@@ -511,6 +525,18 @@ export function RecordDetail({
               {status ? <RecordValueView value={{ badge: status }} /> : null}
             </Flex>
             {subtitle ? <span {...slotAttributes(recordHeadSubtitleStyle, {})}>{subtitle}</span> : null}
+            {figures && figures.length > 0 ? (
+              <dl {...slotAttributes(recordHeadFiguresStyle, {})}>
+                {figures.map((figure) => (
+                  <div key={figure.key} {...slotAttributes(recordHeadFigureStyle, {})}>
+                    <dt {...slotAttributes(recordHeadFigureLabelStyle, {})}>{figure.label}</dt>
+                    <dd {...slotAttributes(recordHeadFigureValueStyle, {})}>
+                      <RecordValueView value={figure.value} />
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+            ) : null}
           </Stack>
         </Flex>,
         presentationSwitch,

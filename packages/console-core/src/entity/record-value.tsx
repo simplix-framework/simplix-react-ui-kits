@@ -1,8 +1,15 @@
 import type { MouseEvent, ReactNode } from "react";
 import { Button, EmptyValue, Flex, StatusBadge, Text, type StatusTone } from "@simplix-react/ui";
 
+import { slotAttributes } from "@simplix-react/ui/design";
+
 import { InitialsAvatar } from "../identity/initials-avatar";
 import { MonoBlock } from "../notice/mono-block";
+
+import { RecordExcerpt } from "./record-excerpt";
+import { RecordMeter, type RecordMeterValue } from "./record-meter";
+import { recordFigureStyle } from "./record-excerpt.style";
+import type { FigureSign } from "./record-figure";
 
 /** A badge a value is drawn as: a standing, a role, a period. */
 export interface RecordBadge {
@@ -41,6 +48,18 @@ export type RecordValue =
   | { readonly badge: RecordBadge }
   | { readonly badges: readonly RecordBadge[] }
   /**
+   * An amount compared down a column: drawn in figures that line up, tinted by its sign where it
+   * is a ledger amount (a credit green, a debit red), the sign also written out.
+   */
+  | { readonly figure: string; readonly sign?: FigureSign }
+  /**
+   * A machine message (an error, an error code): its first line in the monospaced face, with a
+   * copy control and a control that shows it whole.
+   */
+  | { readonly excerpt: string }
+  /** A spent-of-limit reading, drawn as a bar coloured by how near the limit it stands. */
+  | { readonly meter: RecordMeterValue }
+  /**
    * The name of another record. It is drawn in body colour: a name that carries no way to open its
    * record must not look pressable, and inside a clickable row it would compete with the row press.
    * With `onClick` or `href` it is drawn as a link that opens that record; the press does not reach
@@ -52,6 +71,11 @@ export type RecordValue =
 export function RecordValueView({ value }: { readonly value: RecordValue }): ReactNode {
   if (value === null || value === undefined || value === "") return <EmptyValue />;
   if (typeof value === "string" || typeof value === "number") return <>{value}</>;
+  if ("figure" in value) {
+    return <span {...slotAttributes(recordFigureStyle, { sign: value.sign ?? "none" })}>{value.figure}</span>;
+  }
+  if ("meter" in value) return <RecordMeter meter={value.meter} />;
+  if ("excerpt" in value) return value.excerpt === "" ? <EmptyValue /> : <RecordExcerpt text={value.excerpt} />;
   if ("badges" in value) {
     return (
       // Badges wrap one by one inside the column; a badge's own words never break or ellipsize.

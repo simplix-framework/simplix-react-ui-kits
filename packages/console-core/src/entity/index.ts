@@ -32,10 +32,17 @@ export type { StatusCard, StatusCardFilter, StatusCardStripProps } from "./statu
 export { statusCounts, useStatusCounts } from "./status-counts";
 export type { StatusCountsOptions } from "./status-counts";
 export { RecordValueView } from "./record-value";
+export { RecordMeter, meterShare, meterTone } from "./record-meter";
+export { lifecycleNodes } from "./record-lifecycle";
+export type { LifecycleOptions, LifecycleStep } from "./record-lifecycle";
+export type { MeterTone, RecordMeterValue } from "./record-meter";
+export { RecordExcerpt, excerptLine } from "./record-excerpt";
+export { bytesText, durationText, figureSign, signedText } from "./record-figure";
+export type { FigureSign } from "./record-figure";
 export type { RecordBadge, RecordValue } from "./record-value";
 export { RecordDetail, RecordTabBody } from "./record-detail";
-export type { RecordDetailProps, RecordField, RecordSection, RecordTab, RecordTabContent, RecordTabToggle } from "./record-detail";
-export { RecordNote, RecordNotices, RecordVerbButton, RecordVerbs } from "./record-blocks";
+export type { RecordDetailProps, RecordField, RecordHeadFigure, RecordSection, RecordTab, RecordTabContent, RecordTabToggle } from "./record-detail";
+export { RecordNote, RecordNotices, RecordVerbButton, RecordVerbs, raisedRecordNotices } from "./record-blocks";
 export type { RecordNotice, RecordVerb } from "./record-blocks";
 export { RecordTree } from "./record-tree";
 export type { RecordTreeFeatures, RecordTreeProps } from "./record-tree";
@@ -58,4 +65,5 @@ export type { CheckPairValue, ChoiceDetailValue, FieldCommon, FieldEvidence, Ran
 export { CONTRACT_COLUMN_SIZE, enumValueOf, fieldEnumsOf, groupedNumber, isBlankSecret, moneyAmount, moneyFilterTransform, moneyStored, moneyText, secretFormField, recordNameOf, recordValueText, useRecordContract, valueAtPath } from "./record-contract";
 export { useScreenWords, type ScreenWords } from "./screen-words";
 export { decideAccess, permissionOf, useAllowed, type OperationAccess, type PermissionTerm } from "./allowed";
+export { figureValue } from "./record-contract";
 export type { ContractField, ContractFilter, ContractFieldKind, ContractOverrides } from "./record-contract";
