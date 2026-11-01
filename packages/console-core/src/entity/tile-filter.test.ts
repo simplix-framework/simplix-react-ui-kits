@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { countedChips } from "./record-list";
-import { isTilePressed, narrowedValues, pressedTileKeys, pressedValue, pressedValues, tileFilterKey } from "./tile-filter";
+import { isTilePressed, narrowedValues, pressedTileKeys, pressedValue, pressedValues, tileFilterKey, type TileValuesFilter } from "./tile-filter";
 
 const failed = { field: "status", value: "FAILED" };
 
@@ -39,6 +39,27 @@ describe("a tile over a range or a threshold", () => {
   });
   it("writes a one-value card as the chip row's key", () => {
     expect(pressedValues(failed, {})).toEqual({ "status.in": ["FAILED"] });
+  });
+});
+
+describe("a tile over a toggle or a set", () => {
+  const granted: TileValuesFilter = { values: { "consentType.in": ["TRAINING"], "granted.equals": true } };
+  it("takes a boolean and a set without a cast, and is pressed when the bar holds the same members", () => {
+    expect(isTilePressed(granted, { "consentType.in": ["TRAINING"], "granted.equals": true })).toBe(true);
+    expect(isTilePressed(granted, { "consentType.in": ["TRAINING"], "granted.equals": "true" })).toBe(true);
+  });
+  it("is not pressed when the toggle stands the other way, even though false is a value", () => {
+    expect(isTilePressed(granted, { "consentType.in": ["TRAINING"], "granted.equals": false })).toBe(false);
+    expect(isTilePressed({ values: { "granted.equals": false } }, { "granted.equals": false })).toBe(true);
+  });
+  it("compares a set by its members and not by their order, and a wider set is not the tile's rows", () => {
+    const pair: TileValuesFilter = { values: { "consentType.in": ["A", "B"] } };
+    expect(isTilePressed(pair, { "consentType.in": ["B", "A"] })).toBe(true);
+    expect(isTilePressed(pair, { "consentType.in": ["A", "B", "C"] })).toBe(false);
+    expect(isTilePressed(pair, { "consentType.in": ["A"] })).toBe(false);
+  });
+  it("writes the boolean and the set as they are", () => {
+    expect(pressedValues(granted, {})).toEqual({ "consentType.in": ["TRAINING"], "granted.equals": true });
   });
 });
 

@@ -28,7 +28,7 @@ export { missingRequired } from "@simplix-react/headless";
 export { RecordList, countedChips, orderUpdates, useAnnounceOutcome } from "./record-list";
 export type { RecordAction, RecordBulkAction, RecordColumn, RecordFilter, RecordListFeatures, RecordListMore, RecordListProps, RecordOutcome, RecordReorder, RecordVerbType } from "./record-list";
 export { isTilePressed, narrowedValues, pressedTileKeys, pressedValue, pressedValues, tileFilterKey, tileFilterValues } from "./tile-filter";
-export type { TileFilter, TileValueFilter, TileValuesFilter } from "./tile-filter";
+export type { TileFilter, TileFilterValue, TileValueFilter, TileValuesFilter } from "./tile-filter";
 export { missingTileFacets, TileFacetsProvider, tileFacets, useTileFacets, type TileFacet } from "./tile-facets";
 export { aggregateValue, statusCounts, statusTiles, useStatusCounts } from "./status-counts";
 export { figureTiles, listRequestParams, useFigureTiles, withListRequest } from "./figure-tiles";

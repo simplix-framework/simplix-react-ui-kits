@@ -13,13 +13,29 @@ export interface TileValueFilter {
   readonly fieldLabel?: string;
 }
 
+/** One filter value as the filter bar holds it: text, a number, a toggle, or a set of those for an `.in` key. */
+export type TileFilterValue = string | number | boolean | readonly (string | number | boolean)[];
+
 /**
  * A narrowing no chip writes: a set of filter keys and their values, each written as the filter
- * bar writes it (`occurredAt.greaterThanOrEqualTo`, `httpStatus.greaterThanOrEqualTo`), so the
+ * bar writes it (`occurredAt.greaterThanOrEqualTo`, `granted.equals`, `consentType.in`), so the
  * filter bar's own badges show what the tile chose and can lift it.
  */
 export interface TileValuesFilter {
-  readonly values: Readonly<Record<string, string | number>>;
+  readonly values: Readonly<Record<string, TileFilterValue>>;
+}
+
+/** A filter value as the set of its members' text, so a toggle, a number and a one-member set compare by what they say. */
+function memberText(value: unknown): string[] {
+  return (Array.isArray(value) ? value : [value]).map(String).sort();
+}
+
+/** Whether the committed value and the tile's value narrow to the same members, whatever the shape each is held in. */
+function sameFilterValue(committed: unknown, wanted: unknown): boolean {
+  if (committed === undefined || committed === null) return false;
+  const a = memberText(committed);
+  const b = memberText(wanted);
+  return a.length === b.length && a.every((member, index) => member === b[index]);
 }
 
 /** The list narrowing a figure tile stands for. */
@@ -52,7 +68,7 @@ export function tileFilterValues(filter: TileFilter): Readonly<Record<string, un
 export function isTilePressed(filter: TileFilter, committed: Readonly<Record<string, unknown>>): boolean {
   if ("values" in filter) {
     const keys = Object.keys(filter.values);
-    return keys.length > 0 && keys.every((key) => committed[key] !== undefined && String(committed[key]) === String(filter.values[key]));
+    return keys.length > 0 && keys.every((key) => sameFilterValue(committed[key], filter.values[key]));
   }
   const chosen = committed[tileFilterKey(filter)];
   if (Array.isArray(chosen)) return chosen.length === 1 && String(chosen[0]) === filter.value;
