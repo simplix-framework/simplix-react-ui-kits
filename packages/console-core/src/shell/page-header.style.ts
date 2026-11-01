@@ -29,3 +29,12 @@ export const pageHeaderActionsStyle = defineSlotStyle({
   variants: {},
   defaultVariants: {},
 });
+
+/** The sentence under a page header's title that says what the screen is for. */
+export const pageHeaderDescriptionStyle = defineSlotStyle({
+  slot: "console-page-header-description",
+  as: "part",
+  base: "",
+  variants: {},
+  defaultVariants: {},
+});

@@ -26,7 +26,7 @@ export { paginationHandlers } from "@simplix-react/headless";
 export type { PaginationHandlers } from "@simplix-react/headless";
 export { missingRequired } from "@simplix-react/headless";
 export { RecordList, countedChips, orderUpdates, useAnnounceOutcome } from "./record-list";
-export type { RecordAction, RecordBulkAction, RecordColumn, RecordFilter, RecordListFeatures, RecordListMore, RecordListProps, RecordOutcome, RecordReorder } from "./record-list";
+export type { RecordAction, RecordBulkAction, RecordColumn, RecordFilter, RecordListFeatures, RecordListMore, RecordListProps, RecordOutcome, RecordReorder, RecordVerbType } from "./record-list";
 export { isTilePressed, narrowedValues, pressedTileKeys, pressedValue, pressedValues, tileFilterKey, tileFilterValues } from "./tile-filter";
 export type { TileFilter, TileValueFilter, TileValuesFilter } from "./tile-filter";
 export { aggregateValue, statusCounts, statusTiles, useStatusCounts } from "./status-counts";

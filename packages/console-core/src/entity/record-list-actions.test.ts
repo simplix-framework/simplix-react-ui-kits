@@ -16,6 +16,10 @@ describe("actionsNeedLabels", () => {
     expect(actionsNeedLabels([{ type: "view", icon: "a" }, { type: "view", icon: "b" }])).toBe(false);
   });
 
+  it("keeps the kit's own verbs in the icon strip, each with its glyph", () => {
+    expect(actionsNeedLabels([{ type: "view" }, { type: "retry" }, { type: "reset" }, { type: "test" }])).toBe(false);
+  });
+
   it("still labels two actions that both draw their type's icon", () => {
     expect(actionsNeedLabels([{ type: "view" }, { type: "view" }, { type: "view", icon: "users" }])).toBe(true);
   });

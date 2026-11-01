@@ -16,7 +16,7 @@
     "unassigned": { "part": null, "slot": null, "marks": [], "controls": [] }
   },
   "types": {
-    "list-detail": { "template": "crud-page.hbs", "regions": ["header", "figures", "notices", "help", "timeRange", "tabs", "toolbar", "columnHeads", "rowActions", "cell", "pagination"] },
+    "list-detail": { "template": "crud-page.hbs", "required": ["rowActions"], "$comment": "rows open a detail, so every row with rows on screen carries the action strip", "regions": ["header", "figures", "notices", "help", "timeRange", "tabs", "toolbar", "columnHeads", "rowActions", "cell", "pagination"] },
     "dashboard": { "template": "dashboard-page.hbs", "regions": ["header", "figures", "notices", "help", "timeRange", "tabs"] },
     "tabbed": { "template": "static-page.hbs", "regions": ["header", "figures", "notices", "help", "tabs"] },
     "record": { "template": "record-page.hbs", "regions": ["header", "figures", "notices", "help", "tabs"] },

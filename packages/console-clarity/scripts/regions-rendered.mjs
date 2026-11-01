@@ -40,7 +40,10 @@ export function probe(regions) {
       out[region].perCard = Math.max(out[region].perCard, n);
     }
   }
-  return Object.fromEntries(Object.entries(out).map(([k, v]) => [k, { kinds: [...v.kinds].sort(), perCard: v.perCard }]));
+  const signature = Object.fromEntries(Object.entries(out).map(([k, v]) => [k, { kinds: [...v.kinds].sort(), perCard: v.perCard }]));
+  // Rows drawn, so a required region is judged only where there are rows to carry it.
+  signature.rows = document.querySelectorAll("main tbody tr, main [data-slot=console-record-card]").length;
+  return signature;
 }
 
 /** The ways a signature breaks the type's contract, as strings; empty when it holds. */
@@ -48,7 +51,9 @@ export function compare(signature, type, c = contract) {
   const t = c.types[type];
   if (!t) return [`unknown page type ${type}`];
   const problems = [];
-  for (const [region, { kinds, perCard }] of Object.entries(signature)) {
+  const { rows = 0, ...regions } = signature;
+  for (const need of t.required ?? []) if (rows > 0 && !regions[need]) problems.push(`${need}: required on ${type} and missing over ${rows} rows`);
+  for (const [region, { kinds, perCard }] of Object.entries(regions)) {
     const r = c.regions[region];
     if (region === "unassigned") { problems.push(`unassigned: ${kinds.join(",")} drawn outside every region`); continue; }
     if (!t.regions.includes(region)) { problems.push(`${region}: not a region of ${type}`); continue; }
@@ -62,9 +67,11 @@ export function compare(signature, type, c = contract) {
 if (process.argv.includes("--selftest")) {
   const good = { header: { kinds: ["button"], perCard: 1 }, rowActions: { kinds: ["button:icon"], perCard: 2 }, cell: { kinds: ["link"], perCard: 1 }, notices: { kinds: ["button"], perCard: 1 } };
   const bad = { rowActions: { kinds: ["button:label"], perCard: 2 }, cell: { kinds: ["button"], perCard: 2 }, unassigned: { kinds: ["button"], perCard: 0 }, notices: { kinds: ["button"], perCard: 2 } };
-  const miss = compare(good, "list-detail");
+  const miss = compare({ ...good, rows: 3 }, "list-detail");
+  const noStrip = compare({ header: good.header, rows: 3 }, "list-detail");
+  const empty = compare({ header: good.header, rows: 0 }, "list-detail");
   const hit = compare(bad, "list-detail");
-  const ok = miss.length === 0 && hit.length === 4 && compare(good, "system").length === 2;
-  console.log(ok ? "regions-rendered selftest: hit 4, miss 0" : `regions-rendered selftest FAILED\nhit: ${hit.join("\n")}\nmiss: ${miss.join("\n")}`);
+  const ok = miss.length === 0 && noStrip.length === 1 && empty.length === 0 && hit.length === 4 && compare(good, "system").length === 2;
+  console.log(ok ? "regions-rendered selftest: hit 5, miss 0" : `regions-rendered selftest FAILED\nhit: ${hit.join("\n")}\nmiss: ${miss.join("\n")}`);
   process.exit(ok ? 0 : 1);
 }

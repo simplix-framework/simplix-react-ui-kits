@@ -2,7 +2,7 @@ import { Flex, Heading, Stack, Text, usePageHeaderState } from "@simplix-react/u
 
 import { NoticeMenu } from "../notice";
 import { useConsoleOnAPhone } from "./phone-shell";
-import { pageHeaderActionsStyle, pageHeaderMetadataStyle, pageHeaderStyle } from "./page-header.style";
+import { pageHeaderActionsStyle, pageHeaderDescriptionStyle, pageHeaderMetadataStyle, pageHeaderStyle } from "./page-header.style";
 import { partAttributes } from "@simplix-react/ui/design";
 
 /**
@@ -71,7 +71,7 @@ export function ConsolePageHeader() {
         {back}
         <Heading level={1}>{title}</Heading>
         {description && (
-          <Text size="sm" tone="muted">
+          <Text size="sm" tone="muted" {...partAttributes(pageHeaderDescriptionStyle, {})}>
             {description}
           </Text>
         )}

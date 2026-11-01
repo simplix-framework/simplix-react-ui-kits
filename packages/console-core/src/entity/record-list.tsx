@@ -20,6 +20,7 @@ import {
 } from "@simplix-react/ui";
 import { partAttributes, slotAttributes } from "@simplix-react/ui/design";
 import { BulkActionBar } from "@simplix-react/ui/interaction";
+import { FlaskConical, RotateCcw, TimerReset } from "lucide-react";
 
 import { useReflowFlip } from "../layout/use-reflow-flip";
 import { PACKAGE_NAMESPACE } from "./locales";
@@ -96,9 +97,21 @@ export type RecordFilter<Row> =
       readonly options: readonly { readonly value: string; readonly label: string }[];
     };
 
+/**
+ * The verbs the kit names beyond the framework's action types, each with its own glyph, so a screen
+ * never borrows an unrelated type (`duplicate` for a retry) to reach the icon strip.
+ */
+export type RecordVerbType = "retry" | "reset" | "test";
+
+const VERB_GLYPHS: Record<RecordVerbType, { readonly type: ActionType; readonly icon: ReactNode }> = {
+  retry: { type: "view", icon: <RotateCcw /> },
+  reset: { type: "view", icon: <TimerReset /> },
+  test: { type: "view", icon: <FlaskConical /> },
+};
+
 /** A row action, in the row's action cell. */
 export interface RecordAction<Row> {
-  readonly type: ActionType;
+  readonly type: ActionType | RecordVerbType;
   readonly label: string;
   readonly onClick?: (row: Row) => void;
   /** Rows the action is drawn for but cannot run on, with the reason a reader hovers to see. */
@@ -307,8 +320,17 @@ const LABEL_GAP = 8;
  * second verb its own icon. An action carrying its own icon is distinct by that icon and never forces labels.
  */
 export function actionsNeedLabels(actions: readonly { readonly type: string; readonly icon?: unknown }[]): boolean {
-  const typeGlyphs = actions.filter((action) => action.icon === undefined || action.icon === null).map((action) => action.type);
+  const typeGlyphs = actions.filter((action) => (action.icon === undefined || action.icon === null) && !(action.type in VERB_GLYPHS)).map((action) => action.type);
   return new Set(typeGlyphs).size < typeGlyphs.length;
+}
+
+/** The framework type and glyph an action draws with: a kit verb maps to its own glyph. */
+export function actionGlyph(action: { readonly type: ActionType | RecordVerbType; readonly icon?: ReactNode }): { type: ActionType; icon?: ReactNode } {
+  if (action.type in VERB_GLYPHS) {
+    const verb = VERB_GLYPHS[action.type as RecordVerbType];
+    return { type: verb.type, icon: action.icon ?? verb.icon };
+  }
+  return { type: action.type as ActionType, icon: action.icon };
 }
 
 /** The action column's width when every action is a labelled button. */
@@ -475,9 +497,8 @@ export function RecordList<Row>({
 
   const rowActions: RowActionDef<Row>[] = on("rowActions")
     ? actions.map((action) => ({
-        type: action.type,
+        ...actionGlyph(action),
         label: action.label,
-        icon: action.icon,
         onClick: (row: Row) => action.onClick?.(row),
         disabled: action.disabled ? (row: Row) => Boolean(action.disabled?.(row)) : undefined,
         disabledReason: action.disabled ? (row: Row) => action.disabled?.(row) || undefined : undefined,

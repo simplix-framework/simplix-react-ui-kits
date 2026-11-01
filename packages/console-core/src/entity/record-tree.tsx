@@ -1,7 +1,7 @@
 import { useMemo, type ReactNode } from "react";
 import { ChipFilter, CrudTree, useFilterBarState, type RowActionDef } from "@simplix-react/ui";
 
-import type { RecordAction, RecordColumn } from "./record-list";
+import { actionGlyph, type RecordAction, type RecordColumn } from "./record-list";
 import { RecordValueView } from "./record-value";
 
 /**
@@ -84,7 +84,7 @@ export function RecordTree<Row>({
 
   const rowActions: RowActionDef<Row>[] = on("rowActions")
     ? actions.map((action) => ({
-        type: action.type,
+        ...actionGlyph(action),
         label: action.label,
         onClick: (row: Row) => action.onClick?.(row),
         disabled: action.disabled ? (row: Row) => Boolean(action.disabled?.(row)) : undefined,
