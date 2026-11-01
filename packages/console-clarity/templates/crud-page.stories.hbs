@@ -9,9 +9,9 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
 import { CrudPage, {{#if hasCreate}}PageAction, {{/if}}type ConsoleSearch, useDetailPresentationSetting } from "@simplix-react-ui-kits/console-clarity/page";
-import { {{#if figureTiles}}figureTiles, statusCounts, {{/if}}RecordDetail, RecordList, useRecordContract, useScreenWords, type ContractField, type ContractFilter{{#if statusField}}, type RecordBadge, type RecordValue{{/if}} } from "@simplix-react-ui-kits/console-clarity/entity";
+import { {{#if figureTiles}}figureTiles, statusCounts, {{/if}}RecordDetail, {{#if hasForm}}RecordForm, {{/if}}RecordList, useRecordContract, useScreenWords, type ContractField, type ContractFilter{{#if statusField}}, type RecordBadge, type RecordValue{{/if}} } from "@simplix-react-ui-kits/console-clarity/entity";
 import { useOptionalTranslation } from "@simplix-react-ui-kits/console-clarity/i18n";
-import { useMockRecords } from "@simplix-react-ui-kits/console-clarity/mock";
+import { {{#if hasCreate}}mockId, {{/if}}useMockRecords } from "@simplix-react-ui-kits/console-clarity/mock";
 
 type Row = Readonly<Record<string, unknown>>;
 
@@ -97,6 +97,15 @@ const {{this.EntityPascal}}HolderFields_{{@index}}: readonly ContractField[] = [
 
 {{/each}}
 
+{{#if hasForm}}
+/** The fields the generated form writes, as it edits them. */
+const FORM_FIELDS: readonly ContractField[] = [
+{{#each formFields}}
+  { name: "{{this.name}}", kind: "{{this.contractKind}}"{{#if this.money}}, currency: "{{this.money.currency}}", scale: {{this.money.scale}}{{/if}}{{#if this.enumTypeName}}, enumName: "{{this.enumTypeName}}"{{/if}}{{#if this.options.length}}, options: [{{#each this.options}}"{{this}}"{{#unless @last}}, {{/unless}}{{/each}}]{{/if}}{{#if this.peekKind}}, peekKind: "{{this.peekKind}}"{{/if}}{{#if this.peekKinds}}, peekKinds: { field: "{{this.peekKinds.field}}", kinds: { {{#each this.peekKinds.kinds}}{{this.value}}: "{{this.peekKind}}"{{#unless @last}}, {{/unless}}{{/each}} } }{{/if}}{{#if this.nameField}}, nameField: "{{this.nameField}}"{{/if}}{{#if (eq this.sortable true)}}, sortable: true{{/if}}{{#if (eq this.sortable false)}}, sortable: false{{/if}}{{#if this.baseFieldName}}, plainField: "{{this.baseFieldName}}"{{/if}}{{#if (eq this.formComponent "I18nTextareaField")}}, multiline: true{{/if}}{{#if this.defaultLiteral}}, defaultValue: {{{this.defaultLiteral}}}{{/if}} },
+{{/each}}
+];
+{{/if}}
+
 /** Sample rows, one value per field by its contract kind. */
 const ROWS: readonly Row[] = {{{fixtureRowsJson}}};
 
@@ -114,9 +123,13 @@ function statusBadge(value: RecordValue): RecordBadge | undefined {
 interface Args {
   /** The record standing open when the story starts. */
   readonly open?: string;
+{{#if hasCreate}}
+  /** The new-record form standing open when the story starts. */
+  readonly mode?: "new";
+{{/if}}
 }
 
-function Screen({ open }: Args) {
+function Screen({ open{{#if hasCreate}}, mode{{/if}} }: Args) {
   const words = useScreenWords("{{entity}}");
   // The line under the title is the screen's own, from the same catalog key the page reads.
   const { t } = useOptionalTranslation("{{moduleNamespace}}/widgets");
@@ -126,7 +139,7 @@ function Screen({ open }: Args) {
   // The same setting the generated page reads, so the frame draws the presentation switch the screen draws.
   const presentation = useDetailPresentationSetting();
   const records = useMockRecords(ROWS, idOf);
-  const [search, setSearch] = useState<ConsoleSearch>(open ? { id: open } : {});
+  const [search, setSearch] = useState<ConsoleSearch>({{#if hasCreate}}mode ? { mode } : {{/if}}open ? { id: open } : {});
   const contract = useRecordContract("{{entity}}");
   const columns = contract.columns<Row>(COLUMN_FIELDS);
 {{#if figureTiles}}
@@ -256,6 +269,36 @@ function Screen({ open }: Args) {
           />
         );
       }}
+{{#if hasCreate}}
+      // The generated form, so the frame draws the panel the screen opens for a new record.
+      renderNew={(nav) => (
+        <RecordForm
+          title={words.add}
+          sections={[{ key: "main", fields: FORM_FIELDS.map((field) => contract.formField(field, undefined)) }]}
+          submitLabel={words.save}
+          onCancel={nav.showList}
+          onSubmit={(values) => {
+            records.add({ ...contract.request(FORM_FIELDS, values), {{rowIdField}}: mockId("{{entityKebab}}") });
+            nav.showList();
+          }}
+        />
+      )}
+{{/if}}
+{{#if hasUpdate}}
+      // The generated form on the record, so the frame draws the panel the screen opens for an edit.
+      renderEdit={(id, nav) => (
+        <RecordForm
+          title={words.editTitle}
+          sections={[{ key: "main", fields: FORM_FIELDS.map((field) => contract.formField(field, records.find(id))) }]}
+          submitLabel={words.save}
+          onCancel={() => nav.showDetail(id)}
+          onSubmit={(values) => {
+            records.update(id, contract.request(FORM_FIELDS, values));
+            nav.showDetail(id);
+          }}
+        />
+      )}
+{{/if}}
     />
   );
 }
@@ -275,3 +318,8 @@ export const List: Story = {};
 
 /** The first record open. */
 export const Record: Story = { args: { open: idOf(ROWS[0] ?? {}) } };
+{{#if hasCreate}}
+
+/** The new-record form open. */
+export const New: Story = { args: { mode: "new" } };
+{{/if}}

@@ -4,12 +4,14 @@ import { render } from "./template-typecheck";
 
 /**
  * A list that reorders by drag owns the record's order, so the generated form leaves the order
- * field out and a create sends the default the drag starts from.
+ * field out and a create sends the default the drag starts from. The CLI picks the fields a form
+ * writes (`formFields`, without the order field under a drag) and the template renders them.
  */
 const fields = [
   { name: "name", contractKind: "text" },
   { name: "sortOrder", contractKind: "number" },
 ];
+const unordered = fields.filter((field) => field.name !== "sortOrder");
 const context = {
   entity: "voice",
   EntityPascal: "Voice",
@@ -19,12 +21,12 @@ const context = {
   hookCreate: "useCreateVoice",
   hookUpdate: "useUpdateVoice",
   hasUpdate: true,
-  fields,
+  formFields: fields,
 };
 
 describe("the generated form under a list that reorders by drag", () => {
   it("leaves the order field out and sends the default on create", async () => {
-    const out = await render("form.hbs", { ...context, formOrderField: "sortOrder" });
+    const out = await render("form.hbs", { ...context, formFields: unordered, formOrderField: "sortOrder" });
     expect(out).not.toContain('name: "sortOrder"');
     expect(out).toContain("{ sortOrder: 0, ...written }");
   });
@@ -38,7 +40,7 @@ describe("the generated form under a list that reorders by drag", () => {
 
 describe("the generated form for a new record", () => {
   it("states the contract's default of a field", async () => {
-    const out = await render("form.hbs", { ...context, fields: [{ name: "active", contractKind: "boolean", defaultLiteral: "true" }] });
+    const out = await render("form.hbs", { ...context, formFields: [{ name: "active", contractKind: "boolean", defaultLiteral: "true" }] });
     expect(out).toContain('{ name: "active", kind: "boolean", defaultValue: true }');
   });
 });
