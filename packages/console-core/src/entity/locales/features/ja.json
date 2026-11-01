@@ -105,5 +105,9 @@
     "copy": "コピー",
     "showWhole": "全文を表示",
     "credits": "{{count}}クレジット"
+  },
+  "statusCards": {
+    "fold": "数値を折りたたむ",
+    "unfold": "数値を表示"
   }
 }

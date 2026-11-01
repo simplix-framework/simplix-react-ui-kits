@@ -99,6 +99,7 @@ export function {{EntityPascal}}CrudPage({ search, onNavigate }: {{EntityPascal}
         cards={blocks.cards?.(list)}
         cardFilters={list.filters}
         cardsLoading={blocks.cardsLoading}
+        cardsKey="{{entity}}"
         notices={blocks.notices?.(list)}
         renderList={(nav) => (
           <{{EntityPascal}}List

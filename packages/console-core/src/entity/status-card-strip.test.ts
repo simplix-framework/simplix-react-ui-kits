@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { countedChips } from "./record-list";
-import { cardFilterKey, isCardPressed, narrowedValues, pressedCardKeys, pressedValue, pressedValues, shownCardTone } from "./status-card-strip";
+import { cardFilterKey, isCardPressed, narrowedValues, pressedCardKeys, pressedValue, pressedValues, shownCardTone, foldedSummary, readFolded, writeFolded } from "./status-card-strip";
 
 const failed = { field: "status", value: "FAILED" };
 
@@ -76,5 +76,37 @@ describe("countedChips", () => {
   });
   it("draws a bare label where no count is given", () => {
     expect(countedChips({ options: [{ value: "FAILED", label: "Failed" }] }, format)).toEqual([{ value: "FAILED", label: "Failed" }]);
+  });
+});
+
+describe("folding the status cards", () => {
+  const store = () => {
+    const memory = new Map<string, string>();
+    return { getItem: (k: string) => memory.get(k) ?? null, setItem: (k: string, v: string) => void memory.set(k, v), removeItem: (k: string) => void memory.delete(k) };
+  };
+  it("remembers a fold per page and forgets it on unfold", () => {
+    const storage = store();
+    writeFolded(storage, "backgroundJob", true);
+    expect(readFolded(storage, "backgroundJob")).toBe(true);
+    expect(readFolded(storage, "paymentEvent")).toBe(false);
+    writeFolded(storage, "backgroundJob", false);
+    expect(readFolded(storage, "backgroundJob")).toBe(false);
+  });
+  it("starts unfolded with no storage, no page, or a storage that refuses", () => {
+    expect(readFolded(undefined, "backgroundJob")).toBe(false);
+    expect(readFolded(store(), undefined)).toBe(false);
+    const refusing = { getItem: () => { throw new DOMException("denied"); }, setItem: () => { throw new DOMException("denied"); }, removeItem: () => {} };
+    expect(readFolded(refusing, "backgroundJob")).toBe(false);
+    expect(() => writeFolded(refusing, "backgroundJob", true)).not.toThrow();
+  });
+  it("reads as one line of every card's label and figure, leaving out a figure not read yet", () => {
+    expect(foldedSummary([
+      { key: "failed", label: "Failed", value: 1200 },
+      { key: "spent", label: "Spent", value: 5, unit: "credits" },
+      { key: "queued", label: "Queued", value: undefined },
+    ])).toEqual([
+      { key: "failed", label: "Failed", figure: (1200).toLocaleString() },
+      { key: "spent", label: "Spent", figure: "5 credits" },
+    ]);
   });
 });

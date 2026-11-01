@@ -517,6 +517,12 @@
   [data-slot="record-meter-track"][data-slot][data-s-record-meter-track] {
     @apply relative h-1.5 w-full overflow-hidden rounded-full bg-muted;
   }
+  [data-slot="status-card-fold"][data-slot][data-s-status-card-fold] {
+    @apply flex flex-col gap-2;
+  }
+  [data-slot="status-card-head"][data-slot][data-s-status-card-head] {
+    @apply flex min-h-7 items-center justify-end gap-3;
+  }
   [data-slot="status-card"][data-slot][data-s-status-card] {
     @apply h-full rounded-[var(--radius-surface)] text-left transition-shadow duration-[var(--dur-fast)];
   }
@@ -525,6 +531,15 @@
   }
   [data-slot="status-card"][data-pressable="true"][data-s-status-card] {
     @apply cursor-pointer;
+  }
+  [data-slot="status-card-summary-item"][data-slot][data-s-status-card-summary-item] {
+    @apply whitespace-nowrap;
+  }
+  [data-slot="status-card-summary"][data-slot][data-s-status-card-summary] {
+    @apply me-auto flex min-w-0 flex-wrap items-baseline gap-x-4 gap-y-1 text-(length:--fs-body-sm) text-muted-foreground;
+  }
+  [data-slot="status-card-toggle"][data-slot][data-s-status-card-toggle] {
+    @apply inline-flex h-6 shrink-0 items-center gap-1 rounded-[var(--radius-control)] px-2 text-xs text-muted-foreground transition-colors duration-[var(--dur-fast)] ease-[var(--ease)];
   }
   [data-slot="console-error-glyph"][data-kind="server"][data-s-console-error-glyph] {
     @apply text-red-500;
@@ -1757,6 +1772,12 @@
   }
   :where([data-slot="status-card"])[data-s-status-card] {
     @apply [&_[data-slot=stat-card]]:h-full [&_[data-slot=stat-card]]:min-h-0 focus-visible:outline-none focus-visible:shadow-[var(--focus-halo)];
+  }
+  :where([data-slot="status-card-summary-item"])[data-s-status-card-summary-item] {
+    @apply [&>b]:font-semibold [&>b]:tabular-nums [&>b]:text-foreground;
+  }
+  :where([data-slot="status-card-toggle"])[data-s-status-card-toggle] {
+    @apply hover:bg-[var(--hover-bg-strong)] hover:text-foreground focus-visible:outline-none focus-visible:shadow-[var(--focus-halo)] [&>svg]:size-3.5;
   }
   :where([data-slot="console-admin-destination-link"])[data-s-console-admin-destination-link] {
     @apply hover:underline;

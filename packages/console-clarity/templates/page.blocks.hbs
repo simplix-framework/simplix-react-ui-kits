@@ -17,6 +17,7 @@ export function usePageBlocks(_page: { readonly search: ConsoleSearch; readonly 
   // read every day.
   // `cards`: the figures the list is cut by, `(list) => StatusCard[]`, each with the `filter` its
   // chip writes. `notices`: what the list's state raises, `(list) => CrudPageNotice[]`, each with
-  // its `when`. Both are drawn above the tabs and the chip row.
+  // its `when`. The cards come first and the notices directly under them, both above the tabs
+  // and the chip row.
   return {};
 }

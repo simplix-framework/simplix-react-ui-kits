@@ -1,9 +1,22 @@
-import type { ReactNode } from "react";
+import { useId, useState, type ReactNode } from "react";
+import { useTranslation } from "@simplix-react/i18n/react";
+import { ChevronDownIcon, ChevronUpIcon } from "lucide-react";
 import { Grid, SearchOperator, StatCard, type CrudListFilters, type StatusTone } from "@simplix-react/ui";
 import { partAttributes, slotAttributes } from "@simplix-react/ui/design";
 import { DigitRoll } from "@simplix-react/ui/interaction";
 
-import { statusCardStripStyle, statusCardStyle } from "./status-card-strip.style";
+import { browserStorage, type PresentationStorage } from "../page/browser-storage";
+
+import { PACKAGE_NAMESPACE } from "./locales";
+import {
+  statusCardFoldStyle,
+  statusCardHeadStyle,
+  statusCardStripStyle,
+  statusCardStyle,
+  statusCardSummaryItemStyle,
+  statusCardSummaryStyle,
+  statusCardToggleStyle,
+} from "./status-card-strip.style";
 
 /** The list narrowing a {@link StatusCard} stands for: one value of one field, written as the chip row's `<field>.in`. */
 export interface StatusCardValueFilter {
@@ -53,6 +66,67 @@ export interface StatusCardStripProps {
   readonly filters?: Pick<CrudListFilters, "committedValues" | "commitValue" | "commitValues">;
   readonly loading?: boolean;
   readonly columns?: 1 | 2 | 3 | 4;
+  /**
+   * The page the strip stands on, under which the reader's fold is remembered in this browser.
+   * Absent, the strip can still be folded, and the fold lasts as long as the page.
+   */
+  readonly foldKey?: string;
+  /** Where the fold is remembered; the browser's local storage when absent. */
+  readonly storage?: PresentationStorage;
+}
+
+const FOLD_PREFIX = "console.status-cards.folded:";
+
+/**
+ * Whether the reader folded this page's strip, as remembered; unfolded when nothing is remembered
+ * or the storage cannot be read.
+ *
+ * @param storage where the fold is remembered
+ * @param key the page the strip stands on
+ */
+export function readFolded(storage: PresentationStorage | undefined, key: string | undefined): boolean {
+  if (!storage || !key) return false;
+  try {
+    return storage.getItem(FOLD_PREFIX + key) === "1";
+  } catch (error) {
+    if (error instanceof DOMException || error instanceof TypeError) return false;
+    throw error;
+  }
+}
+
+/**
+ * Remembers the reader's fold of this page's strip; a storage that refuses the write leaves the fold
+ * to last as long as the page.
+ *
+ * @param storage where the fold is remembered
+ * @param key the page the strip stands on
+ * @param folded whether the strip is folded
+ */
+export function writeFolded(storage: PresentationStorage | undefined, key: string | undefined, folded: boolean): void {
+  if (!storage || !key) return;
+  try {
+    if (folded) storage.setItem(FOLD_PREFIX + key, "1");
+    else storage.removeItem(FOLD_PREFIX + key);
+  } catch (error) {
+    if (error instanceof DOMException || error instanceof TypeError) return;
+    throw error;
+  }
+}
+
+/**
+ * The one line a folded strip reads as: each card's label and figure, so folding hides the cards
+ * and loses none of their figures. A figure not read yet is left out.
+ *
+ * @param cards the strip's cards
+ */
+export function foldedSummary(cards: readonly Pick<StatusCard, "key" | "label" | "value" | "unit">[]): { key: string; label: string; figure: string }[] {
+  return cards
+    .filter((card) => card.value !== undefined)
+    .map((card) => ({
+      key: card.key,
+      label: card.label,
+      figure: `${typeof card.value === "number" ? card.value.toLocaleString() : String(card.value)}${card.unit ? ` ${card.unit}` : ""}`,
+    }));
 }
 
 /**
@@ -172,12 +246,43 @@ export function shownCardTone(card: Pick<StatusCard, "value" | "tone">): StatusT
  * The page draws the strip above its tab strip (frontend invariant #63), never between the chips
  * and the rows.
  */
-export function StatusCardStrip({ cards, filters, loading = false, columns = 4 }: StatusCardStripProps) {
+export function StatusCardStrip({ cards, filters, loading = false, columns = 4, foldKey, storage }: StatusCardStripProps) {
+  const { t } = useTranslation(PACKAGE_NAMESPACE + "/features");
+  const store = storage ?? browserStorage();
+  const [folded, setFolded] = useState(() => readFolded(store, foldKey));
+  const regionId = useId();
   if (cards.length === 0) return null;
   const committed = filters?.committedValues ?? {};
   const pressedKeys = pressedCardKeys(cards, committed);
+  const fold = (next: boolean) => {
+    setFolded(next);
+    writeFolded(store, foldKey, next);
+  };
   return (
-    <Grid columns={columns} gap="md" fit {...partAttributes(statusCardStripStyle, {})}>
+    <div {...slotAttributes(statusCardFoldStyle, { folded })}>
+      <div {...slotAttributes(statusCardHeadStyle, {})}>
+        {folded ? (
+          <p {...slotAttributes(statusCardSummaryStyle, {})}>
+            {foldedSummary(cards).map((one) => (
+              <span key={one.key} {...slotAttributes(statusCardSummaryItemStyle, {})}>
+                {one.label} <b>{one.figure}</b>
+              </span>
+            ))}
+          </p>
+        ) : null}
+        <button
+          type="button"
+          aria-expanded={!folded}
+          aria-controls={regionId}
+          onClick={() => fold(!folded)}
+          {...slotAttributes(statusCardToggleStyle, {})}
+        >
+          {folded ? <ChevronDownIcon aria-hidden /> : <ChevronUpIcon aria-hidden />}
+          {folded ? t("statusCards.unfold") : t("statusCards.fold")}
+        </button>
+      </div>
+      {folded ? null : (
+    <Grid id={regionId} columns={columns} gap="md" fit {...partAttributes(statusCardStripStyle, {})}>
       {cards.map((card) => {
         const tone = shownCardTone(card);
         const body = (
@@ -215,5 +320,7 @@ export function StatusCardStrip({ cards, filters, loading = false, columns = 4 }
         );
       })}
     </Grid>
+      )}
+    </div>
   );
 }

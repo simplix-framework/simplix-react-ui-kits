@@ -105,5 +105,9 @@
     "copy": "복사",
     "showWhole": "전체 보기",
     "credits": "{{count}}크레딧"
+  },
+  "statusCards": {
+    "fold": "수치 접기",
+    "unfold": "수치 펼치기"
   }
 }

@@ -16,6 +16,10 @@ A design kit re-exports `console-core` segment by segment and adds its styleshee
 
 A kit is named `<area>-<design>`, because one area (a console, a kiosk, a field app) can have several designs.
 
+## Console page order
+
+A console page draws its parts in one order: header, figure tiles, status cards, notices, time range, tabs, chips, rows. The status cards come first and the page notices sit directly under them, so a notice reads as being about the figures above it. A record's notices sit under its head figures the same way. The card strip folds from its own control into one line of each card's label and figure, and the fold is remembered per page in the browser. `ConsolePage` holds the order, and `audit-rendered.mjs --check noticesFollowTheStatusCards` refuses a painted page whose notice stands above its cards.
+
 ## Using a kit in a product
 
 Add this repository as a git submodule and its packages to the product's pnpm workspace:

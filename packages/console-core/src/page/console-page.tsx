@@ -42,7 +42,7 @@ interface ConsolePageProps {
 }
 
 /**
- * The shape every console list screen takes: a header, figures, a notice, a window, tabs, a body.
+ * The shape every console list screen takes: a header, figures, status cards, a notice, a window, tabs, a body.
  *
  * <p><b>The order is the pattern.</b> Sixty screens of this console drew these same parts and
  * seven of them drew two in the other order, which no reviewer catches by eye and no reader can
@@ -224,9 +224,11 @@ export function ConsolePage({
       {seam("beforeTiles")}
       {tiles}
       {seam("afterTiles")}
+      {/* The status cards lead, and the notices they raise sit directly under them: a notice reads as
+          being about the figures it follows, never as a banner the figures hang under. */}
+      {at("cards", spec.cards)}
       {notice}
       {seam("afterNotice")}
-      {at("cards", spec.cards)}
       {at("timeRange", spec.timeRange)}
       {helps.map((one) => {
         const field = one.field ?? "help";

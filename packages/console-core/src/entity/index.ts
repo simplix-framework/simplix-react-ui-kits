@@ -27,7 +27,7 @@ export type { PaginationHandlers } from "@simplix-react/headless";
 export { missingRequired } from "@simplix-react/headless";
 export { RecordList, countedChips, orderUpdates, useAnnounceOutcome } from "./record-list";
 export type { RecordAction, RecordBulkAction, RecordColumn, RecordFilter, RecordListFeatures, RecordListMore, RecordListProps, RecordOutcome, RecordReorder } from "./record-list";
-export { StatusCardStrip, cardFilterKey, cardFilterValues, isCardPressed, narrowedValues, pressedCardKeys, pressedValue, pressedValues, shownCardTone } from "./status-card-strip";
+export { StatusCardStrip, foldedSummary, readFolded, writeFolded, cardFilterKey, cardFilterValues, isCardPressed, narrowedValues, pressedCardKeys, pressedValue, pressedValues, shownCardTone } from "./status-card-strip";
 export type { StatusCard, StatusCardFilter, StatusCardStripProps, StatusCardValueFilter, StatusCardValuesFilter } from "./status-card-strip";
 export { aggregateValue, statusCards, statusCounts, useStatusCounts } from "./status-counts";
 export type { AggregateOp, StatusCardsInput, StatusCountsOptions } from "./status-counts";

@@ -91,13 +91,15 @@ export interface CrudPageProps {
    * {@link useDetailPresentationSetting} hands one that the browser remembers when the reader asks.
    */
   readonly detailWidths?: DetailWidthSetting;
-  /** The figures the list is cut by, drawn under the notices and above the tabs and the chips. */
+  /** The figures the list is cut by, drawn first, above the notices, the tabs and the chips. */
   readonly cards?: readonly StatusCard[];
   /** The list's filter state the cards narrow: the state its chip row reads. */
   readonly cardFilters?: StatusCardStripProps["filters"];
   /** Whether the cards' figures are still being read. */
   readonly cardsLoading?: boolean;
-  /** Notices raised by the list's state, drawn after the spec's own notices. */
+  /** The page the cards stand on, under which the reader's fold of them is remembered. */
+  readonly cardsKey?: string;
+  /** Notices raised by the list's state, drawn directly under the cards after the spec's own notices. */
   readonly notices?: readonly CrudPageNotice[];
   readonly renderList: (nav: CrudPageNavigation) => ReactNode;
   readonly renderDetail: (id: string, nav: CrudPageNavigation) => ReactNode;
@@ -124,6 +126,7 @@ export function CrudPage({
   cards,
   cardFilters,
   cardsLoading,
+  cardsKey,
   notices,
   renderList,
   renderDetail,
@@ -190,7 +193,7 @@ export function CrudPage({
   const listSpec: Omit<PageSpec, "body"> = {
     ...spec,
     notice: raised.length > 0 ? [...declared, ...raised] : spec.notice,
-    cards: cards && cards.length > 0 ? <StatusCardStrip cards={cards} filters={cardFilters} loading={cardsLoading} /> : spec.cards,
+    cards: cards && cards.length > 0 ? <StatusCardStrip cards={cards} filters={cardFilters} loading={cardsLoading} foldKey={cardsKey} /> : spec.cards,
   };
   const pageSpec = recordAsPage ? { title: "", layout: spec.layout, width: spec.width } : listSpec;
   return <ConsolePage spec={{ ...pageSpec, body }} search={search} onNavigate={onNavigate} />;
