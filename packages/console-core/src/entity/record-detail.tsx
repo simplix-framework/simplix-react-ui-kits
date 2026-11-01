@@ -28,6 +28,7 @@ import { PermissionMatrix, type PermissionMatrixProps } from "./permission-matri
 import { BoundedDialogContent } from "../layout/bounded-dialog-content";
 import { recordHeadFigureLabelStyle, recordHeadFigureStyle, recordHeadFigureValueStyle, recordHeadFiguresStyle, recordHeadStyle, recordHeadSubtitleStyle, recordSublistStyle } from "./record-detail.style";
 import { RecordList, RecordListNestingContext, type RecordAction, type RecordColumn, type RecordListProps } from "./record-list";
+import { TileSpark } from "../layout/tile-spark";
 import { RecordValueView, type RecordBadge, type RecordValue } from "./record-value";
 import { StageGate, type StageGateProps } from "./stage-gate";
 import { EvidenceGrid, type EvidenceGridProps } from "../attachment/evidence-grid";
@@ -133,6 +134,8 @@ export interface RecordHeadFigure {
   readonly key: string;
   readonly label: string;
   readonly value: RecordValue;
+  /** The figure's recent periods, oldest first, drawn as a small line beside it. */
+  readonly trend?: readonly number[];
 }
 
 /** Props for {@link RecordDetail}. */
@@ -532,6 +535,11 @@ export function RecordDetail({
                     <dt {...slotAttributes(recordHeadFigureLabelStyle, {})}>{figure.label}</dt>
                     <dd {...slotAttributes(recordHeadFigureValueStyle, {})}>
                       <RecordValueView value={figure.value} />
+                      {figure.trend && figure.trend.length > 1 ? (
+                        <span aria-hidden className="w-16">
+                          <TileSpark shape="line" series={figure.trend} />
+                        </span>
+                      ) : null}
                     </dd>
                   </div>
                 ))}

@@ -355,6 +355,84 @@
   [data-slot="task-title"][data-slot][data-s-task-title] {
     @apply font-medium;
   }
+  [data-slot="event-axis"][data-slot][data-s-event-axis] {
+    @apply absolute inset-x-0 top-3 h-px bg-border;
+  }
+  [data-slot="event-label"][data-slot][data-s-event-label] {
+    @apply absolute top-6 whitespace-nowrap text-xs text-muted-foreground;
+  }
+  [data-slot="event-label"][data-align="middle"][data-s-event-label] {
+    @apply -translate-x-1/2;
+  }
+  [data-slot="event-label"][data-align="end"][data-s-event-label] {
+    @apply -translate-x-full;
+  }
+  [data-slot="event-mark"][data-slot][data-s-event-mark] {
+    @apply absolute top-1.5 size-3 -translate-x-1/2 rounded-full border-2 border-background bg-[var(--mark)];
+  }
+  [data-slot="event-timeline"][data-slot][data-s-event-timeline] {
+    @apply relative h-14 w-full;
+  }
+  [data-slot="gauge-arc"][data-slot][data-s-gauge-arc] {
+    @apply stroke-[var(--mark)];
+  }
+  [data-slot="gauge-figure"][data-slot][data-s-gauge-figure] {
+    @apply -mt-3 text-lg font-semibold tabular-nums;
+  }
+  [data-slot="gauge-label"][data-slot][data-s-gauge-label] {
+    @apply text-xs text-muted-foreground;
+  }
+  [data-slot="gauge-tick"][data-slot][data-s-gauge-tick] {
+    @apply stroke-foreground;
+  }
+  [data-slot="gauge-track"][data-slot][data-s-gauge-track] {
+    @apply stroke-muted;
+  }
+  [data-slot="outcome-cell"][data-slot][data-s-outcome-cell] {
+    @apply h-4 w-1.5 shrink-0 rounded-sm bg-[var(--mark)];
+  }
+  [data-slot="outcome-strip"][data-slot][data-s-outcome-strip] {
+    @apply flex items-end gap-0.5;
+  }
+  [data-slot="segment-bar"][data-slot][data-s-segment-bar] {
+    @apply flex flex-col gap-2;
+  }
+  [data-slot="segment-entry"][data-slot][data-s-segment-entry] {
+    @apply inline-flex items-center gap-1.5;
+  }
+  [data-slot="segment-figure"][data-slot][data-s-segment-figure] {
+    @apply font-medium tabular-nums text-foreground;
+  }
+  [data-slot="segment-legend"][data-slot][data-s-segment-legend] {
+    @apply flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground;
+  }
+  [data-slot="segment-part"][data-slot][data-s-segment-part] {
+    @apply h-full bg-[var(--mark)];
+  }
+  [data-slot="segment-swatch"][data-slot][data-s-segment-swatch] {
+    @apply inline-block size-2 shrink-0 rounded-sm bg-[var(--mark)];
+  }
+  [data-slot="segment-track"][data-slot][data-s-segment-track] {
+    @apply flex h-2.5 w-full overflow-hidden rounded-full bg-muted;
+  }
+  [data-slot="state-matrix-cell"][data-slot][data-s-state-matrix-cell] {
+    @apply border-t border-border px-2 py-1.5;
+  }
+  [data-slot="state-matrix-head"][data-slot][data-s-state-matrix-head] {
+    @apply px-2 py-1.5 text-left font-medium text-muted-foreground;
+  }
+  [data-slot="state-matrix-state"][data-slot][data-s-state-matrix-state] {
+    @apply inline-flex flex-col gap-0.5;
+  }
+  [data-slot="state-matrix"][data-slot][data-s-state-matrix] {
+    @apply w-full border-collapse text-xs;
+  }
+  [data-slot="state-matrix-sub"][data-slot][data-s-state-matrix-sub] {
+    @apply tabular-nums text-muted-foreground;
+  }
+  [data-slot="threshold-gauge"][data-slot][data-s-threshold-gauge] {
+    @apply relative inline-flex flex-col items-center;
+  }
   [data-slot="console-form-error-card"][data-slot][data-s-console-form-error-card] {
     @apply rounded-md border border-destructive/40 bg-destructive/5 px-3 py-2;
   }
@@ -386,7 +464,7 @@
     @apply flex min-w-0 flex-col;
   }
   [data-slot="console-record-head-figure-value"][data-slot][data-s-console-record-head-figure-value] {
-    @apply text-sm font-semibold tabular-nums;
+    @apply flex items-center gap-2 text-sm font-semibold tabular-nums;
   }
   [data-slot="console-record-head-figures"][data-slot][data-s-console-record-head-figures] {
     @apply flex flex-wrap gap-x-6 gap-y-2 pt-2;
@@ -1634,6 +1712,9 @@
   }
   :where([data-slot="schedule-row"])[data-s-schedule-row] {
     @apply hover:bg-muted/50 active:bg-muted focus-visible:outline-none focus-visible:shadow-[var(--focus-halo)];
+  }
+  :where([data-slot="event-mark"])[data-s-event-mark] {
+    @apply focus-visible:outline-none focus-visible:shadow-[var(--focus-halo)];
   }
   :where([data-slot="console-record-sublist"][data-kind="compact"])[data-s-console-record-sublist] {
     @apply [&_[data-testid=crud-list]]:gap-0 [&_[data-slot=table-card-frame]]:-mx-2 [&_[data-slot=table-card-frame]]:rounded-none [&_[data-slot=table-card-frame]]:border-0 [&_[data-slot=table-card-frame]]:bg-transparent [&_[data-slot=table-header]]:!bg-transparent [&_[data-slot=table-head]]:!h-8 [&_[data-slot=table-head]]:!bg-transparent [&_th:first-child]:pl-2 [&_td:first-child]:pl-2 [&_th:last-child]:pr-2 [&_td:last-child]:pr-2 [&_[data-slot=table-row]]:cursor-pointer [&_[data-slot=table-row]]:transition-colors [&_[data-slot=table-row]]:duration-[var(--dur-fast)] [&_[data-slot=table-row]:hover]:bg-[var(--surface-2)] [&_[data-slot=table-row]:active]:bg-[var(--surface-3)] [&_[data-slot=table-cell]]:!h-auto [&_[data-slot=table-cell]]:py-2.5 [&_[data-slot=row-actions-strip]]:opacity-100 [&_[data-part=crud-list-group-row]]:cursor-default [&_[data-part=crud-list-group-row]:hover]:bg-transparent [&_[data-part=crud-list-group-row]:active]:bg-transparent [&_[data-part=crud-list-group-cell]]:!h-7 [&_[data-part=crud-list-group-cell]]:bg-transparent [&_[data-part=crud-list-group-cell]]:pt-3 [&_[data-part=crud-list-group-cell]]:pb-1 [&_[data-part=crud-list-empty]]:py-8 [&_[data-part=crud-list-empty]]:gap-1.5 [&_[data-slot=crud-list-view]]:p-0 [&_[data-slot=crud-list-view]>[data-slot=stack]]:gap-0 [&_[data-slot=crud-card]]:rounded-none [&_[data-slot=crud-card]]:border-0 [&_[data-slot=crud-card]]:border-b [&_[data-slot=crud-card]]:shadow-none [&_[data-slot=crud-card]:last-child]:border-b-0;

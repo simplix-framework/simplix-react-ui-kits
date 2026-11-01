@@ -45,7 +45,7 @@ export const recordHeadFigureLabelStyle = defineSlotStyle({
 /** A key figure's value, in figures that line up. */
 export const recordHeadFigureValueStyle = defineSlotStyle({
   slot: "console-record-head-figure-value",
-  base: "text-sm font-semibold tabular-nums",
+  base: "flex items-center gap-2 text-sm font-semibold tabular-nums",
   variants: {},
   defaultVariants: {},
 });

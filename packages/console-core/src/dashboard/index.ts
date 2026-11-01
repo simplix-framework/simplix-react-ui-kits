@@ -47,3 +47,8 @@ export {
   type StackedColumnSeries,
   type TrendLineSeries,
 } from "@simplix-react/ui/interaction";
+export { SegmentBar, segmentShares, type Segment, type SegmentBarProps } from "./segment-bar";
+export { OutcomeStrip, outcomeTally, type Outcome, type OutcomeStripProps, type OutcomeTone } from "./outcome-strip";
+export { ThresholdGauge, gaugePoint, gaugeTone, type GaugeTone, type ThresholdGaugeProps } from "./threshold-gauge";
+export { StateMatrix, matrixCells, type StateMatrixCell, type StateMatrixProps } from "./state-matrix";
+export { EventTimeline, labelAlign, timelinePositions, type EventTimelineProps, type TimelineEvent } from "./event-timeline";
