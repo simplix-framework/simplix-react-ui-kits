@@ -1,5 +1,5 @@
 import { buildSearchableParams } from "@simplix-react/headless";
-import type { CrudListFilters } from "@simplix-react/ui";
+import type { CrudListFilters, StatusTone } from "@simplix-react/ui";
 
 import { useRecordContract, recordValueText, type ContractField } from "./record-contract";
 import { aggregateValue, statusTiles, useStatusCounts } from "./status-counts";
@@ -14,7 +14,19 @@ export interface FigureQuery {
 /** What a list page counts and sums by default, as its entity's SimpliX Meta states it. */
 export interface FigureTilesSpec {
   /** A tile per value of one enum, from the status-counts read. */
-  readonly status?: { readonly query: FigureQuery; readonly field: string; readonly enumName: string; readonly values: readonly string[] };
+  readonly status?: {
+    readonly query: FigureQuery;
+    readonly field: string;
+    readonly enumName: string;
+    readonly values: readonly string[];
+    /**
+     * The tone of the tile of each enum value, keyed by the value. A tile takes its tone only while
+     * its count is above zero (a zero counts nothing to act on), so `danger` and `warning` mark a
+     * set the reader must act on now (frontend invariant #48). A value the enum does not list, or
+     * one left out, is drawn without a tone.
+     */
+    readonly tones?: Readonly<Record<string, StatusTone>>;
+  };
   /** A tile per sum or row count, from the aggregates read, drawn by each field's own kind. */
   readonly aggregates?: {
     readonly query: FigureQuery;
@@ -99,8 +111,8 @@ export interface FigureWords {
 export function figureTiles(spec: FigureTilesSpec, words: FigureWords, counts: Readonly<Record<string, number>> | undefined): SettingsTile[] {
   const tiles: SettingsTile[] = [];
   if (spec.status) {
-    const { enumName, field, values } = spec.status;
-    tiles.push(...statusTiles({ field, values, counts, label: (value) => words.enumLabel(enumName, value), fieldLabel: words.fieldLabel(field) }));
+    const { enumName, field, values, tones } = spec.status;
+    tiles.push(...statusTiles({ field, values, counts, tones, label: (value) => words.enumLabel(enumName, value), fieldLabel: words.fieldLabel(field) }));
   }
   for (const figure of spec.aggregates?.figures ?? []) {
     const raw = aggregateValue(spec.aggregates?.query.data, figure.field.name, figure.op);

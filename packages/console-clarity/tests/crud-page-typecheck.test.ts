@@ -108,4 +108,16 @@ describe("the generated CRUD page's default figure tiles", () => {
     });
     expect(check(page)).toEqual([]);
   });
+
+  it("type-checks with the tones a context states for the status tiles, and refuses one that is not a status tone", () => {
+    const withTone = (tone: string) =>
+      render("crud-page.hbs", {
+        ...context,
+        figureTiles: {
+          status: { hook: "useGetProductStatusCounts", field: "status", enumName: "ProductStatus", options: ["ACTIVE", "RETIRED"], tones: { RETIRED: tone } },
+        },
+      });
+    expect(check(withTone("danger"))).toEqual([]);
+    expect(check(withTone("loud")).length).toBeGreaterThan(0);
+  });
 });

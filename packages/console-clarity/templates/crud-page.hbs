@@ -62,7 +62,7 @@ export function {{EntityPascal}}CrudPage({ search, onNavigate }: {{EntityPascal}
   // The figures the entity's SimpliX Meta says it counts and sums, drawn as the page's figure row.
   const figures = useFigureTiles("{{entity}}", {
 {{#if figureTiles.status}}
-    status: { query: {{figureTiles.status.hook}}({ field: "{{figureTiles.status.field}}" }), field: "{{figureTiles.status.field}}", enumName: "{{figureTiles.status.enumName}}", values: [{{#each figureTiles.status.options}}"{{this}}"{{#unless @last}}, {{/unless}}{{/each}}] },
+    status: { query: {{figureTiles.status.hook}}({ field: "{{figureTiles.status.field}}" }), field: "{{figureTiles.status.field}}", enumName: "{{figureTiles.status.enumName}}", values: [{{#each figureTiles.status.options}}"{{this}}"{{#unless @last}}, {{/unless}}{{/each}}]{{#if figureTiles.status.tones}}, tones: { {{#each figureTiles.status.tones}}"{{@key}}": "{{this}}"{{#unless @last}}, {{/unless}}{{/each}} }{{/if}} },
 {{/if}}
 {{#if figureTiles.aggregates}}
     aggregates: {

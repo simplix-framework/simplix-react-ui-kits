@@ -153,7 +153,7 @@ function Screen({ open{{#if hasCreate}}, mode{{/if}} }: Args) {
   const figures = figureTiles(
     {
 {{#if figureTiles.status}}
-      status: { query: {}, field: "{{figureTiles.status.field}}", enumName: "{{figureTiles.status.enumName}}", values: [{{#each figureTiles.status.options}}"{{this}}"{{#unless @last}}, {{/unless}}{{/each}}] },
+      status: { query: {}, field: "{{figureTiles.status.field}}", enumName: "{{figureTiles.status.enumName}}", values: [{{#each figureTiles.status.options}}"{{this}}"{{#unless @last}}, {{/unless}}{{/each}}]{{#if figureTiles.status.tones}}, tones: { {{#each figureTiles.status.tones}}"{{@key}}": "{{this}}"{{#unless @last}}, {{/unless}}{{/each}} }{{/if}} },
 {{/if}}
 {{#if figureTiles.aggregates}}
       aggregates: {

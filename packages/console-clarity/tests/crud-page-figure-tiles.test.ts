@@ -45,6 +45,16 @@ describe("crud-page.hbs default figure tiles", () => {
     expect(text).not.toContain("figures.tiles");
   });
 
+  it("passes the tones a context states for the status tiles, and none where it states none", () => {
+    const toned = { ...figureTiles, status: { ...figureTiles.status, tones: { FAILED: "danger", QUEUED: "warning" } } };
+    const page = render("crud-page.hbs", { ...base, figureTiles: toned });
+    expect(page).toContain('values: ["QUEUED", "FAILED"], tones: { "FAILED": "danger", "QUEUED": "warning" } },');
+    const frame = render("crud-page.stories.hbs", { ...base, figureTiles: toned, listFields: [], detailFields: [], contractFilters: [], holders: [], fixtureRowsJson: "[]" });
+    expect(frame).toContain('values: ["QUEUED", "FAILED"], tones: { "FAILED": "danger", "QUEUED": "warning" } },');
+    expect(render("crud-page.hbs", { ...base, figureTiles })).not.toContain("tones");
+    expect(render("crud-page.stories.hbs", { ...base, figureTiles, listFields: [], detailFields: [], contractFilters: [], holders: [], fixtureRowsJson: "[]" })).not.toContain("tones");
+  });
+
   it("draws the same figures in the board frame, counted over the sample rows", () => {
     const text = render("crud-page.stories.hbs", { ...base, figureTiles, listFields: [], detailFields: [], contractFilters: [], holders: [], fixtureRowsJson: "[]" });
     expect(text).toContain("statusCounts(records.rows.map((row) => ({ value: row.status, count: 1 }))");

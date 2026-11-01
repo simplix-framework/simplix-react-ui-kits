@@ -37,6 +37,41 @@ describe("figureTiles", () => {
   });
 });
 
+describe("figureTiles status tones", () => {
+  const spec = (tones?: Record<string, "danger" | "warning" | "success">) => ({
+    status: { query: {}, field: "status", enumName: "JobStatus", values: ["QUEUED", "FAILED", "DONE"], ...(tones ? { tones } : {}) },
+    rowsLabel: "Jobs",
+  });
+  const tileOf = (tiles: ReturnType<typeof figureTiles>, key: string) => tiles.find((tile) => tile.key === key);
+
+  it("tints the tile of a value with a tone while its count is above zero", () => {
+    const tiles = figureTiles(spec({ FAILED: "danger", QUEUED: "warning" }), words, { QUEUED: 4, FAILED: 2, DONE: 9 });
+    expect(tileOf(tiles, "FAILED")).toMatchObject({ value: 2, tone: "danger" });
+    expect(tileOf(tiles, "QUEUED")).toMatchObject({ value: 4, tone: "warning" });
+    expect(tileOf(tiles, "DONE")).not.toHaveProperty("tone");
+  });
+  it("leaves a tile that counts zero without its tone", () => {
+    const tiles = figureTiles(spec({ FAILED: "danger" }), words, { QUEUED: 1, FAILED: 0, DONE: 9 });
+    expect(tileOf(tiles, "FAILED")).toMatchObject({ value: 0 });
+    expect(tileOf(tiles, "FAILED")).not.toHaveProperty("tone");
+  });
+  it("leaves every tile without a tone before the counts have answered", () => {
+    const tiles = figureTiles(spec({ FAILED: "danger" }), words, undefined);
+    expect(tiles.some((tile) => "tone" in tile)).toBe(false);
+  });
+  it("ignores a tone keyed by a value the status does not list", () => {
+    const tiles = figureTiles(spec({ UNKNOWN: "danger" }), words, { QUEUED: 1, FAILED: 2, DONE: 3, UNKNOWN: 5 });
+    expect(tiles.map((tile) => tile.key)).toEqual(["QUEUED", "FAILED", "DONE"]);
+    expect(tiles.some((tile) => "tone" in tile)).toBe(false);
+  });
+  it("changes nothing else about the tiles", () => {
+    const counts = { QUEUED: 1, FAILED: 2, DONE: 3 };
+    const toned = figureTiles(spec({ FAILED: "danger" }), words, counts);
+    const plain = figureTiles(spec(), words, counts);
+    expect(toned.map(({ tone: _tone, ...rest }) => rest)).toEqual(plain.map(({ tone: _tone, ...rest }) => rest));
+  });
+});
+
 describe("figureTiles while the sums are read again", () => {
   const spec = (isLoading: boolean) => ({
     status: { query: {}, field: "status", enumName: "JobStatus", values: ["FAILED"] },
