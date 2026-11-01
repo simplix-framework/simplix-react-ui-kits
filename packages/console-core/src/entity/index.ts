@@ -30,6 +30,8 @@ export type { RecordAction, RecordBulkAction, RecordColumn, RecordFilter, Record
 export { isTilePressed, narrowedValues, pressedTileKeys, pressedValue, pressedValues, tileFilterKey, tileFilterValues } from "./tile-filter";
 export type { TileFilter, TileValueFilter, TileValuesFilter } from "./tile-filter";
 export { aggregateValue, statusCounts, statusTiles, useStatusCounts } from "./status-counts";
+export { figureTiles, useFigureTiles } from "./figure-tiles";
+export type { FigureQuery, FigureTilesSpec, FigureWords } from "./figure-tiles";
 export type { AggregateOp, StatusCountsOptions, StatusTilesInput } from "./status-counts";
 export { RecordValueView } from "./record-value";
 export { RecordMeter, meterShare, meterTone } from "./record-meter";

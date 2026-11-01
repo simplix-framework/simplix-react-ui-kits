@@ -75,6 +75,8 @@ export declare function useDeleteProduct(): OrvalMutationLike;
 export declare const createProductAccess: Rule;
 export declare const updateProductAccess: Rule;
 export declare const deleteProductAccess: Rule;
+export declare function useGetProductStatusCounts(params: { field: string }): { data?: unknown; isLoading: boolean };
+export declare function useGetProductAggregates(params?: Readonly<Record<string, unknown>>): { data?: unknown; isLoading: boolean };
 `;
 
 /** A blocks file written before the page read `editDisabled` and `deleteDisabled`. */
@@ -179,5 +181,18 @@ describe("the generated CRUD page's figure tiles and notices", () => {
     expect(stub).toContain("`spec.tiles`");
     expect(stub).not.toContain("`cards`");
     expect(stub).toContain("`notices`");
+  });
+});
+
+describe("the generated CRUD page's default figure tiles", () => {
+  it("type-checks with the counts and sums its entity's Meta names", () => {
+    const page = render("crud-page.hbs", {
+      ...context,
+      figureTiles: {
+        status: { hook: "useGetProductStatusCounts", field: "status", enumName: "ProductStatus", options: ["ACTIVE", "RETIRED"] },
+        aggregates: { hook: "useGetProductAggregates", figures: [{ field: "productId", op: "count", kind: "number", isRowCount: true }, { field: "price", op: "sum", kind: "money", money: { currency: "KRW", scale: 0 }, isRowCount: false }] },
+      },
+    });
+    expect(check(render("page.blocks.hbs", context), page)).toEqual([]);
   });
 });

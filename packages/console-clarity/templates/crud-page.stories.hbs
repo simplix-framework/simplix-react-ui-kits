@@ -9,7 +9,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
 import { CrudPage, {{#if hasCreate}}PageAction, {{/if}}type ConsoleSearch, useDetailPresentationSetting } from "@simplix-react-ui-kits/console-clarity/page";
-import { RecordDetail, RecordList, useRecordContract, useScreenWords, type ContractField, type ContractFilter{{#if statusField}}, type RecordBadge, type RecordValue{{/if}} } from "@simplix-react-ui-kits/console-clarity/entity";
+import { {{#if figureTiles}}figureTiles, statusCounts, {{/if}}RecordDetail, RecordList, useRecordContract, useScreenWords, type ContractField, type ContractFilter{{#if statusField}}, type RecordBadge, type RecordValue{{/if}} } from "@simplix-react-ui-kits/console-clarity/entity";
 import { useMockRecords } from "@simplix-react-ui-kits/console-clarity/mock";
 
 type Row = Readonly<Record<string, unknown>>;
@@ -123,13 +123,46 @@ function Screen({ open }: Args) {
   const [search, setSearch] = useState<ConsoleSearch>(open ? { id: open } : {});
   const contract = useRecordContract("{{entity}}");
   const columns = contract.columns<Row>(COLUMN_FIELDS);
+{{#if figureTiles}}
+  // The generated page's figure row, counted and summed over the sample rows.
+  const figures = figureTiles(
+    {
+{{#if figureTiles.status}}
+      status: { query: {}, field: "{{figureTiles.status.field}}", enumName: "{{figureTiles.status.enumName}}", values: [{{#each figureTiles.status.options}}"{{this}}"{{#unless @last}}, {{/unless}}{{/each}}] },
+{{/if}}
+{{#if figureTiles.aggregates}}
+      aggregates: {
+        query: {
+          data: [
+{{#each figureTiles.aggregates.figures}}
+            { field: "{{this.field}}", op: "{{this.op}}", value: {{#if (eq this.op "count")}}records.rows.length{{else}}records.rows.reduce((sum, row) => sum + (Number(row.{{this.field}}) || 0), 0){{/if}} },
+{{/each}}
+          ],
+        },
+        figures: [
+{{#each figureTiles.aggregates.figures}}
+          { field: { name: "{{this.field}}", kind: "{{this.kind}}"{{#if this.money}}, currency: "{{this.money.currency}}", scale: {{this.money.scale}}{{/if}} }, op: "{{this.op}}"{{#if this.isRowCount}}, rowCount: true{{/if}} },
+{{/each}}
+        ],
+      },
+{{/if}}
+      rowsLabel: words.plural,
+    },
+    contract,
+{{#if figureTiles.status}}
+    statusCounts(records.rows.map((row) => ({ value: row.{{figureTiles.status.field}}, count: 1 })), { options: [{{#each figureTiles.status.options}}"{{this}}"{{#unless @last}}, {{/unless}}{{/each}}] }),
+{{else}}
+    undefined,
+{{/if}}
+  );
+{{/if}}
 {{#each holders}}
   const holder{{@index}}Contract = useRecordContract("{{this.entity}}");
   const holder{{@index}}Words = useScreenWords("{{this.entity}}");
 {{/each}}
   return (
     <CrudPage
-      spec={{ldb}} title: words.plural, description: words.description{{#if hasCreate}}, actions: <PageAction kind="add" label={words.add} onClick={() => setSearch({ mode: "new" })} />{{/if}} {{rdb}}
+      spec={{ldb}} title: words.plural, description: words.description{{#if figureTiles}}, tiles: figures{{/if}}{{#if hasCreate}}, actions: <PageAction kind="add" label={words.add} onClick={() => setSearch({ mode: "new" })} />{{/if}} {{rdb}}
       search={search}
       onNavigate={setSearch}
       {...presentation}

@@ -6,7 +6,10 @@
  * differently goes in `./page.blocks.tsx`, which the generator writes once and never again.
  */
 import { CrudPage, {{#if hasCreate}}PageAction, {{/if}}type ConsoleSearch, type CrudPageBlocks, useDetailPresentationSetting } from "@simplix-react-ui-kits/console-clarity/page";
-import { {{#if (or hasCreate hasUpdate hasDelete)}}useAllowed, {{/if}}{{#if hasDelete}}{{#if displayNameField}}useRecordContract, {{/if}}{{/if}}useScreenWords{{#if hasDelete}}{{#if displayNameField}}, type ContractField{{/if}}{{/if}} } from "@simplix-react-ui-kits/console-clarity/entity";
+import { {{#if (or hasCreate hasUpdate hasDelete)}}useAllowed, {{/if}}{{#if hasDelete}}{{#if displayNameField}}useRecordContract, {{/if}}{{/if}}{{#if figureTiles}}useFigureTiles, {{/if}}useScreenWords{{#if hasDelete}}{{#if displayNameField}}, type ContractField{{/if}}{{/if}} } from "@simplix-react-ui-kits/console-clarity/entity";
+{{#if figureTiles}}
+import { {{#if figureTiles.status}}{{figureTiles.status.hook}}{{/if}}{{#if figureTiles.status}}{{#if figureTiles.aggregates}}, {{/if}}{{/if}}{{#if figureTiles.aggregates}}{{figureTiles.aggregates.hook}}{{/if}} } from "{{packageName}}";
+{{/if}}
 {{#if hasDelete}}
 import { adaptOrvalDelete, useCrudDeleteWired, useInvalidateEntity } from "@simplix-react/ui";
 import { {{hookDelete}} } from "{{packageName}}";
@@ -48,6 +51,26 @@ export function {{EntityPascal}}CrudPage({ search, onNavigate }: {{EntityPascal}
   const blocks: ReturnType<typeof usePageBlocks> & CrudPageBlocks<{{EntityPascal}}Row, {{EntityPascal}}ListProps, {{EntityPascal}}DetailProps, ReturnType<typeof use{{EntityPascal}}List>> = usePageBlocks({ search, onNavigate });
   const list = use{{EntityPascal}}List(blocks.listParams);
   const presentation = useDetailPresentationSetting();
+{{#if figureTiles}}
+  // The figures the entity's SimpliX Meta says it counts and sums, drawn as the page's figure row;
+  // a blocks file that states `spec.tiles` draws its own instead.
+  const figures = useFigureTiles("{{entity}}", {
+{{#if figureTiles.status}}
+    status: { query: {{figureTiles.status.hook}}({ field: "{{figureTiles.status.field}}" }), field: "{{figureTiles.status.field}}", enumName: "{{figureTiles.status.enumName}}", values: [{{#each figureTiles.status.options}}"{{this}}"{{#unless @last}}, {{/unless}}{{/each}}] },
+{{/if}}
+{{#if figureTiles.aggregates}}
+    aggregates: {
+      query: {{figureTiles.aggregates.hook}}({}),
+      figures: [
+{{#each figureTiles.aggregates.figures}}
+        { field: { name: "{{this.field}}", kind: "{{this.kind}}"{{#if this.money}}, currency: "{{this.money.currency}}", scale: {{this.money.scale}}{{/if}} }, op: "{{this.op}}"{{#if this.isRowCount}}, rowCount: true{{/if}} },
+{{/each}}
+      ],
+    },
+{{/if}}
+    rowsLabel: words.plural,
+  });
+{{/if}}
 {{#if (or hasCreate hasUpdate hasDelete)}}
   // Every control is gated on the rule its endpoint states, so none leads to a call the server refuses.
 {{/if}}
@@ -90,7 +113,7 @@ export function {{EntityPascal}}CrudPage({ search, onNavigate }: {{EntityPascal}
     <>
       <CrudPage
         // The header's line is the entity's description unless the blocks state one; `""` states none.
-        spec={{ldb}} title: words.plural, ...blocks.spec, description: blocks.spec?.description ?? words.description, actions: listActions ? <>{ownActions}{listActions}</> : ownActions {{rdb}}
+        spec={{ldb}} title: words.plural, {{#if figureTiles}}tiles: figures.tiles, tilesLoading: figures.loading, {{/if}}...blocks.spec, description: blocks.spec?.description ?? words.description, actions: listActions ? <>{ownActions}{listActions}</> : ownActions {{rdb}}
         search={search}
         onNavigate={onNavigate}
         {...presentation}
