@@ -82,6 +82,15 @@ export interface {{EntityPascal}}DetailProps {
 }
 
 /** The {{entity}} record, drawn by the kit's record detail. */
+{{#if displayNameField}}
+/** The fields the record is named by, in order, each drawn by its kind. */
+const NAME_FIELDS: readonly ContractField[] = [
+{{#each nameContractFields}}
+  { name: "{{this.name}}", kind: "{{this.contractKind}}"{{#if this.enumTypeName}}, enumName: "{{this.enumTypeName}}"{{/if}}{{#if this.nameField}}, nameField: "{{this.nameField}}"{{/if}}{{#if this.isCode}}, code: true{{/if}} },
+{{/each}}
+];
+
+{{/if}}
 export function {{EntityPascal}}Detail(props: {{EntityPascal}}DetailProps) {
   const words = useScreenWords("{{entity}}");
   const { data, isLoading, isError } = {{hookGet}}(props.{{entity}}Id);
@@ -146,7 +155,7 @@ export function {{EntityPascal}}Detail(props: {{EntityPascal}}DetailProps) {
 {{else}}
   const tabs = typeof blocks.tabs === "function" ? blocks.tabs([{ key: "overview", label: words.overview, sections: [{ key: "overview", fields: generated }] }]) : blocks.tabs;
 {{/if}}
-  const recordName = record ? {{#if displayNameField}}{{recordName "record" displayNameFields}}{{else}}String(record.{{rowIdField}} ?? ""){{/if}} : "";
+  const recordName = record ? {{#if displayNameField}}contract.recordName(NAME_FIELDS, row){{else}}String(record.{{rowIdField}} ?? ""){{/if}} : "";
   const generatedActions = [
     ...(props.onDelete ? [{ label: words.delete, kind: "danger" as const, onClick: () => props.onDelete?.(recordName) }] : []),
     ...(props.onEdit ? [{ label: words.edit, onClick: props.onEdit }] : []),

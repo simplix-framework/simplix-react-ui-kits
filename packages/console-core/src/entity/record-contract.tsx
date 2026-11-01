@@ -344,8 +344,34 @@ export function useRecordContract(entity: string, overrides: ContractOverrides =
     [fieldLabel, value],
   );
 
+  // A record's name as one line of text: each name field drawn as its kind draws it (an enum by
+  // its label, an instant in the installation's zone), the parts joined in order.
+  const recordName = useCallback(
+    (fields: readonly ContractField[], row: Row | undefined): string => recordNameOf(fields.map((field) => value(field, row))),
+    [value],
+  );
+
   // `enumLabel` is returned for a screen that draws an enum constant outside a column or a filter (a tab per group).
-  return useMemo(() => ({ value, formField, request, column, columns, filters, detailField, fieldLabel, enumLabel }), [value, formField, request, column, columns, filters, detailField, fieldLabel, enumLabel]);
+  return useMemo(() => ({ value, formField, request, column, columns, filters, detailField, fieldLabel, enumLabel, recordName }), [value, formField, request, column, columns, filters, detailField, fieldLabel, enumLabel, recordName]);
+}
+
+/** The text a drawn value reads as, or `""` where it draws nothing. */
+export function recordValueText(value: RecordValue): string {
+  if (value === null || value === undefined) return "";
+  if (typeof value === "string" || typeof value === "number") return String(value);
+  if ("text" in value) return value.text;
+  if ("link" in value) return value.link;
+  if ("badges" in value) return value.badges.map((badge) => badge.label).join(" ");
+  if ("badge" in value) return value.badge.label;
+  return "";
+}
+
+/**
+ * A record's name from the values of its name fields, in order, joined by a space with the parts
+ * that draw nothing left out.
+ */
+export function recordNameOf(values: readonly RecordValue[]): string {
+  return values.map(recordValueText).filter((part) => part !== "").join(" ");
 }
 
 /**

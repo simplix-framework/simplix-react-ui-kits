@@ -21,6 +21,7 @@ const context = {
   rowIdField: "productId",
   displayNameField: "name",
   displayNameFields: ["name"],
+  nameContractFields: [{ name: "name", contractKind: "text" }],
   hookDelete: "useDeleteProduct",
   accessCreate: "createProductAccess",
   accessUpdate: "updateProductAccess",

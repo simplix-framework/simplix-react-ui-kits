@@ -44,6 +44,15 @@ const FILTERS: readonly ContractFilter[] = [
 {{/each}}
 ];
 
+{{#if displayNameField}}
+/** The fields the record is named by, in order, each drawn by its kind. */
+const NAME_FIELDS: readonly ContractField[] = [
+{{#each nameContractFields}}
+  { name: "{{this.name}}", kind: "{{this.contractKind}}"{{#if this.enumTypeName}}, enumName: "{{this.enumTypeName}}"{{/if}}{{#if this.nameField}}, nameField: "{{this.nameField}}"{{/if}}{{#if this.isCode}}, code: true{{/if}} },
+{{/each}}
+];
+
+{{/if}}
 /** The fields the record shows, as the generated detail draws them. */
 const DETAIL_FIELDS: readonly ContractField[] = [
 {{#each detailFields}}
@@ -122,7 +131,7 @@ function Screen({ open }: Args) {
         const row = records.find(id);
         return (
           <RecordDetail
-            title={row ? ({{#if displayNameField}}{{recordName "row" displayNameFields}}{{else}}String(row.{{rowIdField}} ?? ""){{/if}} || id) : id}
+            title={row ? ({{#if displayNameField}}contract.recordName(NAME_FIELDS, row){{else}}String(row.{{rowIdField}} ?? ""){{/if}} || id) : id}
             sections={[{ key: "overview", fields: row ? DETAIL_FIELDS.map((field) => contract.detailField(field, row)) : [] }]}
 {{#if (or hasUpdate hasDelete)}}
             // The generated detail's footer verbs, so the frame draws the footer the screen draws.

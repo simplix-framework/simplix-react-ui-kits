@@ -16,6 +16,7 @@ const context = {
   rowIdField: "productId",
   displayNameField: "name",
   displayNameFields: ["name"],
+  nameContractFields: [{ name: "name", contractKind: "text" }],
   listFields: [field],
   detailFields: [field],
   contractFilters: [

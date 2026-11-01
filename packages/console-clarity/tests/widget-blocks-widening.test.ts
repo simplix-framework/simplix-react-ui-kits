@@ -22,6 +22,7 @@ const context = {
   rowIdField: "productId",
   displayNameField: "name",
   displayNameFields: ["name"],
+  nameContractFields: [{ name: "name", contractKind: "text" }],
   hookGet: "useGetProduct",
   hookCreate: "useCreateProduct",
   hookUpdate: "useUpdateProduct",

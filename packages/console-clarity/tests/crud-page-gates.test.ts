@@ -11,6 +11,7 @@ function page(writes: { readonly hasCreate: boolean; readonly hasUpdate: boolean
     rowIdField: "ledgerEntryId",
     displayNameField: "reason",
     displayNameFields: ["reason"],
+    nameContractFields: [{ name: "reason", contractKind: "text" }],
     hookDelete: "useDeleteLedgerEntry",
     accessCreate: "createLedgerEntryAccess",
     accessUpdate: "updateLedgerEntryAccess",
@@ -57,10 +58,12 @@ describe("crud-page.hbs record name", () => {
       rowIdField: "ledgerEntryId",
       displayNameField: "reason",
       displayNameFields: ["reason", "period"],
+      nameContractFields: [{ name: "reason", contractKind: "text" }, { name: "period", contractKind: "instant" }],
       hookDelete: "useDeleteLedgerEntry",
       accessDelete: "deleteLedgerEntryAccess",
       hasDelete: true,
     });
-    expect(text).toContain("const nameOf = (row: { readonly reason?: unknown; readonly period?: unknown; }) => [row.reason, row.period]");
+    expect(text).toContain('{ name: "reason", kind: "text" },\n  { name: "period", kind: "instant" },');
+    expect(text).toContain("const nameOf = (row: object) => contract.recordName(NAME_FIELDS, row as Readonly<Record<string, unknown>>);");
   });
 });

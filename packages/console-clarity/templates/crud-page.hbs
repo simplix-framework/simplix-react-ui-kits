@@ -6,7 +6,7 @@
  * differently goes in `./page.blocks.tsx`, which the generator writes once and never again.
  */
 import { CrudPage, {{#if hasCreate}}PageAction, {{/if}}type ConsoleSearch, type CrudPageBlocks, useDetailPresentationSetting } from "@simplix-react-ui-kits/console-clarity/page";
-import { {{#if (or hasCreate hasUpdate hasDelete)}}useAllowed, {{/if}}useScreenWords } from "@simplix-react-ui-kits/console-clarity/entity";
+import { {{#if (or hasCreate hasUpdate hasDelete)}}useAllowed, {{/if}}{{#if hasDelete}}{{#if displayNameField}}useRecordContract, {{/if}}{{/if}}useScreenWords{{#if hasDelete}}{{#if displayNameField}}, type ContractField{{/if}}{{/if}} } from "@simplix-react-ui-kits/console-clarity/entity";
 {{#if hasDelete}}
 import { adaptOrvalDelete, useCrudDeleteWired, useInvalidateEntity } from "@simplix-react/ui";
 import { {{hookDelete}} } from "{{packageName}}";
@@ -30,6 +30,17 @@ interface {{EntityPascal}}CrudPageProps {
 }
 
 /** {{EntityPascal}}: the list, and the record it opens. */
+{{#if hasDelete}}
+{{#if displayNameField}}
+/** The fields the record is named by, in order, each drawn by its kind. */
+const NAME_FIELDS: readonly ContractField[] = [
+{{#each nameContractFields}}
+  { name: "{{this.name}}", kind: "{{this.contractKind}}"{{#if this.enumTypeName}}, enumName: "{{this.enumTypeName}}"{{/if}}{{#if this.nameField}}, nameField: "{{this.nameField}}"{{/if}}{{#if this.isCode}}, code: true{{/if}} },
+{{/each}}
+];
+
+{{/if}}
+{{/if}}
 export function {{EntityPascal}}CrudPage({ search, onNavigate }: {{EntityPascal}}CrudPageProps) {
   const words = useScreenWords("{{entity}}");
   // Every key of the kit's blocks contract is optional here, so a blocks file written before the
@@ -63,8 +74,9 @@ export function {{EntityPascal}}CrudPage({ search, onNavigate }: {{EntityPascal}
     onDeleted: () => onNavigate({}),
   });
 {{#if displayNameField}}
-  // The record's name is every field its entity declares for it, joined in order.
-  const nameOf = (row: { {{#each displayNameFields}}readonly {{this}}?: unknown; {{/each~}} }) => {{recordName "row" displayNameFields}};
+  // The record's name is every field its entity declares for it, each drawn by its kind, joined in order.
+  const contract = useRecordContract("{{entity}}");
+  const nameOf = (row: object) => contract.recordName(NAME_FIELDS, row as Readonly<Record<string, unknown>>);
 {{else}}
   const nameOf = (row: { readonly {{rowIdField}}?: unknown }) => String(row.{{rowIdField}} ?? "");
 {{/if}}
