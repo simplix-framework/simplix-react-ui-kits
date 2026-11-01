@@ -1,7 +1,8 @@
 /**
  * What the app's shell holds: its brand, its menu, the controls in its top bar, the account menu,
- * what wraps the routed screens and the pages it draws in place of the window for a refused self
- * read. Written by hand and never regenerated; every value below is a start for the app to replace.
+ * what wraps the routed screens, and (in `SHELL_FRAME`) the routes drawn without the window and the
+ * pages drawn in place of it for a refused self read. Written by hand and never regenerated; every
+ * value below is a start for the app to replace.
  */
 import type { ComponentType, ReactNode } from "react";
 import { useTranslation } from "@simplix-react/i18n/react";
@@ -15,8 +16,10 @@ export interface ShellMenuEntry {
   readonly icon: ComponentType<{ "aria-hidden"?: boolean }>;
   /** Where it goes; absent where the screen is not built, and the row is drawn inactive. */
   readonly href?: string;
-  /** Why an entry with no `href` cannot be opened. */
+  /** Why an entry with no `href` cannot be opened, announced and shown on hover. */
   readonly inactiveReason?: string;
+  /** The mark at the end of an entry with no `href`, saying which kind of unavailable it is. */
+  readonly inactiveMark?: ReactNode;
   /** The icon of its phone tab, where the destination is one. */
   readonly phoneTab?: ConsolePhoneTab["icon"];
 }
@@ -35,22 +38,37 @@ export interface ShellBlocks {
   readonly brand: { readonly mark?: ReactNode; readonly title: string; readonly badge?: ReactNode };
   readonly menuTitle?: ReactNode;
   readonly menu: readonly ShellMenuGroup[];
+  /**
+   * Destinations outside the groups, drawn after them: a row of their own in the column, a mark of
+   * their own on the rail, and a row in the phone sheet's last section (a phone tab where marked).
+   */
+  readonly tail?: readonly ShellMenuEntry[];
   /** The top bar's areas, search, region, bell, help and settings controls. */
   readonly topBar: Omit<ConsoleTopBarProps, "mark" | "title" | "badge" | "account">;
   readonly account: ConsoleTopBarAccount;
   readonly status?: ConsoleStatusStripProps;
-  /** Rows the phone's menu sheet ends with (the account, signing out). */
+  /** Rows the phone's menu sheet ends with, after the `tail` entries (signing out). */
   readonly phoneFooter?: ReactNode;
+  /** Providers the window needs around itself and the routed screens, mounted once per window. */
+  readonly wrap: (shell: ReactNode) => ReactNode;
+}
+
+/** What the root layout decides before a session stands, read without running any of the blocks. */
+export interface ShellFrame {
   /** The routes drawn without the console window (sign-in and the pages around it). */
   readonly isOutsideTheConsole: (route: string) => boolean;
-  /** Providers the routed screens need inside the shell. */
-  readonly wrap: (shell: ReactNode) => ReactNode;
   /**
    * The page drawn in place of the whole shell while the server refuses the signed-in identity's own
    * read, by the error code its envelope carries. Absent, no refusal changes the shell.
    */
   readonly refusalPages?: ShellRefusalPages;
 }
+
+export const SHELL_FRAME: ShellFrame = {
+  isOutsideTheConsole: () => false,
+};
+
+/** The shell's parts, read once per window and only once a session stands. */
 
 export function useShellBlocks(): ShellBlocks {
   const { t } = useTranslation("{{namespace}}");
@@ -75,7 +93,6 @@ export function useShellBlocks(): ShellBlocks {
       ),
     },
     account: { name: "", menu: null },
-    isOutsideTheConsole: () => false,
     wrap: (shell) => shell,
   };
 }
