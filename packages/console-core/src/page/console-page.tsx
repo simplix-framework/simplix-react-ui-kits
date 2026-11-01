@@ -118,7 +118,7 @@ export function ConsolePage({
     spec.tiles && spec.tiles.length > 0 ? (
       <SettingsTiles
         tiles={spec.tiles}
-        columns={spec.tilesColumns ?? 4}
+        columns={spec.tilesColumns}
         reorderKey={spec.tilesReorderKey}
         title={spec.tilesTitle}
         loading={spec.tilesLoading}

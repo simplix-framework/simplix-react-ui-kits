@@ -44,6 +44,7 @@ import {
   tilePressStyle,
 } from "./settings-tiles.style";
 import { NumericText } from "./numeric-text";
+import { MAX_TILE_COLUMNS, useTileColumns, type TileColumns } from "./tile-columns";
 import { useTileOrder } from "./tile-order";
 import { useTilesCollapse } from "./tiles-collapse";
 import { narrowedValues, pressedTileKeys, pressedValues, type TileFilter } from "../entity/tile-filter";
@@ -343,13 +344,13 @@ interface SettingsTilesProps {
   /** The figures, in the order the board draws them. */
   readonly tiles: readonly SettingsTile[];
   /**
-   * The most tiles to a row.
+   * The most tiles to a row, five unless a screen caps it lower.
    *
-   * <p>A screen with fewer figures than this does not need to say so — the grid draws as many
-   * columns as there are tiles, so three figures make three columns rather than three quarters of
-   * a row with a hole in it.
+   * <p>A row holds as many tiles as fit at the minimum tile width (`--tile-min-width`) in the page
+   * column, up to this cap, balanced over the rows; a screen with fewer figures needs no cap, as
+   * its tiles take the row between them.
    */
-  readonly columns?: 1 | 2 | 3 | 4;
+  readonly columns?: TileColumns;
   /**
    * Lets the reader put the tiles in their own order, kept in this browser under this key.
    *
@@ -380,7 +381,7 @@ interface SettingsTilesProps {
 /** The part of a list's filter state the tiles read and write. */
 export type TileFilters = Pick<CrudListFilters, "committedValues" | "commitValues">;
 
-export function SettingsTiles({ tiles, columns = 4, reorderKey, title, loading = false, folded = false, filters }: SettingsTilesProps) {
+export function SettingsTiles({ tiles, columns = MAX_TILE_COLUMNS, reorderKey, title, loading = false, folded = false, filters }: SettingsTilesProps) {
   const { t } = useTranslation(PACKAGE_NAMESPACE + "/tiles");
   const shared = useTilesCollapse();
   const [unfolded, setUnfolded] = useState(false);
@@ -730,7 +731,7 @@ function TileGrid({
   className,
 }: {
   readonly tiles: readonly SettingsTile[];
-  readonly columns: 1 | 2 | 3 | 4;
+  readonly columns: TileColumns;
   readonly reorderKey?: string;
   readonly loading: boolean;
   readonly filters?: TileFilters;
@@ -748,12 +749,16 @@ function TileGrid({
   const [over, setOver] = useState<string | null>(null);
   const ordered = enabled ? order.map((k) => tiles.find((t) => t.key === k)!).filter(Boolean) : tiles;
   const grid = useRef<HTMLDivElement>(null);
+  // As many to a row as fit at the minimum tile width in the page column, balanced over the rows.
+  const { columns: perRow, measured } = useTileColumns(grid, ordered.length, columns);
   // A tile moved to a new place, or a row that wraps when the window narrows, glides there.
   // Keyed by the order's content: a screen that rebuilds its tiles on every render hands a new
   // array each time, and a pass on an unchanged order would glide the cards for an unrelated shift.
-  useReflowFlip(grid, "[data-flip-key]", [order.join("\u0000")]);
+  // Held until the column count is measured, so a narrow column does not glide the tiles from the
+  // guess made before it was.
+  useReflowFlip(grid, "[data-flip-key]", [order.join("\u0000"), measured], measured);
   return (
-    <Grid ref={grid} columns={columns} gap="md" fit className={className}>
+    <Grid ref={grid} template={`repeat(${perRow}, minmax(0, 1fr))`} gap="md" className={className}>
       {ordered.map((tile) => {
         // The board stacks value → 추이 → 근거, so the comparison takes the card's first line under
         // the value and the basis moves below it. With no comparison the basis keeps that line and

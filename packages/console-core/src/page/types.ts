@@ -214,7 +214,8 @@ export interface PageSpec {
   /** The header's action buttons — the primary create, a save, an export. */
   readonly actions?: ReactNode;
   readonly tiles?: readonly SettingsTile[];
-  readonly tilesColumns?: 1 | 2 | 3 | 4;
+  /** The most tiles to a row; absent, the row holds as many as fit in the page column, up to five. */
+  readonly tilesColumns?: 1 | 2 | 3 | 4 | 5;
   /**
    * Lets the reader put the figures in their own order, kept in this browser under this key.
    * Absent, the figures keep the order they are declared in.

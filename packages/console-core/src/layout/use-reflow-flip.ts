@@ -47,15 +47,21 @@ function rowsOf(boxes: ReadonlyMap<string, Box>): number {
  * @param selector picks the items under {@link ref}; each is keyed by `data-flip-key`, or by its
  *   position when it has none
  * @param deps values whose change may reorder the items
+ * @param enabled false while the layout is still being settled (a column count not yet measured):
+ *   nothing is recorded or moved, so the first layout that follows is taken as where the items
+ *   started rather than as a jump from the guess before it
  */
-export function useReflowFlip(ref: RefObject<HTMLElement | null>, selector: string, deps: readonly unknown[]): void {
+export function useReflowFlip(ref: RefObject<HTMLElement | null>, selector: string, deps: readonly unknown[], enabled = true): void {
   const boxes = useRef<Map<string, Box>>(new Map());
   const width = useRef<number | null>(null);
   const running = useRef<Map<HTMLElement, Animation>>(new Map());
+  // Read through a ref: the resize observer below is made once and would keep the first render's value.
+  const on = useRef(enabled);
+  on.current = enabled;
 
   const pass = (moved: "order" | "resize") => {
     const host = ref.current;
-    if (!host) return;
+    if (!host || !on.current) return;
     const items = Array.from(host.querySelectorAll<HTMLElement>(selector));
     const next = new Map<string, Box>();
     // Where each item is drawn now (a glide still running included), then where layout puts it:

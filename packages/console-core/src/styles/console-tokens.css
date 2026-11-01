@@ -8,6 +8,9 @@
   --menu-branch-inset: 9px;
   --menu-branch-gap: 1px;
 
+  /* The narrowest a figure tile is drawn: a row holds as many tiles as fit at this width, up to five. */
+  --tile-min-width: 12rem;
+
   /* The title type step a sign-in panel's heading reads (the product theme writes its own). */
   --text-title: 26px;
   --text-title--line-height: 32px;
