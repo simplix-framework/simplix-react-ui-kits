@@ -123,7 +123,7 @@ describe("the generated CRUD page as a whole screen", () => {
   it("type-checks without a blocks file, reading its description from the screen catalog", () => {
     const page = render("crud-page.hbs", context);
     expect(page).not.toContain("page.blocks");
-    expect(page).toContain('t("screen.product.description") || undefined');
+    expect(page).toContain('line !== "screen.product.description" ? line : undefined');
     expect(check(render("page.blocks.hbs", context), page)).toEqual([]);
   });
 });

@@ -120,7 +120,9 @@ function Screen({ open }: Args) {
   const words = useScreenWords("{{entity}}");
   // The line under the title is the screen's own, from the same catalog key the page reads.
   const { t } = useOptionalTranslation("{{moduleNamespace}}/widgets");
-  const description = t("screen.{{entity}}.description") || undefined;
+  // A key the catalog holds empty comes back as the key itself, and draws no line either.
+  const line = t("screen.{{entity}}.description");
+  const description = line && line !== "screen.{{entity}}.description" ? line : undefined;
   // The same setting the generated page reads, so the frame draws the presentation switch the screen draws.
   const presentation = useDetailPresentationSetting();
   const records = useMockRecords(ROWS, idOf);

@@ -53,7 +53,9 @@ export function {{EntityPascal}}CrudPage({ search, onNavigate }: {{EntityPascal}
   const words = useScreenWords("{{entity}}");
   // The line under the title is the screen's own, from its catalog; an empty value draws none.
   const { t } = useTranslation("{{moduleNamespace}}/widgets");
-  const description = t("screen.{{entity}}.description") || undefined;
+  // A key the catalog holds empty comes back as the key itself, and draws no line either.
+  const line = t("screen.{{entity}}.description");
+  const description = line && line !== "screen.{{entity}}.description" ? line : undefined;
   const list = use{{EntityPascal}}List();
   const presentation = useDetailPresentationSetting();
 {{#if figureTiles}}
