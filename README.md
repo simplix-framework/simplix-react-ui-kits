@@ -19,7 +19,8 @@ A mockup draws every screen with one UI kit (a package of screen types built on 
 | `storybook/mockup-settings.tsx` | `useMockupSettings()`: the toolbar's settings, read by a screen |
 | `.storybook/` | The kit's own Storybook: every framework story rendered with a design |
 | `scaffold/` | Files `init-mockup` copies into a new mockup root |
-| `checks/` | `check-screens`, `check-designs`, `check-imports`, `check-versions`, `new-override`, `extract-tokens`, `capture`, `init-mockup` |
+| `checks/` | `check-screens`, `check-designs`, `check-imports`, `check-versions`, `console-menu`, `new-override`, `extract-tokens`, `capture`, `init-mockup` |
+| `lib/` | Helpers the checks and the plugin share; `console-menu.mjs` holds the console menu readers and checks, proved by `console-menu.test.mjs` (`pnpm test`) |
 
 ## Designs
 
@@ -52,6 +53,34 @@ designs/<design>/
 A screen imports its UI kit, React, Storybook types, its fixtures and locales, and `useMockupSettings`; it writes no `className` or `style`. `check-screens` enforces this. Anything else needs a `// ui-kit-exception: <reason>` line directly above it and is counted on every run, because a screen type the kit lacks belongs in the kit.
 
 The UI kit's own providers and page frame go in through `createMockupPreview({ decorators })` in the root's `.storybook/preview.tsx`.
+
+## Console menu
+
+A mockup draws the product's menu beside every back office screen. `console-menu` writes that menu from the product's own menu module, so a menu entry added to the product reaches the mockup without a second edit, and checks that the menu's words agree with the entity each entry opens.
+
+```bash
+node kit/checks/console-menu.mjs [--root <mockup root>]           # write the generated menu
+node kit/checks/console-menu.mjs [--root <mockup root>] --check   # fail when it is stale or the words disagree
+```
+
+The menu constant is read as syntax, never executed. An entry reaches its screen through its route: the route file declares the path and imports the `<Entity>CrudPage`, and the entity names the frame in `screens/` (`templates.story.files` of the scaffold config names a frame that predates its scaffold). An entry with no route falls back to the frame named after its catalogue key, and an entry with no frame is drawn inactive.
+
+`--check` fails when the generated file is stale, when an entry that has a product route has no frame, when an entry or group has no words in a locale, when the catalogue holds menu words no entry uses, and when an entry's words differ from the plural label of its entity in a locale. An entry that differs on purpose is listed under `menu.labelExceptions` with the reason; an exception without a reason, for an entry that opens no entity list, or whose words now agree is reported as well.
+
+The root's `mockup.config.json` holds everything specific to the product, under the key `menu`; a root without the key is left alone. Paths are relative to the root.
+
+| Key | Meaning |
+| --- | --- |
+| `source` | The module that holds the menu constant |
+| `routes` | The directory of the product's route files |
+| `scaffoldConfig` | The scaffold config, read for `templates.story.files` |
+| `catalog` | The shell catalogue, `locales/<catalog>/<locale>.json`, whose `shell.menu` and `shell.groups` hold the words |
+| `storyIdPrefix` | What a frame's story id starts with, before its screen name |
+| `output` | The generated file; the preview imports its `MENU` and `ACCOUNT_ENTRY` |
+| `labelExceptions` | Entry key to the reason its words differ from its entity's |
+| `menuConstant`, `accountConstant` | The constants' names; default `ADMIN_MENU` and `ACCOUNT_ENTRY` |
+| `iconModule`, `iconType` | Where the marks come from and the type of one mark; default `lucide-react` and `LucideIcon` |
+| `entityCatalog` | Where an entity's words live under `locales/`, with `{entity}` in camel case; default `entity/{entity}` |
 
 ## Mockup root
 

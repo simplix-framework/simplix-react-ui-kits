@@ -8,7 +8,9 @@
     "build-storybook": "storybook build -o storybook-static",
     "capture": "node checks/capture.mjs",
     "check": "node checks/check-designs.mjs && node checks/check-imports.mjs && node checks/check-versions.mjs",
-    "new-override": "node checks/new-override.mjs"
+    "new-override": "node checks/new-override.mjs",
+    "console-menu": "node checks/console-menu.mjs",
+    "test": "node --test lib/console-menu.test.mjs"
   },
   "dependencies": {
     "@dnd-kit/core": "6.3.1",
