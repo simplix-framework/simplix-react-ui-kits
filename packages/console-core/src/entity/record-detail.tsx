@@ -176,6 +176,13 @@ export interface RecordDetailProps {
   readonly fieldEnums?: Readonly<Record<string, string>>;
 }
 
+/**
+ * A wide field takes the whole row, and so does its value: the section draws a value as a wrapping
+ * flex row at its content's width, so without the stretch a block (a JSON payload) stops at the
+ * width of its longest line while the row beside it stands empty.
+ */
+const WIDE_FIELD = "col-span-full [&>[data-slot=field-detail-value]]:self-stretch";
+
 function Sections({ sections }: { readonly sections?: readonly RecordSection[] }) {
   if (!sections) return null;
   return (
@@ -186,9 +193,9 @@ function Sections({ sections }: { readonly sections?: readonly RecordSection[] }
             // The position is part of the key: two rows may carry the same label (one per session
             // of the same application), and a repeated key draws neither of them reliably.
             field.copy && typeof field.value === "string" ? (
-              <CopyableDetailField key={`${index}:${field.label}`} label={field.label} layout="inline" value={field.value} className={field.wide ? "col-span-full" : undefined} />
+              <CopyableDetailField key={`${index}:${field.label}`} label={field.label} layout="inline" value={field.value} className={field.wide ? WIDE_FIELD : undefined} />
             ) : (
-              <DetailFieldWrapper key={`${index}:${field.label}`} label={field.label} layout="inline" className={field.wide ? "col-span-full" : undefined}>
+              <DetailFieldWrapper key={`${index}:${field.label}`} label={field.label} layout="inline" className={field.wide ? WIDE_FIELD : undefined}>
                 <RecordValueView value={field.value} />
               </DetailFieldWrapper>
             ),

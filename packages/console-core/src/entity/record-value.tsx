@@ -89,7 +89,7 @@ export function RecordValueView({ value }: { readonly value: RecordValue }): Rea
       </Button>
     );
   }
-  if ("text" in value && value.block) return <MonoBlock>{value.text}</MonoBlock>;
+  if ("text" in value && value.block) return <MonoBlock className="w-full">{value.text}</MonoBlock>;
   if ("text" in value) {
     const lines = (
       <Flex direction="column" gap="none" minSize>

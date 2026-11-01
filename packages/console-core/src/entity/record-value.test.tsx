@@ -35,4 +35,9 @@ describe("a RecordValue marked as a block", () => {
     expect(html).toContain("whitespace-pre-wrap");
     expect(html).toContain('{\n  &quot;a&quot;: 1\n}');
   });
+
+  it("fills the width of the row it stands in rather than stopping at its longest line", () => {
+    const html = renderToStaticMarkup(createElement(RecordValueView, { value: { text: "{}", code: true, block: true } }));
+    expect(html).toMatch(/class="[^"]*\bw-full\b/);
+  });
 });
