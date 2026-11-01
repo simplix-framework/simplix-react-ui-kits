@@ -29,8 +29,8 @@ export { RecordList, countedChips, orderUpdates, useAnnounceOutcome } from "./re
 export type { RecordAction, RecordBulkAction, RecordColumn, RecordFilter, RecordListFeatures, RecordListMore, RecordListProps, RecordOutcome, RecordReorder } from "./record-list";
 export { StatusCardStrip, cardFilterKey, isCardPressed, pressedValue, shownCardTone } from "./status-card-strip";
 export type { StatusCard, StatusCardFilter, StatusCardStripProps } from "./status-card-strip";
-export { statusCounts, useStatusCounts } from "./status-counts";
-export type { StatusCountsOptions } from "./status-counts";
+export { aggregateValue, statusCards, statusCounts, useStatusCounts } from "./status-counts";
+export type { AggregateOp, StatusCardsInput, StatusCountsOptions } from "./status-counts";
 export { RecordValueView } from "./record-value";
 export { RecordMeter, meterShare, meterTone } from "./record-meter";
 export { lifecycleNodes } from "./record-lifecycle";
