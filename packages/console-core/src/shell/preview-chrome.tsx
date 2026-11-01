@@ -15,6 +15,9 @@ import {
   Popover,
   PopoverTrigger,
   Stack,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
 } from "@simplix-react/ui";
 import { partAttributes } from "@simplix-react/ui/design";
 import { zoneLabel } from "../datetime";
@@ -52,6 +55,10 @@ export interface ConsolePreviewMenuEntry {
   readonly icon?: ReactNode;
   /** Where the row goes. Absent, the row is drawn inactive, as the console draws an unbuilt screen. */
   readonly href?: string;
+  /** Why an inactive row cannot be opened, announced and shown on hover, as the console shows it. */
+  readonly inactiveReason?: string;
+  /** The mark at the end of an inactive row, saying which kind of unavailable it is. */
+  readonly inactiveMark?: ReactNode;
   readonly children?: readonly ConsolePreviewMenuEntry[];
 }
 
@@ -485,7 +492,16 @@ function EntryRow({ entry, current }: { readonly entry: ConsolePreviewMenuEntry;
       </Stack>
     );
   }
-  if (!entry.href) return <ConsoleMenuInactiveRow icon={entry.icon} label={entry.label} />;
+  if (!entry.href) {
+    const row = <ConsoleMenuInactiveRow icon={entry.icon} label={entry.label} mark={entry.inactiveMark} aria-description={entry.inactiveReason} />;
+    if (!entry.inactiveReason) return row;
+    return (
+      <Tooltip>
+        <TooltipTrigger asChild>{row}</TooltipTrigger>
+        <TooltipContent>{entry.inactiveReason}</TooltipContent>
+      </Tooltip>
+    );
+  }
   return <ConsoleMenuLinkRow href={entry.href} current={entry.key === current} icon={entry.icon} label={entry.label} />;
 }
 

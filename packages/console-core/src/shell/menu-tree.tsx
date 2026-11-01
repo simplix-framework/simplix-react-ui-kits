@@ -77,7 +77,7 @@ export function ConsoleMenuGlyph({ children }: ConsoleMenuGlyphProps) {
   return (
     <span
       aria-hidden
-      className="flex w-4 shrink-0 items-center justify-center"
+      className="flex w-4 shrink-0 items-center justify-center [&>svg]:size-4"
       {...slotAttributes(menuGlyphStyle, {})}
     >
       {children}
