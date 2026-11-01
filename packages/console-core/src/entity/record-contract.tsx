@@ -51,6 +51,12 @@ export interface ContractField {
   /** The peek kind a `reference` field opens, which is the referenced entity's name. */
   readonly peekKind?: string;
   /**
+   * For a `reference` whose target a sibling field picks (SimpliX Meta's `reference.kindField`):
+   * that field, and the peek kind each of its values opens. A value with no kind is drawn by name
+   * alone, since nothing is served to open.
+   */
+  readonly peekKinds?: { readonly field: string; readonly kinds: Readonly<Record<string, string>> };
+  /**
    * For a `reference` whose value is another field of the referenced entity than its identifier
    * (SimpliX Meta's `reference.idField`), that field: the peek looks the record up by it.
    */
@@ -90,6 +96,13 @@ export interface ContractField {
 }
 
 /** The record a reference opens: its value, its name, and the field the value matches where it is not the identifier. */
+/** The peek kind a `reference` opens for one record: its own, or the one its kind field's value picks. */
+export function peekKindOf(field: Pick<ContractField, "peekKind" | "peekKinds">, row: Readonly<Record<string, unknown>> | undefined): string | undefined {
+  if (!field.peekKinds) return field.peekKind;
+  const kind = enumValueOf(row?.[field.peekKinds.field]);
+  return kind ? field.peekKinds.kinds[kind] : undefined;
+}
+
 export function peekTargetOf(field: Pick<ContractField, "peekBy">, id: string, name: string | undefined): PeekTarget {
   return { id, ...(name !== undefined ? { name } : {}), ...(field.peekBy ? { by: field.peekBy } : {}) };
 }
@@ -312,8 +325,8 @@ export function useRecordContract(entity: string, overrides: ContractOverrides =
         case "reference": {
           const name = field.nameField ? valueAtPath(row, field.nameField) : undefined;
           const text = typeof name === "string" && name !== "" ? name : String(raw);
-          if (!field.peekKind) return { link: text };
-          const kind = field.peekKind;
+          const kind = peekKindOf(field, row);
+          if (!kind) return { link: text };
           return { link: text, onClick: () => peek.open({ kind, target: peekTargetOf(field, String(raw), text) }) };
         }
         case "json":
@@ -352,7 +365,8 @@ export function useRecordContract(entity: string, overrides: ContractOverrides =
           return { ...common, kind: "number", value: moneyAmount(field, raw), min: 0, ...(field.currency ? { unit: field.currency } : {}) };
         case "reference": {
           const search = searches?.[field.name];
-          if (search) return { ...common, kind: "reference", value: raw == null ? "" : String(raw), search, peek: Boolean(field.peekKind), peekKind: field.peekKind };
+          const peekKind = peekKindOf(field, record);
+          if (search) return { ...common, kind: "reference", value: raw == null ? "" : String(raw), search, peek: Boolean(peekKind), peekKind };
           return { ...common, kind: "text", value: raw == null ? "" : String(raw) };
         }
         case "i18nText": {
