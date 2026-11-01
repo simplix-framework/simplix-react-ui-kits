@@ -30,6 +30,7 @@ import { cardLayout, isBadge, isEmpty, keptColumns, packedLines, wideColumns, ty
 import { RecordValueView, type RecordValue } from "./record-value";
 import { enumValueOf } from "./record-contract";
 import { missingTileFacets, useTileFacets } from "./tile-facets";
+import { FLUID_COLUMN_MIN, keepColumnsDrawn } from "./column-priority";
 
 /** One column of a {@link RecordList}. */
 export interface RecordColumn<Row> {
@@ -311,9 +312,6 @@ export function orderUpdates<Row>(before: readonly Row[], after: readonly Row[],
 
 const DEFAULT_PAGE_SIZE = 20;
 
-/** The least a column with no fixed width is given before its text is cut. */
-const FLUID_COLUMN_MIN = 200;
-
 /** What one row action takes in the action cell, the cell's own inset included once. */
 const ACTION_WIDTH = 36;
 const ACTION_CELL_INSET = 24;
@@ -519,6 +517,10 @@ export function RecordList<Row>({
   const actionCell =
     rowActions.length === 0 ? 0 : labelled ? labelledActionWidth(rowActions.map((action) => action.label ?? "")) : rowActions.length * ACTION_WIDTH + ACTION_CELL_INSET;
 
+  // The table's columns: the leading one and the one the rows are sorted by never drop for want of
+  // width, the rest drop from the end. The card keeps the declared columns, which it places by shape.
+  const sortedBy = on("sort") ? list.sort.field : null;
+  const tableColumns = useMemo(() => keepColumnsDrawn(columns, sortedBy), [columns, sortedBy]);
   const [titleColumn, ...lineColumns] = columns;
   // Decided over the page's rows, so a label holds the same cell on every card.
   const wideCards = wideColumns(
@@ -553,7 +555,7 @@ export function RecordList<Row>({
         return column ? valueOf(column, row) : null;
       },
     );
-  const breakpoint = cardBreakpoint === false ? undefined : cardBreakpoint ?? tableWidth(columns, actionCell);
+  const breakpoint = cardBreakpoint === false ? undefined : cardBreakpoint ?? tableWidth(tableColumns, actionCell);
 
   const leading = narrowing ? <CrudList.ChipFilter field={narrowing.field} state={narrowing.state} options={[...narrowing.options]} /> : null;
   const chipRow =
@@ -743,7 +745,7 @@ export function RecordList<Row>({
             : undefined
         }
       >
-        {columns.map((column) => (
+        {tableColumns.map((column) => (
           <CrudList.Column<Row>
             key={column.key}
             field={column.field}

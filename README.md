@@ -26,6 +26,22 @@ A console page draws its parts in one order: header, figure tiles, notices, time
 
 `node packages/console-clarity/scripts/check-regions.mjs` refuses a value part that draws a control and an unlisted boolean slot prop (`pnpm lint`). `packages/console-clarity/scripts/regions-rendered.mjs` exports `probe`, run inside a painted page, and `compare`, which judges its signature against the page type; a product's runner opens its screens and prints the report. Both prove themselves with `--selftest` (`pnpm test`). `packages/console-clarity/scripts/tile-columns-rendered.mjs` does the same for the figure tile grid against `tile-columns.json`: `probe` reads every grid as painted, and `compare` and `compareCase` judge it at the page column widths the contract lists.
 
+## List columns
+
+A list draws as many columns as its pane holds. The generated column set gives its first four columns no width condition and each later column the width of the set up to it, so a narrower pane drops columns from the end of the field order. Three columns never drop, because dropping them leaves the screen unreadable:
+
+- the leading column, which names the row;
+- the column the rows are sorted by (the list's current sort, so it is the default sort until the reader picks another), because a list sorted by a column it does not draw cannot be checked against its own order;
+- the row-action column, which belongs to the table and not to the column set.
+
+A kept column leaves the width ladder and every tier before it grows by the width the kept column now always takes (`keepColumnsDrawn` in `console-core/src/entity/column-priority.ts`, applied by `RecordList`), so the remaining columns still drop from the end and the table does not outgrow the pane. The time column of a log-type list is its default sort column, which is how it stays on screen at every width. A screen whose sort field has no column in its field array is sorted by nothing the reader can see; the field array gets the column.
+
+The columns menu offers every declared column. A column the width dropped is listed unchecked, and switching it on draws it whatever the width, so the table scrolls sideways; switching it off hands it back to the width.
+
+`packages/console-clarity/scripts/list-columns-rendered.mjs` judges a painted list against this: `probe` reads the drawn headers and the sort mark, `probeMenu` reads the open columns menu, and `compare` checks the sort column and the leading column are drawn, the menu offers every column with the drawn ones checked, and the rest drop from the end. A product's runner opens each list at its page widths and passes the column the list is sorted by, since a dropped column carries no mark. It proves itself with `--selftest` (`pnpm test`).
+
+A date or a money value in a cell, a card or a figure tile is drawn by the same contract kind, so a cell and the tile above it agree: a `money` field keeps as many decimals as its stored scale holds, and a count of days is worded by `daysAgoText`, which takes the plural form from the reader's language instead of from a catalogue string.
+
 ## Using a kit in a product
 
 Add this repository as a git submodule and its packages to the product's pnpm workspace:

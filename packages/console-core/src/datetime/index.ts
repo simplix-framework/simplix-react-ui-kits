@@ -37,6 +37,7 @@ export { ListTimeRange, readCounts, useTimeWindowPresets } from "./list-time-ran
 export { PageTimeRange } from "./page-time-range";
 export type { PageTimeRangeSlot } from "./page-time-range";
 export type { ListTimeRangeProps, TimeRangeCountQuery } from "./list-time-range";
+export { daysAgoText } from "./days-ago-text";
 export { RemainingText } from "./remaining-text";
 export type { RemainingTextProps } from "./remaining-text";
 export { periodStanding } from "@simplix-react/headless";

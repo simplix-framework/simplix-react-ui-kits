@@ -111,7 +111,8 @@
     "./regions.json": "./regions.json",
     "./scripts/regions-rendered.mjs": "./scripts/regions-rendered.mjs",
     "./tile-columns.json": "./tile-columns.json",
-    "./scripts/tile-columns-rendered.mjs": "./scripts/tile-columns-rendered.mjs"
+    "./scripts/tile-columns-rendered.mjs": "./scripts/tile-columns-rendered.mjs",
+    "./scripts/list-columns-rendered.mjs": "./scripts/list-columns-rendered.mjs"
   },
   "files": [
     "dist",
@@ -126,7 +127,7 @@
     "dev": "tsup --no-clean --no-dts",
     "typecheck": "tsc --noEmit",
     "lint": "node scripts/check-regions.mjs && oxlint src",
-    "test": "node scripts/check-regions.mjs --selftest && node scripts/regions-rendered.mjs --selftest && node scripts/tile-columns-rendered.mjs --selftest && vitest run --passWithNoTests",
+    "test": "node scripts/check-regions.mjs --selftest && node scripts/regions-rendered.mjs --selftest && node scripts/tile-columns-rendered.mjs --selftest && node scripts/list-columns-rendered.mjs --selftest && vitest run --passWithNoTests",
     "clean": "rm -rf dist .turbo"
   },
   "dependencies": {

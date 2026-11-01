@@ -11,6 +11,16 @@ describe("money fields", () => {
     expect(moneyText({ currency: "KRW", scale: 0 }, 12_000, "ko")).toBe("₩12,000");
   });
 
+  it("keeps the fractions of a cent in a cell, so the cells and the figure above them read the same total", () => {
+    const rows = [0, 16, 15, 0, 17];
+    expect(rows.map((micro) => moneyText(micros, micro, "en"))).toEqual(["$0.00", "$0.000016", "$0.000015", "$0.00", "$0.000017"]);
+    const total = rows.reduce((sum, micro) => sum + micro, 0);
+    expect(moneyText(micros, total, "en")).toBe("$0.000048");
+    // A stored number the server wrote as text draws the same, in either language.
+    expect(moneyText(micros, "81", "en")).toBe("$0.000081");
+    expect(moneyText(micros, 81, "ko")).toBe("US$0.000081");
+  });
+
   it("edits in the currency's units and writes the stored whole number back", () => {
     expect(moneyAmount(micros, 50_250_000)).toBe(50.25);
     expect(moneyStored(micros, 50.25)).toBe(50_250_000);
