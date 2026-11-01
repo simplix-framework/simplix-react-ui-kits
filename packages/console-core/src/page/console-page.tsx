@@ -10,7 +10,7 @@ import {
   SettingsTiles,
 } from "../layout";
 import { Badge, Button, Flex } from "@simplix-react/ui";
-import { Container, Heading, TabsTrigger } from "@simplix-react/ui";
+import { Container, Heading } from "@simplix-react/ui";
 import { PageTimeRange } from "../datetime/page-time-range";
 import { NoticeCard, UnbuiltTab } from "../notice";
 import { PhoneScreenColumn, useConsoleOnAPhone } from "../shell";
@@ -21,15 +21,14 @@ import type {
   PageBlocks,
   PageHelpSpec,
   PageNarrowingSpec,
-  PageSeam,
-  PageSlot,
+  PageNoticeSpec,
   PageSpec,
 } from "./types";
 
 interface ConsolePageProps {
   /** What this page is, declared. Generated code writes this and nothing else. */
   readonly spec: PageSpec;
-  /** What this page departs from the pattern in. Hand-written, and usually absent. */
+  /** The tabs the page's blocks add; never a region. */
   readonly blocks?: PageBlocks;
   /**
    * The address this page is open at, and how to change it.
@@ -52,12 +51,29 @@ interface ConsolePageProps {
  * <p><b>An absent part is not drawn.</b> A page with no figures passes no `tiles` and the row is
  * not there — it is never an empty row, and never a row of zeroes.
  *
- * <p><b>What a page does differently is named, not inlined.</b> `blocks.override` replaces one
- * part, `blocks.insert` adds one at a named seam, and both live in the page's own
- * `page.blocks.tsx`. That file is the whole of what a page departs from this pattern in, which is
- * what makes the departures countable: a slot many pages override belongs in the pattern, and one
- * a single page overrides is a genuine one-off.
+ * <p><b>A page fills named slots and never draws a region.</b> Every part above is drawn here
+ * from the spec's data; a page's own `page.blocks.tsx` adds tabs and fills the spec, and has no
+ * way to replace a region or put something between two of them. A need no slot serves is a slot
+ * to add to the spec, with its data shape.
  */
+/** One notice card from its spec; every notice a page shows is drawn here. */
+function noticeCard(one: PageNoticeSpec): ReactNode {
+  return (
+    <NoticeCard
+      key={one.key}
+      noticeKey={one.key}
+      kind={one.kind}
+      title={one.title}
+      hint={one.hint}
+      actionLabel={one.actionLabel}
+      onAction={one.onAction}
+      actions={one.actions}
+    >
+      {one.children}
+    </NoticeCard>
+  );
+}
+
 export function ConsolePage({
   spec,
   blocks,
@@ -67,9 +83,6 @@ export function ConsolePage({
   onNavigate = () => {},
 }: ConsolePageProps) {
   const onAPhone = useConsoleOnAPhone();
-  const at = (slot: PageSlot, drawn: ReactNode): ReactNode =>
-    slot in (blocks?.override ?? {}) ? blocks?.override?.[slot] : drawn;
-  const seam = (name: PageSeam): ReactNode => blocks?.insert?.[name];
 
   // A list of facts is drawn as one element per fact. Keyed by its words, so the header sees the
   // same description on every render that does not change them.
@@ -86,7 +99,7 @@ export function ConsolePage({
     // to by pressing that row, and only a screen without one owes the reader a breadcrumb.
     back: usePageBackLink(spec.backParams),
     description,
-    actions: at("actions", spec.actions),
+    actions: (spec.actions),
   });
 
   const tabs = [...(spec.tabs ?? []), ...(blocks?.tabs ?? [])].filter((one) => one.when !== false);
@@ -101,8 +114,7 @@ export function ConsolePage({
   const addressed = tabs.find((one) => one.key === search.tab);
   const current = addressed && !addressed.unbuilt ? addressed.key : tabs[0]?.key;
 
-  const tiles = at(
-    "tiles",
+  const tiles = (
     spec.tiles && spec.tiles.length > 0 ? (
       <SettingsTiles
         tiles={spec.tiles}
@@ -113,7 +125,7 @@ export function ConsolePage({
         folded={search.id !== undefined}
         filters={spec.tilesFilters}
       />
-    ) : null,
+    ) : null
   );
   const helps = (Array.isArray(spec.help) ? spec.help : [spec.help]).filter(
     (one): one is PageHelpSpec => Boolean(one),
@@ -124,25 +136,10 @@ export function ConsolePage({
   const notices = (Array.isArray(spec.notice) ? spec.notice : [spec.notice]).filter(
     (one): one is NonNullable<typeof one> => Boolean(one),
   );
-  const notice = at(
-    "notice",
+  const notice = (
     notices.length === 0
       ? null
-      : notices.map((one) => (
-          <NoticeCard
-            key={one.key}
-            noticeKey={one.key}
-            kind={one.kind}
-            title={one.title}
-            hint={one.hint}
-            trailing={one.trailing}
-            actionLabel={one.actionLabel}
-            onAction={one.onAction}
-            actions={one.actions}
-          >
-            {one.children}
-          </NoticeCard>
-        )),
+      : notices.map((one) => noticeCard(one))
   );
 
   // A settings body is as tall as it is and the page scrolls; a list body takes what height is
@@ -155,8 +152,7 @@ export function ConsolePage({
     spec.layout === "flow" || (spec.layout === "record" && search.id === undefined);
   const TabSet = flowing ? SettingsTabs : PageTabs;
 
-  const body = at(
-    "body",
+  const body = (
     tabs.length === 0 ? (
       spec.body
     ) : stripped ? (
@@ -173,31 +169,27 @@ export function ConsolePage({
           )
         }
       >
-        {at(
-          "tabStrip",
+        {(
           <PageTabStrip>
             {tabs.map((one) =>
-              one.link ? (
-                <TabsTrigger key={one.key} value={one.key} asChild>
-                  {one.link}
-                </TabsTrigger>
-              ) : one.unbuilt ? (
+              one.unbuilt ? (
                 <UnbuiltTab key={one.key} value={one.key} label={one.label} count={one.count} />
               ) : (
                 <CountedTab key={one.key} value={one.key} label={one.label} count={one.count} />
               ),
             )}
-          </PageTabStrip>,
+          </PageTabStrip>
         )}
         {tabs.map((one) => (
           <PageTabPanel key={one.key} value={one.key}>
+            {one.notices?.map((notice) => noticeCard(notice))}
             {one.body ?? spec.body}
           </PageTabPanel>
         ))}
       </TabSet>
     ) : (
       tabs[0]?.body
-    ),
+    )
   );
 
   // A phone is a different screen rather than a narrower one, so the page hands over its own.
@@ -215,22 +207,18 @@ export function ConsolePage({
   if (spec.fallback !== undefined) {
     return capped(
       <Stack flex={!flowing} gap="md">
-        {spec.fallback}
+        {noticeCard(spec.fallback)}
       </Stack>,
     );
   }
 
   return capped(
     <Stack flex={!flowing} gap="md">
-      {spec.steps}
-      {seam("beforeTiles")}
       {tiles}
-      {seam("afterTiles")}
       {/* The notices sit directly under the figures: a notice reads as being about the figures it
           follows, never as a banner the figures hang under. */}
       {notice}
-      {seam("afterNotice")}
-      {at("timeRange", spec.timeRange ? <PageTimeRange filters={spec.timeRange.filters} slot={spec.timeRange} /> : undefined)}
+      {(spec.timeRange ? <PageTimeRange filters={spec.timeRange.filters} slot={spec.timeRange} /> : undefined)}
       {helps.map((one) => {
         const field = one.field ?? "help";
         return (
@@ -257,10 +245,8 @@ export function ConsolePage({
           ))}
         </Flex>
       ) : null}
-      {seam("beforeTabs")}
       {spec.bodyTitle ? <Heading level={3}>{spec.bodyTitle}</Heading> : null}
       {body}
-      {seam("afterBody")}
       {spec.dialogs}
     </Stack>,
   );

@@ -14,11 +14,11 @@ export const contract = JSON.parse(readFileSync(resolve(here, "regions.json"), "
  * Runs in the page. `regions` is contract.regions; returns { region: { kinds: string[], perCard: number } }.
  * Self-contained so a driver can serialise it.
  */
-export function probe(regions) {
+export function probe(regions, root = "main") {
   const entries = Object.entries(regions).filter(([, r]) => r.marks.length > 0);
   const matches = (mark, name) => (mark.endsWith("*") ? name.startsWith(mark.slice(0, -1)) : name === mark);
   const regionOf = (el) => {
-    for (let n = el; n && n.tagName !== "MAIN"; n = n.parentElement) {
+    for (let n = el; n && !n.matches?.(root); n = n.parentElement) {
       const names = [n.dataset?.slot, n.dataset?.part, n.tagName.toLowerCase()].filter(Boolean);
       for (const [key, r] of entries) if (r.marks.some((m) => names.some((name) => matches(m, name)))) return [key, n];
     }
@@ -26,7 +26,9 @@ export function probe(regions) {
   };
   const out = {};
   const perHolder = new Map();
-  for (const b of document.querySelectorAll("main button, main a[role=button], main a[href]")) {
+  const scope = document.querySelector(root);
+  if (!scope) return { missing: root };
+  for (const b of scope.querySelectorAll("button, a[role=button], a[href]")) {
     const [region, holder] = regionOf(b);
     const label = (b.textContent || "").trim() !== "";
     const isLink = b.dataset.variant === "link" || (b.tagName === "A" && b.getAttribute("role") !== "button");
@@ -42,7 +44,7 @@ export function probe(regions) {
   }
   const signature = Object.fromEntries(Object.entries(out).map(([k, v]) => [k, { kinds: [...v.kinds].sort(), perCard: v.perCard }]));
   // Rows drawn, so a required region is judged only where there are rows to carry it.
-  signature.rows = document.querySelectorAll("main tbody tr, main [data-slot=console-record-card]").length;
+  signature.rows = scope.querySelectorAll("tbody tr, [data-slot=console-record-card]").length;
   return signature;
 }
 
@@ -72,13 +74,14 @@ export function compare(signature, type, c = contract) {
   const t = c.types[type];
   if (!t) return [`unknown page type ${type}`];
   const problems = [];
+  if (signature.missing) return [`${type}: no element matches its root ${signature.missing}, so nothing was read`];
   const { rows = 0, ...regions } = signature;
   for (const need of t.required ?? []) if (rows > 0 && !regions[need]) problems.push(`${need}: required on ${type} and missing over ${rows} rows`);
   for (const [region, { kinds, perCard }] of Object.entries(regions)) {
     const r = c.regions[region];
     if (region === "unassigned") { problems.push(`unassigned: ${kinds.join(",")} drawn outside every region`); continue; }
     if (!t.regions.includes(region)) { problems.push(`${region}: not a region of ${type}`); continue; }
-    const extra = kinds.filter((k) => !r.controls.includes(k));
+    const extra = r.controls.includes("*") ? [] : kinds.filter((k) => !r.controls.includes(k));
     if (extra.length) problems.push(`${region}: ${extra.join(",")} not allowed (allowed: ${r.controls.join(",") || "none"})`);
     if (r.maxControls !== undefined && perCard > r.maxControls) problems.push(`${region}: ${perCard} controls in one ${r.part}, at most ${r.maxControls}`);
   }
@@ -94,7 +97,8 @@ if (process.argv.includes("--selftest")) {
   const hit = compare(bad, "list-detail");
   const tokHit = compareTokens([{ selector: "rect", attr: "stroke", token: "--background", measured: "#000000", expected: "#f4f7f7" }]);
   const tokMiss = compareTokens([{ selector: "rect", attr: "stroke", token: "--background", measured: "#f4f7f7", expected: "#f4f7f7" }, { selector: "x", missing: true }]);
-  const ok = tokHit.length === 1 && tokMiss.length === 0 && miss.length === 0 && noStrip.length === 1 && empty.length === 0 && hit.length === 4 && compare(good, "system").length === 2;
-  console.log(ok ? "regions-rendered selftest: hit 6, miss 0" : `regions-rendered selftest FAILED\nhit: ${hit.join("\n")}\nmiss: ${miss.join("\n")}`);
+  const vacuous = compare({ missing: "main" }, "list-detail");
+  const ok = vacuous.length === 1 && tokHit.length === 1 && tokMiss.length === 0 && miss.length === 0 && noStrip.length === 1 && empty.length === 0 && hit.length === 4 && compare(good, "system").length === 4;
+  console.log(ok ? "regions-rendered selftest: hit 7, miss 0" : `regions-rendered selftest FAILED\nhit: ${hit.join("\n")}\nmiss: ${miss.join("\n")}`);
   process.exit(ok ? 0 : 1);
 }

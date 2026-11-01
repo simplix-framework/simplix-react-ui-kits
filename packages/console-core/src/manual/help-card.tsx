@@ -45,7 +45,7 @@ interface HelpCardProps {
   /** Told that the reader opened or closed it, when the address is what holds the state. */
   readonly onOpenChange?: (open: boolean) => void;
   /**
-   * The notice cards this explanation holds inside it, declared here as well as rendered there.
+   * The notice cards this explanation holds inside it, as data.
    *
    * <p><b>A notice inside the dialog is not mounted while the dialog is closed</b>, so it puts
    * nothing on the header's list — and a reader who dismissed it then has no way back to it, which
@@ -53,9 +53,8 @@ interface HelpCardProps {
    * whether the dialog is open or not, and its way back is this explanation: the header restores
    * the card and 「설명 보기」 shows it.
    *
-   * <p>Each entry repeats what the nested {@link NoticeCard} declares — the same key, kind, title
-   * and hint. Registration is by key, so the two agree by being the same entry rather than by being
-   * merged.
+   * <p>Each entry is drawn as a notice card after the explanation's body, and registered under its
+   * key, so the card and the header's list are one entry.
    */
   readonly notices?: readonly NestedNotice[];
 }
@@ -170,6 +169,11 @@ export function HelpCard({
               — 620px of window still pins the footer and gives this 424px. */}
           <Stack gap="md" className="min-h-0 flex-1 overflow-y-auto">
             {children}
+            {/* The cards the explanation declares are drawn here, after its body, from the same
+                entries the header lists; a screen never draws one itself. */}
+            {notices?.map((notice) => (
+              <NoticeCard key={notice.noticeKey} noticeKey={notice.noticeKey} kind={notice.kind} title={notice.title} hint={notice.hint} />
+            ))}
           </Stack>
           {/* 닫기는 왼쪽 · 나머지는 오른쪽. The footer's own alignment puts everything on the
               right, so the action carries `ml-auto` and the two ends stay apart — and a dialog

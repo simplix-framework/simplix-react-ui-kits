@@ -13,6 +13,7 @@ import {
   SearchOperator,
   useCrudList,
   type ActionType,
+  type CrudListFilters,
   type FilterDef,
   type ListHook,
   type RowActionDef,
@@ -227,8 +228,16 @@ export interface RecordListProps<Row> {
   readonly empty?: { readonly title: string; readonly description?: string };
   /** Features to turn off; everything not named is on. */
   readonly features?: RecordListFeatures;
-  /** What sits before the filter bar's controls, for a narrowing of the screen's own. */
-  readonly leading?: ReactNode;
+  /**
+   * A narrowing of the screen's own, drawn as a chip row before the list's chips: the field it
+   * writes, the filter state the screen holds and reads into its request, and the choices. The
+   * list draws the row; a screen never hands it a drawn control.
+   */
+  readonly narrowing?: {
+    readonly field: string;
+    readonly state: CrudListFilters;
+    readonly options: readonly { readonly value: string; readonly label: string }[];
+  };
   /**
    * The list's width in px below which each row is drawn as a card: the first column as the card's
    * title, the others as labelled lines under it, the row actions beside the title. Absent, it is
@@ -462,7 +471,7 @@ export function RecordList<Row>({
   pageSize = DEFAULT_PAGE_SIZE,
   empty,
   features = {},
-  leading,
+  narrowing,
   cardBreakpoint,
   bulkActions,
   keyboard = false,
@@ -545,6 +554,7 @@ export function RecordList<Row>({
     );
   const breakpoint = cardBreakpoint === false ? undefined : cardBreakpoint ?? tableWidth(columns, actionCell);
 
+  const leading = narrowing ? <CrudList.ChipFilter field={narrowing.field} state={narrowing.state} options={[...narrowing.options]} /> : null;
   const chipRow =
     on("chips") && chips ? (
       <CrudList.ChipFilter field={`${chips.field}.${SearchOperator.IN}`} state={list.filters} options={countedChips(chips, (label, count) => t("recordList.chipCount", { label, count }))} />

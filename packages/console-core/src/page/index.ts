@@ -24,8 +24,6 @@ export type {
   PageHelpSpec,
   PageNarrowingSpec,
   PageNoticeSpec,
-  PageSeam,
-  PageSlot,
   PageSpec,
   PageTabSpec,
   UsePageBlocks,

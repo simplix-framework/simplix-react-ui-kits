@@ -6,27 +6,6 @@ import type { SettingsTile, TileFilters } from "../layout";
 import type { DismissibleNoticeKind, NoticeCardAction } from "../notice";
 
 /**
- * Where a console page draws something, named so a page can replace exactly that part.
- *
- * <p>An override supplies the node the spec would otherwise have produced. `body` is the region a
- * tabless page fills; a tabbed page overrides a tab's own `body` instead.
- */
-export type PageSlot = "actions" | "tiles" | "notice" | "timeRange" | "tabStrip" | "body";
-
-/**
- * The seams between the parts, named so a page can add something the pattern has no place for.
- *
- * <p>The order the pattern draws in is fixed (header · tiles · notice · timeRange · tabs ·
- * body), and a seam is a gap between two of those, never a re-ordering of them.
- */
-export type PageSeam =
-  | "beforeTiles"
-  | "afterTiles"
-  | "afterNotice"
-  | "beforeTabs"
-  | "afterBody";
-
-/**
  * What one page departs from the pattern in.
  *
  * <p><b>This type is the audit surface.</b> A page's departures live in one object in one file
@@ -36,10 +15,6 @@ export type PageSeam =
  * the departure is spelled out inline among the chrome.
  */
 export interface PageBlocks {
-  /** Replaces what the spec would have drawn at that slot. */
-  readonly override?: Partial<Record<PageSlot, ReactNode>>;
-  /** Drawn in addition, at a named seam. */
-  readonly insert?: Partial<Record<PageSeam, ReactNode>>;
   /** Tabs this page has beyond the generated one, appended in order. */
   readonly tabs?: readonly PageTabSpec[];
 }
@@ -178,20 +153,17 @@ export interface PageTabSpec {
    */
   readonly unbuilt?: boolean;
   /**
-   * Where this tab goes, when what it names is a screen of its own.
-   *
-   * <p>A way in rather than a second place the same rows are drawn: the space tree has its own
-   * address, so the tab that names it hands the reader over instead of redrawing the tree inside
-   * a panel that has no room for it. Given this, the tab has no body of its own.
-   */
-  readonly link?: ReactNode;
-  /**
    * What the tab shows.
    *
    * <p>Omitted where the page draws one body for every tab — forty-one screens of this console do,
    * because their tabs narrow one list rather than showing different things. Those declare the
    * body once, on the spec.
    */
+  /**
+   * Notices about this tab alone, as data: the page draws them at the top of the tab, as it draws
+   * the page's own under its figures. A tab body never draws a notice card itself.
+   */
+  readonly notices?: readonly PageNoticeSpec[];
   readonly body?: ReactNode;
 }
 
@@ -201,8 +173,6 @@ export interface PageNoticeSpec {
   readonly kind: DismissibleNoticeKind;
   readonly title: string;
   readonly hint?: string;
-  /** A control at the card's end — the way out of the state the card is about. */
-  readonly trailing?: ReactNode;
   /** A verb the card offers, and what it does. */
   readonly actionLabel?: string;
   readonly onAction?: () => void;
@@ -243,15 +213,6 @@ export interface PageSpec {
   readonly backParams?: Readonly<Record<string, string>>;
   /** The header's action buttons — the primary create, a save, an export. */
   readonly actions?: ReactNode;
-  /**
-   * Where this screen stands in a sequence of them, drawn above the figures.
-   *
-   * <p>An import is chosen, then mapped, then applied, and each of the three is its own screen —
-   * a reader dropped on the middle one has no way to tell what came before it or what is left
-   * without a line saying so. Six screens of this console draw one, and they draw it in the same
-   * place: above everything, because it is about the journey rather than about this stop.
-   */
-  readonly steps?: ReactNode;
   readonly tiles?: readonly SettingsTile[];
   readonly tilesColumns?: 1 | 2 | 3 | 4;
   /**
@@ -356,10 +317,11 @@ export interface PageSpec {
    *
    * <p>For the page that has nothing to show: the record is not there, the reader may not read it,
    * the query failed. Sixteen screens of this console returned early for one of those, which put
-   * the same decision in sixteen shapes — and a page that returns before its figures leaves the
-   * header saying a record's name with nothing under it.
+   * the same decision in sixteen shapes, and a page that returns before its figures leaves the
+   * header saying a record's name with nothing under it. Stated as the notice that says why; the
+   * page draws it.
    */
-  readonly fallback?: ReactNode;
+  readonly fallback?: PageNoticeSpec;
   /**
    * What this screen is on a phone, where it is a different screen rather than a narrower one.
    *

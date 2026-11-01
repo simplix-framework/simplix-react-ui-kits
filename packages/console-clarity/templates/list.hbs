@@ -5,8 +5,7 @@
  * matches. Columns, filters, chips and row actions this list departs in go in `./list.blocks.tsx`.
  */
 import { adaptForcedList, adaptOrvalList{{#if hasKeywordSearch}}, SEARCHABLE_KEYWORD_PARAM{{/if}}, useCrudList{{#if hookOrder}}{{#if orderField}}, useInvalidateEntity{{/if}}{{/if}} } from "@simplix-react/ui";
-import { {{#if hasMoneyFilter}}moneyFilterTransform, {{/if}}RecordList, {{#if hookOrder}}{{#if orderField}}useAllowed, {{/if}}{{/if}}useRecordContract, useScreenWords, type ContractField, type ContractFilter, type ContractOverrides, type RecordAction, type RecordColumn, type RecordFilter } from "@simplix-react-ui-kits/console-clarity/entity";
-import type { ReactNode } from "react";
+import { {{#if hasMoneyFilter}}moneyFilterTransform, {{/if}}RecordList, {{#if hookOrder}}{{#if orderField}}useAllowed, {{/if}}{{/if}}useRecordContract, useScreenWords, type ContractField, type ContractFilter, type ContractOverrides, type RecordAction, type RecordColumn, type RecordFilter, type RecordListProps } from "@simplix-react-ui-kits/console-clarity/entity";
 
 import { {{hookList}}, {{#if hookOrder}}{{#if orderField}}{{hookOrder}}, {{#if accessOrder}}{{accessOrder}}, {{/if}}{{/if}}{{/if}}type {{listRowType}} } from "{{packageName}}";
 import { useListBlocks } from "./list.blocks";
@@ -44,7 +43,8 @@ export interface {{EntityPascal}}ListProps {
   readonly activeRowId?: string | null;
   readonly onRowClick?: (row: {{EntityPascal}}Row) => void;
   readonly actions?: readonly RecordAction<{{EntityPascal}}Row>[];
-  readonly leading?: ReactNode;
+  /** A narrowing of the page's own, which the list draws as a chip row before its chips. */
+  readonly narrowing?: RecordListProps<{{EntityPascal}}Row>["narrowing"];
 }
 
 /**
@@ -89,7 +89,7 @@ export function use{{EntityPascal}}Columns(overrides?: ContractOverrides): Recor
 }
 
 /** The {{entity}} records, drawn by the kit's list. */
-export function {{EntityPascal}}List({ list, activeRowId, onRowClick, actions, leading }: {{EntityPascal}}ListProps) {
+export function {{EntityPascal}}List({ list, activeRowId, onRowClick, actions, narrowing }: {{EntityPascal}}ListProps) {
   const words = useScreenWords("{{entity}}");
   const generated = use{{EntityPascal}}Columns();
   // The input is held in a variable so a blocks hook written before `fields` and `contractFilters`
@@ -115,7 +115,7 @@ export function {{EntityPascal}}List({ list, activeRowId, onRowClick, actions, l
       chips={blocks.chips}
       groupBy={blocks.groupBy}
       actions={actions ?? blocks.actions}
-      leading={leading ?? blocks.leading}
+      narrowing={narrowing}
       activeRowId={activeRowId}
       onRowClick={onRowClick}
       searchPlaceholder={blocks.searchPlaceholder}

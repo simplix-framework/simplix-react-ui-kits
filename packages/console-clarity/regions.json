@@ -132,6 +132,63 @@
         "select-trigger"
       ]
     },
+    "body": {
+      "part": "the type's content area",
+      "slot": "body",
+      "marks": [
+        "console-page-tab-panel",
+        "console-page-body",
+        "dashboard-columns",
+        "dashboard-stack"
+      ],
+      "controls": [
+        "*"
+      ],
+      "$comment": "Free content: forms, tables and cards the type's body holds; any control may sit here, never a region part."
+    },
+    "authNotices": {
+      "part": "AuthCard notices",
+      "slot": "notices",
+      "marks": [
+        "console-auth-card-notices"
+      ],
+      "controls": [
+        "button"
+      ],
+      "$comment": "The banners a sign-in step opens with; a banner may carry its own close control."
+    },
+    "authBody": {
+      "part": "AuthCard body",
+      "slot": "body",
+      "marks": [
+        "console-auth-card-body"
+      ],
+      "controls": [
+        "*"
+      ]
+    },
+    "authFoot": {
+      "part": "AuthCard foot",
+      "slot": "foot",
+      "marks": [
+        "console-auth-card-foot"
+      ],
+      "controls": [
+        "link",
+        "button"
+      ]
+    },
+    "preferences": {
+      "part": "AuthLayout preferences",
+      "slot": null,
+      "marks": [
+        "console-auth-preferences"
+      ],
+      "controls": [
+        "button"
+      ],
+      "$comment": "Language and theme, drawn by the layout on every page before a session; no screen fills it."
+    },
     "unassigned": {
       "part": null,
       "slot": null,
@@ -158,7 +215,8 @@
         "rowActions",
         "cell",
         "pagination"
-      ]
+      ],
+      "root": "main"
     },
     "dashboard": {
       "template": "dashboard-page.hbs",
@@ -168,8 +226,10 @@
         "notices",
         "help",
         "timeRange",
-        "tabs"
-      ]
+        "tabs",
+        "body"
+      ],
+      "root": "main"
     },
     "tabbed": {
       "template": "static-page.hbs",
@@ -178,8 +238,10 @@
         "figures",
         "notices",
         "help",
-        "tabs"
-      ]
+        "tabs",
+        "body"
+      ],
+      "root": "main"
     },
     "record": {
       "template": "record-page.hbs",
@@ -188,14 +250,19 @@
         "figures",
         "notices",
         "help",
-        "tabs"
-      ]
+        "tabs",
+        "body"
+      ],
+      "root": "main"
     },
     "system": {
       "template": "auth-page.hbs",
+      "root": "[data-part=console-auth-page], [data-slot=console-auth-page]",
       "regions": [
-        "header",
-        "notices"
+        "preferences",
+        "authNotices",
+        "authBody",
+        "authFoot"
       ]
     }
   },
@@ -294,5 +361,172 @@
         "token": "--muted-foreground"
       }
     ]
+  },
+  "pageApi": {
+    "$comment": "Every member of a page type's spec or blocks interface that takes a drawn node, with its class: body (the type's one free content area), content (free composition inside a named slot the template draws, never a region part), or dialogs. A node-typed member not listed here lets a screen draw a region by hand, and check-regions fails it.",
+    "interfaces": {
+      "../console-core/src/page/types.ts": [
+        "PageBlocks",
+        "PageHelpSpec",
+        "PageTabSpec",
+        "PageNoticeSpec",
+        "PageSpec"
+      ],
+      "../console-core/src/page/crud-page-blocks.ts": [
+        "CrudPageBlocks"
+      ],
+      "../console-core/src/entity/record-list.tsx": [
+        "RecordListProps"
+      ],
+      "templates/list.blocks.hbs": [
+        "ListBlocks"
+      ],
+      "templates/auth-page.blocks.hbs": [
+        "PageBlocks"
+      ],
+      "templates/dashboard-page.blocks.hbs": [
+        "PageBlocks"
+      ],
+      "templates/error-page.blocks.hbs": [
+        "PageBlocks"
+      ],
+      "templates/static-page.blocks.hbs": [
+        "PageBlocks"
+      ],
+      "templates/record-page.blocks.hbs": [
+        "PageBlocks"
+      ],
+      "templates/app-shell.blocks.hbs": [
+        "ShellBlocks",
+        "ShellMenuEntry",
+        "ShellMenuGroup"
+      ],
+      "templates/app-shell.top-bar.blocks.hbs": [
+        "ShellBlocks"
+      ]
+    },
+    "members": {
+      "PageHelpSpec.render": {
+        "class": "content",
+        "slot": "help",
+        "reason": "the explanation inside the help card the page draws"
+      },
+      "PageTabSpec.body": {
+        "class": "body",
+        "reason": "a tab's own content area"
+      },
+      "PageNoticeSpec.children": {
+        "class": "content",
+        "slot": "notices",
+        "reason": "the text a notice card explains, inside the card the page draws"
+      },
+      "PageSpec.actions": {
+        "class": "content",
+        "slot": "actions",
+        "reason": "the header's verbs (PageAction, ExportAction) inside the actions region the header draws"
+      },
+      "PageSpec.body": {
+        "class": "body",
+        "reason": "the type's one content area"
+      },
+      "PageSpec.phone": {
+        "class": "body",
+        "reason": "the content area a phone draws instead"
+      },
+      "PageSpec.dialogs": {
+        "class": "dialogs",
+        "reason": "dialogs the page opens"
+      },
+      "CrudPageBlocks.headerActions": {
+        "class": "content",
+        "slot": "actions",
+        "reason": "header verbs that read the list, inside the actions region"
+      },
+      "CrudPageBlocks.dialogs": {
+        "class": "dialogs",
+        "reason": "dialogs the page opens"
+      },
+      "auth-page.PageBlocks.description": {
+        "class": "content",
+        "slot": "header",
+        "reason": "the sentence under the panel's heading"
+      },
+      "auth-page.PageBlocks.body": {
+        "class": "body",
+        "reason": "the sign-in step's form or message"
+      },
+      "auth-page.PageBlocks.foot": {
+        "class": "content",
+        "slot": "foot",
+        "reason": "the links under the panel"
+      },
+      "dashboard-page.PageBlocks.panels": {
+        "class": "body",
+        "reason": "the dashboard's cards, its content area"
+      },
+      "dashboard-page.PageBlocks.action": {
+        "class": "content",
+        "slot": "actions",
+        "reason": "the header's verb"
+      },
+      "error-page.PageBlocks.page": {
+        "class": "body",
+        "reason": "the kit failure page the screen picks"
+      },
+      "static-page.PageBlocks.body": {
+        "class": "body",
+        "reason": "the page's content area"
+      },
+      "static-page.PageBlocks.action": {
+        "class": "content",
+        "slot": "actions",
+        "reason": "the header's verb"
+      },
+      "app-shell.ShellMenuEntry.icon": {
+        "class": "content",
+        "slot": "menu",
+        "reason": "a menu entry's glyph"
+      },
+      "app-shell.ShellMenuEntry.inactiveMark": {
+        "class": "content",
+        "slot": "menu",
+        "reason": "a menu entry's mark for an unbuilt destination"
+      },
+      "app-shell.ShellMenuGroup.icon": {
+        "class": "content",
+        "slot": "menu",
+        "reason": "a menu group's glyph"
+      },
+      "app-shell.ShellBlocks.brand": {
+        "class": "content",
+        "slot": "brand",
+        "reason": "the product mark and badge inside the shell's brand slot"
+      },
+      "app-shell.ShellBlocks.menuTitle": {
+        "class": "content",
+        "slot": "menu",
+        "reason": "the menu column's heading"
+      },
+      "app-shell.ShellBlocks.phoneFooter": {
+        "class": "content",
+        "slot": "phoneFooter",
+        "reason": "what a phone draws under the menu"
+      },
+      "app-shell.ShellBlocks.wrap": {
+        "class": "content",
+        "slot": "providers",
+        "reason": "the providers the routed screens need, wrapping the shell"
+      },
+      "app-shell.top-bar.ShellBlocks.topBar": {
+        "class": "content",
+        "slot": "topBar",
+        "reason": "the band's mark, destinations and controls, inside the top bar region the shell draws"
+      },
+      "app-shell.top-bar.ShellBlocks.wrap": {
+        "class": "content",
+        "slot": "providers",
+        "reason": "the providers the routed screens need"
+      }
+    }
   }
 }

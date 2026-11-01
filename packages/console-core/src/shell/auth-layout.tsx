@@ -5,7 +5,7 @@ import { Flex, Stack } from "@simplix-react/ui";
 import { useConsoleBrand } from "../identity/console-product";
 import { DarkModeToggle } from "./dark-mode-toggle";
 import { LocalePicker } from "./locale-picker";
-import { authBrandStyle, authPageStyle } from "./auth-layout.style";
+import { authBrandStyle, authPageStyle, authPreferencesStyle } from "./auth-layout.style";
 import { partAttributes, slotAttributes } from "@simplix-react/ui/design";
 
 /**
@@ -29,7 +29,7 @@ export function AuthLayout({ children }: { readonly children?: ReactNode } = {})
       className="relative min-h-dvh"
       {...partAttributes(authPageStyle, {})}
     >
-      <Flex gap="xs" align="center" className="absolute right-4 top-4 z-10">
+      <Flex gap="xs" align="center" className="absolute right-4 top-4 z-10" {...partAttributes(authPreferencesStyle, {})}>
         <LocalePicker />
         <DarkModeToggle />
       </Flex>

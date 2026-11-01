@@ -4,12 +4,14 @@
  * Generated from the kit's auth-page.blocks template and tracked: edit inside its keys, and a template change is merged into it three ways on regeneration.
  */
 import type { ReactNode } from "react";
+import type { AuthCardNotice } from "@simplix-react-ui-kits/console-clarity/shell";
 
 export interface PageBlocks {
   /** Replaces the panel's heading where it depends on the page's state. */
   readonly title?: string;
   readonly description?: ReactNode;
-  readonly notices?: ReactNode;
+  /** The messages the panel opens with, as data; the panel draws each as a banner. */
+  readonly notices?: readonly AuthCardNotice[];
   readonly body?: ReactNode;
   readonly foot?: ReactNode;
 }

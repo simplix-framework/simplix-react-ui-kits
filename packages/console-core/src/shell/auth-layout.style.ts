@@ -15,3 +15,12 @@ export const authBrandStyle = defineSlotStyle({
   variants: {},
   defaultVariants: {},
 });
+
+/** The reader's own controls in the corner of the sign-in page: language and theme. */
+export const authPreferencesStyle = defineSlotStyle({
+  slot: "console-auth-preferences",
+  as: "part",
+  base: "",
+  variants: {},
+  defaultVariants: {},
+});

@@ -11,3 +11,30 @@ export const authCardTitleStyle = defineSlotStyle({
   variants: {},
   defaultVariants: {},
 });
+
+/** The messages the sign-in panel opens with. */
+export const authCardNoticesStyle = defineSlotStyle({
+  slot: "console-auth-card-notices",
+  as: "part",
+  base: "",
+  variants: {},
+  defaultVariants: {},
+});
+
+/** The sign-in panel's content: its form or its message and button. */
+export const authCardBodyStyle = defineSlotStyle({
+  slot: "console-auth-card-body",
+  as: "part",
+  base: "",
+  variants: {},
+  defaultVariants: {},
+});
+
+/** The row of links under the sign-in panel's rule. */
+export const authCardFootStyle = defineSlotStyle({
+  slot: "console-auth-card-foot",
+  as: "part",
+  base: "",
+  variants: {},
+  defaultVariants: {},
+});
