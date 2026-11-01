@@ -43,6 +43,12 @@ describe("crud-page.hbs header actions", () => {
     expect(text).toMatch(/const ownActions = blocks\.spec && "actions" in blocks\.spec \? blocks\.spec\.actions : canCreate \?/);
   });
 
+  it("hands the list to the blocks' window picker and draws it as the page's time range", () => {
+    const text = page({ hasCreate: true, hasUpdate: false, hasDelete: false });
+    expect(text).toContain("const timeRange = blocks.timeRange?.(list);");
+    expect(text).toContain("...(timeRange ? { timeRange } : {})");
+  });
+
   it("starts from no action where the entity has no create", () => {
     const text = page({ hasCreate: false, hasUpdate: false, hasDelete: false });
     expect(text).toContain('const ownActions = blocks.spec && "actions" in blocks.spec ? blocks.spec.actions : undefined;');

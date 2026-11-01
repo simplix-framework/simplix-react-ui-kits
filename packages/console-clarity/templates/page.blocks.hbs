@@ -20,5 +20,7 @@ export function usePageBlocks(_page: { readonly search: ConsoleSearch; readonly 
   // `notices`: what the list's state raises, `(list) => CrudPageNotice[]`, each with its `when`. The
   // page draws the figure row first, folded and unfolded by the console's one tile fold, and the
   // notices directly under it.
+  // `timeRange`: a history screen's window picker, `(list) => ReactNode` (`ListTimeRange` over the
+  // list's filters and the entity's counts read), drawn under the notices.
   return {};
 }

@@ -44,6 +44,12 @@ export interface CrudPageBlocks<TRow, TListProps, TDetailProps, TList = unknown>
    */
   readonly headerActions?: (list: TList) => ReactNode;
   /**
+   * The window picker a history screen narrows by (`spec.timeRange`), read from the list it narrows:
+   * a `ListTimeRange` takes the list's filters, counts under its conditions and writes the chosen
+   * slice back to them, so it is built here rather than in `spec`, which cannot see the list.
+   */
+  readonly timeRange?: (list: TList) => ReactNode;
+  /**
    * Every notice the list's state can raise, each with the condition that raises it. A notice
    * whose condition is false is not drawn; drawn ones sit directly under the figures (`spec.tiles`).
    */
