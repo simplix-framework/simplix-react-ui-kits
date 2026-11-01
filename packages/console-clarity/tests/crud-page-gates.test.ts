@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import { render } from "./template-typecheck";
 
 /** The context the CLI hands `crud-page.hbs`, with the write operations chosen per case. */
-function page(writes: { readonly hasCreate: boolean; readonly hasUpdate: boolean; readonly hasDelete: boolean }): string {
+function page(writes: { readonly hasCreate: boolean; readonly hasUpdate: boolean; readonly hasDelete: boolean; readonly timeBuckets?: { readonly field: string; readonly fetch: string } }): string {
   return render("crud-page.hbs", {
     entity: "ledgerEntry",
     EntityPascal: "LedgerEntry",
@@ -48,6 +48,13 @@ describe("crud-page.hbs header actions", () => {
     expect(text).toContain("const timeRange = blocks.timeRange ? { ...blocks.timeRange, filters: list.filters } : undefined;");
     expect(text).not.toContain("blocks.timeRange?.(list)");
     expect(text).toContain("...(timeRange ? { timeRange } : {})");
+  });
+
+  it("wires the counts per slice from the list's counts read where its Meta names one", () => {
+    const text = page({ hasCreate: false, hasUpdate: false, hasDelete: false, timeBuckets: { field: "runAt", fetch: "getJobCounts" } });
+    expect(text).toContain("import { getJobCounts } from");
+    expect(text).toContain("counts: (query: TimeRangeCountQuery) => readCounts(getJobCounts(");
+    expect(page({ hasCreate: false, hasUpdate: false, hasDelete: false })).not.toContain("readCounts");
   });
 
   it("starts from no action where the entity has no create", () => {

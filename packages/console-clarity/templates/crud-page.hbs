@@ -25,6 +25,10 @@ import { {{accessDelete}} } from "{{packageName}}";
 {{/if}}
 
 import { {{EntityPascal}}Detail, {{#if hasForm}}{{EntityPascal}}Form, {{/if}}{{EntityPascal}}List, use{{EntityPascal}}List, type {{EntityPascal}}DetailProps, type {{EntityPascal}}ListProps, type {{EntityPascal}}Row } from "../../widgets/{{entityKebab}}";
+{{#if timeBuckets}}
+import { readCounts, type TimeRangeCountQuery } from "@simplix-react-ui-kits/console-clarity/datetime";
+import { {{timeBuckets.fetch}} } from "{{packageName}}";
+{{/if}}
 import { usePageBlocks } from "./page.blocks";
 
 interface {{EntityPascal}}CrudPageProps {
@@ -109,7 +113,12 @@ export function {{EntityPascal}}CrudPage({ search, onNavigate }: {{EntityPascal}
   const ownActions = blocks.spec && "actions" in blocks.spec ? blocks.spec.actions : {{#if hasCreate}}canCreate ? <PageAction kind="add" label={words.add} onClick={() => onNavigate({ ...search, mode: "new", id: undefined })} /> : undefined{{else}}undefined{{/if}};
   const listActions = blocks.headerActions?.(list);
   // The time range region is off unless the blocks switch it on with data; the page draws the strip.
+{{#if timeBuckets}}
+  // The counts per slice come from the list's own counts read, which its Meta names; a blocks file states only the field and the windows.
+  const timeRange = blocks.timeRange ? { counts: (query: TimeRangeCountQuery) => readCounts({{timeBuckets.fetch}}({ ...query.conditions, from: query.from, to: query.to, buckets: query.buckets } as Parameters<typeof {{timeBuckets.fetch}}>[0])), ...blocks.timeRange, filters: list.filters } : undefined;
+{{else}}
   const timeRange = blocks.timeRange ? { ...blocks.timeRange, filters: list.filters } : undefined;
+{{/if}}
 
   return (
     <>
