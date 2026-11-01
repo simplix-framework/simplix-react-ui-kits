@@ -10,6 +10,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
 import { CrudPage, {{#if hasCreate}}PageAction, {{/if}}type ConsoleSearch, useDetailPresentationSetting } from "@simplix-react-ui-kits/console-clarity/page";
 import { {{#if figureTiles}}figureTiles, statusCounts, {{/if}}RecordDetail, RecordList, useRecordContract, useScreenWords, type ContractField, type ContractFilter{{#if statusField}}, type RecordBadge, type RecordValue{{/if}} } from "@simplix-react-ui-kits/console-clarity/entity";
+import { useOptionalTranslation } from "@simplix-react-ui-kits/console-clarity/i18n";
 import { useMockRecords } from "@simplix-react-ui-kits/console-clarity/mock";
 
 type Row = Readonly<Record<string, unknown>>;
@@ -117,6 +118,9 @@ interface Args {
 
 function Screen({ open }: Args) {
   const words = useScreenWords("{{entity}}");
+  // The line under the title is the screen's own, from the same catalog key the page reads.
+  const { t } = useOptionalTranslation("{{moduleNamespace}}/widgets");
+  const description = t("screen.{{entity}}.description") || undefined;
   // The same setting the generated page reads, so the frame draws the presentation switch the screen draws.
   const presentation = useDetailPresentationSetting();
   const records = useMockRecords(ROWS, idOf);
@@ -162,7 +166,7 @@ function Screen({ open }: Args) {
 {{/each}}
   return (
     <CrudPage
-      spec={{ldb}} title: words.plural, description: words.description{{#if figureTiles}}, tiles: figures{{/if}}{{#if hasCreate}}, actions: <PageAction kind="add" label={words.add} onClick={() => setSearch({ mode: "new" })} />{{/if}} {{rdb}}
+      spec={{ldb}} title: words.plural, description{{#if figureTiles}}, tiles: figures{{/if}}{{#if hasCreate}}, actions: <PageAction kind="add" label={words.add} onClick={() => setSearch({ mode: "new" })} />{{/if}} {{rdb}}
       search={search}
       onNavigate={setSearch}
       {...presentation}
