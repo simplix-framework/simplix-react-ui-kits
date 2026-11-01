@@ -254,5 +254,45 @@
         ]
       }
     }
+  },
+  "partTokens": {
+    "$comment": "What a framework part drawn inside the kit must equal: each property of the part's element against the theme token the framework's own styles name for it. scripts/regions-rendered.mjs probeTokens/compareTokens measure it.",
+    "timeRange": [
+      {
+        "selector": "[data-slot=time-range-heatmap] .apexcharts-heatmap-rect",
+        "attr": "stroke",
+        "token": "--background"
+      },
+      {
+        "selector": "[data-slot=time-range-selector]",
+        "prop": "border-top-color",
+        "token": "--border"
+      },
+      {
+        "selector": "[data-slot=time-range-selector]",
+        "prop": "background-color",
+        "token": "--card"
+      },
+      {
+        "selector": "[data-slot=time-range-badge]",
+        "prop": "border-top-color",
+        "token": "--input"
+      },
+      {
+        "selector": "[data-slot=time-range-action]",
+        "prop": "border-top-color",
+        "token": "--input"
+      },
+      {
+        "selector": "[data-slot=time-range-action]",
+        "prop": "background-color",
+        "token": "--background"
+      },
+      {
+        "selector": "[data-slot=time-range-preset]:not([aria-pressed=true]):not([data-active])",
+        "prop": "color",
+        "token": "--muted-foreground"
+      }
+    ]
   }
 }

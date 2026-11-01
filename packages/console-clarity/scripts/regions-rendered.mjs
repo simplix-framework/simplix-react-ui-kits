@@ -46,6 +46,27 @@ export function probe(regions) {
   return signature;
 }
 
+/**
+ * Runs in the page. For each entry of a part's partTokens, the measured value and the token's
+ * value, both resolved through one canvas so hex, rgb and colour functions compare as one form.
+ */
+export function probeTokens(entries) {
+  const ctx = document.createElement("canvas").getContext("2d");
+  const norm = (c) => { ctx.fillStyle = "#010203"; ctx.fillStyle = c; return ctx.fillStyle; };
+  const root = getComputedStyle(document.documentElement);
+  return entries.map((e) => {
+    const el = document.querySelector(e.selector);
+    if (!el) return { ...e, missing: true };
+    const raw = e.attr ? el.getAttribute(e.attr) : getComputedStyle(el).getPropertyValue(e.prop);
+    return { ...e, measured: norm(raw), expected: norm(root.getPropertyValue(e.token).trim()) };
+  });
+}
+
+/** The measured properties that differ from their token, as strings. A missing element is not judged. */
+export function compareTokens(measured) {
+  return measured.filter((m) => !m.missing && m.measured !== m.expected).map((m) => `${m.selector} ${m.attr ?? m.prop} = ${m.measured}, token ${m.token} = ${m.expected}`);
+}
+
 /** The ways a signature breaks the type's contract, as strings; empty when it holds. */
 export function compare(signature, type, c = contract) {
   const t = c.types[type];
@@ -71,7 +92,9 @@ if (process.argv.includes("--selftest")) {
   const noStrip = compare({ header: good.header, rows: 3 }, "list-detail");
   const empty = compare({ header: good.header, rows: 0 }, "list-detail");
   const hit = compare(bad, "list-detail");
-  const ok = miss.length === 0 && noStrip.length === 1 && empty.length === 0 && hit.length === 4 && compare(good, "system").length === 2;
-  console.log(ok ? "regions-rendered selftest: hit 5, miss 0" : `regions-rendered selftest FAILED\nhit: ${hit.join("\n")}\nmiss: ${miss.join("\n")}`);
+  const tokHit = compareTokens([{ selector: "rect", attr: "stroke", token: "--background", measured: "#000000", expected: "#f4f7f7" }]);
+  const tokMiss = compareTokens([{ selector: "rect", attr: "stroke", token: "--background", measured: "#f4f7f7", expected: "#f4f7f7" }, { selector: "x", missing: true }]);
+  const ok = tokHit.length === 1 && tokMiss.length === 0 && miss.length === 0 && noStrip.length === 1 && empty.length === 0 && hit.length === 4 && compare(good, "system").length === 2;
+  console.log(ok ? "regions-rendered selftest: hit 6, miss 0" : `regions-rendered selftest FAILED\nhit: ${hit.join("\n")}\nmiss: ${miss.join("\n")}`);
   process.exit(ok ? 0 : 1);
 }
