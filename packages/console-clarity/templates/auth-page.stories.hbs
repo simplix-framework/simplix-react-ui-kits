@@ -12,9 +12,12 @@ import { AuthCard, AuthLayout } from "@simplix-react-ui-kits/console-clarity/she
 
 function Screen() {
   const { t } = useTranslation("{{namespace}}");
+  // A key the catalog holds empty comes back as the key itself, and draws no line either.
+  const line = t("{{nameCamel}}.description");
+  const description = line && line !== "{{nameCamel}}.description" ? line : undefined;
   return (
     <AuthLayout>
-      <AuthCard title={t("{{nameCamel}}.title")} />
+      <AuthCard title={t("{{nameCamel}}.title")} description={description} />
     </AuthLayout>
   );
 }

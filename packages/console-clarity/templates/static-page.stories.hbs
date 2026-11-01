@@ -13,10 +13,13 @@ import { ConsolePage, type ConsoleSearch } from "@simplix-react-ui-kits/console-
 
 function Screen() {
   const { t } = useTranslation("{{namespace}}");
+  // A key the catalog holds empty comes back as the key itself, and draws no line either.
+  const line = t("{{nameCamel}}.description");
+  const description = line && line !== "{{nameCamel}}.description" ? line : undefined;
   const [search, setSearch] = useState<ConsoleSearch>({});
   return (
     <ConsolePage
-      spec={{ldb}} title: t("{{nameCamel}}.title"), description: t("{{nameCamel}}.description") {{rdb}}
+      spec={{ldb}} title: t("{{nameCamel}}.title"), description {{rdb}}
       search={search}
       onNavigate={setSearch}
     />
