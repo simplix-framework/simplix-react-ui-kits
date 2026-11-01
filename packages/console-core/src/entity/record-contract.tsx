@@ -122,7 +122,9 @@ export const CONTRACT_COLUMN_SIZE: Readonly<Record<ContractFieldKind, { readonly
 /** A searchable field as the generator writes it, which {@link useRecordContract}'s `filters` turns into a list filter. */
 export type ContractFilter =
   | { readonly kind: "choice"; readonly field: string; readonly enumName?: string; readonly options: readonly string[] }
-  | { readonly kind: "toggle" | "number"; readonly field: string }
+  | { readonly kind: "toggle"; readonly field: string }
+  /** A figure; a `money` field also names its currency and scale, so the reader types currency units. */
+  | { readonly kind: "number"; readonly field: string; readonly currency?: string; readonly scale?: number }
   | { readonly kind: "dateRange"; readonly field: string; readonly dateOnly?: boolean };
 
 /** How many leading columns of a generated list draw at every pane width. */
@@ -189,6 +191,29 @@ export function moneyStored(field: Pick<ContractField, "scale">, amount: unknown
   if (amount === null || amount === undefined || amount === "") return null;
   const value = typeof amount === "number" ? amount : Number(amount);
   return Number.isFinite(value) ? Math.round(value * 10 ** (field.scale ?? 0)) : null;
+}
+
+/**
+ * The list request's filters with every `money` filter's amount, typed in the currency's own units,
+ * turned into the stored whole number the server compares. A filter key is `<field>.<operator>`.
+ *
+ * @returns the adapter's `transformFilters`, or undefined when no filter is a money filter
+ */
+export function moneyFilterTransform(
+  defs: readonly ContractFilter[],
+): ((filters: Record<string, unknown>) => Record<string, unknown>) | undefined {
+  const scales = new Map<string, number>();
+  for (const def of defs) if (def.kind === "number" && def.scale !== undefined) scales.set(def.field, def.scale);
+  if (scales.size === 0) return undefined;
+  return (filters) => {
+    const out: Record<string, unknown> = { ...filters };
+    for (const [key, value] of Object.entries(filters)) {
+      const scale = scales.get(key.split(".")[0] ?? "");
+      if (scale === undefined) continue;
+      out[key] = Array.isArray(value) ? value.map((one) => moneyStored({ scale }, one)) : moneyStored({ scale }, value);
+    }
+    return out;
+  };
 }
 
 /**
@@ -368,6 +393,9 @@ export function useRecordContract(entity: string, overrides: ContractOverrides =
           }
           case "dateRange":
             return { kind: "dateRange", field, label, dateOnly: def.dateOnly ?? false };
+          case "number":
+            // A money filter is typed in the currency's units, so its label says which currency.
+            return { kind: "number", field, label: def.currency ? `${label} (${def.currency})` : label };
           default:
             return { kind: def.kind, field, label };
         }

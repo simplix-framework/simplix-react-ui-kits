@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { moneyAmount, moneyStored, moneyText } from "./record-contract";
+import { moneyAmount, moneyFilterTransform, moneyStored, moneyText } from "./record-contract";
 
 const micros = { currency: "USD", scale: 6 } as const;
 
@@ -17,5 +17,18 @@ describe("money fields", () => {
     expect(moneyStored(micros, "0.1")).toBe(100_000);
     expect(moneyStored(micros, "")).toBeNull();
     expect(moneyAmount(micros, null)).toBeNull();
+  });
+
+  it("sends a money filter's currency units as the stored whole number and leaves other filters alone", () => {
+    const transform = moneyFilterTransform([
+      { kind: "number", field: "amountUsdMicros", currency: "USD", scale: 6 },
+      { kind: "number", field: "units" },
+    ]);
+    expect(transform?.({ "amountUsdMicros.greaterThanOrEqualTo": "1.5", "units.equals": "3", status: ["OPEN"] })).toEqual({
+      "amountUsdMicros.greaterThanOrEqualTo": 1_500_000,
+      "units.equals": "3",
+      status: ["OPEN"],
+    });
+    expect(moneyFilterTransform([{ kind: "number", field: "units" }])).toBeUndefined();
   });
 });

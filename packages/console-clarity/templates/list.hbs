@@ -5,7 +5,7 @@
  * matches. Columns, filters, chips and row actions this list departs in go in `./list.blocks.tsx`.
  */
 import { adaptForcedList, adaptOrvalList{{#if hasKeywordSearch}}, SEARCHABLE_KEYWORD_PARAM{{/if}}, useCrudList{{#if hookOrder}}{{#if orderField}}, useInvalidateEntity{{/if}}{{/if}} } from "@simplix-react/ui";
-import { RecordList, {{#if hookOrder}}{{#if orderField}}useAllowed, {{/if}}{{/if}}useRecordContract, useScreenWords, type ContractField, type ContractFilter, type ContractOverrides, type RecordAction, type RecordColumn, type RecordFilter } from "@simplix-react-ui-kits/console-clarity/entity";
+import { {{#if hasMoneyFilter}}moneyFilterTransform, {{/if}}RecordList, {{#if hookOrder}}{{#if orderField}}useAllowed, {{/if}}{{/if}}useRecordContract, useScreenWords, type ContractField, type ContractFilter, type ContractOverrides, type RecordAction, type RecordColumn, type RecordFilter } from "@simplix-react-ui-kits/console-clarity/entity";
 import type { ReactNode } from "react";
 
 import { {{hookList}}, {{#if hookOrder}}{{#if orderField}}{{hookOrder}}, {{#if accessOrder}}{{accessOrder}}, {{/if}}{{/if}}{{/if}}type {{listRowType}} } from "{{packageName}}";
@@ -18,7 +18,12 @@ export function use{{EntityPascal}}List(params?: Readonly<Record<string, unknown
 {{#if hasKeywordSearch}}
   // The search box's text goes out as the route's keyword search, matched against every field the
   // search DTO marks as a keyword field.
-  const options = { searchKey: SEARCHABLE_KEYWORD_PARAM };
+{{/if}}
+{{#if hasMoneyFilter}}
+  // A money filter is typed in the currency's units and sent as the stored whole number.
+{{/if}}
+{{#if (or hasKeywordSearch hasMoneyFilter)}}
+  const options = { {{#if hasKeywordSearch}}searchKey: SEARCHABLE_KEYWORD_PARAM{{/if}}{{#if hasMoneyFilter}}{{#if hasKeywordSearch}}, {{/if}}transformFilters: moneyFilterTransform({{EntityPascal}}Filters){{/if}} };
   return useCrudList<{{EntityPascal}}Row>(params ? adaptForcedList<{{EntityPascal}}Row>({{hookList}}, { ...params }, options) : adaptOrvalList<{{EntityPascal}}Row>({{hookList}}, options), {
 {{else}}
   return useCrudList<{{EntityPascal}}Row>(params ? adaptForcedList<{{EntityPascal}}Row>({{hookList}}, { ...params }) : adaptOrvalList<{{EntityPascal}}Row>({{hookList}}), {
@@ -69,7 +74,7 @@ const {{EntityPascal}}ColumnFields: readonly ContractField[] = [
 /** The filters the contract's searchable fields give this list; not exported, for the same reason. */
 const {{EntityPascal}}Filters: readonly ContractFilter[] = [
 {{#each contractFilters}}
-  { kind: "{{this.kind}}", field: "{{this.field}}"{{#if this.enumTypeName}}, enumName: "{{this.enumTypeName}}"{{/if}}{{#if this.options}}, options: [{{#each this.options}}"{{this}}"{{#unless @last}}, {{/unless}}{{/each}}]{{/if}}{{#if (eq this.kind "dateRange")}}, dateOnly: {{#if this.dateOnly}}true{{else}}false{{/if}}{{/if}} },
+  { kind: "{{this.kind}}", field: "{{this.field}}"{{#if this.enumTypeName}}, enumName: "{{this.enumTypeName}}"{{/if}}{{#if this.options}}, options: [{{#each this.options}}"{{this}}"{{#unless @last}}, {{/unless}}{{/each}}]{{/if}}{{#if (eq this.kind "dateRange")}}, dateOnly: {{#if this.dateOnly}}true{{else}}false{{/if}}{{/if}}{{#if this.money}}, currency: "{{this.money.currency}}", scale: {{this.money.scale}}{{/if}} },
 {{/each}}
 ];
 
