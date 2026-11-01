@@ -66,7 +66,9 @@ export function {{EntityPascal}}CrudPage({ search, onNavigate }: {{EntityPascal}
 {{/if}}
 {{#if figureTiles.aggregates}}
     aggregates: {
-      query: {{figureTiles.aggregates.hook}}({}),
+      // The sums are read over the rows the list is showing: its filters, search text and forced
+      // scope. The status counts above stay over every row, the census the reader slices by.
+      query: {{figureTiles.aggregates.hook}}(list.requestParams as Parameters<typeof {{figureTiles.aggregates.hook}}>[0]),
       figures: [
 {{#each figureTiles.aggregates.figures}}
         { field: { name: "{{this.field}}", kind: "{{this.kind}}"{{#if this.money}}, currency: "{{this.money.currency}}", scale: {{this.money.scale}}{{/if}} }, op: "{{this.op}}"{{#if this.isRowCount}}, rowCount: true{{/if}} },

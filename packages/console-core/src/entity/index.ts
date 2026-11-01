@@ -31,8 +31,8 @@ export { isTilePressed, narrowedValues, pressedTileKeys, pressedValue, pressedVa
 export type { TileFilter, TileValueFilter, TileValuesFilter } from "./tile-filter";
 export { missingTileFacets, TileFacetsProvider, tileFacets, useTileFacets, type TileFacet } from "./tile-facets";
 export { aggregateValue, statusCounts, statusTiles, useStatusCounts } from "./status-counts";
-export { figureTiles, useFigureTiles } from "./figure-tiles";
-export type { FigureQuery, FigureTilesSpec, FigureWords } from "./figure-tiles";
+export { figureTiles, listRequestParams, useFigureTiles, withListRequest } from "./figure-tiles";
+export type { FigureQuery, FigureTilesSpec, FigureWords, ListRequestOptions, WithListRequest } from "./figure-tiles";
 export type { AggregateOp, StatusCountsOptions, StatusTilesInput } from "./status-counts";
 export { RecordValueView } from "./record-value";
 export { RecordMeter, meterShare, meterTone } from "./record-meter";

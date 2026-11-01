@@ -57,7 +57,7 @@ export interface ProductFormProps {
   readonly onSuccess?: () => void;
   readonly onCancel?: () => void;
 }
-export declare function useProductList(params?: Readonly<Record<string, unknown>>): { readonly rows: readonly ProductRow[]; readonly filters: CrudListFilters };
+export declare function useProductList(params?: Readonly<Record<string, unknown>>): { readonly rows: readonly ProductRow[]; readonly filters: CrudListFilters; readonly requestParams: Readonly<Record<string, unknown>> };
 export declare function ProductList(props: ProductListProps): ReactNode;
 export declare function ProductDetail(props: ProductDetailProps): ReactNode;
 export declare function ProductForm(props: ProductFormProps): ReactNode;
@@ -73,7 +73,7 @@ export declare const createProductAccess: Rule;
 export declare const updateProductAccess: Rule;
 export declare const deleteProductAccess: Rule;
 export declare function useGetProductStatusCounts(params: { field: string }): { data?: unknown; isLoading: boolean };
-export declare function useGetProductAggregates(params?: Readonly<Record<string, unknown>>): { data?: unknown; isLoading: boolean };
+export declare function useGetProductAggregates(params?: { keyword?: string; "status.in"?: string[] }): { data?: unknown; isLoading: boolean };
 `;
 
 function check(pageSource = render("crud-page.hbs", context)): string[] {

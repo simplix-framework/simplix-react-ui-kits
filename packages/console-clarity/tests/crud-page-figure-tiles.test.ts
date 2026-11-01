@@ -32,6 +32,13 @@ describe("crud-page.hbs default figure tiles", () => {
     expect(text).toContain("tiles: figures.tiles,\n          tilesLoading: figures.loading,");
   });
 
+  it("reads the sums under the list's own conditions and the status counts over every row", () => {
+    const text = render("crud-page.hbs", { ...base, figureTiles });
+    expect(text).toContain("query: useGetJobAggregates(list.requestParams as Parameters<typeof useGetJobAggregates>[0]),");
+    expect(text).not.toContain("useGetJobAggregates({})");
+    expect(text).toContain('query: useGetJobStatusCounts({ field: "status" })');
+  });
+
   it("draws no figures where Meta names none", () => {
     const text = render("crud-page.hbs", base);
     expect(text).not.toContain("useFigureTiles");
@@ -41,7 +48,8 @@ describe("crud-page.hbs default figure tiles", () => {
   it("draws the same figures in the board frame, counted over the sample rows", () => {
     const text = render("crud-page.stories.hbs", { ...base, figureTiles, listFields: [], detailFields: [], contractFilters: [], holders: [], fixtureRowsJson: "[]" });
     expect(text).toContain("statusCounts(records.rows.map((row) => ({ value: row.status, count: 1 }))");
-    expect(text).toContain('{ field: "jobId", op: "count", value: records.rows.length },');
+    expect(text).toContain('{ field: "jobId", op: "count", value: list.matched.length },');
+    expect(text).toContain('{ field: "costMicros", op: "sum", value: list.matched.reduce((sum, row) => sum + (Number(row.costMicros) || 0), 0) },');
     expect(text).toContain("tiles: figures");
   });
 });

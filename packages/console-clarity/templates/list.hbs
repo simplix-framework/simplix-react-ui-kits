@@ -6,7 +6,7 @@
  * here, in this file, and a later template change is merged into it three ways.
  */
 import { adaptForcedList, adaptOrvalList{{#if hasKeywordSearch}}, SEARCHABLE_KEYWORD_PARAM{{/if}}, useCrudList{{#if hookOrder}}{{#if orderField}}, useInvalidateEntity{{/if}}{{/if}} } from "@simplix-react/ui";
-import { {{#if hasMoneyFilter}}moneyFilterTransform, {{/if}}RecordList, {{#if hookOrder}}{{#if orderField}}useAllowed, {{/if}}{{/if}}useRecordContract, useScreenWords, type ContractField, type ContractFilter, type ContractOverrides, type RecordAction, type RecordColumn, type RecordFilter, type RecordListProps } from "@simplix-react-ui-kits/console-clarity/entity";
+import { {{#if hasMoneyFilter}}moneyFilterTransform, {{/if}}RecordList, {{#if figureTiles.aggregates}}withListRequest, {{/if}}{{#if hookOrder}}{{#if orderField}}useAllowed, {{/if}}{{/if}}useRecordContract, useScreenWords, type ContractField, type ContractFilter, type ContractOverrides, type RecordAction, type RecordColumn, type RecordFilter, type RecordListProps } from "@simplix-react-ui-kits/console-clarity/entity";
 
 import { {{hookList}}, {{#if hookOrder}}{{#if orderField}}{{hookOrder}}, {{#if accessOrder}}{{accessOrder}}, {{/if}}{{/if}}{{/if}}type {{listRowType}} } from "{{packageName}}";
 
@@ -23,9 +23,11 @@ export function use{{EntityPascal}}List(params?: Readonly<Record<string, unknown
 {{/if}}
 {{#if (or hasKeywordSearch hasMoneyFilter)}}
   const options = { {{#if hasKeywordSearch}}searchKey: SEARCHABLE_KEYWORD_PARAM{{/if}}{{#if hasMoneyFilter}}{{#if hasKeywordSearch}}, {{/if}}transformFilters: moneyFilterTransform({{EntityPascal}}Filters){{/if}} };
-  return useCrudList<{{EntityPascal}}Row>(params ? adaptForcedList<{{EntityPascal}}Row>({{hookList}}, { ...params }, options) : adaptOrvalList<{{EntityPascal}}Row>({{hookList}}, options), {
+{{/if}}
+{{#if figureTiles.aggregates}}
+  const list = useCrudList<{{EntityPascal}}Row>(params ? adaptForcedList<{{EntityPascal}}Row>({{hookList}}, { ...params }{{#if (or hasKeywordSearch hasMoneyFilter)}}, options{{/if}}) : adaptOrvalList<{{EntityPascal}}Row>({{hookList}}{{#if (or hasKeywordSearch hasMoneyFilter)}}, options{{/if}}), {
 {{else}}
-  return useCrudList<{{EntityPascal}}Row>(params ? adaptForcedList<{{EntityPascal}}Row>({{hookList}}, { ...params }) : adaptOrvalList<{{EntityPascal}}Row>({{hookList}}), {
+  return useCrudList<{{EntityPascal}}Row>(params ? adaptForcedList<{{EntityPascal}}Row>({{hookList}}, { ...params }{{#if (or hasKeywordSearch hasMoneyFilter)}}, options{{/if}}) : adaptOrvalList<{{EntityPascal}}Row>({{hookList}}{{#if (or hasKeywordSearch hasMoneyFilter)}}, options{{/if}}), {
 {{/if}}
     stateMode: "server",
     defaultPageSize: 20,
@@ -36,6 +38,11 @@ export function use{{EntityPascal}}List(params?: Readonly<Record<string, unknown
 {{/if}}
     filterMode: "immediate",
   });
+{{#if figureTiles.aggregates}}
+  // The conditions of the list's own request ride on the controller, so the page's sums are read
+  // over the rows the list is showing.
+  return withListRequest(list, { forced: params{{#if (or hasKeywordSearch hasMoneyFilter)}}, ...options{{/if}} });
+{{/if}}
 }
 
 export interface {{EntityPascal}}ListProps {

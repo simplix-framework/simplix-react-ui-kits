@@ -148,7 +148,8 @@ function Screen({ open{{#if hasCreate}}, mode{{/if}} }: Args) {
   const list = useMockList(records.rows);
 {{/if}}
 {{#if figureTiles}}
-  // The generated page's figure row, counted and summed over the sample rows.
+  // The generated page's figure row: the counts are over every sample row, the sums over the rows
+  // the list's filters, search text and chosen window leave in, as the page reads them.
   const figures = figureTiles(
     {
 {{#if figureTiles.status}}
@@ -159,7 +160,7 @@ function Screen({ open{{#if hasCreate}}, mode{{/if}} }: Args) {
         query: {
           data: [
 {{#each figureTiles.aggregates.figures}}
-            { field: "{{this.field}}", op: "{{this.op}}", value: {{#if (eq this.op "count")}}records.rows.length{{else}}records.rows.reduce((sum, row) => sum + (Number(row.{{this.field}}) || 0), 0){{/if}} },
+            { field: "{{this.field}}", op: "{{this.op}}", value: {{#if (eq this.op "count")}}list.matched.length{{else}}list.matched.reduce((sum, row) => sum + (Number(row.{{this.field}}) || 0), 0){{/if}} },
 {{/each}}
           ],
         },

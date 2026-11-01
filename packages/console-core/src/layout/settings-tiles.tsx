@@ -118,6 +118,12 @@ interface SettingsTileShape {
    * explanation to {@link SettingsTile.basis}.
    */
   readonly value: string | number | undefined;
+  /**
+   * Whether this figure is being read again right now, drawn as the card's loading state in place
+   * of its number. A figure that follows the list's filters is read again whenever they change, and
+   * the figures beside it that do not follow them keep what they show.
+   */
+  readonly loading?: boolean;
   /** Appended to the value — 개 · 명 · 일 · %. */
   readonly unit?: string;
   /**
@@ -803,7 +809,7 @@ function TileGrid({
             }
             tone={tone}
             highlighted={tone === "warning" || tone === "danger"}
-            loading={loading}
+            loading={loading || Boolean(tile.loading)}
           />
         );
         // The card fills whatever height it is handed, so a tile that is a link needs its anchor
