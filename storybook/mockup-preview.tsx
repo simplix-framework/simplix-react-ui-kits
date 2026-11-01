@@ -9,7 +9,7 @@ import { useGlobals } from "storybook/preview-api";
 import { THEMES } from "@simplix-react/headless";
 import { createI18nConfig, type LocaleCode } from "@simplix-react/i18n";
 import { I18nProvider } from "@simplix-react/i18n/react";
-import { TooltipProvider, UIProvider } from "@simplix-react/ui";
+import { TooltipProvider, UIProvider, type LanguageSelectorPlacement } from "@simplix-react/ui";
 import { DESIGNS as FRAMEWORK_DESIGNS, type Design } from "@simplix-react/ui/design";
 import design from "virtual:kit-design";
 import { type DetailPresentation, type FrameMode, type MockupSettings, MockupSettingsContext } from "./mockup-settings";
@@ -19,6 +19,11 @@ export interface MockupPreviewConfig {
   locales: LocaleCode[];
   /** The detail presentation a screen opens with. */
   detailPresentation?: DetailPresentation;
+  /**
+   * Where a multilingual field carries its language selector, as the product's `UIProvider`
+   * defaults set it; the framework's own default when absent.
+   */
+  languageSelectorPlacement?: LanguageSelectorPlacement;
   /** Whether a screen opens inside the console's window or alone; `full` when absent. */
   frame?: FrameMode;
   /** Translations of the mockup's own copy, as `import.meta.glob("./locales/*\/*.json", { eager: true })` returns them. */
@@ -97,7 +102,11 @@ export function createMockupPreview(config: MockupPreviewConfig): Preview {
               <MemoryRouter>
                 <UIProvider
                   design={uiDesign}
-                  defaults={{ detailPresentation: frameworkPresentation, ...(density ? { density } : {}) }}
+                  defaults={{
+                    detailPresentation: frameworkPresentation,
+                    ...(density ? { density } : {}),
+                    ...(config.languageSelectorPlacement ? { languageSelectorPlacement: config.languageSelectorPlacement } : {}),
+                  }}
                 >
                   {/* The providers a console screen sits in (ConsoleProviders), so a tooltip a screen draws has one. */}
                   <TooltipProvider>
