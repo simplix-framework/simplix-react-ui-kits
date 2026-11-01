@@ -347,7 +347,7 @@ interface SettingsTilesProps {
    * The most tiles to a row, five unless a screen caps it lower.
    *
    * <p>A row holds as many tiles as fit at the minimum tile width (`--tile-min-width`) in the page
-   * column, up to this cap, balanced over the rows; a screen with fewer figures needs no cap, as
+   * column, up to this cap; a screen with fewer figures needs no cap, as
    * its tiles take the row between them.
    */
   readonly columns?: TileColumns;
@@ -749,7 +749,7 @@ function TileGrid({
   const [over, setOver] = useState<string | null>(null);
   const ordered = enabled ? order.map((k) => tiles.find((t) => t.key === k)!).filter(Boolean) : tiles;
   const grid = useRef<HTMLDivElement>(null);
-  // As many to a row as fit at the minimum tile width in the page column, balanced over the rows.
+  // As many to a row as fit at the minimum tile width in the page column.
   const { columns: perRow, measured } = useTileColumns(grid, ordered.length, columns);
   // A tile moved to a new place, or a row that wraps when the window narrows, glides there.
   // Keyed by the order's content: a screen that rebuilds its tiles on every render hands a new

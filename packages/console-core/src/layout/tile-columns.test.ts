@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { balancedTileColumns, lengthPx, tilesThatFit } from "./tile-columns";
+import { lengthPx, tileColumnsFor, tilesThatFit } from "./tile-columns";
 
 describe("tilesThatFit", () => {
   it("steps down with the row's width at a 192px tile and a 16px gap, up to five", () => {
@@ -32,38 +32,29 @@ describe("tilesThatFit", () => {
   });
 });
 
-describe("balancedTileColumns", () => {
-  it("evens the rows: six at five draw 3 + 3, seven 4 + 3, nine 5 + 4", () => {
-    expect(balancedTileColumns(6, 5)).toBe(3);
-    expect(balancedTileColumns(7, 5)).toBe(4);
-    expect(balancedTileColumns(9, 5)).toBe(5);
+describe("tileColumnsFor", () => {
+  it("draws every column that fits: six at five make 5 + 1, seven 5 + 2, nine 5 + 4", () => {
+    expect(tileColumnsFor(6, 5)).toBe(5);
+    expect(tileColumnsFor(7, 5)).toBe(5);
+    expect(tileColumnsFor(9, 5)).toBe(5);
   });
   it("lets fewer tiles than columns take the row", () => {
-    expect(balancedTileColumns(4, 5)).toBe(4);
-    expect(balancedTileColumns(2, 5)).toBe(2);
-    expect(balancedTileColumns(1, 5)).toBe(1);
+    expect(tileColumnsFor(4, 5)).toBe(4);
+    expect(tileColumnsFor(2, 5)).toBe(2);
+    expect(tileColumnsFor(1, 5)).toBe(1);
   });
-  it("uses as few rows as the limit allows, and the fewest columns that keep them", () => {
+  it("steps down with the width alone", () => {
+    expect(tileColumnsFor(6, 3)).toBe(3);
+    expect(tileColumnsFor(4, 3)).toBe(3);
+    expect(tileColumnsFor(9, 1)).toBe(1);
+  });
+  it("never draws more columns than fit or than there are tiles", () => {
     for (let fit = 1; fit <= 5; fit++) {
       for (let tiles = 1; tiles <= 30; tiles++) {
-        const columns = balancedTileColumns(tiles, fit);
-        const rows = Math.ceil(tiles / fit);
-        expect(columns).toBeLessThanOrEqual(fit);
-        expect(Math.ceil(tiles / columns)).toBe(rows);
-        // One column fewer would need another row, so the rows are as even as they can be.
-        if (columns > 1) expect(Math.ceil(tiles / (columns - 1))).toBeGreaterThan(rows);
+        const columns = tileColumnsFor(tiles, fit);
+        expect(columns).toBe(Math.min(tiles, fit));
       }
     }
-  });
-  it("leaves a lone tile on the last row only where every column count at the limit does", () => {
-    expect(balancedTileColumns(7, 3)).toBe(3);
-    expect(balancedTileColumns(5, 2)).toBe(2);
-    expect(balancedTileColumns(8, 5)).toBe(4);
-    expect(balancedTileColumns(10, 5)).toBe(5);
-    expect(balancedTileColumns(11, 5)).toBe(4);
-  });
-  it("draws one column when only one fits", () => {
-    expect(balancedTileColumns(6, 1)).toBe(1);
   });
 });
 

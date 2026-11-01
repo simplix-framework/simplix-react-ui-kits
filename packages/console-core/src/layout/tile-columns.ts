@@ -21,17 +21,16 @@ export function tilesThatFit(width: number, gap: number, min: number, cap: numbe
 }
 
 /**
- * The column count that spreads `tiles` over as few rows as `fit` columns allow, with the rows as
- * even as they can be: six at five make 3 + 3 and seven make 4 + 3, never a lone tile on the last
- * row. Fewer tiles than columns take the row between them.
+ * The column count a row of `tiles` draws when `fit` columns fit: every column that fits, and no
+ * more columns than there are tiles, so six tiles at five draw 5 + 1 and four tiles at five take
+ * the row between them.
  *
  * @param tiles how many tiles the row draws
  * @param fit how many fit side by side
  */
-export function balancedTileColumns(tiles: number, fit: number): number {
+export function tileColumnsFor(tiles: number, fit: number): number {
   if (tiles < 1) return fit;
-  if (tiles <= fit) return tiles;
-  return Math.ceil(tiles / Math.ceil(tiles / fit));
+  return Math.min(tiles, fit);
 }
 
 /** A CSS length the token holds (`12rem`, `192px`) in px, against the root font size for `rem`. */
@@ -55,7 +54,7 @@ export interface TileColumnsResult {
 
 /**
  * The column count a figure row draws at its own width: as many tiles as fit at the minimum tile
- * width (`--tile-min-width`), up to `cap`, balanced over the rows. Measured on the grid itself, so
+ * width (`--tile-min-width`), up to `cap`. Measured on the grid itself, so
  * it follows the page column rather than the window, and again whenever that column resizes.
  *
  * <p>The first measurement is taken before the first paint, so a narrow column never shows the
@@ -95,5 +94,5 @@ export function useTileColumns(grid: RefObject<HTMLElement | null>, tiles: numbe
       cancelAnimationFrame(frame);
     };
   }, [grid, cap]);
-  return { columns: balancedTileColumns(tiles, fit ?? cap), measured: fit !== null };
+  return { columns: tileColumnsFor(tiles, fit ?? cap), measured: fit !== null };
 }

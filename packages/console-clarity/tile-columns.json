@@ -1,12 +1,12 @@
 {
-  "$comment": "The figure tile grid's column contract. A row holds as many tiles as fit at the minimum tile width (--tile-min-width) in the page column, up to max, and the rows are balanced: columns = ceil(tiles / ceil(tiles / fit)). Fewer tiles than columns take the row. scripts/tile-columns-rendered.mjs reads the grid as painted and judges it against this. The cases are the contract written out for the reference geometry (a 192px minimum and a 16px gap) at three page column widths; the script's self-test proves its own oracle gives the same numbers.",
+  "$comment": "The figure tile grid's column contract. A row holds as many tiles as fit at the minimum tile width (--tile-min-width) in the page column, up to max: columns = min(tiles, fit), so six tiles at full width draw five and one. scripts/tile-columns-rendered.mjs reads the grid as painted and judges it against this. The cases are the contract written out for the reference geometry (a 192px minimum and a 16px gap) at three page column widths; the script's self-test proves its own oracle gives the same numbers.",
   "version": 1,
   "max": 5,
   "reference": { "minWidth": 192, "gap": 16 },
   "widths": [1440, 1024, 640],
   "cases": [
-    { "tiles": 4, "columns": { "1440": 4, "1024": 4, "640": 2 } },
-    { "tiles": 6, "columns": { "1440": 3, "1024": 3, "640": 3 } },
+    { "tiles": 4, "columns": { "1440": 4, "1024": 4, "640": 3 } },
+    { "tiles": 6, "columns": { "1440": 5, "1024": 5, "640": 3 } },
     { "tiles": 9, "columns": { "1440": 5, "1024": 5, "640": 3 } }
   ]
 }

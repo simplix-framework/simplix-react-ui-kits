@@ -58,15 +58,12 @@ export function probe(root = "main") {
 /**
  * The column count the rule gives, worked out by counting instead of by the formula the kit's
  * code uses, so the two cannot share a slip: the widest row that fits at the minimum tile width,
- * then the fewest columns that keep the rows that many gives.
+ * and never more columns than there are tiles.
  */
 export function expectedColumns(tiles, width, gap, min, cap = contract.max) {
   let fit = 1;
   for (let c = 2; c <= cap; c++) if (c * min + (c - 1) * gap <= width) fit = c;
-  if (tiles <= fit) return tiles;
-  const rows = Math.ceil(tiles / fit);
-  for (let c = 1; c <= fit; c++) if (Math.ceil(tiles / c) === rows) return c;
-  return fit;
+  return tiles < fit ? tiles : fit;
 }
 
 /** The ways one painted grid breaks the column rule, as strings; empty when it holds. */
@@ -110,17 +107,17 @@ if (process.argv.includes("--selftest")) {
     const gap = 16;
     return { tiles, width, gap, min: 192, columns, rows, narrowest: (width - gap * (columns - 1)) / columns, widest: (width - gap * (columns - 1)) / columns, tracks: columns, ...over };
   };
-  const good = [grid(4, 1440, 4), grid(4, 1024, 4), grid(4, 640, 2), grid(6, 1440, 3), grid(6, 640, 3), grid(9, 1024, 5), grid(9, 640, 3), grid(7, 1440, 4), grid(3, 640, 3), grid(5, 400, 2, { tiles: 5 })];
+  const good = [grid(4, 1440, 4), grid(4, 1024, 4), grid(4, 640, 3), grid(6, 1440, 5), grid(6, 640, 3), grid(9, 1024, 5), grid(9, 640, 3), grid(7, 1440, 5), grid(3, 640, 3), grid(5, 400, 2, { tiles: 5 })];
   // A hit per way the rule can break; each is the form `compare` must refuse.
   const bad = {
-    "a lone tile": grid(6, 1440, 5),
+    "balanced down from what fits": grid(6, 1440, 3),
     "too many for the width": grid(9, 640, 5),
     "too few for the width": grid(9, 1440, 3),
-    "past the cap": grid(12, 1800, 6, { width: 1800 }),
-    "an unresolved token": grid(6, 1440, 3, { min: 0 }),
-    "tracks apart from the tiles": grid(6, 1440, 3, { tracks: 5 }),
+    "past the cap": grid(12, 1800, 6),
+    "an unresolved token": grid(6, 1440, 5, { min: 0 }),
+    "tracks apart from the tiles": grid(6, 1440, 5, { tracks: 3 }),
     "a tile under the minimum": grid(4, 1440, 4, { narrowest: 150 }),
-    "an uneven row": grid(6, 1440, 3, { rows: [2, 3, 1] }),
+    "an uneven row": grid(9, 1440, 5, { rows: [4, 4, 1] }),
   };
   const missed = good.flatMap((g) => compare(g).map((p) => `miss: ${p}`));
   const hits = Object.entries(bad).filter(([, g]) => compare(g).length === 0).map(([name]) => `no hit for ${name}`);
@@ -132,9 +129,9 @@ if (process.argv.includes("--selftest")) {
       if (got !== entry.columns[String(width)]) drift.push(`${entry.tiles} tiles at ${width}px: oracle ${got}, contract ${entry.columns[String(width)]}`);
     }
   }
-  const caseHit = compareCase({ tiles: 6, target: 1440, grid: grid(6, 1440, 5) });
-  const caseMiss = compareCase({ tiles: 6, target: 1440, grid: grid(6, 1440, 3) });
-  const offTarget = compareCase({ tiles: 6, target: 1440, grid: grid(6, 1100, 3) });
+  const caseHit = compareCase({ tiles: 6, target: 1440, grid: grid(6, 1440, 3) });
+  const caseMiss = compareCase({ tiles: 6, target: 1440, grid: grid(6, 1440, 5) });
+  const offTarget = compareCase({ tiles: 6, target: 1440, grid: grid(6, 1100, 5) });
   const otherGeometry = compareCase({ tiles: 6, target: 1440, grid: grid(6, 1440, 4, { min: 240 }) });
   const ok = missed.length === 0 && hits.length === 0 && drift.length === 0 && caseHit.length === 1 && caseMiss.length === 0 && offTarget.length === 1 && otherGeometry.length === 0;
   console.log(ok ? `tile-columns-rendered selftest: hit ${Object.keys(bad).length + 2}, miss 0` : `tile-columns-rendered selftest FAILED\n${[...missed, ...hits, ...drift, ...caseHit.slice(1), ...caseMiss, ...offTarget.slice(1), ...otherGeometry].join("\n")}`);
