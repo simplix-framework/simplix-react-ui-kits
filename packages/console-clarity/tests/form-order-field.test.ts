@@ -42,3 +42,17 @@ describe("the generated form for a new record", () => {
     expect(out).toContain('{ name: "active", kind: "boolean", defaultValue: true }');
   });
 });
+
+describe("the generated form for a contract that edits and never creates", () => {
+  it("sends only the update and names no create hook", async () => {
+    const out = await render("form.hbs", { ...context, hookCreate: undefined });
+    expect(out).not.toContain("create.mutateAsync");
+    expect(out).not.toContain("useCreateVoice");
+    expect(out).toContain("if (props.voiceId) await update.mutateAsync");
+  });
+
+  it("keeps both branches when the contract creates too", async () => {
+    const out = await render("form.hbs", context);
+    expect(out).toContain("else await create.mutateAsync");
+  });
+});

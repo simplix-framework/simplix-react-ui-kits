@@ -101,8 +101,13 @@ export function {{EntityPascal}}Form(props: {{EntityPascal}}FormProps) {
         const body = editing && row ? { ...row, ...written } : written;
 {{/if}}
 {{#if hasUpdate}}
+{{#if hookCreate}}
         if (editing && props.{{entity}}Id) await update.mutateAsync({ {{#if updatePathParam}}{{updatePathParam}}{{else}}id{{/if}}: props.{{entity}}Id, data: body } as never);
         else await create.mutateAsync({ data: body } as never);
+{{else}}
+        // The contract has no create, so the form only ever edits a record that exists.
+        if (props.{{entity}}Id) await update.mutateAsync({ {{#if updatePathParam}}{{updatePathParam}}{{else}}id{{/if}}: props.{{entity}}Id, data: body } as never);
+{{/if}}
 {{else}}
         await create.mutateAsync({ data: body } as never);
 {{/if}}
