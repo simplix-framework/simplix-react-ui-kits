@@ -69,4 +69,5 @@ export { CONTRACT_COLUMN_SIZE, enumValueOf, fieldEnumsOf, groupedNumber, isBlank
 export { useScreenWords, type ScreenWords } from "./screen-words";
 export { decideAccess, permissionOf, useAllowed, type OperationAccess, type PermissionTerm } from "./allowed";
 export { figureValue } from "./record-contract";
+export { pickFields, pickFilters } from "./contract-pick";
 export type { ContractField, ContractFilter, ContractFieldKind, ContractOverrides } from "./record-contract";
