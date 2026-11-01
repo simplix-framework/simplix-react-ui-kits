@@ -126,6 +126,8 @@ export function {{EntityPascal}}Detail(props: {{EntityPascal}}DetailProps) {
     scopeKey: forcedScope(holder{{@index}}Forced),
     stateMode: "server",
     defaultPageSize: 20,
+    // Newest first, as the holder's own list opens; a server's default order is oldest first.
+    defaultSort: { field: "{{this.rowIdField}}", direction: "desc" },
   });
   const holder{{@index}}Contract = useRecordContract("{{this.entity}}");
   const holder{{@index}}Words = useScreenWords("{{this.entity}}");
