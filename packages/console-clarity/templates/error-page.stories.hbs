@@ -5,6 +5,12 @@
  * `error-page.stories.hbs` and rewritten while its fingerprint matches. It draws the failure the
  * page draws by default (not found); customise it to the failure the page's blocks pick, with the
  * same words, and once edited it is kept, and `simplix generated` lists it.
+ *
+ * A frame is drawn with kit parts only, never an icon library or a `className`: `FailurePage` for a
+ * failure of the page's own, its icon by name through `Icon`, its buttons through `Button` (both
+ * from the kit's `screen` segment). A failure the shell draws in place of itself stands outside
+ * the console window, so it goes inside `WindowScreen` (from the kit's `error` segment) with
+ * `parameters.consoleFrame` set to false.
  */
 import type { Meta, StoryObj } from "@storybook/react";
 import { NotFoundPage } from "@simplix-react-ui-kits/console-clarity/error";
