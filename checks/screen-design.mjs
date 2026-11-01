@@ -20,7 +20,7 @@
 //               starts with `__` is a layout, not a screen
 //   primaryKey  how an entity's primary key is named, `{entity}` in camel case (default {entity}Id)
 import { existsSync, readdirSync, readFileSync } from "node:fs";
-import { join, resolve } from "node:path";
+import { dirname, join, relative, resolve } from "node:path";
 import { parseArgs } from "../lib/fs-util.mjs";
 import { manifestProblems, readRoutePath } from "../lib/screen-design.mjs";
 
@@ -51,7 +51,17 @@ for (const { app, dir } of settings.routes) {
 }
 const manifest = JSON.parse(readFileSync(at(settings.manifest), "utf8"));
 const blocks = (path) => (existsSync(at(path)) ? readFileSync(at(path), "utf8") : undefined);
-const problems = manifestProblems(manifest, routed, blocks, { primaryKey: settings.primaryKey });
+// The render a generated file was laid down as, kept by the generator under the nearest
+// `.simplix/generated/` above it.
+const base = (path) => {
+  const file = at(path);
+  for (let dir = dirname(file); dir !== dirname(dir); dir = dirname(dir)) {
+    const kept = join(dir, ".simplix", "generated", relative(dir, file));
+    if (existsSync(kept)) return readFileSync(kept, "utf8");
+  }
+  return undefined;
+};
+const problems = manifestProblems(manifest, routed, blocks, { primaryKey: settings.primaryKey }, base);
 if (problems.length > 0) {
   console.error(`screen design is not complete:\n${problems.map((problem) => `  ${problem}`).join("\n")}`);
   process.exit(1);
