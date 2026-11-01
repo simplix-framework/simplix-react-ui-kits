@@ -317,7 +317,7 @@ export function useRecordContract(entity: string, overrides: ContractOverrides =
           return { link: text, onClick: () => peek.open({ kind, target: peekTargetOf(field, String(raw), text) }) };
         }
         case "json":
-          return { text: jsonText(raw), code: true };
+          return { text: jsonText(raw), code: true, block: true };
         default:
           return textValueOf(field, raw);
       }
@@ -457,7 +457,7 @@ export function useRecordContract(entity: string, overrides: ContractOverrides =
     (field: ContractField, row: Row | undefined) => ({
       label: fieldLabel(field.name),
       value: value(field, row),
-      wide: field.kind === "longText",
+      wide: field.kind === "longText" || field.kind === "json",
       copy: field.identifier === true,
     }),
     [fieldLabel, value],

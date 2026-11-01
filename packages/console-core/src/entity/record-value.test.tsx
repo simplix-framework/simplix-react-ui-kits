@@ -28,3 +28,11 @@ describe("a RecordValue drawn as a link", () => {
     expect(html).not.toContain("<button");
   });
 });
+
+describe("a RecordValue marked as a block", () => {
+  it("keeps the line breaks of a several-line machine value", () => {
+    const html = renderToStaticMarkup(createElement(RecordValueView, { value: { text: '{\n  "a": 1\n}', code: true, block: true } }));
+    expect(html).toContain("whitespace-pre-wrap");
+    expect(html).toContain('{\n  &quot;a&quot;: 1\n}');
+  });
+});

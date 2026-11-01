@@ -2,6 +2,7 @@ import type { MouseEvent, ReactNode } from "react";
 import { Button, EmptyValue, Flex, StatusBadge, Text, type StatusTone } from "@simplix-react/ui";
 
 import { InitialsAvatar } from "../identity/initials-avatar";
+import { MonoBlock } from "../notice/mono-block";
 
 /** A badge a value is drawn as: a standing, a role, a period. */
 export interface RecordBadge {
@@ -31,6 +32,11 @@ export type RecordValue =
        * the monospaced face so it reads as one rather than as a sentence.
        */
       readonly code?: boolean;
+      /**
+       * The text is a machine value of several lines (a stored payload as indented JSON), drawn as
+       * a scrolling monospaced block that keeps its line breaks.
+       */
+      readonly block?: boolean;
     }
   | { readonly badge: RecordBadge }
   | { readonly badges: readonly RecordBadge[] }
@@ -83,6 +89,7 @@ export function RecordValueView({ value }: { readonly value: RecordValue }): Rea
       </Button>
     );
   }
+  if ("text" in value && value.block) return <MonoBlock>{value.text}</MonoBlock>;
   if ("text" in value) {
     const lines = (
       <Flex direction="column" gap="none" minSize>
