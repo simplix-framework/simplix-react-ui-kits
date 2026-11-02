@@ -261,7 +261,12 @@ if (isMain && process.argv.includes("--selftest")) {
   const counted = byRegion(planted);
   const countOk = counted.plans === 2 && counted.footer === 1 && counted.order === 1 && counted.frame === 1;
   const fine = judge(base, "pricing");
-  const planned = judge(base, "help");
+  // A type still planned is never judged. The example is whichever type the contract still plans, so
+  // the case does not break when a slice makes the one it named ready; with none left it judges a
+  // copy of the contract with pricing marked planned.
+  const plannedType = Object.keys(contract.types).find((key) => contract.types[key].status === "planned");
+  const plannedContract = plannedType ? contract : { ...contract, types: { ...contract.types, pricing: { status: "planned", reason: "selftest" } } };
+  const planned = judge(base, plannedType ?? "pricing", plannedContract);
   const broken = judge({
     ...base,
     order: ["bar", "plans", "pageHead", "hero", "offers"],
@@ -274,7 +279,7 @@ if (isMain && process.argv.includes("--selftest")) {
   }, "pricing");
   const vacuous = judge({ missing: "[data-page]" }, "pricing");
   const judgeOk =
-    fine.length === 0 && planned.length === 1 && /help: the type is planned/.test(planned[0] ?? "") && vacuous.length === 1 &&
+    fine.length === 0 && planned.length === 1 && new RegExp(`^${plannedType ?? "pricing"}: the type is planned`).test(planned[0] ?? "") && vacuous.length === 1 &&
     says(broken, /^hero: not a region of pricing/) && says(broken, /^order: bar > plans > pageHead/) && says(broken, /^footer: required on pricing/) &&
     says(broken, /^offers: site-switch-option not allowed/) && says(broken, /^offers: 2 controls in one OfferRow, at most 1/) && broken.length === 5;
   const ok = compareOk && countOk && judgeOk && bordersOk;
