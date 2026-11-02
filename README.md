@@ -133,6 +133,7 @@ One entry per routed screen:
 | `timeRange` | `{ shown, reason, field }` where the list is read by when its rows happened |
 | `body` | for a page that is not a list (a dashboard): `{ shown, reason, panels }`, each panel `{ title, shown, reason, source, span }` in reading order, `span` the columns it takes in a span grid (1, 2 or 4; there is no 3). A panel left out is a decision with its reason as much as one drawn; a drawn panel names in `source` the read its figures come from, so a figure with no backend read behind it cannot be decided as drawn. Optional; when stated it is checked |
 | `menu` | `{ group, icon }`: the menu group the screen sits in and the icon its entry draws, for a screen the menu opens |
+| `search` | `{ shown, reason }`: whether the console search asks this list for records. Optional; a list whose entity offers keyword search and that is not a source of the search states `shown: false` with the reason |
 
 It fails when a routed screen has no entry, an entry is undecided (`"decided": false`), a decision has no reason, a list sorts by its primary key, or a screen's page does not draw what its entry asks for. A page laid down whole from the kit template and not yet edited draws the description (and the figure row where the entity's Meta counts), so a design asking for those passes untouched; notices, and figures the template does not draw, take the screen's own code, and a header comment naming them does not count. A screen not yet customised is listed under `acknowledged` with its reason, and an acknowledgement whose page has since been customised fails as stale.
 
@@ -141,6 +142,8 @@ It fails when a routed screen has no entry, an entry is undecided (`"decided": f
 The list decision is compared with the files that draw the list. The root's `screenDesign.listFiles` names them as paths relative to the root, with `{entity}` for the entry's entity and `{module}` for the directory above the `src` its `blocks` file sits in (`"{module}/src/widgets/{entity}/list.tsx"`, `"screens/{entity}.stories.tsx"`). The `<RecordList>` element in each must declare the entry's `presentation`, `viewToggle` and `cardTitle` (`presentation="cards"`, `viewToggle`, `cardTitle="name"`; a cards list always declares `viewToggle`, and a table with no switch declares none of them). A file that does not exist, or draws no `RecordList`, is refused for a decision that needs it and left alone for a plain table. Scaffolding with `--list-presentation cards --card-title <column>` lays down the list and the frame as decided, with the switch a cards list always has; `--view-toggle` is for a table list.
 
 A frame's sample rows are part of its design. The frame a story template lays down cannot know sample data, so it fills every text field with its own name and a number (`roleName: "roleName 1"`), which draws a meaningless list. `screen-design` fails when a file named by `listFiles`, or, with `screenDesign.frameDir` (a directory of `*.stories.tsx` files relative to the root), any frame in that directory, holds a declared field (`name: "roleName"`) whose rows are still such a value. A frame in `frameDir` with no routed screen (a holder tab's table) is read as well.
+
+The console search is checked against the same entries. With `screenDesign.search` (`{ app, meta, sources }`: the app whose console searches, its SimpliX Meta document, and the JSON file `{ sources: [{ entity, route, sort }] }` the app builds its record search from), every routed list of that app whose entity offers keyword search in Meta (a field of its search DTO marked `keyword`) is a source of the search, or its entry decides `search: { shown: false, reason }`. A source names an entity that takes a keyword (a list that takes none ignores the text and answers every row), sits at its list's route, and sorts by the entity's default sort. A newly scaffolded list therefore fails the check, which the scaffold runs, with the line to add to the sources file, until it is added or left out with a reason.
 
 Everything specific to a product is the root's `mockup.config.json` key `screenDesign`; a root without the key is left alone:
 
@@ -151,7 +154,8 @@ Everything specific to a product is the root's `mockup.config.json` key `screenD
     "routes": [{ "app": "<app>", "dir": "<path to the app's routes>" }],
     "primaryKey": "{entity}Id",
     "listFiles": ["{module}/src/widgets/{entity}/list.tsx", "screens/{entity}.stories.tsx"],
-    "frameDir": "screens"
+    "frameDir": "screens",
+    "search": { "app": "<app>", "meta": "<path to the Meta document>", "sources": "<path to the search sources JSON>" }
   }
 }
 ```

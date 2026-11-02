@@ -23,6 +23,11 @@
 //               the entry's entity and `{module}` for the directory above the `src` its blocks file sits in.
 //               The entry's list presentation, view switch and card title must equal what the
 //               `<RecordList>` element in each declares (`presentation`, `viewToggle`, `cardTitle`).
+//   search      `{ app, meta, sources }`: the console search of one app. `meta` is the SimpliX Meta
+//               document, `sources` a JSON file `{ sources: [{ entity, route, sort }] }` the app builds
+//               its search from. A routed list of that app whose entity offers keyword search is a
+//               source, or its entry decides `search: { shown: false, reason }`; a source takes a
+//               keyword, sits at its entry's route and sorts as the entity's default.
 //   descriptionCatalog  `{ file, key, locales }`: where a screen's description sentence lives. `file` is
 //               the catalog path inside the screen's module (the directory above the `src` its blocks
 //               file sits in) with `{locale}`, `key` the dotted path with `{entity}` in camel case. An
@@ -30,7 +35,7 @@
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { dirname, join, relative, resolve } from "node:path";
 import { parseArgs } from "../lib/fs-util.mjs";
-import { descriptionCatalogProblems, listViewProblems, manifestProblems, placeholderFrameProblems, placeholderRowProblems, readRoutePath } from "../lib/screen-design.mjs";
+import { descriptionCatalogProblems, entitySearchOffers, listViewProblems, manifestProblems, placeholderFrameProblems, placeholderRowProblems, readRoutePath, searchProblems } from "../lib/screen-design.mjs";
 
 const args = parseArgs(process.argv.slice(2));
 const root = resolve(args.root ?? process.cwd());
@@ -85,6 +90,14 @@ if (settings.listFiles) {
     const unreported = frames.filter((path) => !placeholders.some((reported) => reported.includes(`: ${path} still draws`)));
     problems.push(...placeholderFrameProblems(unreported, textOf));
   }
+}
+// The console search: every routed list whose entity offers keyword search in the Meta document is
+// a source of the search, or its entry decides `search.shown` false with the reason.
+if (settings.search) {
+  const { app, meta, sources } = settings.search;
+  const offers = entitySearchOffers(JSON.parse(readFileSync(at(meta), "utf8")));
+  const declared = JSON.parse(readFileSync(at(sources), "utf8"));
+  problems.push(...searchProblems(manifest, offers, declared.sources, { app, sourcesPath: sources }));
 }
 if (problems.length > 0) {
   console.error(`screen design is not complete:\n${problems.map((problem) => `  ${problem}`).join("\n")}`);
