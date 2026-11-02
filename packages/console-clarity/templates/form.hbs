@@ -7,13 +7,16 @@
  */
 import { RecordForm, useRecordContract, useScreenWords, type ContractField, type RecordFormField } from "@simplix-react-ui-kits/console-clarity/entity";
 import { QueryFallback, useInvalidateEntity } from "@simplix-react/ui";
+{{#each formPickerImports}}
+import { {{{this.hooks}}} } from "{{this.from}}";
+{{/each}}
 
 import { {{#if hookGetForEdit}}{{hookGetForEdit}}, {{else}}{{#if hookGet}}{{hookGet}}, {{/if}}{{/if}}{{#if hookCreate}}{{hookCreate}}{{/if}}{{#if hookUpdate}}{{#if hookCreate}}, {{/if}}{{hookUpdate}}{{/if}} } from "{{packageName}}";
 
 /** The fields the contract lets this form write, each edited by its kind. */
 const {{EntityPascal}}FormFields: readonly ContractField[] = [
 {{#each formFields}}
-  { name: "{{this.name}}", kind: "{{this.contractKind}}"{{#if this.money}}, currency: "{{this.money.currency}}", scale: {{this.money.scale}}{{/if}}{{#if this.enumTypeName}}, enumName: "{{this.enumTypeName}}"{{/if}}{{#if this.options.length}}, options: [{{#each this.options}}"{{this}}"{{#unless @last}}, {{/unless}}{{/each}}]{{/if}}{{#if this.peekKind}}, peekKind: "{{this.peekKind}}"{{/if}}{{#if this.peekKinds}}, peekKinds: { field: "{{this.peekKinds.field}}", kinds: { {{#each this.peekKinds.kinds}}{{this.value}}: "{{this.peekKind}}"{{#unless @last}}, {{/unless}}{{/each}} } }{{/if}}{{#if this.nameField}}, nameField: "{{this.nameField}}"{{/if}}{{#if (eq this.sortable true)}}, sortable: true{{/if}}{{#if (eq this.sortable false)}}, sortable: false{{/if}}{{#if this.baseFieldName}}, plainField: "{{this.baseFieldName}}"{{/if}}{{#if (eq this.formComponent "I18nTextareaField")}}, multiline: true{{/if}}{{#if this.defaultLiteral}}, defaultValue: {{{this.defaultLiteral}}}{{/if}} },
+  { name: "{{this.name}}", kind: "{{this.contractKind}}"{{#if this.money}}, currency: "{{this.money.currency}}", scale: {{this.money.scale}}{{/if}}{{#if this.enumTypeName}}, enumName: "{{this.enumTypeName}}"{{/if}}{{#if this.options.length}}, options: [{{#each this.options}}"{{this}}"{{#unless @last}}, {{/unless}}{{/each}}]{{/if}}{{#if this.peekKind}}, peekKind: "{{this.peekKind}}"{{/if}}{{#if this.peekKinds}}, peekKinds: { field: "{{this.peekKinds.field}}", kinds: { {{#each this.peekKinds.kinds}}{{this.value}}: "{{this.peekKind}}"{{#unless @last}}, {{/unless}}{{/each}} } }{{/if}}{{#if this.nameField}}, nameField: "{{this.nameField}}"{{/if}}{{#if (eq this.sortable true)}}, sortable: true{{/if}}{{#if (eq this.sortable false)}}, sortable: false{{/if}}{{#if this.baseFieldName}}, plainField: "{{this.baseFieldName}}"{{/if}}{{#if (eq this.formComponent "I18nTextareaField")}}, multiline: true{{/if}}{{#if this.required}}{{#unless (eq this.contractKind "boolean")}}, required: true{{/unless}}{{/if}}{{#if this.defaultLiteral}}, defaultValue: {{{this.defaultLiteral}}}{{/if}} },
 {{/each}}
 ];
 
@@ -49,8 +52,16 @@ export function {{EntityPascal}}Form(props: {{EntityPascal}}FormProps) {
   const update = {{hookUpdate}}({ mutation: { onSettled: invalidate, meta: { handledByForm: true } } });
 {{/if}}
   const record = editing ? data ?? undefined : undefined;
+{{#if formPickers.length}}
+  const row = record as Readonly<Record<string, unknown>> | undefined;
+{{#each formPickers}}
+  const {{this.field}}Search = {{this.hook}}(typeof row?.{{this.field}} === "string" ? row.{{this.field}} : "");
+{{/each}}
+  const contract = useRecordContract("{{entity}}", { searches: { {{#each formPickers}}{{this.field}}: {{this.field}}Search{{#unless @last}}, {{/unless}}{{/each}} } });
+{{else}}
   const contract = useRecordContract("{{entity}}");
   const row = record as Readonly<Record<string, unknown>> | undefined;
+{{/if}}
   const generated: RecordFormField[] = {{EntityPascal}}FormFields.map((field) => contract.formField(field, row));
   if (editing && (isLoading || !data)) return <QueryFallback isLoading={isLoading} />;
   return (
