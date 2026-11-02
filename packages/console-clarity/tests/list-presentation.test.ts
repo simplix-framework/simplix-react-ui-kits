@@ -97,3 +97,30 @@ describe("the generated board frame's list", () => {
     expect(source).not.toContain("cardTitle");
   });
 });
+
+describe("the generated list's text filters", () => {
+  const textFilters = [
+    { kind: "text", field: "provider", operators: ["contains", "equals"] },
+    { kind: "text", field: "planCode", operators: ["equals"] },
+    { kind: "text", field: "label" },
+  ];
+
+  it("declares each text filter with the operators the endpoint accepts, and none when the contract names none", () => {
+    const source = render("list.hbs", { ...context, contractFilters: textFilters });
+    expect(source).toContain('{ kind: "text", field: "provider", operators: ["contains", "equals"] },');
+    expect(source).toContain('{ kind: "text", field: "planCode", operators: ["equals"] },');
+    expect(source).toContain('{ kind: "text", field: "label" },');
+    expect(check(source)).toEqual([]);
+  });
+
+  it("draws the same filters in the board frame", () => {
+    const source = render("crud-page.stories.hbs", { ...context, contractFilters: textFilters });
+    expect(source).toContain('{ kind: "text", field: "planCode", operators: ["equals"] },');
+    expect(source).toContain('{ kind: "text", field: "label" },');
+  });
+
+  it("is checked against the contract's filter type, so an operators value that is not a list fails", () => {
+    const source = render("list.hbs", { ...context, contractFilters: textFilters });
+    expect(check(source.replace('operators: ["equals"]', 'operators: "equals"')).length).toBeGreaterThan(0);
+  });
+});

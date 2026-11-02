@@ -60,3 +60,20 @@ describe("a filter over a text the reader types a part of", () => {
     expect(def).toMatchObject({ type: "text", field: "provider", label: "Provider" });
   });
 });
+
+describe("a filter over a text the reader types a part of", () => {
+  it("offers the default operators when the contract names none", () => {
+    expect(recordFilterOf({ kind: "text", field: "provider" }, "Provider", enumLabel)).toEqual({ kind: "text", field: "provider", label: "Provider" });
+  });
+
+  it("offers exactly the operators the endpoint accepts on the field, first one the default", () => {
+    expect(recordFilterOf({ kind: "text", field: "planCode", operators: ["equals"] }, "Plan", enumLabel)).toEqual({ kind: "text", field: "planCode", label: "Plan", operators: ["equals"] });
+    const def = filterDef({ kind: "text", field: "planCode", label: "Plan", operators: ["equals" as never] });
+    expect(def).toMatchObject({ type: "text", operators: ["equals"], defaultOperator: "equals" });
+  });
+
+  it("drops an operator the filter bar does not know, and falls back to the pair when none is left", () => {
+    expect(recordFilterOf({ kind: "text", field: "a", operators: ["contains", "sounds-like"] }, "A", enumLabel)).toMatchObject({ operators: ["contains"] });
+    expect(recordFilterOf({ kind: "text", field: "a", operators: ["sounds-like"] }, "A", enumLabel)).toEqual({ kind: "text", field: "a", label: "A" });
+  });
+});

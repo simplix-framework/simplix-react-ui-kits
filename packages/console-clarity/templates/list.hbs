@@ -90,7 +90,7 @@ const {{EntityPascal}}ColumnFields: readonly ContractField[] = [
 /** The filters the contract's searchable fields give this list; not exported, for the same reason. */
 const {{EntityPascal}}Filters: readonly ContractFilter[] = [
 {{#each contractFilters}}
-  { kind: "{{this.kind}}", field: "{{this.field}}"{{#if this.enumTypeName}}, enumName: "{{this.enumTypeName}}"{{/if}}{{#if this.options}}, options: [{{#each this.options}}"{{this}}"{{#unless @last}}, {{/unless}}{{/each}}]{{/if}}{{#if (eq this.kind "dateRange")}}, dateOnly: {{#if this.dateOnly}}true{{else}}false{{/if}}{{/if}}{{#if this.money}}, currency: "{{this.money.currency}}", scale: {{this.money.scale}}{{/if}} },
+  { kind: "{{this.kind}}", field: "{{this.field}}"{{#if this.enumTypeName}}, enumName: "{{this.enumTypeName}}"{{/if}}{{#if this.options}}, options: [{{#each this.options}}"{{this}}"{{#unless @last}}, {{/unless}}{{/each}}]{{/if}}{{#if (eq this.kind "dateRange")}}, dateOnly: {{#if this.dateOnly}}true{{else}}false{{/if}}{{/if}}{{#if this.money}}, currency: "{{this.money.currency}}", scale: {{this.money.scale}}{{/if}}{{#if this.operators}}, operators: [{{#each this.operators}}"{{this}}"{{#unless @last}}, {{/unless}}{{/each}}]{{/if}} },
 {{/each}}
 ];
 

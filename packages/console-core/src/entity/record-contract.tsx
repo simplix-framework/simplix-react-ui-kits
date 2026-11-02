@@ -6,7 +6,7 @@ import { i18nBaseValue, seedI18nDefaults } from "@simplix-react/i18n";
 /** A text per content language, as the i18n helpers take it. */
 type I18nMap = Parameters<typeof i18nBaseValue>[0] & object;
 import { useEntityTranslation, useI18nEditLanguage, useLocale, useTranslation } from "@simplix-react/i18n/react";
-import type { EntityFacet, EntitySearch, LanguageSelectorPlacement, StatusTone } from "@simplix-react/ui";
+import { SearchOperator, type EntityFacet, type EntitySearch, type LanguageSelectorPlacement, type StatusTone } from "@simplix-react/ui";
 
 import { PACKAGE_NAMESPACE } from "./locales";
 import { usePeekHost, type PeekTarget } from "../peek";
@@ -163,9 +163,10 @@ export type ContractFilter =
   /**
    * A text the reader types a part of (a provider, a plan code), matched as contained. The
    * generator leaves text fields to the keyword search; a screen whose question is asked by one of
-   * them declares it.
+   * them declares it. `operators` are the ones the endpoint accepts on the field, first one the
+   * default (`["equals"]` for a field the server matches only whole); absent, contains and equals.
    */
-  | { readonly kind: "text"; readonly field: string }
+  | { readonly kind: "text"; readonly field: string; readonly operators?: readonly string[] }
   /** A figure; a `money` field also names its currency and scale, so the reader types currency units. */
   | { readonly kind: "number"; readonly field: string; readonly currency?: string; readonly scale?: number }
   | { readonly kind: "dateRange"; readonly field: string; readonly dateOnly?: boolean }
@@ -206,6 +207,12 @@ export function recordFilterOf<R>(
     case "number":
       // A money filter is typed in the currency's units, so its label says which currency.
       return { kind: "number", field, label: def.currency ? `${label} (${def.currency})` : label };
+    case "text": {
+      // An operator the filter bar does not know is dropped; a field left with none takes the default pair.
+      const known = new Set<string>(Object.values(SearchOperator));
+      const operators = (def.operators ?? []).filter((operator): operator is SearchOperator => known.has(operator));
+      return operators.length > 0 ? { kind: "text", field, label, operators } : { kind: "text", field, label };
+    }
     default:
       return { kind: def.kind, field, label };
   }

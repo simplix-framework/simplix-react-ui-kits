@@ -43,7 +43,7 @@ const COLUMN_FIELDS: readonly ContractField[] = [
 /** The filters the contract's searchable fields give the list, as the generated list offers them. */
 const FILTERS: readonly ContractFilter[] = [
 {{#each contractFilters}}
-  { kind: "{{this.kind}}", field: "{{this.field}}"{{#if this.enumTypeName}}, enumName: "{{this.enumTypeName}}"{{/if}}{{#if this.options}}, options: [{{#each this.options}}"{{this}}"{{#unless @last}}, {{/unless}}{{/each}}]{{/if}}{{#if (eq this.kind "dateRange")}}, dateOnly: {{#if this.dateOnly}}true{{else}}false{{/if}}{{/if}} },
+  { kind: "{{this.kind}}", field: "{{this.field}}"{{#if this.enumTypeName}}, enumName: "{{this.enumTypeName}}"{{/if}}{{#if this.options}}, options: [{{#each this.options}}"{{this}}"{{#unless @last}}, {{/unless}}{{/each}}]{{/if}}{{#if (eq this.kind "dateRange")}}, dateOnly: {{#if this.dateOnly}}true{{else}}false{{/if}}{{/if}}{{#if this.operators}}, operators: [{{#each this.operators}}"{{this}}"{{#unless @last}}, {{/unless}}{{/each}}]{{/if}} },
 {{/each}}
 ];
 
