@@ -3,12 +3,14 @@ import { defineSlotStyle } from "@simplix-react/ui/design";
 /**
  * The site window: the bar, the page and the footer on the canvas. It is the named container
  * `page`, so every part inside reflows on the page tiers (`page-narrow`, `page-medium`,
- * `page-wide`) by the window's own width, never by the viewport's.
+ * `page-wide`) by the window's own width, never by the viewport's. It is at least as tall as the
+ * viewport, so the footer stands at the bottom of a short page whatever height its host gives the
+ * element it is mounted in.
  */
 export const siteWindowStyle = defineSlotStyle({
   slot: "site-window",
   base:
-    "@container/page relative flex min-h-full min-w-0 flex-col break-keep bg-(--site-canvas) font-(family-name:--site-font-sans) text-(length:--site-fs-base) leading-(--site-lh-base) font-(--site-fw-base) text-(--site-ink)",
+    "@container/page relative flex min-h-dvh min-w-0 flex-col break-keep bg-(--site-canvas) font-(family-name:--site-font-sans) text-(length:--site-fs-base) leading-(--site-lh-base) font-(--site-fw-base) text-(--site-ink)",
   variants: {},
   defaultVariants: {},
 });

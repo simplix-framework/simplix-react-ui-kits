@@ -1175,7 +1175,7 @@
     @apply flex-1;
   }
   [data-slot="site-window"][data-slot][data-s-site-window] {
-    @apply @container/page relative flex min-h-full min-w-0 flex-col break-keep bg-(--site-canvas) font-(family-name:--site-font-sans) text-(length:--site-fs-base) leading-(--site-lh-base) font-(--site-fw-base) text-(--site-ink);
+    @apply @container/page relative flex min-h-dvh min-w-0 flex-col break-keep bg-(--site-canvas) font-(family-name:--site-font-sans) text-(length:--site-fs-base) leading-(--site-lh-base) font-(--site-fw-base) text-(--site-ink);
   }
 }
 @layer utilities {
