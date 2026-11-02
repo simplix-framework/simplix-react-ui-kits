@@ -1,0 +1,169 @@
+{
+  "$comment": "The site page region contract. Per page type: the regions in drawing order, the part that fills each and the prop that feeds it (slot), the DOM marks (data-slot) that place an element in it, the named parts inside it a rendered check measures, and the control kinds it may hold. A type is `ready` when the kit draws every region it lists, or `planned` with the reason it is not yet. scripts/check-site-regions.mjs holds the contract to site-core's declared slots; scripts/site-regions-rendered.mjs reads a painted page against it.",
+  "version": 1,
+  "frame": {
+    "$comment": "The window around every page and the column the page's regions stand in; measured on every page type, never a region of its own.",
+    "window": "site-window",
+    "main": "site-main",
+    "column": "site-page"
+  },
+  "regions": {
+    "bar": {
+      "part": "SiteBar",
+      "slot": "SiteWindow.bar",
+      "marks": ["site-bar"],
+      "controls": ["site-bar-brand", "site-bar-link", "site-action", "site-bar-account", "site-bar-more", "site-bar-menu-item"],
+      "parts": {
+        "brand": "site-bar-brand",
+        "link": "site-bar-link[data-current=false]",
+        "current": "site-bar-link[data-current=true]",
+        "action": "site-action",
+        "account": "site-bar-account",
+        "avatar": "site-avatar"
+      }
+    },
+    "breadcrumb": {
+      "part": "SiteBreadcrumb",
+      "slot": "SitePage children",
+      "marks": ["site-breadcrumb"],
+      "controls": ["site-breadcrumb-link"],
+      "parts": { "step": "site-breadcrumb-link", "current": "site-breadcrumb-item[data-current=true]" }
+    },
+    "pageHead": {
+      "part": "SitePageHead",
+      "slot": "SitePage children",
+      "marks": ["site-page-head"],
+      "controls": [],
+      "parts": { "eyebrow": "site-page-eyebrow", "title": "site-page-title", "lede": "site-page-lede" }
+    },
+    "switches": {
+      "part": "SwitchRow",
+      "slot": "SitePage children",
+      "marks": ["site-switch-row"],
+      "controls": ["site-switch-option"],
+      "parts": {
+        "track": "site-switch",
+        "option": "site-switch-option[data-checked=false]",
+        "chosen": "site-switch-option[data-checked=true]"
+      }
+    },
+    "plans": {
+      "part": "PlanGrid",
+      "slot": "SitePage children",
+      "marks": ["site-plan-grid"],
+      "controls": ["site-action"],
+      "parts": {
+        "card": "site-plan-card[data-highlight=false]",
+        "highlighted": "site-plan-card[data-highlight=true]",
+        "badge": "site-plan-card-badge",
+        "name": "site-plan-card-name",
+        "price": "site-plan-card-price",
+        "unit": "site-plan-card-unit",
+        "note": "site-plan-card-note",
+        "pitch": "site-plan-card-pitch",
+        "features": "site-feature-list",
+        "feature": "site-feature",
+        "mark": "site-feature-mark",
+        "primary": "site-action[data-tone=primary]",
+        "secondary": "site-action[data-tone=secondary]",
+        "quiet": "site-action[data-tone=quiet]"
+      }
+    },
+    "offers": {
+      "part": "OfferRow",
+      "slot": "SitePage children",
+      "marks": ["site-offer-row"],
+      "controls": ["site-action"],
+      "maxControls": 1,
+      "parts": {
+        "title": "site-offer-row-title",
+        "about": "site-offer-row-about",
+        "action": "site-action",
+        "note": "site-offer-row-note"
+      }
+    },
+    "priceTable": {
+      "part": "PriceTable",
+      "slot": "SitePage children",
+      "marks": ["site-price-table"],
+      "controls": [],
+      "parts": {
+        "caption": "site-price-table-caption",
+        "head": "site-price-table-head",
+        "column": "site-price-table-column",
+        "row": "site-price-table-row",
+        "rowHead": "site-price-table-row-head",
+        "cell": "site-price-table-cell"
+      }
+    },
+    "questions": {
+      "part": "QuestionList",
+      "slot": "SiteSection children",
+      "marks": ["site-question-list"],
+      "within": "site-section",
+      "controls": [],
+      "parts": {
+        "heading": "site-section-heading",
+        "list": "site-question-list",
+        "ask": "site-question-ask",
+        "answer": "site-question-answer"
+      }
+    },
+    "footer": {
+      "part": "SiteFooter",
+      "slot": "SiteWindow.footer",
+      "marks": ["site-footer"],
+      "controls": ["site-footer-link", "*"],
+      "$comment": "`*` admits the product's language picker, which stands in the footer's language place and is the product's own control.",
+      "parts": {
+        "owner": "site-footer-owner",
+        "link": "site-footer-link[data-emphasis=false]",
+        "emphasis": "site-footer-link[data-emphasis=true]"
+      }
+    }
+  },
+  "types": {
+    "pricing": {
+      "status": "ready",
+      "root": "[data-page]",
+      "regions": ["bar", "pageHead", "switches", "plans", "offers", "priceTable", "questions", "footer"],
+      "required": ["bar", "pageHead", "plans", "footer"],
+      "$comment": "The offers, the price table and the questions follow the plans; a page leaves out a region its catalogue has nothing for, never reorders one."
+    },
+    "marketing": {
+      "status": "planned",
+      "reason": "needs the marketing segment (HeroBand, NumberedSteps, SampleRow) of the next slice; the dark band scope it continues into is in place",
+      "plannedRegions": ["bar", "hero", "compare", "steps", "download", "footer"]
+    },
+    "install": {
+      "status": "planned",
+      "reason": "needs the install segment (CheckCard, DownloadCard, CopyBlock, VideoCard)",
+      "plannedRegions": ["bar", "pageHead", "check", "downloads", "steps", "video", "troubleshooting", "footer"]
+    },
+    "help": {
+      "status": "planned",
+      "reason": "needs the help segment (StatusLine, SearchHero, CategoryGrid, ArticleList, ArticleLayout, ContactForm)",
+      "plannedRegions": ["bar", "status", "pageHead", "search", "categories", "articles", "contact", "footer"]
+    },
+    "legal": {
+      "status": "planned",
+      "reason": "needs the legal segment (DocLayout, PlainSummary, VersionPicker, DiffText, KeyValues, LegalTable, PrintButton); the breadcrumb region is in place",
+      "plannedRegions": ["bar", "breadcrumb", "pageHead", "contents", "articles", "footer"]
+    },
+    "account": {
+      "status": "planned",
+      "reason": "needs the account segment (AccountLayout, SectionNav, SettingsRows, QuotaMeter, DaySeries, TableCard, ConfirmByTyping, StandingBanner)",
+      "plannedRegions": ["bar", "banner", "sections", "sectionHead", "rows", "footer"]
+    },
+    "checkout": {
+      "status": "planned",
+      "reason": "needs the checkout segment (Stepper, CheckoutLayout, ChoiceCards, ConsentChecklist, OrderSummary, MethodGrid, ProgressChain, DonePanel)",
+      "plannedRegions": ["bar", "stepper", "main", "summary", "footer"]
+    },
+    "auth": {
+      "status": "planned",
+      "reason": "needs the auth segment (AuthCard) the Keycloak theme draws; it has no site bar or footer",
+      "plannedRegions": ["card", "providers", "foot"]
+    }
+  }
+}
