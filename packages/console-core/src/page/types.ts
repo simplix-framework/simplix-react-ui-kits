@@ -226,6 +226,11 @@ export interface PageSpec {
   /** Whether the figures are still being read. */
   readonly tilesLoading?: boolean;
   /**
+   * Whether the figure row folds. False keeps the figures always open, with no fold control: a page
+   * whose figures are what it is for (a dashboard). Defaults to true, the console's shared fold.
+   */
+  readonly tilesCollapsible?: boolean;
+  /**
    * The list's filter state the figures narrow, for a figure that counts rows of the list under it
    * (`FilterSettingsTile`): pressing it writes the filter its rows are found by, as a chip does.
    */

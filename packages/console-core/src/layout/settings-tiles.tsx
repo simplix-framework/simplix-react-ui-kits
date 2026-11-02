@@ -383,12 +383,18 @@ interface SettingsTilesProps {
   readonly folded?: boolean;
   /** The list's filter state a {@link FilterSettingsTile} narrows: the one its chip row reads. */
   readonly filters?: TileFilters;
+  /**
+   * Whether the row folds. False draws the tiles always open, with no fold control and no strip, and
+   * leaves the console's fold choice alone: a page whose figures are the point of the page (a
+   * dashboard) keeps them in view. Defaults to true.
+   */
+  readonly collapsible?: boolean;
 }
 
 /** The part of a list's filter state the tiles read and write. */
 export type TileFilters = Pick<CrudListFilters, "committedValues" | "commitValues">;
 
-export function SettingsTiles({ tiles, columns = MAX_TILE_COLUMNS, reorderKey, title, loading = false, folded = false, filters }: SettingsTilesProps) {
+export function SettingsTiles({ tiles, columns = MAX_TILE_COLUMNS, reorderKey, title, loading = false, folded = false, filters, collapsible = true }: SettingsTilesProps) {
   const { t } = useTranslation(PACKAGE_NAMESPACE + "/tiles");
   const shared = useTilesCollapse();
   const [unfolded, setUnfolded] = useState(false);
@@ -424,7 +430,7 @@ export function SettingsTiles({ tiles, columns = MAX_TILE_COLUMNS, reorderKey, t
   // registered no actions there. Folding against a rule that is not on the screen would lift the
   // row 32px into whatever is above it.
   const underARule = Boolean(onAPhone ? header.actions : header.title);
-  const folding = underARule && leads !== "content";
+  const folding = collapsible && underARule && leads !== "content";
   // A titled row folds into chips in its own head and has no strip to turn.
   const turningFolded = !title && folding && collapsed;
 
@@ -451,6 +457,22 @@ export function SettingsTiles({ tiles, columns = MAX_TILE_COLUMNS, reorderKey, t
   // arrive, and an index wrapped against the old count would land on a different tile than the one
   // that was about to be shown.
   const showing = at % tiles.length;
+
+  // A row that does not fold draws its heading, when it has one, over the tiles with no control.
+  if (title && !collapsible) {
+    return (
+      <section ref={anchor} aria-label={title}>
+        <div className="flex items-center" {...slotAttributes(tileHeadStyle, { folded: false })}>
+          <h2 className="shrink-0" {...slotAttributes(tileTitleStyle, {})}>
+            {title}
+          </h2>
+        </div>
+        <div {...slotAttributes(tileRowStyle, {})}>
+          <TileGrid tiles={tiles} columns={columns} reorderKey={reorderKey} loading={loading} filters={filters} />
+        </div>
+      </section>
+    );
+  }
 
   if (title) {
     return (

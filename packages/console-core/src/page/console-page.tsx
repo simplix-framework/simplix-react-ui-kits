@@ -124,6 +124,7 @@ export function ConsolePage({
         loading={spec.tilesLoading}
         folded={search.id !== undefined}
         filters={spec.tilesFilters}
+        collapsible={spec.tilesCollapsible}
       />
     ) : null
   );
