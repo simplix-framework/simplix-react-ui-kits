@@ -34,6 +34,36 @@ describe.each(variants)("the generated $name", ({ template, namedAt, entry, befo
   });
 });
 
+describe("the generated top-bar shell on a phone", () => {
+  const action = '  const actions: readonly BarAction[] = [{ key: "account", label: "Account", onSelect: () => undefined }];\n';
+  const declared = "  const actions: readonly BarAction[] = [];\n";
+
+  it("links the mark to the first screen and hands the band its phone menu", () => {
+    const source = render("app-shell.top-bar.hbs", context);
+    expect(source).toContain('home={{ href: "/", label: t("shell.home") }}');
+    expect(source).toContain("phoneMenu={");
+  });
+
+  it("draws an action as a row in the phone sheet and as a button in the wide bar from the one declaration", () => {
+    const source = render("app-shell.top-bar.hbs", context);
+    expect(source).toContain(declared);
+    expect(source.match(/actions\.map\(/g)).toHaveLength(2);
+    const withAction = source.replace(declared, action);
+    expect(check(withAction)).toEqual([]);
+  });
+
+  it("is a shape only the top-bar shell has: the menu-column shell draws the console's own phone shell", () => {
+    const menuColumn = render("app-shell.hbs", context);
+    expect(menuColumn).not.toContain("phoneMenu");
+    expect(menuColumn).not.toContain("BarAction");
+  });
+
+  it("links the board frame's mark to the first screen as well", () => {
+    const story = render("app-shell.top-bar.stories.hbs", { NamePascal: "Shell", storyTitle: "App/Shell" });
+    expect(story).toContain('home={{ href: "/", label: "Go to the first screen" }}');
+  });
+});
+
 describe.each(["auth-page.hbs", "error-page.hbs", "record-page.hbs", "dashboard-page.hbs", "static-page.hbs"])("the generated %s", (template) => {
   it("compiles alone as the whole page", () => {
     const page = join(virtualRoot, "apps", "app", "src", "pages", "thing", "page.tsx");

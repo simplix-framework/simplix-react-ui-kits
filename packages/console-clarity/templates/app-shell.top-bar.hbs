@@ -7,14 +7,31 @@
  * bar, the destinations, what wraps the routed screens and the pages drawn in place of the window
  * for a refused self read are this file's own, in `useShellParts` below, and are customised here;
  * the screens reached without a session wear `AuthLayout`.
+ *
+ * <p>On a phone the bar is the mark (a link to `/`), the page title and one menu button; the
+ * destinations, the language and the theme are the rows of the sheet it opens. The controls the app
+ * adds after the language and the theme are written once, as `actions` in `useShellParts`: the wide
+ * bar draws each as a short button and the sheet as a row, so a control never exists on one and not
+ * the other. The strings come from the `{{namespace}}` catalog (English and Korean in the same
+ * change): `shell.title`, `shell.home` and the label of each action.
  */
 import { Outlet, useRouterState } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 import { useTranslation } from "@simplix-react/i18n/react";
-import { PageHeaderProvider } from "@simplix-react/ui";
+import { Button, PageHeaderProvider } from "@simplix-react/ui";
 import { PeekHost } from "@simplix-react-ui-kits/console-clarity/peek";
 import { NoticeRegistryProvider } from "@simplix-react-ui-kits/console-clarity/notice";
 import { AuthLayout, ConsoleBandTopBar, ConsoleTopBarWindow, DarkModeToggle, LocalePicker, useShellRefusalScreen, type ShellRefusalPages } from "@simplix-react-ui-kits/console-clarity/shell";
+
+/** A control the app adds to the bar after the language and the theme, such as the account page or signing out. */
+export interface BarAction {
+  readonly key: string;
+  /** The words on the control: the short button's name on a wide bar, the row's text in the phone sheet. */
+  readonly label: string;
+  /** The mark ahead of the label. */
+  readonly icon?: ReactNode;
+  readonly onSelect: () => void;
+}
 
 export interface ShellParts {
   /** The band across the top of the window: the mark, the destinations and the controls. */
@@ -33,11 +50,33 @@ export interface ShellParts {
 /** The shell's parts for the route on screen, which the bar reads to mark where the reader stands. */
 export function useShellParts(_route: string): ShellParts {
   const { t } = useTranslation("{{namespace}}");
+  // The controls after the language and the theme, for example the account page and signing out:
+  // { key: "account", label: t("shell.account"), icon: <UserRoundIcon aria-hidden />, onSelect: openAccount }
+  const actions: readonly BarAction[] = [];
   return {
     topBar: (
-      <ConsoleBandTopBar mark={t("shell.title")}>
+      <ConsoleBandTopBar
+        mark={t("shell.title")}
+        home={{ldb}} href: "/", label: t("shell.home") {{rdb}}
+        phoneMenu={
+          actions.length > 0
+            ? actions.map((action) => (
+                <Button key={action.key} variant="ghost" className="w-full justify-start" onClick={action.onSelect}>
+                  {action.icon}
+                  {action.label}
+                </Button>
+              ))
+            : undefined
+        }
+      >
         <LocalePicker />
         <DarkModeToggle />
+        {actions.map((action) => (
+          <Button key={action.key} variant="ghost" size="sm" onClick={action.onSelect}>
+            {action.icon}
+            {action.label}
+          </Button>
+        ))}
       </ConsoleBandTopBar>
     ),
     isOutsideTheShell: () => false,
