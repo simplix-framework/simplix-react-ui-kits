@@ -6,6 +6,18 @@
 
 export { DashboardCard, DashboardColumns, type DashboardCardProps } from "./dashboard-card";
 export {
+  DASHBOARD_SPANS,
+  DashboardGrid,
+  dashboardColumnsThatFit,
+  dashboardRowProblems,
+  dashboardRows,
+  spanAt,
+  useDashboardGridColumns,
+  type DashboardColumnCount,
+  type DashboardGridProps,
+  type DashboardSpan,
+} from "./dashboard-grid";
+export {
   DashboardBlockGrid,
   DashboardBlockHead,
   DashboardSection,

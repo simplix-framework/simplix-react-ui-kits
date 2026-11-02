@@ -4,6 +4,7 @@ export const dashboardSlots: Record<string, string> = {
   "dashboard-card-title": "text-(length:--fs-cell) leading-(--lh-cell) font-semibold",
   "dashboard-card-meta": "text-(length:--fs-control) leading-(--lh-control)",
   "dashboard-columns": "gap-3",
+  "dashboard-grid": "gap-3",
   "schedule-row": "text-(length:--fs-cell) leading-(--lh-cell) hover:bg-[var(--surface-2)] active:bg-[var(--surface-3)]",
   "schedule-time": "font-(--fw-strong)",
   "schedule-task": "font-(--fw-strong)",

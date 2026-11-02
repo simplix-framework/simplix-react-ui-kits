@@ -69,6 +69,20 @@ export interface TileColumnsResult {
  * @param cap the most tiles a row may hold
  */
 export function useTileColumns(grid: RefObject<HTMLElement | null>, tiles: number, cap: TileColumns): TileColumnsResult {
+  const fit = useColumnsThatFit(grid, "--tile-min-width", cap);
+  return { columns: tileColumnsFor(tiles, fit ?? cap), measured: fit !== null };
+}
+
+/**
+ * How many items fit side by side in a grid at its own width, each no narrower than the length the
+ * custom property `minVar` holds, up to `cap`; null until the grid is measured. The figure row and
+ * the dashboard grid both decide their columns this way, each by its own minimum token.
+ *
+ * @param grid the grid element
+ * @param minVar the custom property holding the narrowest an item is drawn (`--tile-min-width`)
+ * @param cap the most items a row may hold
+ */
+export function useColumnsThatFit(grid: RefObject<HTMLElement | null>, minVar: string, cap: number): number | null {
   const [fit, setFit] = useState<number | null>(null);
   useLayoutEffect(() => {
     const el = grid.current;
@@ -77,7 +91,7 @@ export function useTileColumns(grid: RefObject<HTMLElement | null>, tiles: numbe
       const style = getComputedStyle(el);
       const root = Number.parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
       const gap = Number.parseFloat(style.columnGap) || 0;
-      return tilesThatFit(el.clientWidth, gap, lengthPx(style.getPropertyValue("--tile-min-width"), root), cap);
+      return tilesThatFit(el.clientWidth, gap, lengthPx(style.getPropertyValue(minVar), root), cap);
     };
     const commit = () => flushSync(() => setFit(read()));
     setFit(read());
@@ -93,6 +107,6 @@ export function useTileColumns(grid: RefObject<HTMLElement | null>, tiles: numbe
       observer?.disconnect();
       cancelAnimationFrame(frame);
     };
-  }, [grid, cap]);
-  return { columns: tileColumnsFor(tiles, fit ?? cap), measured: fit !== null };
+  }, [grid, minVar, cap]);
+  return fit;
 }

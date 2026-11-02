@@ -292,6 +292,9 @@
   [data-slot="dashboard-columns"][data-slot][data-s-dashboard-columns] {
     @apply gap-3;
   }
+  [data-slot="dashboard-grid"][data-slot][data-s-dashboard-grid] {
+    @apply gap-3;
+  }
   [data-slot="dashboard-split"][data-slot][data-s-dashboard-split] {
     @apply gap-4;
   }

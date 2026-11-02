@@ -43,6 +43,14 @@ export const dashboardCardBodyStyle = defineSlotStyle({
 });
 
 /** Cards side by side, two to a row. */
+/** The four, two or one columns of a dashboard grid, the gap between its cards. */
+export const dashboardGridStyle = defineSlotStyle({
+  slot: "dashboard-grid",
+  base: "gap-3",
+  variants: {},
+  defaultVariants: {},
+});
+
 export const dashboardColumnsStyle = defineSlotStyle({
   slot: "dashboard-columns",
   base: "gap-3",

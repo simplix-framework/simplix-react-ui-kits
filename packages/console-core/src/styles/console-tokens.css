@@ -11,6 +11,10 @@
   /* The narrowest a figure tile is drawn: a row holds as many tiles as fit at this width, up to five. */
   --tile-min-width: 12rem;
 
+  /* The narrowest a one-column dashboard card is drawn: the dashboard grid draws four columns where
+     four fit at this width, two where two fit, one otherwise. */
+  --dashboard-card-min-width: 15rem;
+
   /* The widest a card's label column grows: a card sizes the column to its longest label and wraps
      one past this width. */
   --console-card-label-max: 8rem;

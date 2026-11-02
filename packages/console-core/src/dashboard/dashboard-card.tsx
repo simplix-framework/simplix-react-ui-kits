@@ -3,6 +3,8 @@ import { slotAttributes } from "@simplix-react/ui/design";
 
 import { useReflowFlip } from "../layout/use-reflow-flip";
 
+import { type DashboardSpan, spanAt, useDashboardGridColumns } from "./dashboard-grid";
+
 import { figureActionStyle } from "./chart.style";
 import {
   dashboardCardBodyStyle,
@@ -21,8 +23,12 @@ export interface DashboardCardProps {
   readonly trailing?: ReactNode;
   /** `chart` pads for a plot, `list` for rows that carry their own padding. */
   readonly kind?: "chart" | "list";
-  /** `full` takes the whole row of a {@link DashboardColumns}, for a block read across. */
-  readonly span?: "half" | "full";
+  /**
+   * The columns the card takes. In a `DashboardGrid`: 1 for a number or a meter, 2 for a series, a
+   * breakdown or a short list, 4 for a wide table or an event list; the whole row where the grid has
+   * fewer columns. In a {@link DashboardColumns}: `half`, or `full` for a block read across.
+   */
+  readonly span?: "half" | "full" | DashboardSpan;
   /** Words a screen reader hears for the card, when the title alone does not say whose figures they are. */
   readonly description?: string;
   /** The link at the heading's end to the list the card reads, such as 「Open the audit log」. */
@@ -33,8 +39,16 @@ export interface DashboardCardProps {
 /** A dashboard card: a heading row with a legend or context and the link to its list at its right, over a chart or a list. */
 export function DashboardCard({ title, trailing, kind = "chart", span = "half", description, action, children }: DashboardCardProps) {
   const meta = typeof trailing === "string" ? <span {...slotAttributes(dashboardCardMetaStyle, {})}>{trailing}</span> : trailing;
+  const columns = useDashboardGridColumns();
+  const gridSpan = typeof span === "number" && columns !== null ? spanAt(span, columns) : undefined;
   return (
-    <section aria-label={description ? `${title}, ${description}` : undefined} className={span === "full" ? "lg:col-span-2" : undefined} {...slotAttributes(dashboardCardStyle, {})}>
+    <section
+      aria-label={description ? `${title}, ${description}` : undefined}
+      className={span === "full" ? "lg:col-span-2" : undefined}
+      data-span={typeof span === "number" ? span : undefined}
+      style={gridSpan ? { gridColumn: `span ${gridSpan} / span ${gridSpan}` } : undefined}
+      {...slotAttributes(dashboardCardStyle, {})}
+    >
       <div className="flex flex-wrap items-center justify-between" {...slotAttributes(dashboardCardHeadStyle, {})}>
         <h3 {...slotAttributes(dashboardCardTitleStyle, {})}>{title}</h3>
         {action ? (
