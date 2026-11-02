@@ -2,7 +2,7 @@ import type { MouseEvent, ReactNode } from "react";
 import { slotAttributes } from "@simplix-react/ui/design";
 
 import { SiteLink } from "../link/site-link";
-import { siteActionStyle } from "./site-action.style";
+import { actionPad, siteActionStyle } from "./site-action.style";
 
 /** How strongly an action asks to be pressed: one `primary` per region. */
 export type SiteActionTone = "primary" | "secondary" | "quiet";
@@ -21,6 +21,10 @@ export interface SiteActionSpec {
   readonly disabled?: boolean;
   /** A glyph before the label. */
   readonly icon?: ReactNode;
+  /** A toggle's state: the action is drawn as a button that says whether it is on. */
+  readonly pressed?: boolean;
+  /** The accessible name, where the label alone repeats elsewhere on the page. */
+  readonly name?: string;
 }
 
 /** Props for {@link SiteAction}. */
@@ -37,23 +41,23 @@ export interface SiteActionProps extends SiteActionSpec {
  * action is always a disabled button: a link cannot be disabled, and one that only looks disabled
  * still navigates.
  */
-export function SiteAction({ id, label, href, onSelect, tone, disabled = false, icon, size, block, submit = false }: SiteActionProps) {
-  const marks = slotAttributes(siteActionStyle, { tone, size, block });
+export function SiteAction({ id, label, href, onSelect, tone, disabled = false, icon, pressed, name, size, block, submit = false }: SiteActionProps) {
+  const marks = slotAttributes(siteActionStyle, { tone, size, block, pad: actionPad(tone, size) });
   const content = (
     <>
       {icon}
       {label}
     </>
   );
-  if (href !== undefined && !disabled && !submit) {
+  if (href !== undefined && !disabled && !submit && pressed === undefined) {
     return (
-      <SiteLink {...marks} data-action={id} href={href} onClick={onSelect}>
+      <SiteLink {...marks} data-action={id} href={href} onClick={onSelect} aria-label={name}>
         {content}
       </SiteLink>
     );
   }
   return (
-    <button {...marks} data-action={id} type={submit ? "submit" : "button"} disabled={disabled} onClick={onSelect}>
+    <button {...marks} data-action={id} type={submit ? "submit" : "button"} disabled={disabled} aria-pressed={pressed} aria-label={name} onClick={onSelect}>
       {content}
     </button>
   );

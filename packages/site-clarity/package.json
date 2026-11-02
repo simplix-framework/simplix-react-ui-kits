@@ -25,6 +25,11 @@
       "types": "./src/install/index.ts",
       "import": "./dist/install/index.js"
     },
+    "./legal": {
+      "source": "./src/legal/index.ts",
+      "types": "./src/legal/index.ts",
+      "import": "./dist/legal/index.js"
+    },
     "./link": {
       "source": "./src/link/index.ts",
       "types": "./src/link/index.ts",

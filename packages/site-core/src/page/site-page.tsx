@@ -92,10 +92,12 @@ export interface SiteBreadcrumbProps {
   readonly steps: readonly SiteBreadcrumbStep[];
   /** The trail's landmark name. */
   readonly label: string;
+  /** What stands between two steps, a chevron the product draws; a slash otherwise. */
+  readonly separator?: ReactNode;
 }
 
 /** The trail from the site's top to the page shown, the last step marked as the current page. */
-export function SiteBreadcrumb({ steps, label }: SiteBreadcrumbProps) {
+export function SiteBreadcrumb({ steps, label, separator = "/" }: SiteBreadcrumbProps) {
   return (
     <nav {...slotAttributes(siteBreadcrumbStyle, {})} aria-label={label}>
       <ol {...slotAttributes(siteBreadcrumbListStyle, {})}>
@@ -105,7 +107,7 @@ export function SiteBreadcrumb({ steps, label }: SiteBreadcrumbProps) {
             <Fragment key={step.key}>
               {index > 0 ? (
                 <li {...slotAttributes(siteBreadcrumbSeparatorStyle, {})} aria-hidden="true">
-                  /
+                  {separator}
                 </li>
               ) : null}
               <li {...slotAttributes(siteBreadcrumbItemStyle, { current })} aria-current={current ? "page" : undefined}>

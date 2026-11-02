@@ -87,7 +87,7 @@ export const siteSectionLedeStyle = defineSlotStyle({
 /** The trail from the site's top to the page shown. */
 export const siteBreadcrumbStyle = defineSlotStyle({
   slot: "site-breadcrumb",
-  base: "min-w-0 text-(length:--site-fs-caption) leading-(--site-lh-caption) text-(--site-ink-muted)",
+  base: "flex min-w-0 flex-wrap items-center gap-1.5 text-(length:--site-fs-caption) leading-(--site-lh-caption) font-(--site-fw-caption) text-(--site-ink-muted)",
   variants: {},
   defaultVariants: {},
 });
@@ -103,10 +103,10 @@ export const siteBreadcrumbListStyle = defineSlotStyle({
 /** One step of the trail; the page shown is the last, in full ink. */
 export const siteBreadcrumbItemStyle = defineSlotStyle({
   slot: "site-breadcrumb-item",
-  base: "inline-flex min-w-0 items-center gap-1.5",
+  base: "flex min-w-0 items-center",
   variants: {
     current: {
-      true: "font-(--site-fw-strong) text-(--site-ink)",
+      true: "",
       false: "",
     },
   },
@@ -117,7 +117,7 @@ export const siteBreadcrumbItemStyle = defineSlotStyle({
 export const siteBreadcrumbLinkStyle = defineSlotStyle({
   slot: "site-breadcrumb-link",
   base:
-    "cursor-pointer rounded-(--site-radius-xs) text-inherit no-underline underline-offset-2 outline-none hover:underline focus-visible:shadow-[var(--site-focus-ring)]",
+    "cursor-pointer rounded-(--site-radius-xs) font-(--site-fw-base) text-inherit no-underline underline-offset-2 outline-none hover:underline focus-visible:shadow-[var(--site-focus-ring)]",
   variants: {},
   defaultVariants: {},
 });
@@ -125,7 +125,7 @@ export const siteBreadcrumbLinkStyle = defineSlotStyle({
 /** The mark between two steps. */
 export const siteBreadcrumbSeparatorStyle = defineSlotStyle({
   slot: "site-breadcrumb-separator",
-  base: "text-(--site-ink-muted) opacity-(--site-recede)",
+  base: "flex items-center text-(--site-ink-muted) [&_svg]:size-3",
   variants: {},
   defaultVariants: {},
 });

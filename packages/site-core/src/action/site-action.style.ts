@@ -6,8 +6,9 @@ import { defineSlotStyle } from "@simplix-react/ui/design";
  * hero), and
  * `block` stretches it over its column, as a plan card's actions are.
  *
- * <p>`size` is declared before `tone`: the rules are written in declaration order at one
- * specificity, so the quiet tone's narrower side room, which draws no ground, wins over the size's.
+ * <p>The variants are written in declaration order at one specificity. `pad` comes last: a quiet
+ * action draws no ground, so it takes narrower side room than the size gives, and how much narrower
+ * depends on the size (`quietSm`, `quietMd`); {@link actionPad} picks it from the tone and the size.
  */
 export const siteActionStyle = defineSlotStyle({
   slot: "site-action",
@@ -22,12 +23,23 @@ export const siteActionStyle = defineSlotStyle({
     tone: {
       primary: "bg-(--site-accent) text-(--site-on-accent) hover:bg-(--site-accent-strong)",
       secondary: "border-(--site-line) bg-(--site-surface) text-(--site-ink) hover:bg-(--site-surface-sunken)",
-      quiet: "bg-transparent px-2 text-(--site-accent-strong) hover:bg-(--site-accent-soft)",
+      quiet: "bg-transparent text-(--site-accent-strong) hover:bg-(--site-accent-soft)",
     },
     block: {
       true: "w-full",
       false: "",
     },
+    pad: {
+      size: "",
+      quietSm: "px-1.5",
+      quietMd: "px-2",
+    },
   },
-  defaultVariants: { tone: "secondary", size: "md", block: false },
+  defaultVariants: { tone: "secondary", size: "md", block: false, pad: "size" },
 });
+
+/** The side room an action takes: its size's, or a quiet action's narrower room for that size. */
+export function actionPad(tone: "primary" | "secondary" | "quiet" | undefined, size: "md" | "sm" | "lg" | undefined): "size" | "quietSm" | "quietMd" {
+  if (tone !== "quiet") return "size";
+  return size === "sm" ? "quietSm" : "quietMd";
+}

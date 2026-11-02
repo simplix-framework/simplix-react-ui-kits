@@ -6,6 +6,7 @@ export default defineConfig((options) => ({
     "action/index": "src/action/index.ts",
     "help/index": "src/help/index.ts",
     "install/index": "src/install/index.ts",
+    "legal/index": "src/legal/index.ts",
     "link/index": "src/link/index.ts",
     "marketing/index": "src/marketing/index.ts",
     "page/index": "src/page/index.ts",

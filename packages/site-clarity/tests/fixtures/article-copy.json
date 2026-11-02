@@ -1,0 +1,780 @@
+{
+ "en": {
+  "article": {
+   "crumbs": [
+    "Help",
+    "Troubleshooting",
+    "When voices are not made"
+   ],
+   "navLabel": "Help",
+   "title": "When voices are not made",
+   "facts": [
+    "Troubleshooting",
+    "3 min read",
+    "Updated Oct 12",
+    "For app 1.0.0"
+   ],
+   "where": [
+    "PC app",
+    "Inside PowerPoint",
+    "Tablet"
+   ],
+   "lead": "Go through these in order when you press Make voice and a sentence is not made, progress stops, or nothing happens. Most cases are solved at step 1 or step 3.",
+   "tocTitle": "In this article",
+   "toc": [
+    {
+     "no": null,
+     "title": "First, just these",
+     "done": false
+    },
+    {
+     "no": "1",
+     "title": "Read the error message",
+     "done": false
+    },
+    {
+     "no": "2",
+     "title": "Check that the app is running",
+     "done": false
+    },
+    {
+     "no": "3",
+     "title": "Run the connection check",
+     "done": false
+    },
+    {
+     "no": "4",
+     "title": "Check your credits",
+     "done": false
+    },
+    {
+     "no": "5",
+     "title": "Remake only the failed sentences",
+     "done": false
+    },
+    {
+     "no": null,
+     "title": "Still not working",
+     "done": false
+    }
+   ],
+   "progress": "0 of 5 steps tried",
+   "ask": "Contact us",
+   "quick": {
+    "title": "First, just these",
+    "items": [
+     [
+      "Are you online?",
+      "Premium voices, your own voice and free voices on a tablet are made on the server."
+     ],
+     [
+      "Are credits left?",
+      "Free voices use no credits in the PC app or on a tablet. Cloud mode has only premium voices, which use credits."
+     ],
+     [
+      "Is the app running?",
+      "Inside PowerPoint, the app makes the voices."
+     ]
+    ]
+   },
+   "steps": [
+    {
+     "title": "Read the error message",
+     "body": "On the Voice tab, a sentence that was not made says why under its text. What to do depends on the message.",
+     "figure": {
+      "caption": "Figure 1 · The Voice tab of the task pane. Press a failed sentence to see why and a button to fix it."
+     },
+     "table": {
+      "label": "Read the error message",
+      "head": [
+       "Message",
+       "Meaning",
+       "What to do"
+      ],
+      "rows": [
+       [
+        "Not enough credits",
+        "Premium or own-voice characters ran out",
+        "Top up credits or switch to a free voice"
+       ],
+       [
+        "Cannot reach the voice server",
+        "The internet is down or the server is under maintenance",
+        "Check the service status. Free voices still work in the PC app; on a tablet they need the connection"
+       ],
+       [
+        "Free voice model not found",
+        "The model download stopped or was deleted",
+        "Settings › Voice engine › Download again"
+       ],
+       [
+        "Some characters cannot be read",
+        "There are formulas or special symbols",
+        "Write how to read them in the pronunciation dictionary"
+       ]
+      ]
+     },
+     "tip": null,
+     "note": null,
+     "tried": {
+      "label": "Mark as tried",
+      "name": "Mark as tried: step 1"
+     }
+    },
+    {
+     "title": "Check that the app is running",
+     "body": "Inside PowerPoint, the StageVoice app on this computer makes voices. If “App not found” shows at the top of the task pane, press Open the app.",
+     "figure": {
+      "caption": "Figure 2 · The notice at the top of the task pane when the app is closed"
+     },
+     "table": null,
+     "tip": "If you opened the file directly in the PC app or on a tablet, skip this step.",
+     "note": null,
+     "tried": {
+      "label": "Mark as tried",
+      "name": "Mark as tried: step 2"
+     }
+    },
+    {
+     "title": "Run the connection check",
+     "body": "In the app, press Start check under Settings › Connection check. Press Fix beside an item with a problem and most problems are solved at once.",
+     "figure": {
+      "caption": "Figure 3 · Connection check. It looks only at connections, never at your files."
+     },
+     "table": null,
+     "tip": null,
+     "note": null,
+     "tried": {
+      "label": "Mark as tried",
+      "name": "Mark as tried: step 3"
+     }
+    },
+    {
+     "title": "Check your credits",
+     "body": "Premium voices and your own voice use credits. We warn you before you run short, but making several presentations at once can run out midway.",
+     "figure": {
+      "caption": "Figure 4 · Credits left. Extra credits of 60,000 characters are ₩14,900 and last 12 months."
+     },
+     "table": null,
+     "tip": null,
+     "note": "Credits for failed sentences come back at once, and the held characters are released too.",
+     "tried": {
+      "label": "Mark as tried",
+      "name": "Mark as tried: step 4"
+     }
+    },
+    {
+     "title": "Remake only the failed sentences",
+     "body": "Once the cause is fixed, press Remake failed only under the Voice tab. Sentences already made are not made again, so no more credits are spent.",
+     "figure": {
+      "caption": "Figure 5 · Only the failed sentences are made again"
+     },
+     "table": null,
+     "tip": null,
+     "note": null,
+     "tried": {
+      "label": "Mark as tried",
+      "name": "Mark as tried: step 5"
+     }
+    }
+   ],
+   "tip": null,
+   "still": {
+    "title": "Still not working",
+    "text": "Attach the app's diagnostic record when you contact us. It holds only versions, connection status and recent errors, nothing from your presentation. Support answers usually within 4 hours, at the latest the next business day.",
+    "action": "Contact us with the diagnostic record"
+   },
+   "feedback": {
+    "label": "Was this helpful?",
+    "question": "Was this helpful?",
+    "yes": "Yes",
+    "no": "No",
+    "whyLabel": "What was missing? Pick as many as you like.",
+    "whys": [
+     "My case is not here",
+     "I tried and it did not work",
+     "Hard to follow",
+     "My screen looks different"
+    ],
+    "send": "Send",
+    "continue": "Continue as a question"
+   },
+   "related": {
+    "title": "See also",
+    "items": [
+     [
+      "When there is no sound while presenting",
+      "Troubleshooting"
+     ],
+     [
+      "When the task pane stays on “App not found”",
+      "Troubleshooting"
+     ],
+     [
+      "When do credits expire?",
+      "Payment and account"
+     ],
+     [
+      "Setting how words are read with the pronunciation dictionary",
+      "Voices and my voice"
+     ]
+    ]
+   },
+   "triedDone": {
+    "label": "Tried it",
+    "name": "Tried it: step 1"
+   },
+   "progressTried": "3 of 5 steps tried"
+  },
+  "guide": {
+   "crumbs": [
+    "Help",
+    "Getting started",
+    "Exporting a video and subtitles"
+   ],
+   "navLabel": "Help",
+   "title": "Exporting a video and subtitles",
+   "facts": [
+    "For app 1.0.0"
+   ],
+   "where": [
+    "App on a computer",
+    "Tablet"
+   ],
+   "lead": "Export turns a presentation with voice into files you can share. One run makes every format you pick. On a computer the app carries on if you close its window; on a tablet keep StageVoice open until it finishes.",
+   "tocTitle": "In this article",
+   "toc": [
+    {
+     "no": "1",
+     "title": "Pick what to export",
+     "done": false
+    },
+    {
+     "no": "2",
+     "title": "Put subtitles in the video, or keep them apart",
+     "done": false
+    },
+    {
+     "no": "3",
+     "title": "Decide what happens to slides without voice",
+     "done": false
+    },
+    {
+     "no": "4",
+     "title": "Choose the folder and start",
+     "done": false
+    },
+    {
+     "no": "5",
+     "title": "Find the files",
+     "done": false
+    }
+   ],
+   "progress": null,
+   "ask": "Contact us",
+   "quick": null,
+   "steps": [
+    {
+     "title": "Pick what to export",
+     "body": "On the Export screen, pick the formats you need. They are made in one run and saved in the same folder.",
+     "figure": null,
+     "table": {
+      "label": "Pick what to export",
+      "head": [
+       "Format",
+       "File and what it holds"
+      ],
+      "rows": [
+       [
+        "Copy with voice",
+        ".pptx · audio and auto-advance on every slide"
+       ],
+       [
+        "Video",
+        ".mp4 · slides, animation and voice"
+       ],
+       [
+        "Subtitles",
+        ".srt and .vtt · timed per sentence"
+       ],
+       [
+        "Audio per slide",
+        ".wav · one file a slide, in a folder"
+       ],
+       [
+        "Script",
+        ".txt · slide numbers, titles and notes"
+       ]
+      ]
+     },
+     "tip": null,
+     "note": null,
+     "tried": null
+    },
+    {
+     "title": "Put subtitles in the video, or keep them apart",
+     "body": "Pick Subtitles to get .srt and .vtt files, one line per sentence. Turn on “Burn subtitles into the video” to draw them onto the .mp4 as well; off, they stay a separate file only.",
+     "figure": null,
+     "table": null,
+     "tip": null,
+     "note": null,
+     "tried": null
+    },
+    {
+     "title": "Decide what happens to slides without voice",
+     "body": "A slide without voice shows silently for 5 seconds. You can pick “Fill with a free voice” or “Leave out” instead, and the choice covers the video and the copy. The video runs each slide for its voice, so its length can differ from the notes read aloud; “Video length” shows the sum.",
+     "figure": null,
+     "table": null,
+     "tip": null,
+     "note": null,
+     "tried": null
+    },
+    {
+     "title": "Choose the folder and start",
+     "body": "“Save to” shows the folder, and “Change” picks another. Press “Export”. On a computer the app does the work, so it carries on if you close the window. On a tablet the files are made on the tablet, and a cloud folder receives them once it is online; keep StageVoice open until it finishes. If the connection drops during the upload, the upload starts again from the beginning once the tablet is back online.",
+     "figure": null,
+     "table": null,
+     "tip": null,
+     "note": null,
+     "tried": null
+    },
+    {
+     "title": "Find the files",
+     "body": "When it finishes, the screen says where the files are saved. Press “Open export folder” to see them. If you press “Stop”, the files already finished stay in the folder.",
+     "figure": null,
+     "table": null,
+     "tip": null,
+     "note": null,
+     "tried": null
+    }
+   ],
+   "tip": "The video shows “AI voice” on the first slide, and that cannot be turned off for a video made with your own voice.",
+   "still": null,
+   "feedback": {
+    "label": "Was this helpful?",
+    "question": "Was this helpful?",
+    "yes": "Yes",
+    "no": "No",
+    "whyLabel": "What was missing? Pick as many as you like.",
+    "whys": [
+     "My case is not here",
+     "I tried and it did not work",
+     "Hard to follow",
+     "My screen looks different"
+    ],
+    "send": "Send",
+    "continue": "Continue as a question"
+   },
+   "related": {
+    "title": "See also",
+    "items": [
+     [
+      "Opening and editing a pptx without PowerPoint",
+      "Getting started"
+     ],
+     [
+      "When voices go onto the slides",
+      "Voices and my voice"
+     ],
+     [
+      "Free voices and premium voices",
+      "Voices and my voice"
+     ],
+     [
+      "When voices are not made",
+      "Troubleshooting"
+     ]
+    ]
+   }
+  }
+ },
+ "ko": {
+  "article": {
+   "crumbs": [
+    "도움말",
+    "문제 해결",
+    "음성이 만들어지지 않을 때"
+   ],
+   "navLabel": "도움말",
+   "title": "음성이 만들어지지 않을 때",
+   "facts": [
+    "문제 해결",
+    "읽는 데 3분",
+    "10월 12일 고침",
+    "앱 1.0.0 기준"
+   ],
+   "where": [
+    "PC 앱",
+    "PowerPoint 안",
+    "태블릿"
+   ],
+   "lead": "‘음성 만들기’를 눌렀는데 문장이 만들어지지 않거나, 진행이 멈추거나, 아무 일도 일어나지 않을 때 차례대로 확인하세요. 대부분 1단계나 3단계에서 해결됩니다.",
+   "tocTitle": "이 글의 차례",
+   "toc": [
+    {
+     "no": null,
+     "title": "먼저 이것만",
+     "done": false
+    },
+    {
+     "no": "1",
+     "title": "오류 메시지 보기",
+     "done": false
+    },
+    {
+     "no": "2",
+     "title": "앱이 켜져 있는지 확인",
+     "done": false
+    },
+    {
+     "no": "3",
+     "title": "연결 진단 실행",
+     "done": false
+    },
+    {
+     "no": "4",
+     "title": "크레딧 확인",
+     "done": false
+    },
+    {
+     "no": "5",
+     "title": "실패한 문장만 다시 만들기",
+     "done": false
+    },
+    {
+     "no": null,
+     "title": "그래도 안 되면",
+     "done": false
+    }
+   ],
+   "progress": "0 / 5 단계 해 봄",
+   "ask": "문의하기",
+   "quick": {
+    "title": "먼저 이것만",
+    "items": [
+     [
+      "인터넷에 연결되어 있나요?",
+      "프리미엄 음성, 내 목소리, 태블릿의 무료 음성은 서버에서 만듭니다."
+     ],
+     [
+      "크레딧이 남았나요?",
+      "무료 음성은 PC 앱과 태블릿 모두 크레딧을 쓰지 않습니다. 클라우드 모드에는 크레딧을 쓰는 프리미엄 음성만 있습니다."
+     ],
+     [
+      "앱이 켜져 있나요?",
+      "PowerPoint 안에서 쓸 때 음성은 앱이 만듭니다."
+     ]
+    ]
+   },
+   "steps": [
+    {
+     "title": "오류 메시지 보기",
+     "body": "보이스 탭에서 만들지 못한 문장은 문장 아래에 이유가 나옵니다. 메시지에 따라 할 일이 다릅니다.",
+     "figure": {
+      "caption": "그림 1 · 작업창 보이스 탭. 실패한 문장을 누르면 이유와 고치는 단추가 나옵니다."
+     },
+     "table": {
+      "label": "오류 메시지 보기",
+      "head": [
+       "메시지",
+       "뜻",
+       "할 일"
+      ],
+      "rows": [
+       [
+        "크레딧이 부족합니다",
+        "프리미엄 음성·내 목소리 글자가 모자랍니다",
+        "크레딧을 충전하거나 무료 음성으로 바꿉니다"
+       ],
+       [
+        "음성 서버에 연결할 수 없습니다",
+        "인터넷이 끊겼거나 서버를 점검 중입니다",
+        "서비스 상태를 봅니다. PC 앱의 무료 음성은 그대로 되고, 태블릿의 무료 음성은 연결이 필요합니다"
+       ],
+       [
+        "무료 음성 모델을 찾을 수 없습니다",
+        "모델 파일을 받다 멈췄거나 지워졌습니다",
+        "설정 › 음성 엔진 › 다시 받기"
+       ],
+       [
+        "읽을 수 없는 글자가 있습니다",
+        "수식이나 특수 기호가 들어 있습니다",
+        "발음 사전에 읽는 법을 적습니다"
+       ]
+      ]
+     },
+     "tip": null,
+     "note": null,
+     "tried": {
+      "label": "해 봤으면 표시",
+      "name": "1단계 해 봤으면 표시"
+     }
+    },
+    {
+     "title": "앱이 켜져 있는지 확인",
+     "body": "PowerPoint 안에서 쓰면 음성은 이 컴퓨터의 StageVoice 앱이 만듭니다. 작업창 위에 ‘앱을 찾을 수 없습니다’가 보이면 ‘앱 열기’를 누르세요.",
+     "figure": {
+      "caption": "그림 2 · 앱이 꺼져 있을 때 작업창 맨 위에 뜨는 안내"
+     },
+     "table": null,
+     "tip": "PC 앱이나 태블릿에서 직접 파일을 열었다면 이 단계는 건너뛰세요.",
+     "note": null,
+     "tried": {
+      "label": "해 봤으면 표시",
+      "name": "2단계 해 봤으면 표시"
+     }
+    },
+    {
+     "title": "연결 진단 실행",
+     "body": "앱의 설정 › 연결 진단에서 ‘점검 시작’을 누릅니다. 문제가 있는 항목 옆의 ‘고치기’를 누르면 대부분 바로 해결됩니다.",
+     "figure": {
+      "caption": "그림 3 · 연결 진단. 개인 파일은 보지 않고 연결 상태만 확인합니다."
+     },
+     "table": null,
+     "tip": null,
+     "note": null,
+     "tried": {
+      "label": "해 봤으면 표시",
+      "name": "3단계 해 봤으면 표시"
+     }
+    },
+    {
+     "title": "크레딧 확인",
+     "body": "프리미엄 음성과 내 목소리는 크레딧을 씁니다. 만들기 전에 모자라면 알려 주지만, 여러 발표를 한꺼번에 만들면 중간에 모자랄 수 있습니다.",
+     "figure": {
+      "caption": "그림 4 · 남은 크레딧. 추가 크레딧 60,000자는 ₩14,900이고 12개월 동안 씁니다."
+     },
+     "table": null,
+     "tip": null,
+     "note": "실패한 문장의 크레딧은 바로 돌려받습니다. 잡아 두었던 글자도 함께 풀립니다.",
+     "tried": {
+      "label": "해 봤으면 표시",
+      "name": "4단계 해 봤으면 표시"
+     }
+    },
+    {
+     "title": "실패한 문장만 다시 만들기",
+     "body": "원인을 고쳤으면 보이스 탭 아래의 ‘실패한 문장만 다시’를 누르세요. 이미 만든 문장은 다시 만들지 않아 크레딧이 더 들지 않습니다.",
+     "figure": {
+      "caption": "그림 5 · 실패한 문장만 골라 다시 만듭니다"
+     },
+     "table": null,
+     "tip": null,
+     "note": null,
+     "tried": {
+      "label": "해 봤으면 표시",
+      "name": "5단계 해 봤으면 표시"
+     }
+    }
+   ],
+   "tip": null,
+   "still": {
+    "title": "그래도 안 되면",
+    "text": "문의할 때 앱의 진단 기록을 붙여 주세요. 버전, 연결 상태, 최근 오류만 들어가고 발표 내용은 넣지 않습니다. 지원팀이 보통 4시간 안에, 늦어도 다음 영업일에 답합니다.",
+    "action": "진단 기록 붙여 문의하기"
+   },
+   "feedback": {
+    "label": "도움이 됐나요?",
+    "question": "도움이 됐나요?",
+    "yes": "예",
+    "no": "아니요",
+    "whyLabel": "무엇이 아쉬웠나요? 여러 개 골라도 됩니다.",
+    "whys": [
+     "내 경우가 없음",
+     "해 봤는데 안 됨",
+     "설명이 어려움",
+     "화면이 다름"
+    ],
+    "send": "보내기",
+    "continue": "문의로 이어 쓰기"
+   },
+   "related": {
+    "title": "같이 보면 좋은 글",
+    "items": [
+     [
+      "발표할 때 소리가 안 나올 때",
+      "문제 해결"
+     ],
+     [
+      "작업창이 ‘앱을 찾을 수 없음’에서 멈출 때",
+      "문제 해결"
+     ],
+     [
+      "크레딧은 언제 사라지나요",
+      "결제와 계정"
+     ],
+     [
+      "발음 사전으로 읽는 법 정하기",
+      "음성과 내 목소리"
+     ]
+    ]
+   },
+   "triedDone": {
+    "label": "해 봤습니다",
+    "name": "1단계 해 봤습니다"
+   },
+   "progressTried": "3 / 5 단계 해 봄"
+  },
+  "guide": {
+   "crumbs": [
+    "도움말",
+    "시작하기",
+    "영상과 자막으로 내보내기"
+   ],
+   "navLabel": "도움말",
+   "title": "영상과 자막으로 내보내기",
+   "facts": [
+    "앱 1.0.0 기준"
+   ],
+   "where": [
+    "컴퓨터의 앱",
+    "태블릿"
+   ],
+   "lead": "내보내기는 음성이 있는 발표를 공유할 수 있는 파일로 만듭니다. 고른 형식을 한 번에 만듭니다. 컴퓨터에서는 창을 닫아도 앱이 이어서 하고, 태블릿에서는 끝날 때까지 StageVoice를 열어 두어야 합니다.",
+   "tocTitle": "이 글에서",
+   "toc": [
+    {
+     "no": "1",
+     "title": "내보낼 형식 고르기",
+     "done": false
+    },
+    {
+     "no": "2",
+     "title": "영상에 자막을 넣거나 따로 두기",
+     "done": false
+    },
+    {
+     "no": "3",
+     "title": "음성이 없는 슬라이드 정하기",
+     "done": false
+    },
+    {
+     "no": "4",
+     "title": "저장 폴더를 정하고 시작하기",
+     "done": false
+    },
+    {
+     "no": "5",
+     "title": "만든 파일 찾기",
+     "done": false
+    }
+   ],
+   "progress": null,
+   "ask": "문의하기",
+   "quick": null,
+   "steps": [
+    {
+     "title": "내보낼 형식 고르기",
+     "body": "내보내기 화면에서 필요한 형식을 고릅니다. 고른 형식은 한 번에 만들어 같은 폴더에 넣습니다.",
+     "figure": null,
+     "table": {
+      "label": "내보낼 형식 고르기",
+      "head": [
+       "형식",
+       "파일과 담기는 것"
+      ],
+      "rows": [
+       [
+        "음성 포함 사본",
+        ".pptx · 슬라이드마다 오디오와 자동 넘김"
+       ],
+       [
+        "영상",
+        ".mp4 · 슬라이드, 애니메이션, 음성"
+       ],
+       [
+        "자막",
+        ".srt와 .vtt · 문장 단위 시간"
+       ],
+       [
+        "슬라이드별 음성",
+        ".wav · 장마다 한 파일, 폴더로"
+       ],
+       [
+        "대본",
+        ".txt · 슬라이드 번호, 제목, 노트"
+       ]
+      ]
+     },
+     "tip": null,
+     "note": null,
+     "tried": null
+    },
+    {
+     "title": "영상에 자막을 넣거나 따로 두기",
+     "body": "‘자막’ 형식을 고르면 .srt와 .vtt 파일이 문장마다 한 줄씩 만들어집니다. ‘영상에 자막 굽기’를 켜면 .mp4 안에도 자막이 그려지고, 끄면 자막은 따로 붙는 파일로만 만듭니다.",
+     "figure": null,
+     "table": null,
+     "tip": null,
+     "note": null,
+     "tried": null
+    },
+    {
+     "title": "음성이 없는 슬라이드 정하기",
+     "body": "음성이 없는 슬라이드는 5초 동안 조용히 보여 줍니다. ‘무료 음성으로 채우기’나 ‘빼기’를 고를 수도 있고, 고른 방법은 영상과 사본에 모두 적용됩니다. 영상은 슬라이드마다 음성 길이만큼 보여 주므로 노트를 소리 내어 읽는 시간과 다를 수 있고, ‘영상 길이’에 합계가 나옵니다.",
+     "figure": null,
+     "table": null,
+     "tip": null,
+     "note": null,
+     "tried": null
+    },
+    {
+     "title": "저장 폴더를 정하고 시작하기",
+     "body": "‘저장 위치’에 폴더가 표시되고, ‘바꾸기’로 다른 폴더를 고를 수 있습니다. ‘내보내기’를 누르면 시작합니다. 컴퓨터에서는 작업을 앱이 맡으므로 창을 닫아도 계속됩니다. 태블릿에서는 파일을 태블릿 안에서 만들고, 인터넷에 연결되면 클라우드 폴더로 보냅니다. 끝날 때까지 StageVoice를 열어 두세요. 보내는 도중 연결이 끊기면 연결이 돌아온 뒤 처음부터 다시 보냅니다.",
+     "figure": null,
+     "table": null,
+     "tip": null,
+     "note": null,
+     "tried": null
+    },
+    {
+     "title": "만든 파일 찾기",
+     "body": "끝나면 화면에 파일이 저장된 곳이 나옵니다. ‘내보내기 폴더 열기’를 누르면 바로 볼 수 있습니다. ‘멈추기’를 눌러도 이미 끝난 파일은 폴더에 남습니다.",
+     "figure": null,
+     "table": null,
+     "tip": null,
+     "note": null,
+     "tried": null
+    }
+   ],
+   "tip": "영상 첫 장면에 ‘AI 음성’이 표시됩니다. 내 목소리로 만든 영상은 이 표시를 끌 수 없습니다.",
+   "still": null,
+   "feedback": {
+    "label": "도움이 됐나요?",
+    "question": "도움이 됐나요?",
+    "yes": "예",
+    "no": "아니요",
+    "whyLabel": "무엇이 아쉬웠나요? 여러 개 골라도 됩니다.",
+    "whys": [
+     "내 경우가 없음",
+     "해 봤는데 안 됨",
+     "설명이 어려움",
+     "화면이 다름"
+    ],
+    "send": "보내기",
+    "continue": "문의로 이어 쓰기"
+   },
+   "related": {
+    "title": "같이 보면 좋은 글",
+    "items": [
+     [
+      "PowerPoint 없이 pptx 열어 고치기",
+      "시작하기"
+     ],
+     [
+      "음성을 슬라이드에 넣는 시점 정하기",
+      "음성과 내 목소리"
+     ],
+     [
+      "무료 음성과 프리미엄 음성의 차이",
+      "음성과 내 목소리"
+     ],
+     [
+      "음성이 만들어지지 않을 때",
+      "문제 해결"
+     ]
+    ]
+   }
+  }
+ }
+}

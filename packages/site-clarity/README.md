@@ -1,6 +1,6 @@
 # @simplix-react-ui-kits/site-clarity
 
-The web site kit in the clarity design: the site parts of `@simplix-react-ui-kits/site-core` drawn with hairline borders, one accent and hierarchy from type. It re-exports site-core segment by segment (`/action`, `/help`, `/install`, `/link`, `/marketing`, `/page`, `/pricing`, `/shell`) and adds the stylesheet, the variables it reads, the page region contract and the rendered checks.
+The web site kit in the clarity design: the site parts of `@simplix-react-ui-kits/site-core` drawn with hairline borders, one accent and hierarchy from type. It re-exports site-core segment by segment (`/action`, `/help`, `/install`, `/legal`, `/link`, `/marketing`, `/page`, `/pricing`, `/shell`) and adds the stylesheet, the variables it reads, the page region contract and the rendered checks.
 
 ## Using it in an app
 
@@ -145,6 +145,7 @@ Inside an element marked `data-band="dark"` (`SiteBand`, `HeroBand` with `tone="
 | `marketing` | ready | bar, hero, compare, steps, footer |
 | `install` | ready | bar, pageHead, notice, check, downloads, installSteps, video, troubleshooting, symptoms, caption, footer |
 | `help` | ready | bar, search, categories, articles, contact, footer |
+| `article` | ready | bar, breadcrumb, docHead, contents, doc, footer |
 | `legal` | planned | bar, breadcrumb, pageHead, contents, articles, footer |
 | `account` | planned | bar, banner, sections, sectionHead, rows, footer |
 | `checkout` | planned | bar, stepper, main, summary, footer |

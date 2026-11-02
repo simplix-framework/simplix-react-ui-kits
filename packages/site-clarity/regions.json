@@ -160,9 +160,12 @@
       ],
       "parts": {
         "step": "site-breadcrumb-link",
-        "current": "site-breadcrumb-item[data-current=true]"
+        "current": "site-breadcrumb-item[data-current=true]",
+        "separator": "site-breadcrumb-separator"
       },
-      "widths": []
+      "widths": [
+        "root"
+      ]
     },
     "pageHead": {
       "part": "SitePageHead",
@@ -614,6 +617,134 @@
       ],
       "carded": true
     },
+    "docHead": {
+      "part": "DocLayout head",
+      "slot": "DocLayout title, badge, controls, notice",
+      "marks": [
+        "site-doc-head"
+      ],
+      "controls": [
+        "site-action",
+        "*"
+      ],
+      "$comment": "`*` admits the product controls a document head holds (a version select, a comparison switch).",
+      "parts": {
+        "titleRow": "site-doc-title-row",
+        "title": "site-doc-title",
+        "controls": "site-doc-controls",
+        "intro": "site-article-intro",
+        "facts": "site-article-facts",
+        "fact": "site-article-fact",
+        "where": "site-article-where",
+        "chip": "site-chip[data-tone=accent]",
+        "lead": "site-article-lead"
+      },
+      "widths": [
+        "root",
+        "titleRow",
+        "intro",
+        "facts",
+        "lead"
+      ]
+    },
+    "contents": {
+      "part": "DocLayout rail",
+      "slot": "DocLayout toc, jump, side",
+      "marks": [
+        "site-doc-rail"
+      ],
+      "controls": [
+        "site-toc-button",
+        "site-action",
+        "*"
+      ],
+      "$comment": "`*` admits the product's jump select, drawn in the list's place below the medium tier.",
+      "parts": {
+        "title": "site-doc-rail-title",
+        "list": "site-toc",
+        "item": "site-toc-button[data-current=false]",
+        "current": "site-toc-button[data-current=true]",
+        "number": "site-toc-number",
+        "entryTitle": "site-toc-title",
+        "done": "site-toc-done",
+        "changed": "site-toc-changed",
+        "jump": "site-toc-jump",
+        "progressText": "site-card-text",
+        "track": "site-progress",
+        "fill": "site-progress-fill",
+        "action": "site-action"
+      },
+      "widths": [
+        "root",
+        "list",
+        "item",
+        "track",
+        "fill"
+      ]
+    },
+    "doc": {
+      "part": "DocLayout children",
+      "slot": "DocLayout children",
+      "marks": [
+        "site-doc"
+      ],
+      "controls": [
+        "site-action",
+        "site-related-link",
+        "*"
+      ],
+      "parts": {
+        "quick": "site-quick-box",
+        "quickTitle": "site-quick-title",
+        "quickList": "site-quick-list",
+        "quickAsk": "site-quick-ask",
+        "step": "site-article-step",
+        "disc": "site-step-disc[data-done=false]",
+        "doneDisc": "site-step-disc[data-done=true]",
+        "stepBody": "site-article-step-body",
+        "heading": "site-doc-heading",
+        "text": "site-doc-text",
+        "figure": "site-figure",
+        "caption": "site-figure-caption",
+        "table": "site-legal-table",
+        "tableHead": "site-legal-table-head",
+        "tableColumn": "site-legal-table-column",
+        "tableRow": "site-legal-table-row",
+        "tableLead": "site-legal-table-cell[data-lead=true]",
+        "tableCell": "site-legal-table-cell[data-lead=false]",
+        "tip": "site-tip",
+        "tipMark": "site-tip-mark",
+        "note": "site-caption",
+        "tried": "site-action[aria-pressed=false]",
+        "triedOn": "site-action[aria-pressed=true]",
+        "section": "site-doc-section",
+        "primary": "site-action[data-tone=primary]",
+        "feedback": "site-feedback",
+        "feedbackRow": "site-feedback-row",
+        "feedbackAsk": "site-feedback-ask",
+        "more": "site-feedback-more",
+        "related": "site-related",
+        "relatedTitle": "site-article-list-title",
+        "relatedGrid": "site-related-grid",
+        "relatedLink": "site-related-link",
+        "relatedName": "site-article-name",
+        "relatedMeta": "site-article-meta"
+      },
+      "widths": [
+        "root",
+        "quick",
+        "step",
+        "stepBody",
+        "figure",
+        "table",
+        "tip",
+        "feedback",
+        "related",
+        "relatedGrid",
+        "relatedLink"
+      ],
+      "carded": true
+    },
     "footer": {
       "part": "SiteFooter",
       "slot": "SiteWindow.footer",
@@ -758,6 +889,25 @@
         "providers",
         "foot"
       ]
+    },
+    "article": {
+      "status": "ready",
+      "root": "[data-page]",
+      "regions": [
+        "bar",
+        "breadcrumb",
+        "docHead",
+        "contents",
+        "doc",
+        "footer"
+      ],
+      "required": [
+        "bar",
+        "docHead",
+        "doc",
+        "footer"
+      ],
+      "$comment": "A help article or guide on DocLayout: the trail, the head (title, the article meta, where it applies, the lead), then the contents rail (with progress or the way to ask) beside the document (quick checks, numbered steps with figures, tables, tips and the tried toggle, a closing section, feedback and related articles)."
     }
   }
 }
