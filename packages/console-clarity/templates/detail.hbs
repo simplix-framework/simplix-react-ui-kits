@@ -23,8 +23,10 @@ const {{EntityPascal}}DetailFields: readonly ContractField[] = [
 {{#unless this.isSystemField}}
 {{#unless this.isReferenceName}}
 {{#unless this.isAuditField}}
+{{#unless this.isUnmasked}}
 {{#unless this.isOpaqueId}}
   { name: "{{this.name}}", kind: "{{this.contractKind}}"{{#if this.money}}, currency: "{{this.money.currency}}", scale: {{this.money.scale}}{{/if}}{{#if this.enumTypeName}}, enumName: "{{this.enumTypeName}}"{{/if}}{{#if this.options.length}}, options: [{{#each this.options}}"{{this}}"{{#unless @last}}, {{/unless}}{{/each}}]{{/if}}{{#if this.peekKind}}, peekKind: "{{this.peekKind}}"{{/if}}{{#if this.peekKinds}}, peekKinds: { field: "{{this.peekKinds.field}}", kinds: { {{#each this.peekKinds.kinds}}{{this.value}}: "{{this.peekKind}}"{{#unless @last}}, {{/unless}}{{/each}} } }{{/if}}{{#if this.nameField}}, nameField: "{{this.nameField}}"{{/if}}{{#if this.peekBy}}, peekBy: "{{this.peekBy}}"{{/if}}{{#if (eq this.sortable true)}}, sortable: true{{/if}}{{#if (eq this.sortable false)}}, sortable: false{{/if}}{{#if this.isIdentifier}}, identifier: true{{/if}}{{#if this.isCode}}, code: true{{/if}} },
+{{/unless}}
 {{/unless}}
 {{/unless}}
 {{/unless}}
@@ -43,9 +45,11 @@ const {{this.EntityPascal}}HolderFields_{{@index}}: readonly ContractField[] = [
 {{#unless this.isSystemField}}
 {{#unless this.isReferenceName}}
 {{#unless this.isAuditField}}
+{{#unless this.isUnmasked}}
 {{#unless this.isOpaqueId}}
 {{#unless this.isIdentifier}}
   { name: "{{this.name}}", kind: "{{this.contractKind}}"{{#if this.money}}, currency: "{{this.money.currency}}", scale: {{this.money.scale}}{{/if}}{{#if this.enumTypeName}}, enumName: "{{this.enumTypeName}}"{{/if}}{{#if this.options.length}}, options: [{{#each this.options}}"{{this}}"{{#unless @last}}, {{/unless}}{{/each}}]{{/if}}{{#if this.peekKind}}, peekKind: "{{this.peekKind}}"{{/if}}{{#if this.peekKinds}}, peekKinds: { field: "{{this.peekKinds.field}}", kinds: { {{#each this.peekKinds.kinds}}{{this.value}}: "{{this.peekKind}}"{{#unless @last}}, {{/unless}}{{/each}} } }{{/if}}{{#if this.nameField}}, nameField: "{{this.nameField}}"{{/if}}{{#if this.peekBy}}, peekBy: "{{this.peekBy}}"{{/if}}{{#if (eq this.sortable true)}}, sortable: true{{/if}}{{#if (eq this.sortable false)}}, sortable: false{{/if}}{{#if this.isCode}}, code: true{{/if}} },
+{{/unless}}
 {{/unless}}
 {{/unless}}
 {{/unless}}
