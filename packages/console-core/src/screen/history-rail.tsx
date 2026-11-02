@@ -125,7 +125,7 @@ export function HistoryRail({ nodes }: HistoryRailProps) {
                 distance under this dot as it stops above the next one, whatever height the node's
                 content gives the row. */}
             {index < nodes.length - 1 && (
-              <span aria-hidden {...slotAttributes(historyLineStyle, { skipped: node.state === "skip" })} />
+              <span aria-hidden {...slotAttributes(historyLineStyle, { skipped: nodes[index + 1]?.state === "skip" })} />
             )}
           </Flex>
 
