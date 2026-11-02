@@ -14,4 +14,8 @@ export const dashboardSlots: Record<string, string> = {
   "task-due": "text-(length:--fs-control) leading-(--lh-control)",
   "task-empty": "text-(length:--fs-control) leading-(--lh-control)",
   "schedule-now": "text-[var(--destructive-text)]",
+  // The link to the list a card or a figure reads: an action, so it is drawn on the quiet filled
+  // ground the tile fold uses, never as bare text.
+  "figure-action":
+    "rounded-[var(--radius-control)] bg-[var(--surface-2)] hover:bg-[color-mix(in_oklch,var(--surface-2),var(--foreground)_7%)] text-muted-foreground hover:text-foreground",
 };

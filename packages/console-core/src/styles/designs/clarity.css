@@ -44,7 +44,7 @@
     @apply gap-2.5 px-1 py-1.5;
   }
   [data-slot="figure-action"][data-slot][data-s-figure-action] {
-    @apply rounded-[var(--radius-control)] px-2 py-1 text-(length:--fs-control) leading-(--lh-control) font-medium transition-colors duration-[var(--dur-fast)] ease-[var(--ease)];
+    @apply px-2 py-1 text-(length:--fs-control) leading-(--lh-control) font-medium transition-colors duration-[var(--dur-fast)] ease-[var(--ease)] rounded-[var(--radius-control)] bg-[var(--surface-2)] text-muted-foreground;
   }
   [data-slot="figure-button"][data-slot][data-s-figure-button] {
     @apply gap-2 rounded-[var(--radius-control)] px-1 py-0.5 text-left transition-colors duration-[var(--dur-fast)] ease-[var(--ease)];
@@ -1708,7 +1708,7 @@
     @apply starting:opacity-0;
   }
   :where([data-slot="figure-action"])[data-s-figure-action] {
-    @apply hover:bg-muted/60 focus-visible:outline-none focus-visible:shadow-[var(--focus-halo)];
+    @apply focus-visible:outline-none focus-visible:shadow-[var(--focus-halo)] hover:bg-[color-mix(in_oklch,var(--surface-2),var(--foreground)_7%)] hover:text-foreground;
   }
   :where([data-slot="figure-button"])[data-s-figure-button] {
     @apply hover:bg-muted/60 focus-visible:outline-none focus-visible:shadow-[var(--focus-halo)];
