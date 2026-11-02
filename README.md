@@ -42,6 +42,14 @@ The columns menu offers every declared column. A column the width dropped is lis
 
 A date or a money value in a cell, a card or a figure tile is drawn by the same contract kind, so a cell and the tile above it agree: a `money` field keeps as many decimals as its stored scale holds, and a count of days is worded by `daysAgoText`, which takes the plural form from the reader's language instead of from a catalogue string.
 
+## List presentation
+
+A list screen is designed as a table or as cards, and `RecordList` draws either from the same column declarations. `presentation` is `"table"` (the default; the table falls to cards below the width its columns need) or `"cards"`, which draws every row as a card at every width. The card is the one the narrow table already falls to: `record-card.ts` places the title column, the badge row, the labelled lines and the row actions beside the title, so no screen declares a second set of columns for it. `cardTitle` names the column (its `key`) that titles the card, the first column when absent; the other columns keep their order. A `cardTitle` naming no column throws.
+
+Cards sit in a fit grid: as many columns as hold a card no narrower than the `--card-min-width` layout token, each column an equal share of the row, so a detail panel opening beside the list reflows the cards and a pane narrower than one card draws one column. The table's sortable headers have no counterpart on a card; a cards list is read in the order of its default sort.
+
+`viewToggle` offers the reader the table and the cards as two views, in the filter bar or, on a list with no filters, in the list's own toolbar (`CrudList.ViewToggle`). `presentation` is what the list opens in. With a `viewKey` (what names the list among the product's lists) the browser remembers the reader's last choice under `console.listView.<viewKey>` and the next visit opens in it; a list without a switch never reads a saved view, so its presentation is its only view. The decision is made in the screen's design entry (`list.presentation`, `list.viewToggle`, `list.cardTitle`), passed to the scaffold as `--list-presentation`, `--view-toggle` and `--card-title`, and the mockup kit's `screen-design` check refuses a list file or a board frame whose `<RecordList>` declares anything else.
+
 ## Using a kit in a product
 
 Add this repository as a git submodule and its packages to the product's pnpm workspace:

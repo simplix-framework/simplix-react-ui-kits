@@ -44,7 +44,7 @@ export function probe(regions, root = "main") {
   }
   const signature = Object.fromEntries(Object.entries(out).map(([k, v]) => [k, { kinds: [...v.kinds].sort(), perCard: v.perCard }]));
   // Rows drawn, so a required region is judged only where there are rows to carry it.
-  signature.rows = scope.querySelectorAll("tbody tr, [data-slot=console-record-card]").length;
+  signature.rows = scope.querySelectorAll("tbody tr, [data-slot=crud-card]").length;
   return signature;
 }
 
@@ -115,7 +115,13 @@ if (process.argv.includes("--selftest")) {
   // A figure that counts the rows of another screen opens it: a link is a control of the figures region, a bare button is not.
   const linkTile = compare({ figures: { kinds: ["console-tile-chip", "link"], perCard: 0 }, rows: 0 }, "dashboard");
   const buttonTile = compare({ figures: { kinds: ["button"], perCard: 0 }, rows: 0 }, "dashboard");
-  const ok = linkTile.length === 0 && buttonTile.length === 1 && rampHit.length === 1 && rampMiss.length === 0 && vacuous.length === 1 && tokHit.length === 1 && tokMiss.length === 0 && miss.length === 0 && noStrip.length === 1 && empty.length === 0 && hit.length === 4 && compare(good, "system").length === 4;
-  console.log(ok ? "regions-rendered selftest: hit 9, miss 0" : `regions-rendered selftest FAILED\nhit: ${hit.join("\n")}\nmiss: ${miss.join("\n")}`);
+  // A list drawn as cards has no head and no cells, and its rows are the cards: the action strip is still required over them,
+  // and the list/grid switch is a control of the toolbar.
+  const cards = { toolbar: { kinds: ["crud-filter-bar-view-button"], perCard: 0 }, rowActions: { kinds: ["button:icon"], perCard: 0 }, cell: { kinds: ["link"], perCard: 1 } };
+  const cardList = compare({ ...cards, rows: 4 }, "list-detail");
+  const cardsNoStrip = compare({ toolbar: cards.toolbar, cell: cards.cell, rows: 4 }, "list-detail");
+  const switchInCell = compare({ ...cards, cell: { kinds: ["link", "crud-filter-bar-view-button"], perCard: 1 }, rows: 4 }, "list-detail");
+  const ok = cardList.length === 0 && cardsNoStrip.length === 1 && switchInCell.length === 1 && linkTile.length === 0 && buttonTile.length === 1 && rampHit.length === 1 && rampMiss.length === 0 && vacuous.length === 1 && tokHit.length === 1 && tokMiss.length === 0 && miss.length === 0 && noStrip.length === 1 && empty.length === 0 && hit.length === 4 && compare(good, "system").length === 4;
+  console.log(ok ? "regions-rendered selftest: hit 12, miss 0" : `regions-rendered selftest FAILED\nhit: ${hit.join("\n")}\nmiss: ${miss.join("\n")}`);
   process.exit(ok ? 0 : 1);
 }

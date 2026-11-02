@@ -87,9 +87,11 @@
         "crud-filter-bar-trigger",
         "crud-filter-bar-clear-button",
         "crud-filter-bar-columns-button",
+        "crud-filter-bar-view-button",
         "crud-chip-filter-chip",
         "button"
-      ]
+      ],
+      "$comment": "crud-filter-bar-view-button is the list/grid switch of a list that offers both presentations (RecordList viewToggle); it stands in the filter bar's leading group or, on a list with no filters, in the record list toolbar."
     },
     "columnHeads": {
       "part": "RecordList header",
@@ -116,12 +118,14 @@
       "slot": "columns",
       "marks": [
         "table-cell",
-        "td"
+        "td",
+        "crud-list-card-header",
+        "crud-card-body"
       ],
       "controls": [
         "link"
       ],
-      "$comment": "A cell shows a value; a reference to another record is a link and is the value itself, every other control is refused."
+      "$comment": "A cell shows a value; a reference to another record is a link and is the value itself, every other control is refused. A list drawn as cards (RecordList presentation cards, or the table below its card breakpoint) holds the same values in the card's title row and body, so those are the cell region's marks too; a card's row action strip stays in rowActions because the button reaches that mark first."
     },
     "pagination": {
       "part": "RecordList pagination",
@@ -283,7 +287,8 @@
       "../console-core/src/entity/record-list.tsx": [
         "RecordColumn",
         "RecordAction",
-        "RecordListFeatures"
+        "RecordListFeatures",
+        "RecordListProps"
       ],
       "../console-core/src/page/types.ts": [
         "PageTabSpec",
@@ -303,6 +308,8 @@
       "RecordListFeatures.rowActions": "turns the row action strip on or off",
       "RecordListFeatures.count": "turns the count on or off",
       "RecordListFeatures.pagination": "turns pagination on or off",
+      "RecordListProps.viewToggle": "content: offers the reader the switch between the table and the cards, decided by the screen's design entry",
+      "RecordListProps.keyboard": "behaviour: gives the page's keys to this list",
       "PageTabSpec.when": "whether the tab exists for this reader",
       "PageTabSpec.unbuilt": "content: the tab names a capability the server does not offer yet",
       "PageSpec.tilesLoading": "state: the figures are still loading",
