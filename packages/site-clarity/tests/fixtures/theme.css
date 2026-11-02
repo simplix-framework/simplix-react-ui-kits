@@ -26,6 +26,12 @@
   --site-voice-text: #a9431f;
   --site-wave-rest: #b9ccca;
   --site-shadow-window: 0 14px 40px #00141452, 0 0 0 1px #0000001f;
+  --site-good: #18733f;
+  --site-good-soft: #dff3e7;
+  --site-warn: #8f5a0c;
+  --site-warn-soft: #fcefd6;
+  --site-bad: #b83a33;
+  --site-bad-soft: #fbe2e0;
 
   --site-dark-canvas: #0c1315;
   --site-dark-surface: #142024;

@@ -31,6 +31,12 @@
   --site-voice-soft: var(--site-accent-soft);
   --site-voice-text: var(--site-accent-strong);
   --site-wave-rest: var(--border);
+  --site-good: var(--success-text);
+  --site-good-soft: color-mix(in srgb, var(--success) 14%, transparent);
+  --site-warn: var(--warning-text);
+  --site-warn-soft: color-mix(in srgb, var(--warning-text) 14%, transparent);
+  --site-bad: var(--destructive-text);
+  --site-bad-soft: color-mix(in srgb, var(--destructive) 14%, transparent);
 
   /* Type: the text family, the display family for titles and prices, and the steps. */
   --site-font-sans: var(--font-sans);
@@ -70,6 +76,7 @@
   --site-fw-strong: 600;
   --site-tracking-display: -0.025em;
   --site-tracking-wide: 0.025em;
+  --site-tracking-code: 0.1em;
 
   /* Geometry. */
   --site-page-wide: var(--container-page-wide);
@@ -92,6 +99,7 @@
   --site-duration-fast: 120ms;
   --site-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
   --site-focus-ring: 0 0 0 2px var(--site-surface), 0 0 0 4px var(--site-accent);
+  --site-focus-ring-inset: inset 0 0 0 2px var(--site-accent);
   --site-shadow-float: 0 10px 30px rgb(0 30 30 / 22%);
   --site-shadow-accent: 0 2px 8px color-mix(in srgb, var(--site-accent) 28%, transparent);
   --site-shadow-window: 0 14px 40px rgb(0 20 20 / 32%), 0 0 0 1px rgb(0 0 0 / 12%);

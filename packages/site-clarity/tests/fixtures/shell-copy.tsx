@@ -74,6 +74,16 @@ export const glyph = {
       <path d="m5 12 5 5L20 7" />
     </svg>
   ),
+  pause: (
+    <svg {...stroke}>
+      <path d="M8 5v14M16 5v14" />
+    </svg>
+  ),
+  chevronDown: (
+    <svg {...stroke}>
+      <path d="m6 9 6 6 6-6" />
+    </svg>
+  ),
   chevron: (
     <svg {...stroke}>
       <path d="m9 6 6 6-6 6" />

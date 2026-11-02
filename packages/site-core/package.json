@@ -15,6 +15,11 @@
       "types": "./src/action/index.ts",
       "import": "./dist/action/index.js"
     },
+    "./install": {
+      "source": "./src/install/index.ts",
+      "types": "./src/install/index.ts",
+      "import": "./dist/install/index.js"
+    },
     "./link": {
       "source": "./src/link/index.ts",
       "types": "./src/link/index.ts",

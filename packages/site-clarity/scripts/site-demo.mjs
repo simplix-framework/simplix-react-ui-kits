@@ -118,7 +118,7 @@ export async function buildDemo(props = {}, { planted = "", fixture = "pricing" 
 /**
  * Opens each page in one ego-browser task space and returns the probe's signature of each. A run
  * names the page type it is read as, the viewport width and, where given, the page root's width,
- * which a reference measured inside a frame (a phone mock-up) dictates.
+ * which a reference measured inside a frame (a phone mock-up) dictates, and its least height.
  */
 export function probeInBrowser(runs) {
   const script = `
@@ -133,6 +133,9 @@ for (const run of runs) {
   await page.goto("about:blank");
   await page.evaluate((html) => { document.open(); document.write(html); document.close(); }, run.html);
   if (run.rootWidth) await page.evaluate((width) => { document.querySelector("[data-page]").style.width = width + "px"; }, run.rootWidth);
+  // A reference shorter than its frame fills the frame, so the page root takes the reference window's
+  // height as its least height; a taller page still grows, and the column's own height is compared.
+  if (run.minHeight) await page.evaluate((height) => { document.querySelector("[data-page]").style.minHeight = height + "px"; }, run.minHeight);
   await page.waitForTimeout(300);
   readings.push(await page.evaluate(probeFn, { contract, type: run.type }));
 }
@@ -178,7 +181,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === resolve(process.argv[1
     // carded region the page draws and nowhere else.
     const entries = Object.entries(measuredPages());
     const plant = ":root { --site-radius-xl: 10px; }";
-    const runOf = async (page, planted) => ({ html: await buildDemo(page.props, { planted, fixture: page.fixture ?? page.type }), type: page.type, viewport: page.viewport, rootWidth: page.rootWidth });
+    const runOf = async (page, planted) => ({ html: await buildDemo(page.props, { planted, fixture: page.fixture ?? page.type }), type: page.type, viewport: page.viewport, rootWidth: page.rootWidth, minHeight: page.signature?.frame?.window?.height });
     const runs = await Promise.all(entries.map(([, page]) => runOf(page, "")));
     const planted = selftest ? await Promise.all(entries.map(([, page]) => runOf(page, plant))) : [];
     const readings = probeInBrowser([...runs, ...planted]);

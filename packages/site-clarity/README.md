@@ -1,6 +1,6 @@
 # @simplix-react-ui-kits/site-clarity
 
-The web site kit in the clarity design: the site parts of `@simplix-react-ui-kits/site-core` drawn with hairline borders, one accent and hierarchy from type. It re-exports site-core segment by segment (`/action`, `/link`, `/marketing`, `/page`, `/pricing`, `/shell`) and adds the stylesheet, the variables it reads, the page region contract and the rendered checks.
+The web site kit in the clarity design: the site parts of `@simplix-react-ui-kits/site-core` drawn with hairline borders, one accent and hierarchy from type. It re-exports site-core segment by segment (`/action`, `/install`, `/link`, `/marketing`, `/page`, `/pricing`, `/shell`) and adds the stylesheet, the variables it reads, the page region contract and the rendered checks.
 
 ## Using it in an app
 
@@ -52,6 +52,12 @@ Every label is a prop: the kit ships no strings, and the product passes its own 
 | `--site-voice-soft` | a playing sample's ground, the word being read | `var(--site-accent-soft)` |
 | `--site-voice-text` | the word being read | `var(--site-accent-strong)` |
 | `--site-wave-rest` | a wave's bars not yet played | `var(--border)` |
+| `--site-good` | a finding that passed, its chip and verdict | `var(--success-text)` |
+| `--site-good-soft` | a good chip's ground | `var(--success)` at 14% |
+| `--site-warn` | a chip that asks for care | `var(--warning-text)` |
+| `--site-warn-soft` | its ground | `var(--warning-text)` at 14% |
+| `--site-bad` | a finding that blocks, its chip and verdict | `var(--destructive-text)` |
+| `--site-bad-soft` | a bad chip's ground | `var(--destructive)` at 14% |
 | `--site-font-sans` | the text family | `var(--font-sans)` |
 | `--site-font-display` | the display family: page titles, prices, display headings | `var(--font-sans)` |
 | `--site-font-mono` | the mono family: a hero eyebrow, step numbers | `var(--font-mono)` |
@@ -89,6 +95,7 @@ Every label is a prop: the kit ships no strings, and the product passes its own 
 | `--site-fw-strong` | the current link, actions, names, the chosen option | `600` |
 | `--site-tracking-display` | letter spacing of the display family | `-0.025em` |
 | `--site-tracking-wide` | letter spacing of a mono eyebrow | `0.025em` |
+| `--site-tracking-code` | letter spacing of a code to type | `0.1em` |
 | `--site-page-wide` | the page column's widest measure | `var(--container-page-wide)` |
 | `--site-control` | an action's height | `34px` |
 | `--site-control-sm` | a small action's and a switch option's height | `28px` |
@@ -105,6 +112,7 @@ Every label is a prop: the kit ships no strings, and the product passes its own 
 | `--site-duration-fast` | hover and press transitions | `120ms` |
 | `--site-ease` | their easing | `cubic-bezier(0.2, 0.8, 0.2, 1)` |
 | `--site-focus-ring` | the keyboard focus ring | a 2px surface gap, then a 2px accent ring |
+| `--site-focus-ring-inset` | the focus ring inside a part that clips its edge (a row of a ruled list) | a 2px accent ring inside |
 | `--site-shadow-float` | the more menu | `0 10px 30px` at 22% |
 | `--site-shadow-accent` | the highlighted offer | `0 2px 8px` of the accent at 28% |
 | `--site-shadow-window` | a raised player card | `0 14px 40px` at 32% and a 1px line |
@@ -134,12 +142,14 @@ Inside an element marked `data-band="dark"` (`SiteBand`, `HeroBand` with `tone="
 | --- | --- | --- |
 | `pricing` | ready | bar, pageHead, switches, plans, offers, priceTable, questions, footer |
 | `marketing` | ready | bar, hero, compare, steps, footer |
-| `install` | planned | bar, pageHead, check, downloads, steps, video, troubleshooting, footer |
+| `install` | ready | bar, pageHead, notice, check, downloads, installSteps, video, troubleshooting, symptoms, caption, footer |
 | `help` | planned | bar, status, pageHead, search, categories, articles, contact, footer |
 | `legal` | planned | bar, breadcrumb, pageHead, contents, articles, footer |
 | `account` | planned | bar, banner, sections, sectionHead, rows, footer |
 | `checkout` | planned | bar, stepper, main, summary, footer |
 | `auth` | planned | card, providers, foot |
+
+`tests/slot-styles.test.ts` refuses a slot style whose base, or one of whose variant values, sets one property twice (two border colours, two directions): the stylesheet's order, not the class order, would decide which one draws, so an override goes in a variant.
 
 `node scripts/check-site-regions.mjs` holds the contract to the slots site-core declares (`pnpm lint`, `design:check`), and `--selftest` proves it on a broken contract.
 
@@ -167,4 +177,4 @@ node scripts/site-demo.mjs --measure    # hold every page the measure files reco
 node scripts/site-demo.mjs --selftest   # the same, plus each page with a planted card radius that must be found on its carded regions
 ```
 
-The measure files record the reference design's signature per page: `measure.json` (pricing at 1440, 1024 and 800 wide, a phone, signed in, and the bar over a dark band) and `measure/<type>.json` for the other page types (each at 1440, 1024, 800 and a phone, in English and Korean, and in the states the parts draw). An entry names its page type, its fixture when the type's name is not it, its props, the viewport and the page-root width; `--measure` renders the fixture with those props at that width and prints every difference.
+The measure files record the reference design's signature per page: `measure.json` (pricing at 1440, 1024 and 800 wide, a phone, signed in, and the bar over a dark band) and `measure/<type>.json` for the other page types (each at 1440, 1024, 800 and a phone, in English and Korean, and in the states the parts draw). An entry names its page type, its fixture when the type's name is not it, its props, the viewport and the page-root width; `--measure` renders the fixture with those props at that width, with the reference window's height as the root's least height (a reference shorter than its frame fills the frame; a taller build still grows, and the column's own height is compared), and prints every difference.

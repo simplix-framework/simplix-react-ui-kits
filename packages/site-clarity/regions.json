@@ -292,6 +292,194 @@
         "list"
       ]
     },
+    "notice": {
+      "part": "NoticeCard",
+      "slot": "SitePage children",
+      "marks": [
+        "site-notice"
+      ],
+      "controls": [],
+      "parts": {
+        "title": "site-notice-title",
+        "text": "site-card-text"
+      },
+      "widths": [
+        "root"
+      ],
+      "carded": true
+    },
+    "check": {
+      "part": "CheckCard",
+      "slot": "SitePage children",
+      "marks": [
+        "site-check"
+      ],
+      "controls": [
+        "site-action"
+      ],
+      "maxControls": 1,
+      "parts": {
+        "title": "site-check-title",
+        "action": "site-action",
+        "spinner": "site-spinner",
+        "chip": "site-chip[data-tone=good]",
+        "blocked": "site-chip[data-tone=bad]",
+        "dot": "site-chip-dot",
+        "verdict": "site-check-verdict"
+      },
+      "widths": [
+        "root"
+      ],
+      "carded": true
+    },
+    "downloads": {
+      "part": "DownloadGrid",
+      "slot": "SitePage children",
+      "marks": [
+        "site-download-grid"
+      ],
+      "controls": [
+        "site-action"
+      ],
+      "parts": {
+        "card": "site-download[data-highlight=false]",
+        "highlighted": "site-download[data-highlight=true]",
+        "title": "site-card-title",
+        "text": "site-card-text",
+        "file": "site-download-file",
+        "primary": "site-action[data-tone=primary]",
+        "secondary": "site-action[data-tone=secondary]"
+      },
+      "widths": [
+        "root",
+        "card",
+        "highlighted"
+      ],
+      "carded": true
+    },
+    "installSteps": {
+      "part": "InstallSteps",
+      "slot": "SitePage children",
+      "marks": [
+        "site-install-steps"
+      ],
+      "controls": [],
+      "parts": {
+        "step": "site-install-step",
+        "head": "site-install-step-head",
+        "disc": "site-step-disc",
+        "title": "site-install-step-title",
+        "tag": "site-chip",
+        "body": "site-install-step-body",
+        "sketch": "site-sketch",
+        "sketchBar": "site-sketch-bar",
+        "line": "site-sketch-line[data-span=short]",
+        "longLine": "site-sketch-line[data-span=long]",
+        "accentLine": "site-sketch-line[data-span=accent]",
+        "label": "site-sketch-label[data-kind=progress]",
+        "pillLabel": "site-sketch-label[data-kind=pill]",
+        "pill": "site-sketch-pill",
+        "code": "site-sketch-label[data-kind=code]",
+        "track": "site-sketch-track",
+        "fill": "site-sketch-fill"
+      },
+      "widths": [
+        "root",
+        "step",
+        "head",
+        "sketch",
+        "track",
+        "fill"
+      ],
+      "carded": true
+    },
+    "video": {
+      "part": "VideoCard",
+      "slot": "SitePage children",
+      "marks": [
+        "site-video"
+      ],
+      "controls": [
+        "site-video-toggle"
+      ],
+      "parts": {
+        "row": "site-video-row",
+        "toggle": "site-video-toggle",
+        "title": "site-video-title",
+        "caption": "site-card-text",
+        "track": "site-progress",
+        "fill": "site-progress-fill"
+      },
+      "widths": [
+        "root",
+        "row",
+        "track",
+        "fill"
+      ],
+      "carded": true
+    },
+    "troubleshooting": {
+      "part": "ActionLine",
+      "slot": "SitePage children",
+      "marks": [
+        "site-action-line"
+      ],
+      "controls": [
+        "site-action"
+      ],
+      "maxControls": 1,
+      "parts": {
+        "action": "site-action"
+      },
+      "widths": [
+        "root"
+      ]
+    },
+    "symptoms": {
+      "part": "DisclosureList",
+      "slot": "SitePage children",
+      "marks": [
+        "site-disclosure-list"
+      ],
+      "controls": [
+        "site-disclosure-button",
+        "site-action"
+      ],
+      "parts": {
+        "item": "site-disclosure",
+        "button": "site-disclosure-button",
+        "label": "site-disclosure-label",
+        "mark": "site-disclosure-mark",
+        "panel": "site-disclosure-panel",
+        "text": "site-disclosure-text",
+        "lead": "site-disclosure-lead",
+        "list": "site-numbered-list",
+        "step": "site-numbered-item",
+        "copy": "site-copy-text",
+        "copyAction": "site-action"
+      },
+      "widths": [
+        "root",
+        "item",
+        "button",
+        "panel",
+        "text",
+        "list"
+      ],
+      "carded": true
+    },
+    "caption": {
+      "part": "SiteCaption",
+      "slot": "SitePage children",
+      "marks": [
+        "site-caption"
+      ],
+      "controls": [],
+      "parts": {},
+      "widths": [
+        "root"
+      ]
+    },
     "footer": {
       "part": "SiteFooter",
       "slot": "SiteWindow.footer",
@@ -353,18 +541,27 @@
       "$comment": "A product introduction: the bar continues the dark hero band, then the page column (SitePage rhythm=open) holds a split section of samples and the numbered steps with their promises."
     },
     "install": {
-      "status": "planned",
-      "reason": "needs the install segment (CheckCard, DownloadCard, CopyBlock, VideoCard)",
-      "plannedRegions": [
+      "status": "ready",
+      "root": "[data-page]",
+      "regions": [
         "bar",
         "pageHead",
+        "notice",
         "check",
         "downloads",
-        "steps",
+        "installSteps",
         "video",
         "troubleshooting",
+        "symptoms",
+        "caption",
         "footer"
-      ]
+      ],
+      "required": [
+        "bar",
+        "pageHead",
+        "footer"
+      ],
+      "$comment": "The download guide (the check of this computer, or on a phone the notice to open the page on the computer, the downloads, the steps with their sketches, the video and the way to troubleshooting) and the troubleshooting page (the symptoms and the line under them) share the type: a page draws the regions its view has, in this order."
     },
     "help": {
       "status": "planned",

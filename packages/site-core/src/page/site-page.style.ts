@@ -127,3 +127,62 @@ export const siteBreadcrumbSeparatorStyle = defineSlotStyle({
   variants: {},
   defaultVariants: {},
 });
+
+/**
+ * The card most page parts stand on: a hairline box on the surface with its content one gap apart.
+ * Parts that are cards draw their own slot with this ground, so a region can be found by its slot. A
+ * class that changes what the ground sets (its direction, its outline) is never appended to it in the
+ * same base, where the stylesheet's order and not the class order decides; it goes in a variant.
+ */
+export const SITE_CARD_GROUND = "gap-3 rounded-(--site-radius-xl) border border-(--site-line) bg-(--site-surface) px-4 py-3.5";
+/** The card with its content one under the other. */
+export const SITE_CARD = `flex min-w-0 flex-col ${SITE_CARD_GROUND}`;
+
+/** A status in one to three words, on its tone's soft ground; `dot` adds a still dot in the tone's colour. */
+export const siteChipStyle = defineSlotStyle({
+  slot: "site-chip",
+  base:
+    "inline-flex h-5 shrink-0 items-center gap-1 whitespace-nowrap rounded-(--site-radius-full) px-2 font-(family-name:--site-font-sans) text-(length:--site-fs-label) leading-none font-(--site-fw-strong) tracking-(--site-tracking-label)",
+  variants: {
+    tone: {
+      neutral: "bg-(--site-surface-sunken) text-(--site-ink-muted)",
+      accent: "bg-(--site-accent-soft) text-(--site-accent-strong)",
+      good: "bg-(--site-good-soft) text-(--site-good)",
+      warn: "bg-(--site-warn-soft) text-(--site-warn)",
+      bad: "bg-(--site-bad-soft) text-(--site-bad)",
+    },
+  },
+  defaultVariants: { tone: "neutral" },
+});
+
+/** The dot of a chip, in the chip's colour. */
+export const siteChipDotStyle = defineSlotStyle({
+  slot: "site-chip-dot",
+  base: "block size-1.5 shrink-0 rounded-(--site-radius-full) bg-current",
+  variants: {},
+  defaultVariants: {},
+});
+
+/** A small ring that turns while something runs. */
+export const siteSpinnerStyle = defineSlotStyle({
+  slot: "site-spinner",
+  base: "inline-block size-3 shrink-0 animate-spin rounded-(--site-radius-full) border-2 border-current border-r-transparent motion-reduce:animate-none",
+  variants: {},
+  defaultVariants: {},
+});
+
+/** A small muted line under a part: where to go next, what to do if stuck. */
+export const siteCaptionStyle = defineSlotStyle({
+  slot: "site-caption",
+  base: "m-0 text-(length:--site-fs-caption) leading-(--site-lh-caption) font-(--site-fw-caption) text-(--site-ink-muted)",
+  variants: {},
+  defaultVariants: {},
+});
+
+/** Words read only by a screen reader: a status line that speaks each change. */
+export const siteLiveStyle = defineSlotStyle({
+  slot: "site-live",
+  base: "sr-only",
+  variants: {},
+  defaultVariants: {},
+});
