@@ -87,7 +87,8 @@ describe("ConsoleMenuLinkRow", () => {
     const markup = renderToStaticMarkup(createElement(ConsoleMenuLinkRow, { label: "Portal", href: "https://portal.example.test/", external: true }));
     expect(markup).toContain('target="_blank"');
     expect(markup).toContain('rel="noopener noreferrer"');
-    expect(markup).toContain('class="sr-only"');
+    // The words follow the label after a space, so the link is heard as two phrases, not one word.
+    expect(markup).toMatch(/>Portal<\/span>.*<span class="sr-only"> \S/);
   });
 
   it("leaves a destination of the console in the same tab with no new-tab mark", () => {

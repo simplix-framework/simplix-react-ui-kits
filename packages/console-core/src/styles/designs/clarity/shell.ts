@@ -69,8 +69,10 @@ export const shellSlots: Record<string, string> = {
   "console-menu-column": `w-60 border-[var(--border)] bg-[var(--chrome-sidebar)] ${MENU_GROUND}`,
   "console-menu-rail": `w-15 border-[var(--border)] bg-[var(--chrome-sidebar)] pb-0 pt-2 ${MENU_GROUND}`,
   "console-menu-rail-rule": "my-[1.5px] bg-transparent",
+  // `shadow-none` takes the outline variant's shadow away; the keyboard focus halo is drawn back, or a
+  // mark reached by Tab shows nothing.
   "console-menu-rail-button":
-    "size-[38px] border-0 bg-transparent text-[var(--menu-icon,var(--muted-foreground))] shadow-none hover:bg-[var(--menu-hover,var(--hover-bg-strong))] hover:text-[var(--menu-hover-fg,var(--foreground))] [&_[data-slot=console-menu-glyph]]:text-current [&_[data-slot=console-menu-glyph]]:opacity-100 [&_svg]:size-[18px]",
+    "size-[38px] border-0 bg-transparent text-[var(--menu-icon,var(--muted-foreground))] shadow-none focus-visible:shadow-[var(--focus-halo)] hover:bg-[var(--menu-hover,var(--hover-bg-strong))] hover:text-[var(--menu-hover-fg,var(--foreground))] [&_[data-slot=console-menu-glyph]]:text-current [&_[data-slot=console-menu-glyph]]:opacity-100 [&_svg]:size-[18px]",
   "console-menu-rail-button active=true": "bg-[var(--primary-soft)] text-[var(--primary-text)] hover:bg-[var(--primary-soft)] hover:text-[var(--primary-text)]",
   "console-menu-column-head":
     "h-12 border-0 py-0 pl-[18px] pr-2.5 text-[var(--menu-fg,var(--secondary-foreground))] [&>*:first-child]:text-[var(--menu-fg,var(--foreground))] [&>*:first-child]:text-(length:--fs-cell) leading-(--lh-cell) [&>*:first-child]:font-semibold",

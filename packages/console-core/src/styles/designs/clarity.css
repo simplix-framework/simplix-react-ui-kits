@@ -1654,7 +1654,7 @@
     @apply px-2;
   }
   :where([data-part="console-menu-rail-button"])[data-part][data-p-console-menu-rail-button] {
-    @apply size-[38px] border-0 bg-transparent text-[var(--menu-icon,var(--muted-foreground))] shadow-none hover:bg-[var(--menu-hover,var(--hover-bg-strong))] hover:text-[var(--menu-hover-fg,var(--foreground))] [&_[data-slot=console-menu-glyph]]:text-current [&_[data-slot=console-menu-glyph]]:opacity-100 [&_svg]:size-[18px];
+    @apply size-[38px] border-0 bg-transparent text-[var(--menu-icon,var(--muted-foreground))] shadow-none focus-visible:shadow-[var(--focus-halo)] hover:bg-[var(--menu-hover,var(--hover-bg-strong))] hover:text-[var(--menu-hover-fg,var(--foreground))] [&_[data-slot=console-menu-glyph]]:text-current [&_[data-slot=console-menu-glyph]]:opacity-100 [&_svg]:size-[18px];
   }
   :where([data-part="console-menu-rail-button"][data-part-active="true"])[data-part][data-p-console-menu-rail-button] {
     @apply bg-[var(--primary-soft)] text-[var(--primary-text)] hover:bg-[var(--primary-soft)] hover:text-[var(--primary-text)];

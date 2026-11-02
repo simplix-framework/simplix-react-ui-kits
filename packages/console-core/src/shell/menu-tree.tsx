@@ -443,7 +443,7 @@ function NewTabMark() {
       <ConsoleMenuGlyph>
         <ExternalLinkIcon />
       </ConsoleMenuGlyph>
-      <span className="sr-only">{t("link.newTab")}</span>
+      <span className="sr-only">{` ${t("link.newTab")}`}</span>
     </>
   );
 }
