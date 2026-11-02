@@ -20,12 +20,14 @@ import {
 
 /** Props for {@link SitePage}. */
 export interface SitePageProps {
+  /** `open` spaces a marketing page's sections further apart; `page` is every other page. */
+  readonly rhythm?: "page" | "open";
   readonly children: ReactNode;
 }
 
 /** The page column: centred, as wide as the wide tier at most, its regions one gap apart. */
-export function SitePage({ children }: SitePageProps) {
-  return <div {...slotAttributes(sitePageStyle, {})}>{children}</div>;
+export function SitePage({ rhythm, children }: SitePageProps) {
+  return <div {...slotAttributes(sitePageStyle, { rhythm })}>{children}</div>;
 }
 
 /** Props for {@link SitePageHead}. */

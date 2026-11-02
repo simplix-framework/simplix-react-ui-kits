@@ -2,14 +2,19 @@ import { defineSlotStyle } from "@simplix-react/ui/design";
 
 /**
  * The page column: centred, no wider than the wide tier, its regions one gap apart. A narrow page
- * keeps a smaller side room so the content gets the width.
+ * keeps a smaller side room so the content gets the width. `rhythm="open"` spaces the sections of a
+ * marketing page further apart, under a hero that already gave the page its head.
  */
 export const sitePageStyle = defineSlotStyle({
   slot: "site-page",
-  base:
-    "mx-auto flex w-full min-w-0 max-w-(--site-page-wide) flex-col gap-5 px-6 py-8 @max-page-narrow/page:px-4 @max-page-narrow/page:py-5",
-  variants: {},
-  defaultVariants: {},
+  base: "mx-auto flex w-full min-w-0 max-w-(--site-page-wide) flex-col px-6 @max-page-narrow/page:px-4",
+  variants: {
+    rhythm: {
+      page: "gap-5 py-8 @max-page-narrow/page:py-5",
+      open: "gap-8 py-10",
+    },
+  },
+  defaultVariants: { rhythm: "page" },
 });
 
 /** The page's head: an optional eyebrow, the title and the lede. */

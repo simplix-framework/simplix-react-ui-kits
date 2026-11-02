@@ -20,8 +20,8 @@ export function tagsOf(html: string): MarkupTag[] {
   return tags;
 }
 
-/** Tags that carry no look of their own: a table's row groups and the shapes inside a glyph. */
-const STRUCTURAL = new Set(["thead", "tbody", "path", "circle"]);
+/** Tags that carry no look of their own: a table's row groups, a line break and the shapes inside a glyph. */
+const STRUCTURAL = new Set(["thead", "tbody", "br", "path", "circle"]);
 
 /** The tags that should carry a `data-slot` and do not. */
 export function unmarked(html: string): string[] {

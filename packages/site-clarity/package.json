@@ -20,6 +20,11 @@
       "types": "./src/link/index.ts",
       "import": "./dist/link/index.js"
     },
+    "./marketing": {
+      "source": "./src/marketing/index.ts",
+      "types": "./src/marketing/index.ts",
+      "import": "./dist/marketing/index.js"
+    },
     "./page": {
       "source": "./src/page/index.ts",
       "types": "./src/page/index.ts",

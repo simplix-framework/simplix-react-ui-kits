@@ -34,6 +34,121 @@
         "root"
       ]
     },
+    "hero": {
+      "part": "HeroBand",
+      "slot": "SiteWindow children",
+      "marks": [
+        "site-hero"
+      ],
+      "controls": [
+        "site-action",
+        "site-switch-option",
+        "site-play-toggle"
+      ],
+      "$comment": "The hero holds its own band, so its root measures the band ground; the player card in its media slot is measured as named parts.",
+      "parts": {
+        "inner": "site-hero-inner",
+        "copy": "site-hero-copy",
+        "eyebrow": "site-hero-eyebrow",
+        "title": "site-hero-title",
+        "accent": "site-hero-accent",
+        "lede": "site-hero-lede",
+        "actions": "site-hero-actions",
+        "primary": "site-action[data-tone=primary]",
+        "secondary": "site-action[data-tone=secondary]",
+        "facts": "site-hero-facts",
+        "player": "site-player",
+        "track": "site-switch",
+        "option": "site-switch-option[data-checked=false]",
+        "chosen": "site-switch-option[data-checked=true]",
+        "text": "site-read-along",
+        "word": "site-read-word",
+        "spoken": "site-read-word[data-state=spoken]",
+        "upcoming": "site-read-word[data-state=upcoming]",
+        "wave": "site-wave",
+        "barRest": "site-wave-bar[data-played=false]",
+        "barPlayed": "site-wave-bar[data-played=true]",
+        "toggle": "site-play-toggle",
+        "caption": "site-player-caption"
+      },
+      "widths": [
+        "root",
+        "inner",
+        "copy",
+        "player",
+        "track",
+        "text",
+        "wave"
+      ]
+    },
+    "compare": {
+      "part": "SplitSection",
+      "slot": "SitePage children",
+      "marks": [
+        "site-split"
+      ],
+      "controls": [
+        "site-sample"
+      ],
+      "parts": {
+        "head": "site-split-head",
+        "heading": "site-display-heading",
+        "lede": "site-split-lede",
+        "list": "site-sample-list",
+        "sample": "site-sample[data-playing=false]",
+        "playing": "site-sample[data-playing=true]",
+        "disc": "site-sample-disc[data-playing=false]",
+        "playingDisc": "site-sample-disc[data-playing=true]",
+        "name": "site-sample-name",
+        "meta": "site-sample-meta",
+        "line": "site-sample-line",
+        "text": "site-sample-text",
+        "wave": "site-wave",
+        "bar": "site-wave-bar[data-played=false]",
+        "barPlayed": "site-wave-bar[data-played=true]"
+      },
+      "widths": [
+        "root",
+        "head",
+        "list",
+        "sample",
+        "playing",
+        "line",
+        "wave"
+      ],
+      "carded": true
+    },
+    "steps": {
+      "part": "NumberedSteps",
+      "slot": "SitePage children",
+      "marks": [
+        "site-steps"
+      ],
+      "controls": [],
+      "parts": {
+        "heading": "site-display-heading",
+        "list": "site-steps-list",
+        "step": "site-step",
+        "number": "site-step-number",
+        "art": "site-bars",
+        "bar": "site-bars-bar[data-tone=soft]",
+        "strongBar": "site-bars-bar[data-tone=strong]",
+        "wave": "site-wave",
+        "title": "site-step-title",
+        "body": "site-step-body",
+        "notes": "site-note-list",
+        "note": "site-note",
+        "mark": "site-note-mark"
+      },
+      "widths": [
+        "root",
+        "list",
+        "step",
+        "art",
+        "wave"
+      ],
+      "carded": true
+    },
     "breadcrumb": {
       "part": "SiteBreadcrumb",
       "slot": "SitePage children",
@@ -221,16 +336,21 @@
       "$comment": "The offers, the price table and the questions follow the plans; a page leaves out a region its catalogue has nothing for, never reorders one."
     },
     "marketing": {
-      "status": "planned",
-      "reason": "needs the marketing segment (HeroBand, NumberedSteps, SampleRow) of the next slice; the dark band scope it continues into is in place",
-      "plannedRegions": [
+      "status": "ready",
+      "root": "[data-page]",
+      "regions": [
         "bar",
         "hero",
         "compare",
         "steps",
-        "download",
         "footer"
-      ]
+      ],
+      "required": [
+        "bar",
+        "hero",
+        "footer"
+      ],
+      "$comment": "A product introduction: the bar continues the dark hero band, then the page column (SitePage rhythm=open) holds a split section of samples and the numbered steps with their promises."
     },
     "install": {
       "status": "planned",

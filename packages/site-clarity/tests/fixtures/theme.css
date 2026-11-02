@@ -18,13 +18,28 @@
   --site-shadow-accent: 0 2px 8px #0b7a7347;
   --site-font-sans: system-ui, -apple-system, "Segoe UI", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
   --site-font-display: "Bricolage Grotesque", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --site-font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --site-voice: #ff7a4d;
+  --site-on-voice: #250c03;
+  --site-voice-strong: #ff9d78;
+  --site-voice-soft: #ffe6db;
+  --site-voice-text: #a9431f;
+  --site-wave-rest: #b9ccca;
+  --site-shadow-window: 0 14px 40px #00141452, 0 0 0 1px #0000001f;
 
   --site-dark-canvas: #0c1315;
-  --site-dark-ink: #ddf1ee;
+  --site-dark-surface: #142024;
+  --site-dark-line: #26363b;
+  --site-dark-ink: #e3eeee;
+  --site-dark-bar-ink: #ddf1ee;
   --site-dark-ink-muted: #8ca1a3;
   --site-dark-accent: #3ddbc9;
   --site-dark-on-accent: #062421;
   --site-dark-accent-strong: #3ddbc9;
   --site-dark-accent-soft: #062421;
-  --site-dark-surface-sunken: #142024;
+  --site-dark-surface-sunken: #0f181b;
+  --site-dark-voice-soft: #3b1a10;
+  --site-dark-voice-text: #ff9d78;
+  --site-dark-wave-rest: #3a5458;
+  --site-dark-shadow-window: 0 16px 44px #00000080, 0 0 0 1px #3ddbc947;
 }

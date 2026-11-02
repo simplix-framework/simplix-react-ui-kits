@@ -41,7 +41,7 @@ export const siteBarStyle = defineSlotStyle({
   variants: {
     tone: {
       light: "",
-      dark: "border-transparent bg-(--site-canvas)",
+      dark: "border-transparent bg-(--site-canvas) text-(--site-dark-bar-ink)",
     },
   },
   defaultVariants: { tone: "light" },

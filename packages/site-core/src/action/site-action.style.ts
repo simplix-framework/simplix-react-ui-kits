@@ -2,7 +2,8 @@ import { defineSlotStyle } from "@simplix-react/ui/design";
 
 /**
  * A site action: a link or a button drawn as a pressable box. `tone` says how strongly it asks to be
- * pressed (one primary per region), `size` follows the region it stands in (`sm` inside a row), and
+ * pressed (one primary per region), `size` follows the region it stands in (`sm` inside a row, `lg` in a
+ * hero), and
  * `block` stretches it over its column, as a plan card's actions are.
  *
  * <p>`size` is declared before `tone`: the rules are written in declaration order at one
@@ -16,6 +17,7 @@ export const siteActionStyle = defineSlotStyle({
     size: {
       md: "h-(--site-control) px-3.5 text-(length:--site-fs-body-pane) leading-(--site-lh-body-pane)",
       sm: "h-(--site-control-sm) px-2.5 text-(length:--site-fs-caption) leading-(--site-lh-caption)",
+      lg: "h-(--site-control-lg) rounded-(--site-radius-lg) px-4.5 text-(length:--site-fs-body-pane) leading-(--site-lh-body-pane)",
     },
     tone: {
       primary: "bg-(--site-accent) text-(--site-on-accent) hover:bg-(--site-accent-strong)",

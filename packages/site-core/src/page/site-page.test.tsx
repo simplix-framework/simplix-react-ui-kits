@@ -15,7 +15,7 @@ describe("SitePage", () => {
     expect(html.startsWith('<div data-slot="site-page"')).toBe(true);
     expect(sitePageStyle.base).toContain("max-w-(--site-page-wide)");
     expect(sitePageStyle.base).toContain("@max-page-narrow/page:px-4");
-    expect(sitePageStyle.base).toContain("@max-page-narrow/page:py-5");
+    expect(sitePageStyle.variants.rhythm.page).toContain("@max-page-narrow/page:py-5");
     expect(unmarked(html)).toEqual([]);
   });
 });

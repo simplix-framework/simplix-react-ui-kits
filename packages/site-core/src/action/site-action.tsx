@@ -25,7 +25,7 @@ export interface SiteActionSpec {
 
 /** Props for {@link SiteAction}. */
 export interface SiteActionProps extends SiteActionSpec {
-  readonly size?: "md" | "sm";
+  readonly size?: "md" | "sm" | "lg";
   /** Stretches the action over its column. */
   readonly block?: boolean;
 }

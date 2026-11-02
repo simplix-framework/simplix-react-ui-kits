@@ -1,6 +1,6 @@
 # @simplix-react-ui-kits/site-clarity
 
-The web site kit in the clarity design: the site parts of `@simplix-react-ui-kits/site-core` drawn with hairline borders, one accent and hierarchy from type. It re-exports site-core segment by segment (`/action`, `/link`, `/page`, `/pricing`, `/shell`) and adds the stylesheet, the variables it reads, the page region contract and the rendered checks.
+The web site kit in the clarity design: the site parts of `@simplix-react-ui-kits/site-core` drawn with hairline borders, one accent and hierarchy from type. It re-exports site-core segment by segment (`/action`, `/link`, `/marketing`, `/page`, `/pricing`, `/shell`) and adds the stylesheet, the variables it reads, the page region contract and the rendered checks.
 
 ## Using it in an app
 
@@ -46,8 +46,15 @@ Every label is a prop: the kit ships no strings, and the product passes its own 
 | `--site-on-accent` | text on the accent | `var(--primary-foreground)` |
 | `--site-accent-strong` | quiet action text, primary action under the pointer, avatar initial | `var(--primary)` |
 | `--site-accent-soft` | avatar ground, quiet action under the pointer | `var(--accent)` |
+| `--site-voice` | the voice colour: a hero's accent line, the play toggle, a playing sample | `var(--site-accent)` |
+| `--site-on-voice` | text and glyphs on the voice colour | `var(--site-on-accent)` |
+| `--site-voice-strong` | the play toggle under the pointer | `var(--site-accent-strong)` |
+| `--site-voice-soft` | a playing sample's ground, the word being read | `var(--site-accent-soft)` |
+| `--site-voice-text` | the word being read | `var(--site-accent-strong)` |
+| `--site-wave-rest` | a wave's bars not yet played | `var(--border)` |
 | `--site-font-sans` | the text family | `var(--font-sans)` |
 | `--site-font-display` | the display family: page titles, prices, display headings | `var(--font-sans)` |
+| `--site-font-mono` | the mono family: a hero eyebrow, step numbers | `var(--font-mono)` |
 | `--site-fs-base` | the window's text size | `13px` |
 | `--site-lh-base` | the window's line height | `19.5px` |
 | `--site-fw-base` | the window's weight | `400` |
@@ -61,6 +68,9 @@ Every label is a prop: the kit ships no strings, and the product passes its own 
 | `--site-fs-label` | the highlight badge, an eyebrow | `11px` |
 | `--site-lh-label` | their line height | `14px` |
 | `--site-tracking-label` | their letter spacing | `0.02em` |
+| `--site-fs-heading` | a heading inside a page part | `16px` |
+| `--site-lh-heading` | its line height | `24px` |
+| `--site-lh-reading` | the line height of a sentence read along | `26px` |
 | `--site-fs-subheading` | offer names, section headings | `14px` |
 | `--site-lh-subheading` | their line height | `20px` |
 | `--site-fs-headline` | a display section heading (`SiteSection size="lg"`) | `23px` |
@@ -71,15 +81,24 @@ Every label is a prop: the kit ships no strings, and the product passes its own 
 | `--site-fs-title` | the page title | `26px` |
 | `--site-lh-title` | its line height | `32px` |
 | `--site-fw-title` | its weight, and a display heading's | `700` |
+| `--site-fs-display` | a hero title on a narrow page | `34px` |
+| `--site-lh-display` | its line height | `40px` |
+| `--site-fs-display-xl` | a hero title | `44px` |
+| `--site-lh-display-xl` | its line height | `48px` |
+| `--site-fw-display` | a hero title's weight | `750` |
 | `--site-fw-strong` | the current link, actions, names, the chosen option | `600` |
 | `--site-tracking-display` | letter spacing of the display family | `-0.025em` |
+| `--site-tracking-wide` | letter spacing of a mono eyebrow | `0.025em` |
 | `--site-page-wide` | the page column's widest measure | `var(--container-page-wide)` |
 | `--site-control` | an action's height | `34px` |
 | `--site-control-sm` | a small action's and a switch option's height | `28px` |
+| `--site-control-lg` | a hero action's height | `42px` |
 | `--site-radius-xs` | footer and breadcrumb link focus corners | `4px` |
 | `--site-radius-sm` | switch options, menu items | `6px` |
 | `--site-radius-md` | actions, bar links, the switch track, the more menu | `8px` |
+| `--site-radius-lg` | a hero action | `10px` |
 | `--site-radius-xl` | cards, offer rows, the price table | `12px` |
+| `--site-radius-2xl` | a raised player card | `16px` |
 | `--site-radius-full` | the highlight badge, the avatar | `9999px` |
 | `--site-recede` | the opacity of a bar link that is not the current page | `0.7` |
 | `--site-faint` | a feature an offer leaves out, a disabled switch option | `0.4` |
@@ -88,7 +107,9 @@ Every label is a prop: the kit ships no strings, and the product passes its own 
 | `--site-focus-ring` | the keyboard focus ring | a 2px surface gap, then a 2px accent ring |
 | `--site-shadow-float` | the more menu | `0 10px 30px` at 22% |
 | `--site-shadow-accent` | the highlighted offer | `0 2px 8px` of the accent at 28% |
+| `--site-shadow-window` | a raised player card | `0 14px 40px` at 32% and a 1px line |
 | `--site-dark-canvas` | a dark band's ground (`data-band="dark"`) | `var(--sidebar)` |
+| `--site-dark-surface` | a dark band's cards and chosen options | `var(--sidebar)` |
 | `--site-dark-surface-sunken` | a dark band's sunken ground | `var(--sidebar-accent)` |
 | `--site-dark-line` | a dark band's hairline | `transparent` |
 | `--site-dark-ink` | a dark band's text | `var(--sidebar-foreground)` |
@@ -97,8 +118,13 @@ Every label is a prop: the kit ships no strings, and the product passes its own 
 | `--site-dark-on-accent` | text on a dark band's accent | `var(--sidebar-primary-foreground)` |
 | `--site-dark-accent-strong` | a dark band's strong accent | `var(--sidebar-primary)` |
 | `--site-dark-accent-soft` | a dark band's soft accent | `var(--sidebar-accent)` |
+| `--site-dark-voice-soft` | a dark band's voice ground | `var(--site-dark-accent-soft)` |
+| `--site-dark-voice-text` | a dark band's word being read | `var(--site-dark-accent-strong)` |
+| `--site-dark-wave-rest` | a dark band's wave rest colour | `var(--site-dark-line)` |
+| `--site-dark-shadow-window` | a dark band's raised card | `0 16px 44px` at 50% and a 1px accent line |
+| `--site-dark-bar-ink` | the bar's text over a dark band, which may differ from the band's own | `var(--site-dark-ink)` |
 
-Inside an element marked `data-band="dark"` (`SiteBand`, and `SiteBar` with `tone="dark"`), the ground, ink, line and accent variables take the `--site-dark-*` values, so the same rules draw on the dark ground.
+Inside an element marked `data-band="dark"` (`SiteBand`, `HeroBand` with `tone="dark"`, and `SiteBar` with `tone="dark"`), the ground, surface, ink, line, accent, voice, wave and raised-card variables take the `--site-dark-*` values, so the same rules draw on the dark ground. The bar over a dark band draws its text in `--site-dark-bar-ink`.
 
 ## Page region contract
 
@@ -107,7 +133,7 @@ Inside an element marked `data-band="dark"` (`SiteBand`, and `SiteBar` with `ton
 | Type | Status | Regions |
 | --- | --- | --- |
 | `pricing` | ready | bar, pageHead, switches, plans, offers, priceTable, questions, footer |
-| `marketing` | planned | bar, hero, compare, steps, download, footer |
+| `marketing` | ready | bar, hero, compare, steps, footer |
 | `install` | planned | bar, pageHead, check, downloads, steps, video, troubleshooting, footer |
 | `help` | planned | bar, status, pageHead, search, categories, articles, contact, footer |
 | `legal` | planned | bar, breadcrumb, pageHead, contents, articles, footer |

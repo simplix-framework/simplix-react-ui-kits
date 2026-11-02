@@ -25,10 +25,17 @@
   --site-on-accent: var(--primary-foreground);
   --site-accent-strong: var(--primary);
   --site-accent-soft: var(--accent);
+  --site-voice: var(--site-accent);
+  --site-on-voice: var(--site-on-accent);
+  --site-voice-strong: var(--site-accent-strong);
+  --site-voice-soft: var(--site-accent-soft);
+  --site-voice-text: var(--site-accent-strong);
+  --site-wave-rest: var(--border);
 
   /* Type: the text family, the display family for titles and prices, and the steps. */
   --site-font-sans: var(--font-sans);
   --site-font-display: var(--font-sans);
+  --site-font-mono: var(--font-mono);
   --site-fs-base: 13px;
   --site-lh-base: 19.5px;
   --site-fw-base: 400;
@@ -42,6 +49,9 @@
   --site-fs-label: 11px;
   --site-lh-label: 14px;
   --site-tracking-label: 0.02em;
+  --site-fs-heading: 16px;
+  --site-lh-heading: 24px;
+  --site-lh-reading: 26px;
   --site-fs-subheading: 14px;
   --site-lh-subheading: 20px;
   --site-fs-headline: 23px;
@@ -52,17 +62,26 @@
   --site-fs-title: 26px;
   --site-lh-title: 32px;
   --site-fw-title: 700;
+  --site-fs-display: 34px;
+  --site-lh-display: 40px;
+  --site-fs-display-xl: 44px;
+  --site-lh-display-xl: 48px;
+  --site-fw-display: 750;
   --site-fw-strong: 600;
   --site-tracking-display: -0.025em;
+  --site-tracking-wide: 0.025em;
 
   /* Geometry. */
   --site-page-wide: var(--container-page-wide);
   --site-control: 34px;
   --site-control-sm: 28px;
+  --site-control-lg: 42px;
   --site-radius-xs: 4px;
   --site-radius-sm: 6px;
   --site-radius-md: 8px;
+  --site-radius-lg: 10px;
   --site-radius-xl: 12px;
+  --site-radius-2xl: 16px;
   --site-radius-full: 9999px;
 
   /* What recedes and what is left out. */
@@ -75,9 +94,11 @@
   --site-focus-ring: 0 0 0 2px var(--site-surface), 0 0 0 4px var(--site-accent);
   --site-shadow-float: 0 10px 30px rgb(0 30 30 / 22%);
   --site-shadow-accent: 0 2px 8px color-mix(in srgb, var(--site-accent) 28%, transparent);
+  --site-shadow-window: 0 14px 40px rgb(0 20 20 / 32%), 0 0 0 1px rgb(0 0 0 / 12%);
 
   /* The dark band's own values (a hero and the bar over it). */
   --site-dark-canvas: var(--sidebar);
+  --site-dark-surface: var(--sidebar);
   --site-dark-surface-sunken: var(--sidebar-accent);
   --site-dark-line: transparent;
   --site-dark-ink: var(--sidebar-foreground);
@@ -86,12 +107,17 @@
   --site-dark-on-accent: var(--sidebar-primary-foreground);
   --site-dark-accent-strong: var(--sidebar-primary);
   --site-dark-accent-soft: var(--sidebar-accent);
+  --site-dark-voice-soft: var(--site-dark-accent-soft);
+  --site-dark-voice-text: var(--site-dark-accent-strong);
+  --site-dark-wave-rest: var(--site-dark-line);
+  --site-dark-shadow-window: 0 16px 44px rgb(0 0 0 / 50%), 0 0 0 1px color-mix(in srgb, var(--site-dark-accent) 28%, transparent);
+  --site-dark-bar-ink: var(--site-dark-ink);
 }
 
 /* A band on the dark ground: every site variable a part reads takes the band's value inside it. */
 [data-band="dark"] {
   --site-canvas: var(--site-dark-canvas);
-  --site-surface: var(--site-dark-canvas);
+  --site-surface: var(--site-dark-surface);
   --site-surface-sunken: var(--site-dark-surface-sunken);
   --site-line: var(--site-dark-line);
   --site-ink: var(--site-dark-ink);
@@ -100,4 +126,8 @@
   --site-on-accent: var(--site-dark-on-accent);
   --site-accent-strong: var(--site-dark-accent-strong);
   --site-accent-soft: var(--site-dark-accent-soft);
+  --site-voice-soft: var(--site-dark-voice-soft);
+  --site-voice-text: var(--site-dark-voice-text);
+  --site-wave-rest: var(--site-dark-wave-rest);
+  --site-shadow-window: var(--site-dark-shadow-window);
 }
