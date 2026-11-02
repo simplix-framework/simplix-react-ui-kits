@@ -49,6 +49,7 @@ import {
   menuDecisionProblems,
   readClaimedFrames,
   readMenu,
+  readPageRoutes,
   readRoutes,
   renderMenu,
   resolveMenu,
@@ -83,16 +84,16 @@ const menu = readMenu(readFileSync(at(settings.source), "utf8"), settings.source
   account: settings.accountConstant ?? "ACCOUNT_ENTRY",
 });
 const routeDir = at(settings.routes);
-const routes = readRoutes(
-  readdirSync(routeDir)
-    .filter((file) => /\.tsx?$/.test(file))
-    .sort()
-    .map((file) => readFileSync(join(routeDir, file), "utf8")),
-);
+const routeTexts = readdirSync(routeDir)
+  .filter((file) => /\.tsx?$/.test(file))
+  .sort()
+  .map((file) => readFileSync(join(routeDir, file), "utf8"));
+const routes = readRoutes(routeTexts);
+const pages = readPageRoutes(routeTexts);
 const claimed = readClaimedFrames(readFileSync(at(settings.scaffoldConfig), "utf8"), settings.scaffoldConfig);
 const screens = join(root, "screens");
 const frame = (file) => (existsSync(join(screens, file)) ? readFileSync(join(screens, file), "utf8") : undefined);
-const resolved = resolveMenu(menu, { routes, claimed, frame, prefix: settings.storyIdPrefix });
+const resolved = resolveMenu(menu, { routes, claimed, frame, prefix: settings.storyIdPrefix, pages, app: settings.designApp });
 const entryCount = resolved.groups.flatMap((group) => group.entries).length;
 
 // The menu's placement is a decision of the screen's design entry; it is checked in either mode.
