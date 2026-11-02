@@ -63,3 +63,20 @@ describe("the readers the checks use", () => {
     expect([...documentedVariables(markdown)]).toEqual(["--site-ink"]);
   });
 });
+
+describe("the site window against a host's base layer", () => {
+  const app = read("src/styles/app.css");
+  const reset = /@layer base\s*{\s*:where\(\[data-slot="site-window"\]\)\s*:is\(h1, h2, h3, h4, h5, h6\)\s*{([^}]*)}/.exec(app);
+
+  it("puts every heading inside the window back to full opacity and the inherited family", () => {
+    expect(reset?.[1]).toMatch(/opacity:\s*1;/);
+    expect(reset?.[1]).toMatch(/font-family:\s*inherit;/);
+  });
+
+  it("matches a heading with an element's weight, so it wins over a host's bare h1 rule that comes before it", () => {
+    // `:where(...)` alone would weigh nothing and lose to the host's `h1 { opacity: 0.8 }`.
+    expect(app).not.toMatch(/:where\([^)]*\)\s*:where\(h1/);
+    expect(app.indexOf("@layer base")).toBeGreaterThan(app.indexOf('@import "./designs/clarity.css"'));
+  });
+});
+

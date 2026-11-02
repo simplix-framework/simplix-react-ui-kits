@@ -26,8 +26,13 @@ export const siteSwitchOptionStyle = defineSlotStyle({
       true: "bg-(--site-surface) font-(--site-fw-strong) text-(--site-ink) ring-1 ring-(--site-line)",
       false: "",
     },
+    // `sm` for a switch that sits in a line of small text, such as the footer's language picker.
+    size: {
+      md: "",
+      sm: "h-6",
+    },
   },
-  defaultVariants: { checked: false },
+  defaultVariants: { checked: false, size: "md" },
 });
 
 /** The offers side by side: four to a row, two below the medium tier, one below the narrow tier. */

@@ -1,11 +1,14 @@
-import { createContext, createElement, useContext, type AnchorHTMLAttributes, type ReactElement, type ReactNode, type Ref } from "react";
+import { createContext, createElement, useContext, type AnchorHTMLAttributes, type ReactElement, type ReactNode } from "react";
 
-/** What a site part hands the link it draws: an address and the anchor's own attributes. */
+/**
+ * What a site part hands the link it draws: an address and the anchor's own attributes. It carries no
+ * `ref`: no part hands one, and a `Ref` type is unique to the copy of the React types that declares
+ * it, so an app resolving its own copy could not pass these props on to its anchor.
+ */
 export interface SiteLinkProps extends AnchorHTMLAttributes<HTMLAnchorElement> {
   /** The address the link opens; a router link resolves it as its own route. */
   readonly href: string;
   readonly children?: ReactNode;
-  readonly ref?: Ref<HTMLAnchorElement>;
 }
 
 /**

@@ -7,3 +7,14 @@
 /* The site parts as a content source, as every kit stylesheet registers its own, so a utility a part
    writes on an element reaches an app whose own @source globs do not cover the kit. */
 @source "../../../site-core/src/**/*.{ts,tsx}";
+
+/* A host app's base layer may style bare elements for its own pages (a console fades every h1 and
+   draws it in its title family). Inside the site window the slot rules decide every look, so a
+   heading starts from the document's defaults: this base rule comes after the host's, matches with
+   the same weight (one element), and every slot rule, in a later layer, still wins over it. */
+@layer base {
+  :where([data-slot="site-window"]) :is(h1, h2, h3, h4, h5, h6) {
+    opacity: 1;
+    font-family: inherit;
+  }
+}

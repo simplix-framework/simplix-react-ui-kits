@@ -19,6 +19,8 @@ export interface SegmentedSwitchProps<T extends string> {
   readonly onValueChange: (value: T) => void;
   /** The group's accessible name ("Billing cycle"). */
   readonly label: string;
+  /** `sm` sits in a line of small text (a footer); `md` stands above a set of offers. */
+  readonly size?: "md" | "sm";
 }
 
 /**
@@ -48,7 +50,7 @@ export function switchKeyTarget<T extends string>(options: readonly SegmentedOpt
  * It is a radio group: Tab reaches the chosen option, the arrows move the choice, and one option is
  * always chosen.
  */
-export function SegmentedSwitch<T extends string>({ options, value, onValueChange, label }: SegmentedSwitchProps<T>) {
+export function SegmentedSwitch<T extends string>({ options, value, onValueChange, label, size }: SegmentedSwitchProps<T>) {
   const group = useRef<HTMLDivElement>(null);
   const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
     const target = switchKeyTarget(options, value, event.key);
@@ -64,7 +66,7 @@ export function SegmentedSwitch<T extends string>({ options, value, onValueChang
         return (
           <button
             key={option.value}
-            {...slotAttributes(siteSwitchOptionStyle, { checked })}
+            {...slotAttributes(siteSwitchOptionStyle, { checked, size })}
             type="button"
             role="radio"
             aria-checked={checked}

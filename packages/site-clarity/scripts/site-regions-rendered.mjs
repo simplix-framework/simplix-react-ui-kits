@@ -142,6 +142,16 @@ export function judge(signature, type, c = contract) {
 
 /** Properties compared exactly: colours, type, borders, radii, shadows, spacing. */
 const EXACT = ["family", "size", "weight", "lineHeight", "letterSpacing", "color", "background", "borderTop", "borderRight", "borderBottom", "borderLeft", "radius", "shadow", "padding", "gap", "opacity", "fill", "maxWidth", "columns"];
+const BORDERS = new Set(["borderTop", "borderRight", "borderBottom", "borderLeft"]);
+
+/**
+ * A property's value as compared: a border side no wider than 0px paints nothing, so its colour (which
+ * a host's base layer sets on every element while a bare preflight leaves `currentcolor`) is not part
+ * of what is drawn and compares as `0px`.
+ */
+export function comparable(prop, value) {
+  return BORDERS.has(prop) && /^0px(\s|$)/.test(String(value)) ? "0px" : String(value);
+}
 /**
  * The parts whose width the layout decides, as `<region>.<part>` keys: the frame always, and per
  * region the `widths` regions.json lists (`root` names the region's own box). A width the text
@@ -170,7 +180,7 @@ export function compare(reference, build, { tolerance = 1, contract: c = contrac
       problems.push(`${where}: drawn only in the ${a ? "reference" : "build"}`);
       return;
     }
-    for (const prop of EXACT) if (String(a[prop]) !== String(b[prop])) problems.push(`${where} ${prop}: reference ${a[prop]} | build ${b[prop]}`);
+    for (const prop of EXACT) if (comparable(prop, a[prop]) !== comparable(prop, b[prop])) problems.push(`${where} ${prop}: reference ${a[prop]} | build ${b[prop]}`);
     if (Math.abs(a.height - b.height) > tolerance) problems.push(`${where} height: reference ${a.height} | build ${b.height}`);
     if (sized.has(where) && Math.abs(a.width - b.width) > tolerance) problems.push(`${where} width: reference ${a.width} | build ${b.width}`);
   };
@@ -243,6 +253,11 @@ if (isMain && process.argv.includes("--selftest")) {
     says(planted, /^offers count: reference 2 \| build 1/) &&
     says(planted, /^footer: drawn only in the reference/) &&
     planted.length === 8;
+  // A border no wider than 0px paints nothing, so its colour is no difference; a drawn one's colour is.
+  const hairline = (top) => signature({ regions: { ...base.regions, pageHead: { ...base.regions.pageHead, root: look({ borderTop: top }) } } });
+  const unpainted = compare(base, hairline("0px rgb(220, 228, 227)"));
+  const painted = compare(hairline("1px rgb(18, 32, 31)"), hairline("1px rgb(220, 228, 227)"));
+  const bordersOk = unpainted.length === 0 && painted.length === 1 && says(painted, /^pageHead\.root borderTop: reference 1px rgb\(18, 32, 31\) \| build 1px rgb\(220, 228, 227\)$/);
   const counted = byRegion(planted);
   const countOk = counted.plans === 2 && counted.footer === 1 && counted.order === 1 && counted.frame === 1;
   const fine = judge(base, "pricing");
@@ -262,7 +277,7 @@ if (isMain && process.argv.includes("--selftest")) {
     fine.length === 0 && planned.length === 1 && /help: the type is planned/.test(planned[0] ?? "") && vacuous.length === 1 &&
     says(broken, /^hero: not a region of pricing/) && says(broken, /^order: bar > plans > pageHead/) && says(broken, /^footer: required on pricing/) &&
     says(broken, /^offers: site-switch-option not allowed/) && says(broken, /^offers: 2 controls in one OfferRow, at most 1/) && broken.length === 5;
-  const ok = compareOk && countOk && judgeOk;
-  console.log(ok ? "site-regions-rendered selftest: 10 compare cases and 8 judge cases hold" : `site-regions-rendered selftest FAILED\nsame: ${same.join(" | ")}\ntolerance: ${withinTolerance.join(" | ")}\nplanted (${planted.length}): ${planted.join("\n  ")}\ncounted: ${JSON.stringify(counted)}\nfine: ${fine.join(" | ")}\nplanned: ${planned.join(" | ")}\nbroken (${broken.length}): ${broken.join("\n  ")}`);
+  const ok = compareOk && countOk && judgeOk && bordersOk;
+  console.log(ok ? "site-regions-rendered selftest: 12 compare cases and 8 judge cases hold" : `site-regions-rendered selftest FAILED\nsame: ${same.join(" | ")}\nunpainted border: ${unpainted.join(" | ")}\npainted border: ${painted.join(" | ")}\ntolerance: ${withinTolerance.join(" | ")}\nplanted (${planted.length}): ${planted.join("\n  ")}\ncounted: ${JSON.stringify(counted)}\nfine: ${fine.join(" | ")}\nplanned: ${planned.join(" | ")}\nbroken (${broken.length}): ${broken.join("\n  ")}`);
   process.exit(ok ? 0 : 1);
 }

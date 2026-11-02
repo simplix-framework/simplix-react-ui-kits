@@ -919,6 +919,9 @@
   [data-slot="site-switch-option"][data-checked="true"][data-s-site-switch-option] {
     @apply bg-(--site-surface) font-(--site-fw-strong) text-(--site-ink) ring-1 ring-(--site-line);
   }
+  [data-slot="site-switch-option"][data-size="sm"][data-s-site-switch-option] {
+    @apply h-6;
+  }
   [data-slot="site-switch-row"][data-slot][data-s-site-switch-row] {
     @apply flex min-w-0 flex-wrap items-center gap-3;
   }

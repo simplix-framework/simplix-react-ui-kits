@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 import { bySlot, tabStops, unmarked } from "../testing/markup";
 import { OfferRow, PriceTable, QuestionList } from "./offer-parts";
 import { FeatureList, PlanCard, PlanGrid } from "./plan-card";
-import { sitePlanGridStyle, siteQuestionListStyle, siteFeatureListStyle } from "./pricing.style";
+import { sitePlanGridStyle, siteQuestionListStyle, siteFeatureListStyle, siteSwitchOptionStyle } from "./pricing.style";
 import { SegmentedSwitch, SwitchRow, switchKeyTarget, type SegmentedOption } from "./segmented-switch";
 
 type Cycle = "monthly" | "yearly";
@@ -49,6 +49,21 @@ describe("SegmentedSwitch", () => {
     expect(switchKeyTarget(cycles, "monthly", "Enter")).toBeNull();
     expect(switchKeyTarget(cycles, "monthly", "Home")).toBeNull();
     expect(switchKeyTarget([{ value: "a", label: "A", disabled: true }], "a", "ArrowRight")).toBeNull();
+  });
+});
+
+describe("SegmentedSwitch sizes", () => {
+  const options = [
+    { value: "en", label: "English" },
+    { value: "ko", label: "Korean" },
+  ] as const;
+
+  it("draws its options at the small size in a line of small text and at the default size otherwise", () => {
+    const small = renderToStaticMarkup(<SegmentedSwitch label="Language" value="en" onValueChange={() => {}} options={options} size="sm" />);
+    expect(bySlot(small, "site-switch-option").map((option) => option.attributes["data-size"])).toEqual(["sm", "sm"]);
+    const plain = renderToStaticMarkup(<SegmentedSwitch label="Language" value="en" onValueChange={() => {}} options={options} />);
+    expect(bySlot(plain, "site-switch-option").map((option) => option.attributes["data-size"])).toEqual(["md", "md"]);
+    expect(siteSwitchOptionStyle.variants.size.sm).toBe("h-6");
   });
 });
 
