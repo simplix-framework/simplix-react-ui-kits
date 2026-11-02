@@ -474,7 +474,8 @@ export function useRecordContract(entity: string, overrides: ContractOverrides =
         case "money":
           return figureValue(field, raw, moneyText(field, raw, locale));
         case "credits":
-          return figureValue(field, raw, t("recordValue.credits", { count: groupedNumber(raw, locale) as never }));
+          // The plural follows the number (1 credit, 2 credits); the figure is written grouped.
+          return figureValue(field, raw, t("recordValue.credits", { count: Number(raw), value: groupedNumber(raw, locale) }));
         case "bytes":
           return { figure: bytesText(raw, locale) };
         case "duration":

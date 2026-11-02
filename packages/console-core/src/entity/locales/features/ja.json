@@ -102,6 +102,6 @@
     }
   },
   "recordValue": {
-    "credits": "{{count}}クレジット"
+    "credits_other": "{{value}}クレジット"
   }
 }
