@@ -1,0 +1,144 @@
+# @simplix-react-ui-kits/site-clarity
+
+The web site kit in the clarity design: the site parts of `@simplix-react-ui-kits/site-core` drawn with hairline borders, one accent and hierarchy from type. It re-exports site-core segment by segment (`/action`, `/link`, `/page`, `/pricing`, `/shell`) and adds the stylesheet, the variables it reads, the page region contract and the rendered checks.
+
+## Using it in an app
+
+```css
+/* the app's stylesheet */
+@import "tailwindcss";
+@import "@simplix-react/ui/theme.css";
+@import "@simplix-react-ui-kits/site-clarity/styles/app.css";
+@import "./site-theme.css"; /* the product's values for the variables below */
+```
+
+The parts carry no classes of their own: every element is marked with `data-slot`, and `styles/designs/clarity.css` draws each slot with Tailwind utilities that read the site variables. The window (`SiteWindow`) is the `page` container, so the parts reflow on the page tiers (`page-narrow` 620px, `page-medium` 900px, `page-wide` 1200px, declared in `styles/site-tokens.css` as `--container-page-*`) by the window's width, not the viewport's.
+
+```tsx
+import { SiteWindow, SiteBar, SiteFooter } from "@simplix-react-ui-kits/site-clarity/shell";
+import { SitePage, SitePageHead } from "@simplix-react-ui-kits/site-clarity/page";
+
+<SiteWindow page="pricing" linkComponent={RouterLink} bar={<SiteBar … />} footer={<SiteFooter … />}>
+  <SitePage>
+    <SitePageHead title={t("pricing.title")} lede={t("pricing.lede")} />
+    …
+  </SitePage>
+</SiteWindow>;
+```
+
+Every label is a prop: the kit ships no strings, and the product passes its own catalogue's text in each language.
+
+## Variables
+
+`styles/site-tokens.css` defines every variable the stylesheet reads, with a default that falls back to the framework theme token named in it. A product writes its own values for the same names after the kit's stylesheet; a value it leaves unset keeps the default. `tests/stylesheet.test.ts` fails when the stylesheet reads a variable this list does not define or document.
+
+| Variable | What it draws | Default |
+| --- | --- | --- |
+| `--site-canvas` | the page's ground | `var(--background)` |
+| `--site-surface` | bar, footer, cards and the chosen switch option | `var(--card)` |
+| `--site-surface-sunken` | switch track, hovered quiet controls | `var(--muted)` |
+| `--site-line` | every hairline: bar, footer, cards, table rules | `var(--border)` |
+| `--site-ink` | body text and headings | `var(--foreground)` |
+| `--site-ink-muted` | ledes, notes, captions, table values | `var(--muted-foreground)` |
+| `--site-ink-disabled` | a disabled action's label | `var(--muted-foreground)` |
+| `--site-control-disabled` | a disabled action's ground | `var(--muted)` |
+| `--site-accent` | the one accent: primary action, highlighted offer, checks | `var(--primary)` |
+| `--site-on-accent` | text on the accent | `var(--primary-foreground)` |
+| `--site-accent-strong` | quiet action text, primary action under the pointer, avatar initial | `var(--primary)` |
+| `--site-accent-soft` | avatar ground, quiet action under the pointer | `var(--accent)` |
+| `--site-font-sans` | the text family | `var(--font-sans)` |
+| `--site-font-display` | the display family: page titles, prices, display headings | `var(--font-sans)` |
+| `--site-fs-base` | the window's text size | `13px` |
+| `--site-lh-base` | the window's line height | `19.5px` |
+| `--site-fw-base` | the window's weight | `400` |
+| `--site-fs-body` | a page lede | `14px` |
+| `--site-lh-body` | a page lede's line height | `22px` |
+| `--site-fs-body-pane` | bar links, actions, pitches, questions | `13px` |
+| `--site-lh-body-pane` | their line height | `20px` |
+| `--site-fs-caption` | notes, features, footer, small actions, switch options | `12px` |
+| `--site-lh-caption` | their line height | `16px` |
+| `--site-fw-caption` | their weight | `500` |
+| `--site-fs-label` | the highlight badge, an eyebrow | `11px` |
+| `--site-lh-label` | their line height | `14px` |
+| `--site-tracking-label` | their letter spacing | `0.02em` |
+| `--site-fs-subheading` | offer names, section headings | `14px` |
+| `--site-lh-subheading` | their line height | `20px` |
+| `--site-fs-headline` | a display section heading (`SiteSection size="lg"`) | `23px` |
+| `--site-lh-headline` | its line height | `26px` |
+| `--site-fs-stat` | a price | `24px` |
+| `--site-lh-stat` | its line height | `28px` |
+| `--site-fw-stat` | its weight | `750` |
+| `--site-fs-title` | the page title | `26px` |
+| `--site-lh-title` | its line height | `32px` |
+| `--site-fw-title` | its weight, and a display heading's | `700` |
+| `--site-fw-strong` | the current link, actions, names, the chosen option | `600` |
+| `--site-tracking-display` | letter spacing of the display family | `-0.025em` |
+| `--site-page-wide` | the page column's widest measure | `var(--container-page-wide)` |
+| `--site-control` | an action's height | `34px` |
+| `--site-control-sm` | a small action's and a switch option's height | `28px` |
+| `--site-radius-xs` | footer and breadcrumb link focus corners | `4px` |
+| `--site-radius-sm` | switch options, menu items | `6px` |
+| `--site-radius-md` | actions, bar links, the switch track, the more menu | `8px` |
+| `--site-radius-xl` | cards, offer rows, the price table | `12px` |
+| `--site-radius-full` | the highlight badge, the avatar | `9999px` |
+| `--site-recede` | the opacity of a bar link that is not the current page | `0.7` |
+| `--site-faint` | a feature an offer leaves out, a disabled switch option | `0.4` |
+| `--site-duration-fast` | hover and press transitions | `120ms` |
+| `--site-ease` | their easing | `cubic-bezier(0.2, 0.8, 0.2, 1)` |
+| `--site-focus-ring` | the keyboard focus ring | a 2px surface gap, then a 2px accent ring |
+| `--site-shadow-float` | the more menu | `0 10px 30px` at 22% |
+| `--site-shadow-accent` | the highlighted offer | `0 2px 8px` of the accent at 28% |
+| `--site-dark-canvas` | a dark band's ground (`data-band="dark"`) | `var(--sidebar)` |
+| `--site-dark-surface-sunken` | a dark band's sunken ground | `var(--sidebar-accent)` |
+| `--site-dark-line` | a dark band's hairline | `transparent` |
+| `--site-dark-ink` | a dark band's text | `var(--sidebar-foreground)` |
+| `--site-dark-ink-muted` | a dark band's muted text | `var(--sidebar-foreground)` |
+| `--site-dark-accent` | a dark band's accent | `var(--sidebar-primary)` |
+| `--site-dark-on-accent` | text on a dark band's accent | `var(--sidebar-primary-foreground)` |
+| `--site-dark-accent-strong` | a dark band's strong accent | `var(--sidebar-primary)` |
+| `--site-dark-accent-soft` | a dark band's soft accent | `var(--sidebar-accent)` |
+
+Inside an element marked `data-band="dark"` (`SiteBand`, and `SiteBar` with `tone="dark"`), the ground, ink, line and accent variables take the `--site-dark-*` values, so the same rules draw on the dark ground.
+
+## Page region contract
+
+`regions.json` names, per site page type, the regions in drawing order, the part that fills each and the prop that feeds it (`slot`), the `data-slot` marks that place an element in it, the named parts inside it a rendered check measures, and the controls it may hold. A type is `ready` when the kit draws every region it lists; the others are `planned` with the reason.
+
+| Type | Status | Regions |
+| --- | --- | --- |
+| `pricing` | ready | bar, pageHead, switches, plans, offers, priceTable, questions, footer |
+| `marketing` | planned | bar, hero, compare, steps, download, footer |
+| `install` | planned | bar, pageHead, check, downloads, steps, video, troubleshooting, footer |
+| `help` | planned | bar, status, pageHead, search, categories, articles, contact, footer |
+| `legal` | planned | bar, breadcrumb, pageHead, contents, articles, footer |
+| `account` | planned | bar, banner, sections, sectionHead, rows, footer |
+| `checkout` | planned | bar, stepper, main, summary, footer |
+| `auth` | planned | card, providers, foot |
+
+`node scripts/check-site-regions.mjs` holds the contract to the slots site-core declares (`pnpm lint`, `design:check`), and `--selftest` proves it on a broken contract.
+
+## Rendered checks
+
+`scripts/site-regions-rendered.mjs` exports `probe`, `judge`, `compare` and `byRegion`:
+
+```js
+import { contract, probe, judge, compare, byRegion } from "@simplix-react-ui-kits/site-clarity/scripts/site-regions-rendered.mjs";
+
+const signature = await page.evaluate(probe, { contract, type: "pricing" });
+judge(signature, "pricing"); // [] when the regions are in the contract's order and hold only their controls
+const reference = await other.evaluate(probe, { contract, type: "pricing", selectors }); // a page without site marks
+compare(reference, signature); // ["plans.card padding: reference 16px | build 12px", ...]
+```
+
+`probe` reads, inside the page root, the regions in drawing order, the controls each holds and, for the frame, every region and every named part, the computed first font family, size, weight, line height, letter spacing, colour, background, borders, radius, shadow, padding, gap, opacity, maximum width, grid columns, and the layout height and width (offset sizes, so a reference painted inside a scaled frame reads at its layout size). `selectors` stands CSS selectors in for the marks when the reference page carries none. `compare` requires colours, type, borders, radii, shadows and spacing to be equal and a height, and a width the layout decides, to agree within 1px.
+
+`scripts/site-demo.mjs` is the kit's verification page: a pricing page composed from the parts (`tests/fixtures/pricing-page.tsx`), rendered on the server and drawn with the stylesheet compiled the way an app's Tailwind compiles it, with the product values of `tests/fixtures/theme.css`.
+
+```bash
+node scripts/site-demo.mjs --out page.html            # write the page
+node scripts/site-demo.mjs --probe --width 1440        # open it in ego-browser, print the regions and the verdict
+node scripts/site-demo.mjs --measure                   # hold it to every page measure.json records
+node scripts/site-demo.mjs --selftest                  # the same, plus a planted card radius that must be found
+```
+
+`measure.json` records the reference design's signature at each width it was measured at (1440, 1024 and 800 wide, a phone, signed in, and the bar over a dark band); `--measure` renders the page with each entry's props at its page-root width and prints every difference.

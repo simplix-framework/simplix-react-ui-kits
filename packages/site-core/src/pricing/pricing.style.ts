@@ -11,7 +11,7 @@ export const siteSwitchRowStyle = defineSlotStyle({
 /** One choice of a few on a sunken track; exactly one option is always chosen. */
 export const siteSwitchStyle = defineSlotStyle({
   slot: "site-switch",
-  base: "inline-flex max-w-full gap-0.5 rounded-(--site-radius-md) border border-(--site-line) bg-(--site-surface-sunken) p-0.5",
+  base: "inline-flex gap-0.5 rounded-(--site-radius-md) border border-(--site-line) bg-(--site-surface-sunken) p-0.5",
   variants: {},
   defaultVariants: {},
 });
@@ -49,7 +49,7 @@ export const sitePlanCardStyle = defineSlotStyle({
   base: "relative flex min-w-0 flex-col gap-2 rounded-(--site-radius-xl) border border-(--site-line) bg-(--site-surface) p-4",
   variants: {
     highlight: {
-      true: "border-(--site-accent)",
+      true: "border-(--site-accent) shadow-[var(--site-shadow-accent)]",
       false: "",
     },
   },
@@ -60,7 +60,7 @@ export const sitePlanCardStyle = defineSlotStyle({
 export const sitePlanCardBadgeStyle = defineSlotStyle({
   slot: "site-plan-card-badge",
   base:
-    "absolute -top-2.5 left-3 rounded-full bg-(--site-accent) px-2 text-(length:--site-fs-label) leading-(--site-lh-label) font-(--site-fw-strong) tracking-(--site-tracking-label) text-(--site-on-accent)",
+    "absolute -top-2.5 left-3 rounded-(--site-radius-full) bg-(--site-accent) px-2 text-(length:--site-fs-label) leading-(--site-lh-label) font-(--site-fw-strong) tracking-(--site-tracking-label) text-(--site-on-accent)",
   variants: {},
   defaultVariants: {},
 });

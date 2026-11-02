@@ -1,0 +1,5 @@
+/* The web site kit with the clarity design. An app imports this once, after Tailwind and the
+   framework theme, then its own theme: the site parts carry no classes of their own, so every look
+   comes from the slot rules below, drawn with the site variables. */
+@import "./site-tokens.css";
+@import "./designs/clarity.css";

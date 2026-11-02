@@ -1,0 +1,103 @@
+/* The site design's variables and their defaults. Every look the site parts draw reads one of these,
+   so a product sets its own values by writing the same names (its token script writes them after
+   this file); a value left unset falls back to the framework theme token named here. The list and
+   what each one is for are in the package README. */
+
+/* The page tiers. The window is the `page` container, and a part reflows on `@max-page-narrow/page`,
+   `@max-page-medium/page` and the wide measure. */
+@theme {
+  --container-page-narrow: 620px;
+  --container-page-medium: 900px;
+  --container-page-wide: 1200px;
+}
+
+:where(:root) {
+  /* Grounds, ink and lines. */
+  --site-canvas: var(--background);
+  --site-surface: var(--card);
+  --site-surface-sunken: var(--muted);
+  --site-line: var(--border);
+  --site-ink: var(--foreground);
+  --site-ink-muted: var(--muted-foreground);
+  --site-ink-disabled: var(--muted-foreground);
+  --site-control-disabled: var(--muted);
+  --site-accent: var(--primary);
+  --site-on-accent: var(--primary-foreground);
+  --site-accent-strong: var(--primary);
+  --site-accent-soft: var(--accent);
+
+  /* Type: the text family, the display family for titles and prices, and the steps. */
+  --site-font-sans: var(--font-sans);
+  --site-font-display: var(--font-sans);
+  --site-fs-base: 13px;
+  --site-lh-base: 19.5px;
+  --site-fw-base: 400;
+  --site-fs-body: 14px;
+  --site-lh-body: 22px;
+  --site-fs-body-pane: 13px;
+  --site-lh-body-pane: 20px;
+  --site-fs-caption: 12px;
+  --site-lh-caption: 16px;
+  --site-fw-caption: 500;
+  --site-fs-label: 11px;
+  --site-lh-label: 14px;
+  --site-tracking-label: 0.02em;
+  --site-fs-subheading: 14px;
+  --site-lh-subheading: 20px;
+  --site-fs-headline: 23px;
+  --site-lh-headline: 26px;
+  --site-fs-stat: 24px;
+  --site-lh-stat: 28px;
+  --site-fw-stat: 750;
+  --site-fs-title: 26px;
+  --site-lh-title: 32px;
+  --site-fw-title: 700;
+  --site-fw-strong: 600;
+  --site-tracking-display: -0.025em;
+
+  /* Geometry. */
+  --site-page-wide: var(--container-page-wide);
+  --site-control: 34px;
+  --site-control-sm: 28px;
+  --site-radius-xs: 4px;
+  --site-radius-sm: 6px;
+  --site-radius-md: 8px;
+  --site-radius-xl: 12px;
+  --site-radius-full: 9999px;
+
+  /* What recedes and what is left out. */
+  --site-recede: 0.7;
+  --site-faint: 0.4;
+
+  /* Motion, focus and what floats. */
+  --site-duration-fast: 120ms;
+  --site-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --site-focus-ring: 0 0 0 2px var(--site-surface), 0 0 0 4px var(--site-accent);
+  --site-shadow-float: 0 10px 30px rgb(0 30 30 / 22%);
+  --site-shadow-accent: 0 2px 8px color-mix(in srgb, var(--site-accent) 28%, transparent);
+
+  /* The dark band's own values (a hero and the bar over it). */
+  --site-dark-canvas: var(--sidebar);
+  --site-dark-surface-sunken: var(--sidebar-accent);
+  --site-dark-line: transparent;
+  --site-dark-ink: var(--sidebar-foreground);
+  --site-dark-ink-muted: var(--sidebar-foreground);
+  --site-dark-accent: var(--sidebar-primary);
+  --site-dark-on-accent: var(--sidebar-primary-foreground);
+  --site-dark-accent-strong: var(--sidebar-primary);
+  --site-dark-accent-soft: var(--sidebar-accent);
+}
+
+/* A band on the dark ground: every site variable a part reads takes the band's value inside it. */
+[data-band="dark"] {
+  --site-canvas: var(--site-dark-canvas);
+  --site-surface: var(--site-dark-canvas);
+  --site-surface-sunken: var(--site-dark-surface-sunken);
+  --site-line: var(--site-dark-line);
+  --site-ink: var(--site-dark-ink);
+  --site-ink-muted: var(--site-dark-ink-muted);
+  --site-accent: var(--site-dark-accent);
+  --site-on-accent: var(--site-dark-on-accent);
+  --site-accent-strong: var(--site-dark-accent-strong);
+  --site-accent-soft: var(--site-dark-accent-soft);
+}
