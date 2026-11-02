@@ -20,8 +20,9 @@ export const contract = JSON.parse(readFileSync(resolve(here, "regions.json"), "
  */
 export function probe(input) {
   const { contract: c, type, selectors = {} } = input;
+  // A mark is a slot name, optionally qualified by attributes or a pseudo-class (`site-action:disabled`).
   const css = (mark) => {
-    const at = mark.indexOf("[");
+    const at = mark.search(/[[:]/);
     const slot = at < 0 ? mark : mark.slice(0, at);
     return `[data-slot="${slot}"]${at < 0 ? "" : mark.slice(at)}`;
   };
@@ -94,11 +95,12 @@ export function probe(input) {
     const region = c.regions[key];
     const entry = (regions[key] ??= { count: 0, root: look(el), parts: {}, controls: [], perInstance: 0 });
     entry.count += 1;
-    if (entry.count === 1) {
-      for (const [part, mark] of Object.entries(region.parts ?? {})) {
-        const selector = selectors.regions?.[key]?.parts?.[part] ?? css(mark);
-        entry.parts[part] = look(el.matches(selector) ? el : el.querySelector(selector));
-      }
+    // A part is read from the first instance of the region that draws it, so a part only a later
+    // instance has (the note under the second offer row, its disabled action) is still measured.
+    for (const [part, mark] of Object.entries(region.parts ?? {})) {
+      if (entry.parts[part]) continue;
+      const selector = selectors.regions?.[key]?.parts?.[part] ?? css(mark);
+      entry.parts[part] = look(el.matches(selector) ? el : el.querySelector(selector));
     }
     const controls = [...el.querySelectorAll("a[href], button")];
     entry.perInstance = Math.max(entry.perInstance, controls.length);

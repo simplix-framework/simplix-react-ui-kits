@@ -21,8 +21,8 @@ export function declaredSlots(dir = coreSource) {
   return slots;
 }
 
-/** The slot a contract mark names: the part before any attribute qualifier. */
-export const slotOfMark = (mark) => mark.split("[")[0];
+/** The slot a contract mark names: the part before any attribute or pseudo-class qualifier. */
+export const slotOfMark = (mark) => mark.split(/[[:]/)[0];
 
 /** The ways `contract` breaks its own rules or names a slot `slots` lacks, as strings; empty when sound. */
 export function problemsOf(contract, slots) {

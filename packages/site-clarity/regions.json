@@ -11,8 +11,17 @@
     "bar": {
       "part": "SiteBar",
       "slot": "SiteWindow.bar",
-      "marks": ["site-bar"],
-      "controls": ["site-bar-brand", "site-bar-link", "site-action", "site-bar-account", "site-bar-more", "site-bar-menu-item"],
+      "marks": [
+        "site-bar"
+      ],
+      "controls": [
+        "site-bar-brand",
+        "site-bar-link",
+        "site-action",
+        "site-bar-account",
+        "site-bar-more",
+        "site-bar-menu-item"
+      ],
       "parts": {
         "brand": "site-bar-brand",
         "link": "site-bar-link[data-current=false]",
@@ -25,22 +34,39 @@
     "breadcrumb": {
       "part": "SiteBreadcrumb",
       "slot": "SitePage children",
-      "marks": ["site-breadcrumb"],
-      "controls": ["site-breadcrumb-link"],
-      "parts": { "step": "site-breadcrumb-link", "current": "site-breadcrumb-item[data-current=true]" }
+      "marks": [
+        "site-breadcrumb"
+      ],
+      "controls": [
+        "site-breadcrumb-link"
+      ],
+      "parts": {
+        "step": "site-breadcrumb-link",
+        "current": "site-breadcrumb-item[data-current=true]"
+      }
     },
     "pageHead": {
       "part": "SitePageHead",
       "slot": "SitePage children",
-      "marks": ["site-page-head"],
+      "marks": [
+        "site-page-head"
+      ],
       "controls": [],
-      "parts": { "eyebrow": "site-page-eyebrow", "title": "site-page-title", "lede": "site-page-lede" }
+      "parts": {
+        "eyebrow": "site-page-eyebrow",
+        "title": "site-page-title",
+        "lede": "site-page-lede"
+      }
     },
     "switches": {
       "part": "SwitchRow",
       "slot": "SitePage children",
-      "marks": ["site-switch-row"],
-      "controls": ["site-switch-option"],
+      "marks": [
+        "site-switch-row"
+      ],
+      "controls": [
+        "site-switch-option"
+      ],
       "parts": {
         "track": "site-switch",
         "option": "site-switch-option[data-checked=false]",
@@ -50,8 +76,12 @@
     "plans": {
       "part": "PlanGrid",
       "slot": "SitePage children",
-      "marks": ["site-plan-grid"],
-      "controls": ["site-action"],
+      "marks": [
+        "site-plan-grid"
+      ],
+      "controls": [
+        "site-action"
+      ],
       "parts": {
         "card": "site-plan-card[data-highlight=false]",
         "highlighted": "site-plan-card[data-highlight=true]",
@@ -66,26 +96,34 @@
         "mark": "site-feature-mark",
         "primary": "site-action[data-tone=primary]",
         "secondary": "site-action[data-tone=secondary]",
-        "quiet": "site-action[data-tone=quiet]"
+        "quiet": "site-action[data-tone=quiet]",
+        "current": "site-action:disabled"
       }
     },
     "offers": {
       "part": "OfferRow",
       "slot": "SitePage children",
-      "marks": ["site-offer-row"],
-      "controls": ["site-action"],
+      "marks": [
+        "site-offer-row"
+      ],
+      "controls": [
+        "site-action"
+      ],
       "maxControls": 1,
       "parts": {
         "title": "site-offer-row-title",
         "about": "site-offer-row-about",
-        "action": "site-action",
-        "note": "site-offer-row-note"
+        "action": "site-action:enabled",
+        "note": "site-offer-row-note",
+        "disabled": "site-action:disabled"
       }
     },
     "priceTable": {
       "part": "PriceTable",
       "slot": "SitePage children",
-      "marks": ["site-price-table"],
+      "marks": [
+        "site-price-table"
+      ],
       "controls": [],
       "parts": {
         "caption": "site-price-table-caption",
@@ -99,7 +137,9 @@
     "questions": {
       "part": "QuestionList",
       "slot": "SiteSection children",
-      "marks": ["site-question-list"],
+      "marks": [
+        "site-question-list"
+      ],
       "within": "site-section",
       "controls": [],
       "parts": {
@@ -112,8 +152,13 @@
     "footer": {
       "part": "SiteFooter",
       "slot": "SiteWindow.footer",
-      "marks": ["site-footer"],
-      "controls": ["site-footer-link", "*"],
+      "marks": [
+        "site-footer"
+      ],
+      "controls": [
+        "site-footer-link",
+        "*"
+      ],
       "$comment": "`*` admits the product's language picker, which stands in the footer's language place and is the product's own control.",
       "parts": {
         "owner": "site-footer-owner",
@@ -126,44 +171,107 @@
     "pricing": {
       "status": "ready",
       "root": "[data-page]",
-      "regions": ["bar", "pageHead", "switches", "plans", "offers", "priceTable", "questions", "footer"],
-      "required": ["bar", "pageHead", "plans", "footer"],
+      "regions": [
+        "bar",
+        "pageHead",
+        "switches",
+        "plans",
+        "offers",
+        "priceTable",
+        "questions",
+        "footer"
+      ],
+      "required": [
+        "bar",
+        "pageHead",
+        "plans",
+        "footer"
+      ],
       "$comment": "The offers, the price table and the questions follow the plans; a page leaves out a region its catalogue has nothing for, never reorders one."
     },
     "marketing": {
       "status": "planned",
       "reason": "needs the marketing segment (HeroBand, NumberedSteps, SampleRow) of the next slice; the dark band scope it continues into is in place",
-      "plannedRegions": ["bar", "hero", "compare", "steps", "download", "footer"]
+      "plannedRegions": [
+        "bar",
+        "hero",
+        "compare",
+        "steps",
+        "download",
+        "footer"
+      ]
     },
     "install": {
       "status": "planned",
       "reason": "needs the install segment (CheckCard, DownloadCard, CopyBlock, VideoCard)",
-      "plannedRegions": ["bar", "pageHead", "check", "downloads", "steps", "video", "troubleshooting", "footer"]
+      "plannedRegions": [
+        "bar",
+        "pageHead",
+        "check",
+        "downloads",
+        "steps",
+        "video",
+        "troubleshooting",
+        "footer"
+      ]
     },
     "help": {
       "status": "planned",
       "reason": "needs the help segment (StatusLine, SearchHero, CategoryGrid, ArticleList, ArticleLayout, ContactForm)",
-      "plannedRegions": ["bar", "status", "pageHead", "search", "categories", "articles", "contact", "footer"]
+      "plannedRegions": [
+        "bar",
+        "status",
+        "pageHead",
+        "search",
+        "categories",
+        "articles",
+        "contact",
+        "footer"
+      ]
     },
     "legal": {
       "status": "planned",
       "reason": "needs the legal segment (DocLayout, PlainSummary, VersionPicker, DiffText, KeyValues, LegalTable, PrintButton); the breadcrumb region is in place",
-      "plannedRegions": ["bar", "breadcrumb", "pageHead", "contents", "articles", "footer"]
+      "plannedRegions": [
+        "bar",
+        "breadcrumb",
+        "pageHead",
+        "contents",
+        "articles",
+        "footer"
+      ]
     },
     "account": {
       "status": "planned",
       "reason": "needs the account segment (AccountLayout, SectionNav, SettingsRows, QuotaMeter, DaySeries, TableCard, ConfirmByTyping, StandingBanner)",
-      "plannedRegions": ["bar", "banner", "sections", "sectionHead", "rows", "footer"]
+      "plannedRegions": [
+        "bar",
+        "banner",
+        "sections",
+        "sectionHead",
+        "rows",
+        "footer"
+      ]
     },
     "checkout": {
       "status": "planned",
       "reason": "needs the checkout segment (Stepper, CheckoutLayout, ChoiceCards, ConsentChecklist, OrderSummary, MethodGrid, ProgressChain, DonePanel)",
-      "plannedRegions": ["bar", "stepper", "main", "summary", "footer"]
+      "plannedRegions": [
+        "bar",
+        "stepper",
+        "main",
+        "summary",
+        "footer"
+      ]
     },
     "auth": {
       "status": "planned",
       "reason": "needs the auth segment (AuthCard) the Keycloak theme draws; it has no site bar or footer",
-      "plannedRegions": ["card", "providers", "foot"]
+      "plannedRegions": [
+        "card",
+        "providers",
+        "foot"
+      ]
     }
   }
 }
