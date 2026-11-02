@@ -52,7 +52,73 @@ export function probe(regions, root = "main") {
     const sides = [s.borderTopWidth, s.borderRightWidth, s.borderBottomWidth, s.borderLeftWidth];
     return sides.some((w) => !(parseFloat(w) > 0)) || !(parseFloat(s.borderTopLeftRadius) > 0);
   }).length;
+  // The card grid as laid out: the list's own width, the gap, the card minimum the layout token decides the
+  // columns by, the tracks drawn and where each card stands, so `compare` can hold every card list to one width rule.
+  const grid = scope.querySelector("[data-slot=crud-list-view][data-grid=true] [data-testid=list-card-grid]");
+  if (grid) {
+    const px = (value) => parseFloat(value) || 0;
+    const style = getComputedStyle(grid);
+    const box = grid.getBoundingClientRect();
+    const inset = px(style.borderLeftWidth) + px(style.paddingLeft);
+    const minimum = document.createElement("div");
+    minimum.style.cssText = "position:absolute;visibility:hidden;height:0;width:var(--card-min-width, 20rem)";
+    grid.appendChild(minimum);
+    const cardMin = minimum.getBoundingClientRect().width;
+    minimum.remove();
+    const round = (value) => Math.round(value * 100) / 100;
+    signature.cardGrid = {
+      listWidth: round(box.width - inset - px(style.paddingRight) - px(style.borderRightWidth)),
+      gap: px(style.columnGap),
+      rowGap: px(style.rowGap),
+      cardMin: round(cardMin),
+      tracks: style.gridTemplateColumns.split(" ").filter(Boolean).length,
+      cards: [...grid.querySelectorAll(":scope > [data-slot=crud-card]")].map((card) => {
+        const r = card.getBoundingClientRect();
+        return { x: round(r.left - box.left - inset), y: round(r.top - box.top), w: round(r.width), h: round(r.height) };
+      }),
+    };
+  }
   return signature;
+}
+
+/**
+ * The ways one card grid breaks the one card width rule, as strings; empty when it holds. The columns
+ * are decided by the list's own width and the card minimum token alone: as many as hold a card no
+ * narrower than the minimum, each an equal share, every card the width of its column, the first card at
+ * the list's left padding and neighbours one grid gap apart. `grid` is `probe`'s `cardGrid`; `tolerance`
+ * is in px.
+ */
+export function compareCardGrid(grid, tolerance = 1) {
+  if (!grid || grid.cards.length === 0) return [];
+  const { listWidth, gap, rowGap, cardMin, tracks, cards } = grid;
+  const problems = [];
+  const columns = Math.max(1, Math.floor((listWidth + gap) / (cardMin + gap) + 1e-9));
+  const columnWidth = (listWidth - gap * (columns - 1)) / columns;
+  const off = (a, b) => Math.abs(a - b) > tolerance;
+  if (tracks !== columns) problems.push(`card grid: ${tracks} columns at a list width of ${listWidth}px, the card minimum ${cardMin}px and a gap of ${gap}px decide ${columns}`);
+  const widths = cards.filter((card) => off(card.w, columnWidth));
+  if (widths.length) problems.push(`card grid: ${widths.length} of ${cards.length} cards are not the column width ${Math.round(columnWidth * 100) / 100}px (${widths.slice(0, 3).map((card) => `${card.w}px`).join(", ")})`);
+  if (cards.some((card) => off(card.w, cards[0].w))) problems.push("card grid: the cards differ in width from the first card");
+  if (off(cards[0].x, 0)) problems.push(`card grid: the first card starts ${cards[0].x}px from the list's left padding, not at it`);
+  const rows = [];
+  for (const card of cards) {
+    const row = rows.find((one) => !off(one.y, card.y));
+    if (row) row.cards.push(card);
+    else rows.push({ y: card.y, cards: [card] });
+  }
+  for (const row of rows) {
+    const ordered = [...row.cards].sort((a, b) => a.x - b.x);
+    for (let i = 1; i < ordered.length; i++) {
+      const between = ordered[i].x - (ordered[i - 1].x + ordered[i - 1].w);
+      if (off(between, gap)) problems.push(`card grid: ${Math.round(between * 100) / 100}px between neighbours, the grid gap is ${gap}px`);
+    }
+  }
+  for (let i = 1; i < rows.length; i++) {
+    const above = Math.max(...rows[i - 1].cards.map((card) => card.y + card.h));
+    const between = rows[i].y - above;
+    if (off(between, rowGap)) problems.push(`card grid: ${Math.round(between * 100) / 100}px between rows, the grid row gap is ${rowGap}px`);
+  }
+  return problems;
 }
 
 /**
@@ -94,8 +160,9 @@ export function compare(signature, type, c = contract) {
   if (!t) return [`unknown page type ${type}`];
   const problems = [];
   if (signature.missing) return [`${type}: no element matches its root ${signature.missing}, so nothing was read`];
-  const { rows = 0, unboxedCards = 0, ...regions } = signature;
+  const { rows = 0, unboxedCards = 0, cardGrid, ...regions } = signature;
   if (unboxedCards > 0) problems.push(`cards: ${unboxedCards} card${unboxedCards === 1 ? "" : "s"} of the grid view drawn with no border on every side or no radius, so the cards read as loose text`);
+  problems.push(...compareCardGrid(cardGrid));
   for (const need of t.required ?? []) if (rows > 0 && !regions[need]) problems.push(`${need}: required on ${type} and missing over ${rows} rows`);
   for (const [region, { kinds, perCard }] of Object.entries(regions)) {
     const r = c.regions[region];
@@ -132,7 +199,29 @@ if (process.argv.includes("--selftest")) {
   // A card of the grid view with no box fails; boxed cards and a list with no grid hold.
   const unboxed = compare({ ...cards, rows: 4, unboxedCards: 2 }, "list-detail");
   const boxed = compare({ ...cards, rows: 4, unboxedCards: 0 }, "list-detail");
-  const ok = unboxed.length === 1 && boxed.length === 0 && cardList.length === 0 && cardsNoStrip.length === 1 && switchInCell.length === 1 && linkTile.length === 0 && buttonTile.length === 1 && rampHit.length === 1 && rampMiss.length === 0 && vacuous.length === 1 && tokHit.length === 1 && tokMiss.length === 0 && miss.length === 0 && noStrip.length === 1 && empty.length === 0 && hit.length === 4 && compare(good, "system").length === 4;
-  console.log(ok ? "regions-rendered selftest: hit 13, miss 0" : `regions-rendered selftest FAILED\nhit: ${hit.join("\n")}\nmiss: ${miss.join("\n")}`);
+  // The card grid holds one width rule: columns from the list width and the card minimum, every card the
+  // column width, the first at the left padding, neighbours one gap apart.
+  const gridOf = (over = {}, cards) => ({ listWidth: 1103, gap: 8, rowGap: 8, cardMin: 320, tracks: 3, cards: cards ?? [0, 1, 2, 3].map((i) => ({ x: (i % 3) * (362.33 + 8), y: Math.floor(i / 3) * 208, w: 362.33, h: 200 })), ...over });
+  const gridGood = compareCardGrid(gridOf());
+  const gridFewCards = compareCardGrid(gridOf({}, [{ x: 0, y: 0, w: 362.33, h: 200 }]));
+  const gridOneColumn = compareCardGrid({ listWidth: 306, gap: 8, rowGap: 8, cardMin: 320, tracks: 1, cards: [{ x: 0, y: 0, w: 306, h: 90 }, { x: 0, y: 98, w: 306, h: 90 }] });
+  const gridWide = compareCardGrid(gridOf({}, [0, 1, 2, 3].map((i) => ({ x: (i % 3) * (362.33 + 8), y: Math.floor(i / 3) * 208, w: i === 1 ? 420 : 362.33, h: 200 }))));
+  const gridColumns = compareCardGrid(gridOf({ tracks: 2 }));
+  const gridStart = compareCardGrid(gridOf({}, [0, 1, 2, 3].map((i) => ({ x: 24 + (i % 3) * (362.33 + 8), y: Math.floor(i / 3) * 208, w: 362.33, h: 200 }))));
+  const gridGap = compareCardGrid(gridOf({ gap: 16 }));
+  const gridRows = compareCardGrid(gridOf({ rowGap: 24 }));
+  const gridAbsent = compareCardGrid(undefined);
+  const gridInCompare = compare({ ...cards, rows: 4, cardGrid: gridOf({ tracks: 2 }) }, "list-detail");
+  const says = (found, pattern) => found.some((problem) => pattern.test(problem));
+  const gridOk =
+    gridGood.length === 0 && gridFewCards.length === 0 && gridOneColumn.length === 0 && gridAbsent.length === 0 &&
+    says(gridWide, /1 of 4 cards are not the column width/) && says(gridWide, /differ in width from the first card/) &&
+    says(gridColumns, /2 columns at a list width of 1103px.*decide 3/) &&
+    says(gridStart, /first card starts 24px from the list's left padding/) &&
+    says(gridGap, /neighbours, the grid gap is 16px/) &&
+    says(gridRows, /between rows, the grid row gap is 24px/) &&
+    gridInCompare.length === 1;
+  const ok = gridOk && unboxed.length === 1 && boxed.length === 0 && cardList.length === 0 && cardsNoStrip.length === 1 && switchInCell.length === 1 && linkTile.length === 0 && buttonTile.length === 1 && rampHit.length === 1 && rampMiss.length === 0 && vacuous.length === 1 && tokHit.length === 1 && tokMiss.length === 0 && miss.length === 0 && noStrip.length === 1 && empty.length === 0 && hit.length === 4 && compare(good, "system").length === 4;
+  console.log(ok ? "regions-rendered selftest: 13 region cases and 11 card grid cases hold" : `regions-rendered selftest FAILED\nhit: ${hit.join("\n")}\nmiss: ${miss.join("\n")}\ngrid: ${[gridGood, gridFewCards, gridOneColumn, gridWide, gridColumns, gridStart, gridGap, gridRows, gridInCompare].map((one) => one.join(" | ")).join("\n      ")}`);
   process.exit(ok ? 0 : 1);
 }
