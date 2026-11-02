@@ -45,6 +45,13 @@ export function probe(regions, root = "main") {
   const signature = Object.fromEntries(Object.entries(out).map(([k, v]) => [k, { kinds: [...v.kinds].sort(), perCard: v.perCard }]));
   // Rows drawn, so a required region is judged only where there are rows to carry it.
   signature.rows = scope.querySelectorAll("tbody tr, [data-slot=crud-card]").length;
+  // The cards of the grid view are separate boxes: a border on every side and a radius. The stacked
+  // fallback inside a list frame is ruled rows and is not judged here.
+  signature.unboxedCards = [...scope.querySelectorAll("[data-slot=crud-list-view][data-grid=true] [data-slot=crud-card]")].filter((card) => {
+    const s = getComputedStyle(card);
+    const sides = [s.borderTopWidth, s.borderRightWidth, s.borderBottomWidth, s.borderLeftWidth];
+    return sides.some((w) => !(parseFloat(w) > 0)) || !(parseFloat(s.borderTopLeftRadius) > 0);
+  }).length;
   return signature;
 }
 
@@ -87,7 +94,8 @@ export function compare(signature, type, c = contract) {
   if (!t) return [`unknown page type ${type}`];
   const problems = [];
   if (signature.missing) return [`${type}: no element matches its root ${signature.missing}, so nothing was read`];
-  const { rows = 0, ...regions } = signature;
+  const { rows = 0, unboxedCards = 0, ...regions } = signature;
+  if (unboxedCards > 0) problems.push(`cards: ${unboxedCards} card${unboxedCards === 1 ? "" : "s"} of the grid view drawn with no border on every side or no radius, so the cards read as loose text`);
   for (const need of t.required ?? []) if (rows > 0 && !regions[need]) problems.push(`${need}: required on ${type} and missing over ${rows} rows`);
   for (const [region, { kinds, perCard }] of Object.entries(regions)) {
     const r = c.regions[region];
@@ -121,7 +129,10 @@ if (process.argv.includes("--selftest")) {
   const cardList = compare({ ...cards, rows: 4 }, "list-detail");
   const cardsNoStrip = compare({ toolbar: cards.toolbar, cell: cards.cell, rows: 4 }, "list-detail");
   const switchInCell = compare({ ...cards, cell: { kinds: ["link", "crud-filter-bar-view-button"], perCard: 1 }, rows: 4 }, "list-detail");
-  const ok = cardList.length === 0 && cardsNoStrip.length === 1 && switchInCell.length === 1 && linkTile.length === 0 && buttonTile.length === 1 && rampHit.length === 1 && rampMiss.length === 0 && vacuous.length === 1 && tokHit.length === 1 && tokMiss.length === 0 && miss.length === 0 && noStrip.length === 1 && empty.length === 0 && hit.length === 4 && compare(good, "system").length === 4;
-  console.log(ok ? "regions-rendered selftest: hit 12, miss 0" : `regions-rendered selftest FAILED\nhit: ${hit.join("\n")}\nmiss: ${miss.join("\n")}`);
+  // A card of the grid view with no box fails; boxed cards and a list with no grid hold.
+  const unboxed = compare({ ...cards, rows: 4, unboxedCards: 2 }, "list-detail");
+  const boxed = compare({ ...cards, rows: 4, unboxedCards: 0 }, "list-detail");
+  const ok = unboxed.length === 1 && boxed.length === 0 && cardList.length === 0 && cardsNoStrip.length === 1 && switchInCell.length === 1 && linkTile.length === 0 && buttonTile.length === 1 && rampHit.length === 1 && rampMiss.length === 0 && vacuous.length === 1 && tokHit.length === 1 && tokMiss.length === 0 && miss.length === 0 && noStrip.length === 1 && empty.length === 0 && hit.length === 4 && compare(good, "system").length === 4;
+  console.log(ok ? "regions-rendered selftest: hit 13, miss 0" : `regions-rendered selftest FAILED\nhit: ${hit.join("\n")}\nmiss: ${miss.join("\n")}`);
   process.exit(ok ? 0 : 1);
 }
