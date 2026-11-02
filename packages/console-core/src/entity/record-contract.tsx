@@ -48,7 +48,14 @@ export type ContractFieldKind =
   /** A span of milliseconds, written as a reader compares it (`850 ms`, `12.3 sec`, `2 min 5 sec`). */
   | "duration"
   /** A machine message (an error, an error code): one monospaced line, copied and shown whole on request. */
-  | "excerpt";
+  | "excerpt"
+  /**
+   * Free text a person wrote (a note, a comment): a list cell or card draws its start as prose, cut
+   * on a word with an ellipsis at `proseLength` characters, and a detail draws the whole text.
+   */
+  | "prose"
+  /** A language code (`ko`, `en-US`), written as the language's name in the reader's language. */
+  | "language";
 
 export interface ContractField {
   readonly name: string;
@@ -90,6 +97,17 @@ export interface ContractField {
   readonly sortAlias?: Readonly<Record<string, string>>;
   /** The record's own identifier: drawn with a copy control in a detail. */
   readonly identifier?: boolean;
+  /**
+   * For a `prose` field, the characters a list cell or card keeps before the cut; absent,
+   * {@link PROSE_CHARS}.
+   */
+  readonly proseLength?: number;
+  /**
+   * For a `boolean` field, a list cell or card draws a mark with the field's own label when the
+   * value is true and nothing when it is false: a "No" badge on every card says nothing. The column
+   * keeps no empty cell on the cards that lack it. A detail still draws yes or no.
+   */
+  readonly markWhenTrue?: boolean;
   /**
    * A code the reader types or compares (SimpliX Meta's `format: "code"`, from `@CodeValue`): a
    * text value drawn in the monospaced face.
@@ -154,6 +172,8 @@ export const CONTRACT_COLUMN_SIZE: Readonly<Record<ContractFieldKind, { readonly
   bytes: { width: 104, align: "end" },
   duration: { width: 112, align: "end" },
   excerpt: { minWidth: 200 },
+  prose: { minWidth: 220, wrap: true },
+  language: { minWidth: 140 },
 };
 
 /** A searchable field as the generator writes it, which {@link useRecordContract}'s `filters` turns into a list filter. */
@@ -243,6 +263,43 @@ type Row = Readonly<Record<string, unknown>>;
 /** A value no other kind draws, as text: in the monospaced face where the contract marks it as a code. */
 export function textValueOf(field: Pick<ContractField, "code">, raw: unknown): RecordValue {
   return field.code ? { text: String(raw), code: true } : String(raw);
+}
+
+/** Characters a `prose` field keeps in a list cell or card when the field names no length. */
+export const PROSE_CHARS = 200;
+
+/**
+ * The start of a text, read as prose: line breaks fold into spaces and a cut falls on a word with an
+ * ellipsis after it, so a card shows a sentence and not a machine message's first line.
+ *
+ * @param text the whole text
+ * @param limit the characters kept; the whole text when it fits
+ */
+export function proseExcerpt(text: string, limit: number = PROSE_CHARS): string {
+  const flat = text.replace(/\s+/g, " ").trim();
+  if (flat.length <= limit) return flat;
+  const cut = flat.slice(0, limit);
+  const lastSpace = cut.lastIndexOf(" ");
+  // A cut inside the last word drops that word, unless the text is one long word.
+  const kept = lastSpace > limit * 0.6 ? cut.slice(0, lastSpace) : cut;
+  return `${kept.trimEnd()}…`;
+}
+
+/**
+ * A language code as the language's name in the reader's language (`ko` as 한국어 for a Korean
+ * reader). A code the runtime does not know, or that is not a language tag, is drawn as it came.
+ *
+ * @param code the stored code (`en`, `pt-BR`, `ko_KR`)
+ * @param locale the reader's language
+ */
+export function languageName(code: string, locale: string): string {
+  try {
+    return new Intl.DisplayNames([locale], { type: "language" }).of(code.replace(/_/g, "-")) ?? code;
+  } catch (error) {
+    // A structurally invalid tag (`not a code`) is a RangeError; any other failure is not ours to hide.
+    if (error instanceof RangeError) return code;
+    throw error;
+  }
 }
 
 /** A structured value as indented JSON, or the value itself where it is already text. */
@@ -405,6 +462,8 @@ export function useRecordContract(entity: string, overrides: ContractOverrides =
           return { badge: { label, tone: tones?.[field.name]?.[constant] ?? "neutral" } };
         }
         case "boolean":
+          // A mark for the rows it is true of, drawn under the field's own name; nothing on the others.
+          if (field.markWhenTrue) return raw ? { badge: { label: fieldLabel(field.name), tone: tones?.[field.name]?.["true"] ?? "info" } } : null;
           return { badge: { label: raw ? t("recordForm.yes") : t("recordForm.no"), tone: raw ? "success" : "neutral" } };
         case "instant":
           return zoneDateTimeText(zone, String(raw), locale);
@@ -422,6 +481,10 @@ export function useRecordContract(entity: string, overrides: ContractOverrides =
           return { figure: durationText(raw, locale) };
         case "excerpt":
           return { excerpt: String(raw) };
+        case "prose":
+          return proseExcerpt(String(raw), field.proseLength);
+        case "language":
+          return languageName(String(raw), locale);
         case "reference": {
           const name = field.nameField ? valueAtPath(row, field.nameField) : undefined;
           const text = typeof name === "string" && name !== "" ? name : String(raw);
@@ -435,7 +498,7 @@ export function useRecordContract(entity: string, overrides: ContractOverrides =
           return textValueOf(field, raw);
       }
     },
-    [enumLabel, locale, peek, t, tones, zone],
+    [enumLabel, fieldLabel, locale, peek, t, tones, zone],
   );
 
   const formField = useCallback(
@@ -485,6 +548,7 @@ export function useRecordContract(entity: string, overrides: ContractOverrides =
           return secretFormField(common, record !== undefined, t("recordForm.secretKeep"));
         case "longText":
         case "excerpt":
+        case "prose":
           return { ...common, kind: "textarea", value: raw == null ? "" : String(raw) };
         case "json":
           return { ...common, kind: "textarea", value: raw == null ? "" : jsonText(raw) };
@@ -526,6 +590,8 @@ export function useRecordContract(entity: string, overrides: ContractOverrides =
       field: (sortFieldOf(field, locale) ?? field.name) as keyof R & string,
       ...CONTRACT_COLUMN_SIZE[field.kind],
       ...(sortFieldOf(field, locale) !== undefined ? { sortable: true } : field.sortable === undefined ? {} : { sortable: field.sortable }),
+      // A mark drawn only on the rows it is true of leaves no empty cell on the cards that lack it.
+      ...(field.kind === "boolean" && field.markWhenTrue ? { cardKeep: false } : {}),
       value: (row: R) => value(field, row as unknown as Row),
     }),
     [fieldLabel, value, locale],
@@ -561,7 +627,8 @@ export function useRecordContract(entity: string, overrides: ContractOverrides =
   const detailField = useCallback(
     (field: ContractField, row: Row | undefined) => ({
       label: fieldLabel(field.name),
-      value: value(field, row),
+      // A detail draws the whole text and a yes or no, where a list draws the start and a mark.
+      value: value(field.kind === "prose" ? { ...field, kind: "longText" } : field.markWhenTrue ? { ...field, markWhenTrue: false } : field, row),
       wide: detailFieldIsWide(field),
       copy: field.identifier === true,
     }),
@@ -617,7 +684,7 @@ export function recordNameOf(values: readonly RecordValue[]): string {
  * @param field the contract field
  */
 export function detailFieldIsWide(field: ContractField): boolean {
-  return field.kind === "longText" || field.kind === "json" || field.kind === "excerpt";
+  return field.kind === "longText" || field.kind === "json" || field.kind === "excerpt" || field.kind === "prose";
 }
 
 /**

@@ -42,6 +42,8 @@ The columns menu offers every declared column. A column the width dropped is lis
 
 A date or a money value in a cell, a card or a figure tile is drawn by the same contract kind, so a cell and the tile above it agree: a `money` field keeps as many decimals as its stored scale holds, and a count of days is worded by `daysAgoText`, which takes the plural form from the reader's language instead of from a catalogue string.
 
+Three contract kinds cover text a screen would otherwise cut by hand. `prose` is text a person wrote: a list cell or card draws its first `proseLength` characters (200 by default) cut on a word with an ellipsis, and a detail draws the whole text across the panel. `language` writes a stored language code as the language's name in the reader's language, and a code that is not a language tag is drawn as it came. A `boolean` with `markWhenTrue` draws a badge named by the field's own label on the rows it is true of and nothing on the others, with no empty cell on the cards that lack it; a detail still draws yes or no.
+
 ## List presentation
 
 A list screen is designed as a table or as cards, and `RecordList` draws either from the same column declarations. `presentation` is `"table"` (the default; the table falls to cards below the width its columns need) or `"cards"`, which draws every row as a card at every width. The card is the one the narrow table already falls to: `record-card.ts` places the title column, the badge row, the labelled lines and the row actions beside the title, so no screen declares a second set of columns for it. `cardTitle` names the column (its `key`) that titles the card, the first column when absent; the other columns keep their order. A `cardTitle` naming no column throws.
