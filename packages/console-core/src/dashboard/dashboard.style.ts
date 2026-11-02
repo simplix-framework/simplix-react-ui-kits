@@ -16,6 +16,17 @@ export const dashboardCardHeadStyle = defineSlotStyle({
   defaultVariants: {},
 });
 
+/**
+ * The heading's end: the context and the link to the list, one group that keeps to the right edge,
+ * also on the line it wraps to when a one-column card has no room beside its title.
+ */
+export const dashboardCardEndStyle = defineSlotStyle({
+  slot: "dashboard-card-end",
+  base: "ml-auto inline-flex min-w-0 flex-wrap items-center justify-end",
+  variants: {},
+  defaultVariants: {},
+});
+
 /** What the card shows. */
 export const dashboardCardTitleStyle = defineSlotStyle({
   slot: "dashboard-card-title",

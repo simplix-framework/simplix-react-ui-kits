@@ -76,7 +76,7 @@ describe("DashboardCard's link to its list", () => {
     renderToStaticMarkup(createElement(DashboardCard, { title: "Recent activity", children: "rows", ...props }));
   it("draws the link at the heading's end, after the context, in one group", () => {
     const html = card({ trailing: "8 latest", action: { label: "Open the audit log", onClick: () => {} } });
-    const group = html.indexOf('class="inline-flex');
+    const group = html.indexOf('data-slot="dashboard-card-end"');
     expect(group).toBeGreaterThan(html.indexOf("Recent activity"));
     expect(html.indexOf("8 latest")).toBeGreaterThan(group);
     expect(html.indexOf("Open the audit log")).toBeGreaterThan(html.indexOf("8 latest"));
@@ -85,7 +85,7 @@ describe("DashboardCard's link to its list", () => {
   it("draws no link and no group without one", () => {
     const html = card({ trailing: "8 latest" });
     expect(html).not.toContain("figure-action");
-    expect(html).not.toContain("inline-flex");
+    expect(html).not.toContain("dashboard-card-end");
   });
 });
 

@@ -277,6 +277,9 @@
   [data-slot="dashboard-card-body"][data-kind="list"][data-s-dashboard-card-body] {
     @apply px-2 pb-2 pt-0.5;
   }
+  [data-slot="dashboard-card-end"][data-slot][data-s-dashboard-card-end] {
+    @apply ml-auto inline-flex min-w-0 flex-wrap items-center justify-end;
+  }
   [data-slot="dashboard-card-head"][data-slot][data-s-dashboard-card-head] {
     @apply gap-3 px-4 pb-1 pt-3.5;
   }

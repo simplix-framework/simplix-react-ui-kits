@@ -8,6 +8,7 @@ import { type DashboardSpan, spanAt, useDashboardGridColumns } from "./dashboard
 import { figureActionStyle } from "./chart.style";
 import {
   dashboardCardBodyStyle,
+  dashboardCardEndStyle,
   dashboardCardHeadStyle,
   dashboardCardMetaStyle,
   dashboardCardStyle,
@@ -53,7 +54,7 @@ export function DashboardCard({ title, trailing, kind = "chart", span = "half", 
         <h3 {...slotAttributes(dashboardCardTitleStyle, {})}>{title}</h3>
         {action ? (
           // The context and the link sit together at the heading's end, one group, so the row breaks in one place.
-          <span className="inline-flex min-w-0 flex-wrap items-center justify-end">
+          <span {...slotAttributes(dashboardCardEndStyle, {})}>
             {meta}
             <button type="button" onClick={action.onClick} {...slotAttributes(figureActionStyle, {})}>
               {action.label}
