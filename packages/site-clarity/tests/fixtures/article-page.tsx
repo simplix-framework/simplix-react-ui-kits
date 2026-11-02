@@ -107,10 +107,9 @@ export function ArticleFixture({ locale = "en", doc = "article", tried = [], fee
               share={tried.length / steps.length}
               action={{ id: "ask", label: t.ask, icon: send }}
             />
-          ) : (
-            <DocProgress action={{ id: "ask", label: t.ask, icon: send }} />
-          )
+          ) : undefined
         }
+        {...(doc === "guide" ? { sideAction: { id: "ask", label: t.ask, icon: send } } : {})}
       >
         {"quick" in t && t.quick !== null ? (
           <QuickBox id="h-quick" title={t.quick.title} items={t.quick.items.map(([ask, answer]) => ({ key: ask ?? "", ask, answer }))}>

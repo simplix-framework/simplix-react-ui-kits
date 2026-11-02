@@ -1,6 +1,8 @@
 import type { ReactNode } from "react";
 import { slotAttributes } from "@simplix-react/ui/design";
 
+import { SiteAction, type SiteActionSpec } from "../action/site-action";
+import { siteDocActionStyle } from "../help/help.style";
 import { SiteBreadcrumb, SitePage, type SiteBreadcrumbStep } from "../page/site-page";
 import {
   siteDocBodyStyle,
@@ -59,8 +61,10 @@ export interface DocLayoutProps {
   readonly doneMark?: ReactNode;
   /** The product's jump control (a select over the same sections), drawn below the medium tier. */
   readonly jump?: ReactNode;
-  /** What the rail holds under the list. */
+  /** What the rail holds under the list (progress through the steps). */
   readonly side?: ReactNode;
+  /** A small action under the rail's list, such as a link to the other policy or a way to ask. */
+  readonly sideAction?: SiteActionSpec;
   /** The document's sections. */
   readonly children: ReactNode;
 }
@@ -70,7 +74,7 @@ export interface DocLayoutProps {
  * a notice, then the contents rail beside the sections. Below the medium tier the rail spans the
  * column above the sections and its list gives way to the product's jump control.
  */
-export function DocLayout({ crumbs, crumbsLabel, crumbSeparator, title, badge, controls, notice, tocTitle, toc, current, onJump, doneMark, jump, side, children }: DocLayoutProps) {
+export function DocLayout({ crumbs, crumbsLabel, crumbSeparator, title, badge, controls, notice, tocTitle, toc, current, onJump, doneMark, jump, side, sideAction, children }: DocLayoutProps) {
   return (
     <SitePage>
       <SiteBreadcrumb steps={crumbs} label={crumbsLabel} separator={crumbSeparator} />
@@ -103,6 +107,11 @@ export function DocLayout({ crumbs, crumbsLabel, crumbSeparator, title, badge, c
           </ol>
           {jump !== undefined ? <div {...slotAttributes(siteTocJumpStyle, {})}>{jump}</div> : null}
           {side !== undefined ? <div {...slotAttributes(siteDocSideStyle, {})}>{side}</div> : null}
+          {sideAction !== undefined ? (
+            <span {...slotAttributes(siteDocActionStyle, {})}>
+              <SiteAction {...sideAction} size="sm" />
+            </span>
+          ) : null}
         </nav>
         <div {...slotAttributes(siteDocStyle, {})}>{children}</div>
       </div>

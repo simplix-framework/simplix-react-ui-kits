@@ -42,6 +42,7 @@ Every label is a prop: the kit ships no strings, and the product passes its own 
 | `--site-ink` | body text and headings | `var(--foreground)` |
 | `--site-ink-muted` | ledes, notes, captions, table values | `var(--muted-foreground)` |
 | `--site-ink-disabled` | a disabled action's label | `var(--muted-foreground)` |
+| `--site-ink-faint` | the dashed outline of a draft field still to fill | `var(--border)` |
 | `--site-control-disabled` | a disabled action's ground | `var(--muted)` |
 | `--site-accent` | the one accent: primary action, highlighted offer, checks | `var(--primary)` |
 | `--site-on-accent` | text on the accent | `var(--primary-foreground)` |
@@ -110,6 +111,7 @@ Every label is a prop: the kit ships no strings, and the product passes its own 
 | `--site-radius-full` | the highlight badge, the avatar | `9999px` |
 | `--site-recede` | the opacity of a bar link that is not the current page | `0.7` |
 | `--site-faint` | a feature an offer leaves out, a disabled switch option | `0.4` |
+| `--site-dim` | a control that cannot be used now (the comparison while the previous version shows) | `0.45` |
 | `--site-duration-fast` | hover and press transitions | `120ms` |
 | `--site-ease` | their easing | `cubic-bezier(0.2, 0.8, 0.2, 1)` |
 | `--site-focus-ring` | the keyboard focus ring | a 2px surface gap, then a 2px accent ring |
@@ -146,7 +148,7 @@ Inside an element marked `data-band="dark"` (`SiteBand`, `HeroBand` with `tone="
 | `install` | ready | bar, pageHead, notice, check, downloads, installSteps, video, troubleshooting, symptoms, caption, footer |
 | `help` | ready | bar, search, categories, articles, contact, footer |
 | `article` | ready | bar, breadcrumb, docHead, contents, doc, footer |
-| `legal` | planned | bar, breadcrumb, pageHead, contents, articles, footer |
+| `legal` | ready | bar, breadcrumb, docHead, contents, doc, footer |
 | `account` | planned | bar, banner, sections, sectionHead, rows, footer |
 | `checkout` | planned | bar, stepper, main, summary, footer |
 | `auth` | planned | card, providers, foot |

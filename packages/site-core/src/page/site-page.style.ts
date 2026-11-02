@@ -188,3 +188,17 @@ export const siteLiveStyle = defineSlotStyle({
   variants: {},
   defaultVariants: {},
 });
+
+/** A small badge in a tone with its glyph, such as a draft mark beside a title. */
+export const siteBadgeStyle = defineSlotStyle({
+  slot: "site-badge",
+  base:
+    "inline-flex items-center gap-1 rounded-(--site-radius-full) px-2 py-0.5 text-(length:--site-fs-label) leading-(--site-lh-label) font-(--site-fw-strong) tracking-(--site-tracking-label) [&_svg]:size-3",
+  variants: {
+    tone: {
+      neutral: "bg-(--site-surface-sunken) text-(--site-ink-muted)",
+      warn: "bg-(--site-warn-soft) text-(--site-warn)",
+    },
+  },
+  defaultVariants: { tone: "neutral" },
+});

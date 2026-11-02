@@ -21,6 +21,7 @@
   --site-ink: var(--foreground);
   --site-ink-muted: var(--muted-foreground);
   --site-ink-disabled: var(--muted-foreground);
+  --site-ink-faint: var(--border);
   --site-control-disabled: var(--muted);
   --site-accent: var(--primary);
   --site-on-accent: var(--primary-foreground);
@@ -95,6 +96,7 @@
   /* What recedes and what is left out. */
   --site-recede: 0.7;
   --site-faint: 0.4;
+  --site-dim: 0.45;
 
   /* Motion, focus and what floats. */
   --site-duration-fast: 120ms;

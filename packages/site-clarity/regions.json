@@ -625,6 +625,7 @@
       ],
       "controls": [
         "site-action",
+        "site-change-link",
         "*"
       ],
       "$comment": "`*` admits the product controls a document head holds (a version select, a comparison switch).",
@@ -637,15 +638,36 @@
         "fact": "site-article-fact",
         "where": "site-article-where",
         "chip": "site-chip[data-tone=accent]",
-        "lead": "site-article-lead"
+        "lead": "site-article-lead",
+        "badge": "site-badge",
+        "toggle": "site-toggle-field",
+        "smallAction": "site-action[data-size=sm]",
+        "banner": "site-banner",
+        "bannerMark": "site-banner-mark",
+        "bannerTitle": "site-banner-title",
+        "bannerText": "site-banner-text",
+        "bannerActions": "site-banner-actions",
+        "caption": "site-caption",
+        "changes": "site-change-list",
+        "changesTitle": "site-change-list-title",
+        "legendAdded": "site-change-legend[data-kind=added]",
+        "legendRemoved": "site-change-legend[data-kind=removed]",
+        "changeLink": "site-change-link",
+        "changeNo": "site-change-no",
+        "changeWhat": "site-change-what",
+        "text": "site-doc-text"
       },
       "widths": [
         "root",
         "titleRow",
         "intro",
         "facts",
-        "lead"
-      ]
+        "lead",
+        "controls",
+        "banner",
+        "changes"
+      ],
+      "carded": true
     },
     "contents": {
       "part": "DocLayout rail",
@@ -728,7 +750,30 @@
         "relatedGrid": "site-related-grid",
         "relatedLink": "site-related-link",
         "relatedName": "site-article-name",
-        "relatedMeta": "site-article-meta"
+        "relatedMeta": "site-article-meta",
+        "article": "site-legal-article[data-kind=article]",
+        "addedArticle": "site-legal-article[data-added=true]",
+        "addendum": "site-legal-article[data-kind=addendum]",
+        "articleHeading": "site-legal-article-heading",
+        "articleNo": "site-legal-article-no",
+        "articleWas": "site-legal-article-was",
+        "articleTag": "site-chip[data-tone=good]",
+        "summary": "site-plain-summary",
+        "summaryLabel": "site-plain-summary-label",
+        "summaryText": "site-plain-summary-text",
+        "clauses": "site-clause-list",
+        "clause": "site-clause",
+        "clauseMark": "site-clause-mark",
+        "clauseText": "site-clause-text",
+        "added": "site-diff-added",
+        "removed": "site-diff-removed",
+        "fieldGap": "site-field-gap",
+        "keyValues": "site-key-values",
+        "key": "site-key",
+        "value": "site-value",
+        "infoGrid": "site-info-grid",
+        "infoCard": "site-info-card",
+        "infoTitle": "site-info-card-title"
       },
       "widths": [
         "root",
@@ -741,7 +786,15 @@
         "feedback",
         "related",
         "relatedGrid",
-        "relatedLink"
+        "relatedLink",
+        "article",
+        "addedArticle",
+        "addendum",
+        "summary",
+        "clauses",
+        "keyValues",
+        "infoGrid",
+        "infoCard"
       ],
       "carded": true
     },
@@ -847,16 +900,23 @@
       "$comment": "The help centre: the search band (status, h1, lede, searches to try, the search and its matches), then the categories, and the most read articles beside the way to ask support (closed, the form, or sent). An article is the article type."
     },
     "legal": {
-      "status": "planned",
-      "reason": "needs the legal segment (DocLayout, PlainSummary, VersionPicker, DiffText, KeyValues, LegalTable, PrintButton); the breadcrumb region is in place",
-      "plannedRegions": [
+      "status": "ready",
+      "root": "[data-page]",
+      "regions": [
         "bar",
         "breadcrumb",
-        "pageHead",
+        "docHead",
         "contents",
-        "articles",
+        "doc",
         "footer"
-      ]
+      ],
+      "required": [
+        "bar",
+        "docHead",
+        "doc",
+        "footer"
+      ],
+      "$comment": "A legal text on DocLayout: the trail, the head (title with the draft badge, the version picker and Save as PDF, a notice about the version or the list of changes, the disclaimer), the contents rail with a dot on each changed article, then the articles: a numbered heading, the plain summary and the clauses, with additions and removals marked in the comparison, and cards of labelled values on the business page."
     },
     "account": {
       "status": "planned",

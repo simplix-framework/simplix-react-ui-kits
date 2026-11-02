@@ -4,5 +4,5 @@ export { ArticleList, CategoryGrid, SiteColumns } from "./help-lists";
 export type { ArticleListProps, CategoryGridProps, SiteArticleLink, SiteArticleRow, SiteCategory, SiteColumnsProps } from "./help-lists";
 export { SearchHero, SiteSearch, searchKeyTarget, StatusLine } from "./search-hero";
 export type { SearchHeroProps, SiteSearchMatch, SiteSearchProps, StatusLineProps } from "./search-hero";
-export { ArticleFigure, ArticleIntro, ArticleStep, DocProgress, DocSection, FeedbackPanel, QuickBox, RelatedLinks, TipNote } from "./article";
-export type { ArticleFigureProps, ArticleIntroProps, ArticleStepProps, DocProgressProps, DocSectionProps, FeedbackPanelProps, QuickBoxProps, RelatedLinksProps, SiteTriedToggle, TipNoteProps } from "./article";
+export { ArticleFigure, ArticleIntro, ArticleStep, DocProgress, DocSection, DocText, FeedbackPanel, QuickBox, RelatedLinks, TipNote } from "./article";
+export type { ArticleFigureProps, ArticleIntroProps, ArticleStepProps, DocProgressProps, DocSectionProps, DocTextProps, FeedbackPanelProps, QuickBoxProps, RelatedLinksProps, SiteTriedToggle, TipNoteProps } from "./article";

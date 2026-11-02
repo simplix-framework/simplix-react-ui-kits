@@ -321,3 +321,15 @@ export function DocProgress({ text, status, share, action }: DocProgressProps) {
     </div>
   );
 }
+
+/** Props for {@link DocText}. */
+export interface DocTextProps {
+  /** `muted` for a paragraph that introduces the page rather than states a term. */
+  readonly tone?: "plain" | "muted";
+  readonly children: ReactNode;
+}
+
+/** A paragraph of a document. */
+export function DocText({ tone, children }: DocTextProps) {
+  return <p {...slotAttributes(siteDocTextStyle, { tone })}>{children}</p>;
+}

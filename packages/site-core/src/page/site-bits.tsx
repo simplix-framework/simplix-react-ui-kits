@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { slotAttributes } from "@simplix-react/ui/design";
 
-import { siteCaptionStyle, siteChipDotStyle, siteChipStyle, siteLiveStyle, siteSpinnerStyle } from "./site-page.style";
+import { siteBadgeStyle, siteCaptionStyle, siteChipDotStyle, siteChipStyle, siteLiveStyle, siteSpinnerStyle } from "./site-page.style";
 
 /** How a {@link SiteChip} reads: plain, the accent, or a state that went well, needs care or failed. */
 export type SiteChipTone = "neutral" | "accent" | "good" | "warn" | "bad";
@@ -49,6 +49,26 @@ export interface SiteLiveProps {
 export function SiteLive({ children }: SiteLiveProps) {
   return (
     <span {...slotAttributes(siteLiveStyle, {})} role="status">
+      {children}
+    </span>
+  );
+}
+
+/** Props for {@link SiteBadge}. */
+export interface SiteBadgeProps {
+  readonly tone?: "neutral" | "warn";
+  /** A glyph before the words, which the product draws. */
+  readonly icon?: ReactNode;
+  /** What the badge means in full, shown on hover. */
+  readonly title?: string;
+  readonly children: ReactNode;
+}
+
+/** A small badge in a tone with its glyph, such as a draft mark beside a document's title. */
+export function SiteBadge({ tone, icon, title, children }: SiteBadgeProps) {
+  return (
+    <span {...slotAttributes(siteBadgeStyle, { tone })} title={title}>
+      {icon}
       {children}
     </span>
   );

@@ -562,12 +562,17 @@ export const siteDocHeadingStyle = defineSlotStyle({
   defaultVariants: {},
 });
 
-/** A paragraph inside a document. */
+/** A paragraph inside a document; `muted` for one that introduces rather than states. */
 export const siteDocTextStyle = defineSlotStyle({
   slot: "site-doc-text",
   base: "m-0 text-(length:--site-fs-body-pane) leading-(--site-lh-body-pane)",
-  variants: {},
-  defaultVariants: {},
+  variants: {
+    tone: {
+      plain: "",
+      muted: "text-(--site-ink-muted)",
+    },
+  },
+  defaultVariants: { tone: "plain" },
 });
 
 /** Where a step's toggle or a section's action stands: at the start, its own width. */
