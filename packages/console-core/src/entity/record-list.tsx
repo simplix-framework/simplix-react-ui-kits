@@ -284,13 +284,16 @@ export interface RecordListProps<Row> {
   readonly presentation?: RecordPresentation;
   /**
    * Offers the reader a switch between the table and the cards, in the toolbar. The presentation is
-   * what the list opens in; the reader's choice replaces it on the next visit when {@link viewKey} names
-   * the list. Off by default: a list draws one presentation.
+   * what the list opens in; the reader's choice replaces it on the next visit. A list drawn as cards
+   * always offers the switch (`presentation="cards"` makes this `true` whatever is passed), so a
+   * cards list without it cannot exist; a table list offers it only where the screen's design says
+   * its rows are also read as units.
    */
   readonly viewToggle?: boolean;
   /**
    * What names this list among the lists of the product, for the browser to remember the reader's
-   * view under. Without it the choice made with {@link viewToggle} lasts as long as the page.
+   * view under. Absent, the key is derived from the list's columns ({@link derivedViewKey}), so a
+   * list that offers the switch remembers the choice without a key set by hand.
    */
   readonly viewKey?: string;
   /**
@@ -380,6 +383,33 @@ export function splitCardColumns<Row>(
   const title = columns.find((column) => column.key === cardTitle);
   if (!title) throw new Error(`RecordList cardTitle "${cardTitle}" names no column; the columns are ${columns.map((column) => column.key).join(", ")}`);
   return { title, lines: columns.filter((column) => column !== title) };
+}
+
+/**
+ * Whether a list offers the reader the switch between the table and the cards. A list drawn as cards
+ * always does; a table list does when its design asked for it.
+ *
+ * @param presentation what the screen decided the rows are drawn as
+ * @param viewToggle the switch the screen asked for
+ */
+export function offersViewSwitch(presentation: RecordPresentation, viewToggle: boolean): boolean {
+  return presentation === "cards" || viewToggle;
+}
+
+/**
+ * The key a list's view is remembered under when the screen names none: a short hash of the column
+ * keys in order. A column key is a code constant, so the key is the same on every visit and differs
+ * between lists that show different columns.
+ *
+ * @param columns the list's columns
+ */
+export function derivedViewKey(columns: readonly { readonly key: string }[]): string {
+  let hash = 0x811c9dc5;
+  for (const char of columns.map((column) => column.key).join("\u001f")) {
+    hash ^= char.codePointAt(0) ?? 0;
+    hash = Math.imul(hash, 0x01000193) >>> 0;
+  }
+  return `columns-${hash.toString(16).padStart(8, "0")}`;
 }
 
 /**
@@ -608,7 +638,7 @@ export function RecordList<Row>({
   narrowing,
   cardBreakpoint,
   presentation = "table",
-  viewToggle = false,
+  viewToggle: viewToggleAsked = false,
   viewKey,
   cardTitle,
   bulkActions,
@@ -654,9 +684,12 @@ export function RecordList<Row>({
   const sortedBy = on("sort") ? list.sort.field : null;
   const tableColumns = useMemo(() => keepColumnsDrawn(columns, sortedBy), [columns, sortedBy]);
   const { title: titleColumn, lines: lineColumns } = splitCardColumns(columns, cardTitle);
+  // A list drawn as cards always offers the switch to the table; the choice is kept under the key the
+  // screen names, else under one derived from the columns.
+  const viewToggle = offersViewSwitch(presentation, viewToggleAsked);
   // The view the list opens in: the presentation, unless the reader's saved choice replaces it where
   // the switch is offered. A list with no switch never reads a saved view.
-  const remembered = useRememberedView(viewToggle ? viewKey : undefined);
+  const remembered = useRememberedView(viewToggle ? (viewKey ?? derivedViewKey(columns)) : undefined);
   const openView = openingView(presentation, viewToggle, remembered.saved);
   // Decided over the page's rows, so a label holds the same cell on every card.
   const wideCards = wideColumns(

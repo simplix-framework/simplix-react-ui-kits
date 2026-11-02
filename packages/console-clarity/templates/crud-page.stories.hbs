@@ -227,10 +227,13 @@ function Screen({ open{{#if hasCreate}}, mode{{/if}} }: Args) {
           onRowClick={(row) => nav.showDetail(idOf(row))}
 {{#if listCards}}
           presentation="cards"
-{{/if}}
+          viewToggle
+          viewKey="{{entity}}"
+{{else}}
 {{#if viewToggle}}
           viewToggle
           viewKey="{{entity}}"
+{{/if}}
 {{/if}}
 {{#if cardTitle}}
           cardTitle="{{cardTitle}}"

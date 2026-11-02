@@ -5,7 +5,7 @@ import { afterEach, describe, expect, it } from "vitest";
 
 import { memoryPresentationStorage } from "../page/presentation-memory";
 import { writeRememberedView } from "./list-view-memory";
-import { openingView, RecordList, splitCardColumns, type RecordColumn, type RecordListProps } from "./record-list";
+import { derivedViewKey, offersViewSwitch, openingView, RecordList, splitCardColumns, type RecordColumn, type RecordListProps } from "./record-list";
 
 interface Row {
   readonly id: string;
@@ -122,9 +122,13 @@ function withBrowserStorage<T>(initial: Record<string, string>, render: () => T)
 describe("RecordList view switch", () => {
   afterEach(() => Reflect.deleteProperty(globalThis, "window"));
 
-  it("offers no switch unless viewToggle is on, for either presentation", () => {
-    expect(html({ presentation: "cards" })).not.toContain("aria-pressed");
-    expect(html({ presentation: "table" })).not.toContain("aria-pressed");
+  // The server render never draws the switch itself (it appears after the first effect), so what the
+  // list decided is read from the one visible consequence: the saved view replaces the presentation.
+  it("opens a cards list in the reader's saved table without viewToggle being passed, so the switch is on", () => {
+    const out = withBrowserStorage({ "console.listView.voices": "list" }, () => html({ presentation: "cards", viewKey: "voices" }));
+    expect(out).toContain("<table");
+    const forcedOn = withBrowserStorage({ "console.listView.voices": "list" }, () => html({ presentation: "cards", viewToggle: false, viewKey: "voices" }));
+    expect(forcedOn).toContain("<table");
   });
 
   it("opens in the reader's saved view over the presentation, where the switch is offered", () => {
@@ -137,13 +141,48 @@ describe("RecordList view switch", () => {
   });
 
   it("ignores a saved view where no switch is offered, so the presentation is the one view", () => {
-    const out = withBrowserStorage({ "console.listView.voices": "list" }, () => html({ presentation: "cards", viewKey: "voices" }));
+    const out = withBrowserStorage({ "console.listView.voices": "grid" }, () => html({ presentation: "table", viewKey: "voices" }));
+    expect(out).toContain("<table");
+    expect(out).not.toContain('data-testid="list-card-grid"');
+  });
+
+  it("opens a cards list in the table the reader chose, under a key derived from its columns when none is named", () => {
+    const key = derivedViewKey(columns);
+    const out = withBrowserStorage({ [`console.listView.${key}`]: "list" }, () => html({ presentation: "cards" }));
+    expect(out).toContain("<table");
+    expect(out).not.toContain('data-testid="list-card-grid"');
+  });
+
+  it("does not read another list's saved view for a cards list with no key", () => {
+    const out = withBrowserStorage({ [`console.listView.${derivedViewKey([{ key: "other" }])}`]: "list" }, () => html({ presentation: "cards" }));
     expect(out).toContain('data-testid="list-card-grid"');
   });
 
   it("keeps the presentation when the saved view belongs to another list", () => {
     const out = withBrowserStorage({ "console.listView.other": "list" }, () => html({ presentation: "cards", viewToggle: true, viewKey: "voices" }));
     expect(out).toContain('data-testid="list-card-grid"');
+  });
+});
+
+describe("offersViewSwitch", () => {
+  it("is true for every cards list, whatever viewToggle says", () => {
+    expect(offersViewSwitch("cards", false)).toBe(true);
+    expect(offersViewSwitch("cards", true)).toBe(true);
+  });
+
+  it("follows viewToggle for a table list", () => {
+    expect(offersViewSwitch("table", false)).toBe(false);
+    expect(offersViewSwitch("table", true)).toBe(true);
+  });
+});
+
+describe("derivedViewKey", () => {
+  it("is the same for the same columns in the same order and differs when a column or the order differs", () => {
+    const one = derivedViewKey([{ key: "name" }, { key: "status" }]);
+    expect(derivedViewKey([{ key: "name" }, { key: "status" }])).toBe(one);
+    expect(derivedViewKey([{ key: "status" }, { key: "name" }])).not.toBe(one);
+    expect(derivedViewKey([{ key: "name" }])).not.toBe(one);
+    expect(one).toMatch(/^columns-[0-9a-f]{8}$/);
   });
 });
 

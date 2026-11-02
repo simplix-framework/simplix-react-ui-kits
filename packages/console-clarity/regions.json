@@ -308,7 +308,7 @@
       "RecordListFeatures.rowActions": "turns the row action strip on or off",
       "RecordListFeatures.count": "turns the count on or off",
       "RecordListFeatures.pagination": "turns pagination on or off",
-      "RecordListProps.viewToggle": "content: offers the reader the switch between the table and the cards, decided by the screen's design entry",
+      "RecordListProps.viewToggle": "content: offers a table list the switch to the cards where the screen's design entry says its rows are also read as units; a cards list always has the switch",
       "RecordListProps.keyboard": "behaviour: gives the page's keys to this list",
       "PageTabSpec.when": "whether the tab exists for this reader",
       "PageTabSpec.unbuilt": "content: the tab names a capability the server does not offer yet",

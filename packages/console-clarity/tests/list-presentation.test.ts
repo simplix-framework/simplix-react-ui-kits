@@ -55,14 +55,17 @@ describe("the generated list's presentation", () => {
     expect(check(source)).toEqual([]);
   });
 
-  it("draws the switch alone on a table, and cards alone without one", () => {
+  it("draws the switch alone on a table, and the switch with its key on every cards list", () => {
     const toggled = render("list.hbs", { ...context, viewToggle: true });
     expect(toggled).not.toContain("presentation=");
     expect(toggled).toMatch(/\n\s+viewToggle\n/);
+    // A cards list carries the switch and the key it is remembered under even when the design did not
+    // set the flag, so a cards list without the switch cannot be generated.
     const plain = render("list.hbs", { ...context, listCards: true });
     expect(plain).toContain('presentation="cards"');
-    expect(plain).not.toContain("viewToggle");
-    expect(plain).not.toContain("viewKey");
+    expect(plain).toMatch(/\n\s+viewToggle\n/);
+    expect(plain).toContain('viewKey="product"');
+    expect(plain.match(/viewToggle/g)).toHaveLength(1);
     expect(check(toggled)).toEqual([]);
     expect(check(plain)).toEqual([]);
   });
@@ -88,6 +91,14 @@ describe("the generated board frame's list", () => {
     expect(source).toMatch(/\n\s+viewToggle\n/);
     expect(source).toContain('viewKey="product"');
     expect(source).toContain('cardTitle="name"');
+  });
+
+  it("draws the switch and its key on a cards frame whose design set no flag", () => {
+    const source = render("crud-page.stories.hbs", { ...context, listCards: true });
+    expect(source).toContain('presentation="cards"');
+    expect(source).toMatch(/\n\s+viewToggle\n/);
+    expect(source).toContain('viewKey="product"');
+    expect(source.match(/viewToggle/g)).toHaveLength(1);
   });
 
   it("draws the plain table when nothing is decided", () => {

@@ -130,10 +130,13 @@ export function {{EntityPascal}}List({ list, activeRowId, onRowClick, actions, n
       onRowClick={onRowClick}
 {{#if listCards}}
       presentation="cards"
-{{/if}}
+      viewToggle
+      viewKey="{{entity}}"
+{{else}}
 {{#if viewToggle}}
       viewToggle
       viewKey="{{entity}}"
+{{/if}}
 {{/if}}
 {{#if cardTitle}}
       cardTitle="{{cardTitle}}"
