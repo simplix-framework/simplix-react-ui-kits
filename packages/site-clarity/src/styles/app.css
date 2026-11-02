@@ -3,3 +3,7 @@
    comes from the slot rules below, drawn with the site variables. */
 @import "./site-tokens.css";
 @import "./designs/clarity.css";
+
+/* The site parts as a content source, as every kit stylesheet registers its own, so a utility a part
+   writes on an element reaches an app whose own @source globs do not cover the kit. */
+@source "../../../site-core/src/**/*.{ts,tsx}";

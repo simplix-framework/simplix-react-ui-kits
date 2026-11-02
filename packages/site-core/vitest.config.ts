@@ -18,8 +18,7 @@ const alias = (name: string) => [
   { find: new RegExp(`^${name}/(.*)$`), replacement: `${frameworkDir(name)}/$1` },
 ];
 
-// Only `*.test.*` files are tests: the design specs under `src/styles/designs` end in `.spec.ts`
-// and hold a design, not a suite.
+// Only `*.test.*` files under src are tests.
 export default defineConfig({
   resolve: { dedupe: ["react", "react-dom"], alias: [...alias("react"), ...alias("react-dom"), ...alias("lucide-react")] },
   test: { include: ["src/**/*.test.{ts,tsx}"], server: { deps: { inline: [/@simplix-react\//] } } },
