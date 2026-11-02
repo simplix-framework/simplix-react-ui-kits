@@ -30,7 +30,7 @@
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { dirname, join, relative, resolve } from "node:path";
 import { parseArgs } from "../lib/fs-util.mjs";
-import { descriptionCatalogProblems, listViewProblems, manifestProblems, readRoutePath } from "../lib/screen-design.mjs";
+import { descriptionCatalogProblems, listViewProblems, manifestProblems, placeholderFrameProblems, placeholderRowProblems, readRoutePath } from "../lib/screen-design.mjs";
 
 const args = parseArgs(process.argv.slice(2));
 const root = resolve(args.root ?? process.cwd());
@@ -73,7 +73,19 @@ const problems = manifestProblems(manifest, routed, blocks, { primaryKey: settin
 if (settings.descriptionCatalog) problems.push(...descriptionCatalogProblems(manifest, settings.descriptionCatalog, (path) => (existsSync(at(path)) ? JSON.parse(readFileSync(at(path), "utf8")) : undefined), blocks));
 // The list decision (table or cards, the view switch, the card title) is compared with every file that
 // draws the list: the screen's list widget and its board frame.
-if (settings.listFiles) problems.push(...listViewProblems(manifest, settings.listFiles, (path) => (existsSync(at(path)) ? readFileSync(at(path), "utf8") : undefined)));
+if (settings.listFiles) {
+  const textOf = (path) => (existsSync(at(path)) ? readFileSync(at(path), "utf8") : undefined);
+  const placeholders = placeholderRowProblems(manifest, settings.listFiles, textOf);
+  problems.push(...listViewProblems(manifest, settings.listFiles, textOf), ...placeholders);
+  // Every frame in the frame directory is read, not only those a routed screen's entry names, so a
+  // frame with no entry (a holder tab's table) cannot keep the generated rows either.
+  if (settings.frameDir) {
+    const dir = at(settings.frameDir);
+    const frames = existsSync(dir) ? readdirSync(dir).filter((name) => name.endsWith(".stories.tsx")).sort().map((name) => join(settings.frameDir, name)) : [];
+    const unreported = frames.filter((path) => !placeholders.some((reported) => reported.includes(`: ${path} still draws`)));
+    problems.push(...placeholderFrameProblems(unreported, textOf));
+  }
+}
 if (problems.length > 0) {
   console.error(`screen design is not complete:\n${problems.map((problem) => `  ${problem}`).join("\n")}`);
   process.exit(1);

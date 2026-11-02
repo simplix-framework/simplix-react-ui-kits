@@ -139,6 +139,8 @@ It fails when a routed screen has no entry, an entry is undecided (`"decided": f
 
 The list decision is compared with the files that draw the list. The root's `screenDesign.listFiles` names them as paths relative to the root, with `{entity}` for the entry's entity and `{module}` for the directory above the `src` its `blocks` file sits in (`"{module}/src/widgets/{entity}/list.tsx"`, `"screens/{entity}.stories.tsx"`). The `<RecordList>` element in each must declare the entry's `presentation`, `viewToggle` and `cardTitle` (`presentation="cards"`, `viewToggle`, `cardTitle="name"`; a cards list always declares `viewToggle`, and a table with no switch declares none of them). A file that does not exist, or draws no `RecordList`, is refused for a decision that needs it and left alone for a plain table. Scaffolding with `--list-presentation cards --view-toggle --card-title <column>` lays down the list and the frame as decided.
 
+A frame's sample rows are part of its design. The frame a story template lays down cannot know sample data, so it fills every text field with its own name and a number (`roleName: "roleName 1"`), which draws a meaningless list. `screen-design` fails when a file named by `listFiles`, or, with `screenDesign.frameDir` (a directory of `*.stories.tsx` files relative to the root), any frame in that directory, holds a declared field (`name: "roleName"`) whose rows are still such a value. A frame in `frameDir` with no routed screen (a holder tab's table) is read as well.
+
 Everything specific to a product is the root's `mockup.config.json` key `screenDesign`; a root without the key is left alone:
 
 ```json
@@ -147,7 +149,8 @@ Everything specific to a product is the root's `mockup.config.json` key `screenD
     "manifest": "screen-design.json",
     "routes": [{ "app": "<app>", "dir": "<path to the app's routes>" }],
     "primaryKey": "{entity}Id",
-    "listFiles": ["{module}/src/widgets/{entity}/list.tsx", "screens/{entity}.stories.tsx"]
+    "listFiles": ["{module}/src/widgets/{entity}/list.tsx", "screens/{entity}.stories.tsx"],
+    "frameDir": "screens"
   }
 }
 ```
