@@ -1,0 +1,70 @@
+{
+  "name": "@simplix-react-ui-kits/site-core",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Web site UI kit parts shared by every site design: the site shell, page column and pricing parts, each element marked with the slot a design draws",
+  "type": "module",
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    "./action": {
+      "source": "./src/action/index.ts",
+      "types": "./src/action/index.ts",
+      "import": "./dist/action/index.js"
+    },
+    "./link": {
+      "source": "./src/link/index.ts",
+      "types": "./src/link/index.ts",
+      "import": "./dist/link/index.js"
+    },
+    "./page": {
+      "source": "./src/page/index.ts",
+      "types": "./src/page/index.ts",
+      "import": "./dist/page/index.js"
+    },
+    "./pricing": {
+      "source": "./src/pricing/index.ts",
+      "types": "./src/pricing/index.ts",
+      "import": "./dist/pricing/index.js"
+    },
+    "./shell": {
+      "source": "./src/shell/index.ts",
+      "types": "./src/shell/index.ts",
+      "import": "./dist/shell/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --no-clean --no-dts",
+    "typecheck": "tsc --noEmit",
+    "lint": "oxlint src && simplix-design-classes src && simplix-slot-spread src && simplix-design-literals src",
+    "test": "vitest run",
+    "clean": "rm -rf dist .turbo"
+  },
+  "dependencies": {
+    "simplix-react": "catalog:"
+  },
+  "peerDependencies": {
+    "react": ">=18.0.0",
+    "react-dom": ">=18.0.0",
+    "tailwindcss": ">=4.0.0"
+  },
+  "devDependencies": {
+    "@simplix-react-ui-kits/console-core": "workspace:*",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "oxlint": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "tsup": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}

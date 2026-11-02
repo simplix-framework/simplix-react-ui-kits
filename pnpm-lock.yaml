@@ -329,6 +329,83 @@ importers:
         specifier: 'catalog:'
         version: 4.1.12(vite@8.3.5(esbuild@0.27.7)(jiti@2.7.0)(yaml@2.9.1))
 
+  packages/site-clarity:
+    dependencies:
+      '@simplix-react-ui-kits/site-core':
+        specifier: workspace:*
+        version: link:../site-core
+      simplix-react:
+        specifier: link:/Users/taehwan/Workspace/simplix-react/packages/simplix-react
+        version: link:../../../simplix-react/packages/simplix-react
+      tailwindcss:
+        specifier: '>=4.0.0'
+        version: 4.3.3
+    devDependencies:
+      '@simplix-react-ui-kits/console-core':
+        specifier: workspace:*
+        version: link:../console-core
+      '@types/react':
+        specifier: 'catalog:'
+        version: 19.3.0
+      '@types/react-dom':
+        specifier: 'catalog:'
+        version: 19.3.0(@types/react@19.3.0)
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
+      react:
+        specifier: 'catalog:'
+        version: 19.3.1
+      react-dom:
+        specifier: 'catalog:'
+        version: 19.3.1(react@19.3.1)
+      tsup:
+        specifier: 'catalog:'
+        version: 8.5.1(jiti@2.7.0)(postcss@8.5.31)(typescript@5.9.3)(yaml@2.9.1)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      vitest:
+        specifier: 'catalog:'
+        version: 4.1.12(vite@8.3.5(esbuild@0.27.7)(jiti@2.7.0)(yaml@2.9.1))
+
+  packages/site-core:
+    dependencies:
+      simplix-react:
+        specifier: link:/Users/taehwan/Workspace/simplix-react/packages/simplix-react
+        version: link:../../../simplix-react/packages/simplix-react
+      tailwindcss:
+        specifier: '>=4.0.0'
+        version: 4.3.3
+    devDependencies:
+      '@simplix-react-ui-kits/console-core':
+        specifier: workspace:*
+        version: link:../console-core
+      '@types/react':
+        specifier: 'catalog:'
+        version: 19.3.0
+      '@types/react-dom':
+        specifier: 'catalog:'
+        version: 19.3.0(@types/react@19.3.0)
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
+      react:
+        specifier: 'catalog:'
+        version: 19.3.1
+      react-dom:
+        specifier: 'catalog:'
+        version: 19.3.1(react@19.3.1)
+      tsup:
+        specifier: 'catalog:'
+        version: 8.5.1(jiti@2.7.0)(postcss@8.5.31)(typescript@5.9.3)(yaml@2.9.1)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      vitest:
+        specifier: 'catalog:'
+        version: 4.1.12(vite@8.3.5(esbuild@0.27.7)(jiti@2.7.0)(yaml@2.9.1))
+
 packages:
 
   '@babel/code-frame@7.29.7':
