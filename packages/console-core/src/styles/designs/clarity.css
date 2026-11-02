@@ -1719,6 +1719,9 @@
   :where([data-part="console-preview-topbar"])[data-part][data-p-console-preview-topbar] {
     @apply border-b border-[var(--border)] bg-card;
   }
+  :where([data-part="console-band-controls"])[data-part][data-p-console-band-controls] {
+    @apply ml-auto;
+  }
   :where([data-part="console-band-top-bar"])[data-part][data-p-console-band-top-bar] {
     @apply border-b px-4 py-2;
   }

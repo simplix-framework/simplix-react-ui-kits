@@ -88,6 +88,83 @@ export interface ConsolePhoneTab {
   readonly onPress?: () => void;
 }
 
+/** Props for {@link ConsolePhoneBar}. */
+export interface ConsolePhoneBarProps {
+  /** What the bar says this screen is, or absent where the bar carries the brand alone. */
+  readonly title?: ReactNode;
+  /** The product's mark and name, drawn at the head of the bar on every screen. */
+  readonly brand?: ReactNode;
+  /** Where pressing the brand leads and what that link is called for a screen reader; absent, the brand does nothing. */
+  readonly home?: { readonly href: string; readonly label: string };
+  /** Whether there is somewhere to go back to. */
+  readonly back?: boolean;
+  /** Controls at the end of the bar, each a touch target of its own. */
+  readonly actions?: ReactNode;
+}
+
+/**
+ * The bar along the top of a phone screen: back, the brand, the page title and the controls at the
+ * end, in one row a thumb's height.
+ *
+ * <p>Here rather than inside {@link ConsolePhoneShell} because a window with no area tabs, the top
+ * bar window of an app for the people a product serves, draws the same bar with a menu button at
+ * its end. Written twice the two would stop agreeing on the first change to either.
+ */
+export function ConsolePhoneBar({ title, brand, home, back = false, actions }: ConsolePhoneBarProps) {
+  return (
+    <Flex
+      align="center"
+      gap="xs"
+      shrink={false}
+      role="banner"
+      className={TOUCH_TARGET}
+      {...partAttributes(phoneBarStyle, {})}
+    >
+      {back && <PhoneBackButton />}
+      {/* One line, cut with an ellipsis rather than wrapped: a title that wraps at a phone's
+          width pushes the screen down by as many lines as it takes, and 「알림 센터」 came out
+          four lines tall at one character each. */}
+      {brand != null && (
+        <>
+          {home ? (
+            <MenuLink href={home.href} className={TOUCH_TARGET} attributes={{ ...slotAttributes(previewBrandLinkStyle, {}), "aria-label": home.label }}>
+              <Flex align="center" shrink={false}>
+                {brand}
+              </Flex>
+            </MenuLink>
+          ) : (
+            <Flex align="center" shrink={false}>
+              {brand}
+            </Flex>
+          )}
+          {title != null && <Separator orientation="vertical" className="h-5" />}
+        </>
+      )}
+      <Text size={brand != null ? undefined : "lg"} weight="semibold" className="min-w-0 flex-1 truncate">
+        {title}
+      </Text>
+      {actions}
+    </Flex>
+  );
+}
+
+/** The arrow at the head of the phone bar, which steps back through the history the router keeps. */
+function PhoneBackButton() {
+  const { t } = useTranslation(PACKAGE_NAMESPACE + "/chrome");
+  const router = useRouter();
+  return (
+    <Button
+      type="button"
+      variant="outline"
+      className={TOUCH_TARGET}
+      aria-label={t("phone.back")}
+      onClick={() => router.history.back()}
+    >
+      <ArrowLeftIcon className="size-5" aria-hidden />
+    </Button>
+  );
+}
+
 /** Props for {@link ConsolePhoneShell}. */
 export interface ConsolePhoneShellProps {
   /** What the bar at the top says this screen is — the page header's own title. */
@@ -140,7 +217,6 @@ export function ConsolePhoneShell({
   children,
 }: ConsolePhoneShellProps) {
   const { t } = useTranslation(PACKAGE_NAMESPACE + "/chrome");
-  const router = useRouter();
 
   return (
     // Exactly the viewport tall, with the screen taking what the two bars leave. `dvh` rather
@@ -148,49 +224,7 @@ export function ConsolePhoneShell({
     // taller of the two puts its bottom row under them — which `ConsoleWindow` says once for
     // every shell rather than once per shell.
     <ConsoleWindow>
-      <Flex
-        align="center"
-        gap="xs"
-        shrink={false}
-        role="banner"
-        className={TOUCH_TARGET}
-        {...partAttributes(phoneBarStyle, {})}
-      >
-        {back && (
-          <Button
-            type="button"
-            variant="outline"
-            className={TOUCH_TARGET}
-            aria-label={t("phone.back")}
-            onClick={() => router.history.back()}
-          >
-            <ArrowLeftIcon className="size-5" aria-hidden />
-          </Button>
-        )}
-        {/* One line, cut with an ellipsis rather than wrapped: a title that wraps at a phone's
-            width pushes the screen down by as many lines as it takes, and 「알림 센터」 came out
-            four lines tall at one character each. */}
-        {brand != null && (
-          <>
-            {home ? (
-              <MenuLink href={home.href} attributes={{ ...slotAttributes(previewBrandLinkStyle, {}), "aria-label": home.label }}>
-                <Flex align="center" shrink={false}>
-                  {brand}
-                </Flex>
-              </MenuLink>
-            ) : (
-              <Flex align="center" shrink={false}>
-                {brand}
-              </Flex>
-            )}
-            <Separator orientation="vertical" className="h-5" />
-          </>
-        )}
-        <Text size={brand != null ? undefined : "lg"} weight="semibold" className="min-w-0 flex-1 truncate">
-          {title}
-        </Text>
-        {actions}
-      </Flex>
+      <ConsolePhoneBar title={title} brand={brand} home={home} back={back} actions={actions} />
 
       {/* The screen, with its own footer inside it — a committing action belongs at the near end
           of the reach rather than in the bar at the top, and which action that is only the screen
@@ -483,7 +517,7 @@ export function ConsolePhoneMenuSheet({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
         side="bottom"
-        className="flex max-h-[85dvh] flex-col"
+        className="flex max-h-[85dvh] flex-col [&_[data-slot=sheet-close]]:min-h-11 [&_[data-slot=sheet-close]]:min-w-11"
         {...partAttributes(phoneMenuSheetStyle, {})}
       >
         <SheetHeader>
@@ -511,13 +545,30 @@ export function ConsolePhoneMenuSheet({
 /** One cluster of {@link ConsolePhoneMenuSheet}: its name over its destinations. */
 export function ConsolePhoneMenuSection({
   title,
+  onActivate,
   children,
 }: {
   readonly title?: ReactNode;
+  /**
+   * Called when a button or link inside the section is pressed, for a section whose rows act on
+   * the screen behind the sheet and so have to close it. The sheet already closes itself on a link.
+   */
+  readonly onActivate?: () => void;
   readonly children: ReactNode;
 }) {
   return (
-    <Stack gap="none" className="[&_a]:min-h-11 [&_button]:min-h-11 [&_[aria-disabled]]:min-h-11">
+    <Stack
+      gap="none"
+      className="[&_a]:min-h-11 [&_button]:min-h-11 [&_button]:min-w-11 [&_[aria-disabled]]:min-h-11"
+      onClickCapture={
+        onActivate
+          ? (event) => {
+              const target = event.target;
+              if (target instanceof Element && target.closest("button, a[href]")) onActivate();
+            }
+          : undefined
+      }
+    >
       {title && (
         <Text size="caption" tone="muted" weight="medium">
           {title}

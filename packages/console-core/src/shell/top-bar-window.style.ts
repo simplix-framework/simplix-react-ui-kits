@@ -7,3 +7,12 @@ export const consoleBandTopBarStyle = defineSlotStyle({
   variants: {},
   defaultVariants: {},
 });
+
+/** The destinations and controls of the band: at the far end of the row, and of the second row when they wrap under the mark. */
+export const consoleBandControlsStyle = defineSlotStyle({
+  slot: "console-band-controls",
+  as: "part",
+  base: "ml-auto",
+  variants: {},
+  defaultVariants: {},
+});

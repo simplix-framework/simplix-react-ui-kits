@@ -109,6 +109,7 @@ export { AuthLayout } from "./auth-layout";
 export { AuthCard, type AuthCardNotice, type AuthCardProps } from "./auth-card";
 export { ConsolePageHeader } from "./page-header";
 export {
+  ConsolePhoneBar,
   ConsolePhoneMenuSection,
   ConsolePhoneMenuSheet,
   ConsolePhoneSearchButton,
@@ -123,6 +124,7 @@ export {
   PhoneStripScroller,
   TOUCH_TARGET,
   useConsoleOnAPhone,
+  type ConsolePhoneBarProps,
   type ConsolePhoneMenuSheetProps,
   type ConsolePhoneShellProps,
   type ConsolePhoneTab,

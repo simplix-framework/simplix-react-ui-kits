@@ -8,6 +8,11 @@ import { PACKAGE_NAMESPACE } from "./locales";
 export interface ChromeControlRowsProps {
   /** Utility classes carrying the surface these rows sit on. */
   className?: string;
+  /**
+   * Whether the display settings row is drawn. A window whose wide bar offers no display settings
+   * passes `false`, so the phone sheet moves the controls the bar carries and adds none.
+   */
+  display?: boolean;
 }
 
 /**
@@ -19,7 +24,7 @@ export interface ChromeControlRowsProps {
  *
  * <p>Same controls as the bar's, so a narrow width moves them rather than dropping them.
  */
-export function ChromeControlRows({ className }: ChromeControlRowsProps) {
+export function ChromeControlRows({ className, display = true }: ChromeControlRowsProps) {
   const { t } = useTranslation(PACKAGE_NAMESPACE + "/chrome");
 
   return (
@@ -36,12 +41,14 @@ export function ChromeControlRows({ className }: ChromeControlRowsProps) {
         </Text>
         <DarkModeToggle />
       </Flex>
-      <Flex justify="between" align="center">
-        <Text size="sm" tone="muted">
-          {t("display.title")}
-        </Text>
-        <DisplaySettings />
-      </Flex>
+      {display && (
+        <Flex justify="between" align="center">
+          <Text size="sm" tone="muted">
+            {t("display.title")}
+          </Text>
+          <DisplaySettings />
+        </Flex>
+      )}
     </Stack>
   );
 }

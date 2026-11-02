@@ -5,6 +5,7 @@
     "darkMode": "Dark Mode"
   },
   "phone": {
+    "menu": "Menu",
     "back": "Back",
     "areas": "Main areas",
     "unbuilt": "This screen has not been built yet"
