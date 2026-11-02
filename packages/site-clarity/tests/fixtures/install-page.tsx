@@ -1,6 +1,7 @@
 // The download and install guide and its troubleshooting page composed from the site parts, with the
 // words of the reference the kit's measurements were taken from (measure/install.json), in English
-// and in Korean. It is the page `scripts/site-demo.mjs` renders for the rendered checks.
+// and in Korean. It is the page `scripts/site-demo.mjs` renders for the rendered checks. The words are
+// the reference product's own, kept as written because where a line wraps is part of what is measured.
 import { ActionLine, CheckCard, CopyBlock, DisclosureList, DownloadCard, DownloadGrid, InstallSteps, NoticeCard, ScreenSketch, VideoCard, type SiteCheckState } from "@simplix-react-ui-kits/site-core/install";
 import { SiteCaption, SiteChip, SitePage, SitePageHead } from "@simplix-react-ui-kits/site-core/page";
 import { SiteBar, SiteFooter, SiteWindow } from "@simplix-react-ui-kits/site-core/shell";

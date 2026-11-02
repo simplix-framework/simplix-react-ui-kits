@@ -1,6 +1,8 @@
 // A product introduction composed from the site parts, with the words of the reference the kit's
 // measurements were taken from (measure/marketing.json), in English and in Korean. It is the page
-// `scripts/site-demo.mjs` renders for the rendered checks; it names no product and plays no audio.
+// `scripts/site-demo.mjs` renders for the rendered checks, and it plays no audio. The words are the
+// reference product's own, kept as written because where a line wraps is part of what is measured;
+// the brand and the owner are placeholders (shell-copy.tsx).
 import { HeroBand, NumberedSteps, PlayerCard, ReadAlong, readWordAt, SampleList, SampleRow, SiteBars, SiteWave, SplitSection } from "@simplix-react-ui-kits/site-core/marketing";
 import { SitePage } from "@simplix-react-ui-kits/site-core/page";
 import { SegmentedSwitch } from "@simplix-react-ui-kits/site-core/pricing";

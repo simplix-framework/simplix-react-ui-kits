@@ -1,5 +1,6 @@
 // The bar and footer words and the glyphs every fixture page shares, in the languages the reference
-// was measured in. The brand is a box the size of a mark, so the fixtures name no product.
+// was measured in. The brand is a box the size of a mark and the owner a placeholder; the page copy
+// of the other fixtures is the reference product's own words.
 
 export type Locale = "en" | "ko";
 

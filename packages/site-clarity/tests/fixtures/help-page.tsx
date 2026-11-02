@@ -1,6 +1,7 @@
 // The help centre composed from the site parts, with the words of the reference the kit's
 // measurements were taken from (help-copy.json, read off the reference in English and Korean). It is
-// the page `scripts/site-demo.mjs` renders for the rendered checks. The contact form's controls are
+// the page `scripts/site-demo.mjs` renders for the rendered checks. The words are the reference
+// product's own, kept as written because where a line wraps is part of what is measured. The contact form's controls are
 // the product's (the kit draws their layout, not them), so the page stands boxes of their size in.
 import type { CSSProperties, ReactNode } from "react";
 import { ArticleList, AttachBox, CategoryGrid, ContactForm, ContactPanel, ContactSent, FieldRow, FormField, SearchHero, SiteColumns, SiteSearch, StatusLine } from "@simplix-react-ui-kits/site-core/help";

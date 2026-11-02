@@ -1,6 +1,7 @@
 // A help article and a help guide composed from the site parts, with the words of the reference the
 // kit's measurements were taken from (article-copy.json, read off the reference in English and
-// Korean). It is the page `scripts/site-demo.mjs` renders for the rendered checks. The pictures of
+// Korean). It is the page `scripts/site-demo.mjs` renders for the rendered checks. The words are the
+// reference product's own, kept as written because where a line wraps is part of what is measured. The pictures of
 // the screen, the cost table and the jump select are the product's content, so the page stands
 // boxes of their measured size in.
 import type { CSSProperties, ReactNode } from "react";

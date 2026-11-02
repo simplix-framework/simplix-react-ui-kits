@@ -1,7 +1,8 @@
 // The terms of use composed from the site parts, with the text of the reference the kit's
 // measurements were taken from (terms-copy.json: every article as written with its change marks,
 // read off the reference's comparison in English and Korean). The same text draws the current
-// version, the previous one and the comparison. The version select and the comparison switch are
+// version, the previous one and the comparison. The words are the reference product's own, kept as
+// written because where a line wraps is part of what is measured. The version select and the comparison switch are
 // the product's controls, so the page stands boxes of their measured size in.
 import type { CSSProperties, ReactNode } from "react";
 import { DocText } from "@simplix-react-ui-kits/site-core/help";
