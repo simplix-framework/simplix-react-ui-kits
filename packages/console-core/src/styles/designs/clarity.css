@@ -676,6 +676,9 @@
   [data-slot="console-tile-chip"][data-slot][data-s-console-tile-chip] {
     @apply h-7 border bg-card gap-2 rounded-[var(--radius-badge)] border-[var(--border)] px-[11px] text-(length:--fs-control) leading-(--lh-control) transition-[opacity,translate,border-color,background-color] delay-[calc(var(--i)*35ms+80ms)] duration-[var(--dur-base)] ease-[var(--ease-spring)];
   }
+  [data-slot="console-tile-chip"][data-pressable="false"][data-s-console-tile-chip] {
+    @apply cursor-not-allowed;
+  }
   [data-slot="console-tile-chips"][data-slot][data-s-console-tile-chips] {
     @apply gap-1.5 [scrollbar-width:none];
   }
@@ -762,6 +765,9 @@
   }
   [data-slot="console-tile"][data-drop="true"][data-s-console-tile] {
     @apply rounded-[var(--radius-surface)] ring-0 shadow-[var(--focus-halo)];
+  }
+  [data-slot="console-tile"][data-pressable="false"][data-s-console-tile] {
+    @apply cursor-not-allowed;
   }
   [data-slot="console-tile-ticker"][data-slot][data-s-console-tile-ticker] {
     @apply hidden;
@@ -1757,6 +1763,9 @@
   }
   :where([data-slot="console-tile-chip"])[data-s-console-tile-chip] {
     @apply hover:border-[var(--muted-2)] hover:bg-card active:scale-[0.98] focus-visible:outline-none focus-visible:ring-0 focus-visible:shadow-[var(--focus-halo)] [[data-open=false]_&]:translate-y-1 [[data-open=false]_&]:opacity-0 [[data-open=false]_&]:delay-0;
+  }
+  :where([data-slot="console-tile-chip"][data-pressable="false"])[data-s-console-tile-chip] {
+    @apply hover:bg-card hover:border-[var(--border)] active:scale-100;
   }
   :where([data-slot="console-tile-go"])[data-s-console-tile-go] {
     @apply group-hover:text-foreground group-focus-visible:text-foreground group-hover:translate-x-0 group-focus-visible:translate-x-0;

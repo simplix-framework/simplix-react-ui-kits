@@ -52,4 +52,30 @@ describe("folded tile chips", () => {
     // Without the list's filter state the narrowing tile has nothing to write, so no chip is a control.
     expect(buttons).toHaveLength(0);
   });
+
+  it("marks only a chip that does nothing as unpressable, which a design draws with a not-allowed cursor", () => {
+    const html = chips(filters);
+    expect(html).toMatch(/<span[^>]*data-pressable="false"[^>]*>(?:(?!<\/span><\/span>).)*Rate/s);
+    expect(html).not.toMatch(/<button[^>]*data-pressable="false"/);
+    expect(html).not.toMatch(/<a[^>]*data-pressable="false"/);
+  });
+});
+
+describe("tile cards", () => {
+  /** The unfolded row's cards: the tile wrapper carries whether pressing it does anything. */
+  function cards(withFilters: TileFilters | undefined): string {
+    return renderToStaticMarkup(createElement(UIProvider, { children: createElement(SettingsTiles, { tiles, title: "Summary", filters: withFilters }) }));
+  }
+
+  it("marks a card that does nothing when pressed as unpressable", () => {
+    const html = cards(filters);
+    const wrappers = [...html.matchAll(/data-slot="console-tile"[^>]*/g)].map((m) => m[0]);
+    expect(wrappers.filter((w) => w.includes('data-pressable="false"'))).toHaveLength(1);
+    expect(wrappers.filter((w) => w.includes('data-pressable="true"'))).toHaveLength(2);
+  });
+
+  it("marks a narrowing card unpressable when the list's filter state is not handed in", () => {
+    const wrappers = [...cards(undefined).matchAll(/data-slot="console-tile"[^>]*/g)].map((m) => m[0]);
+    expect(wrappers.filter((w) => w.includes('data-pressable="false"'))).toHaveLength(2);
+  });
 });

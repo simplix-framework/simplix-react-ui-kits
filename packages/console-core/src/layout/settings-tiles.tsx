@@ -626,10 +626,11 @@ function TileChips({
             </NumericText>
           </>
         );
+        const pressable = Boolean((tile.filter && filters) || tile.href);
         const common = {
           className: "inline-flex shrink-0 items-center",
           style: { "--i": index } as CSSProperties,
-          ...slotAttributes(tileChipStyle, {}),
+          ...slotAttributes(tileChipStyle, { pressable }),
         };
         if (tile.filter && filters) {
           return (
@@ -650,7 +651,7 @@ function TileChips({
             // `contents` keeps the wrapper out of the layout; it carries the stagger position and
             // takes the link out of the keyboard's path while the row is unfolded.
             <span key={tile.key} className="contents" style={common.style} inert={!active}>
-              <MenuLink href={tile.href} className={common.className} attributes={slotAttributes(tileChipStyle, {}) as Record<string, string>}>
+              <MenuLink href={tile.href} className={common.className} attributes={slotAttributes(tileChipStyle, { pressable }) as Record<string, string>}>
                 {content}
               </MenuLink>
             </span>
@@ -907,6 +908,7 @@ function TileGrid({
               emphasis: tile.emphasis === true,
               dragging: enabled && dragging === tile.key,
               drop: enabled && dragging !== null && dragging !== tile.key && over === tile.key,
+              pressable: Boolean((tile.filter && filters) || tile.href),
             })}
           >
             {tile.filter && filters ? (

@@ -86,8 +86,11 @@ export const tileChipStyle = defineSlotStyle({
   slot: "console-tile-chip",
   // Chips arrive one after another (35ms apart through `--i`) and leave together.
   base: "h-7 gap-2 rounded-full border bg-card px-[11px] text-xs transition-[opacity,translate,border-color,background-color,scale] delay-[calc(var(--i)*35ms+80ms)] duration-[var(--dur-base)] ease-[var(--ease-spring)] hover:bg-accent/40 active:scale-[0.98] [[data-open=false]_&]:translate-y-1 [[data-open=false]_&]:opacity-0 [[data-open=false]_&]:delay-0",
-  variants: {},
-  defaultVariants: {},
+  variants: {
+    /** Whether pressing the chip does anything; a chip for a plain figure says so with its cursor and does not react. */
+    pressable: { true: "", false: "cursor-not-allowed hover:bg-card active:scale-100" },
+  },
+  defaultVariants: { pressable: true },
 });
 
 /**
@@ -241,8 +244,10 @@ export const tileStyle = defineSlotStyle({
     dragging: { true: "opacity-40", false: "" },
     /** The tile a dragged one would land on. */
     drop: { true: "rounded-lg shadow-[var(--focus-halo)]", false: "" },
+    /** Whether pressing the tile does anything: a figure that narrows a list or leads to one does. */
+    pressable: { true: "", false: "cursor-not-allowed" },
   },
-  defaultVariants: { emphasis: false, dragging: false, drop: false },
+  defaultVariants: { emphasis: false, dragging: false, drop: false, pressable: true },
 });
 
 /**

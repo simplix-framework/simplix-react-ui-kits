@@ -673,6 +673,9 @@
   [data-slot="console-tile-chip"][data-slot][data-s-console-tile-chip] {
     @apply h-7 gap-2 rounded-full border bg-card px-[11px] text-xs transition-[opacity,translate,border-color,background-color,scale] delay-[calc(var(--i)*35ms+80ms)] duration-[var(--dur-base)] ease-[var(--ease-spring)];
   }
+  [data-slot="console-tile-chip"][data-pressable="false"][data-s-console-tile-chip] {
+    @apply cursor-not-allowed;
+  }
   [data-slot="console-tile-chips"][data-slot][data-s-console-tile-chips] {
     @apply gap-1.5 [scrollbar-width:none];
   }
@@ -759,6 +762,9 @@
   }
   [data-slot="console-tile"][data-drop="true"][data-s-console-tile] {
     @apply rounded-lg shadow-[var(--focus-halo)];
+  }
+  [data-slot="console-tile"][data-pressable="false"][data-s-console-tile] {
+    @apply cursor-not-allowed;
   }
   [data-slot="console-tile-ticker"][data-slot][data-s-console-tile-ticker] {
     @apply hidden;
@@ -1727,6 +1733,9 @@
   }
   :where([data-slot="console-tile-chip"])[data-s-console-tile-chip] {
     @apply hover:bg-accent/40 active:scale-[0.98] [[data-open=false]_&]:translate-y-1 [[data-open=false]_&]:opacity-0 [[data-open=false]_&]:delay-0;
+  }
+  :where([data-slot="console-tile-chip"][data-pressable="false"])[data-s-console-tile-chip] {
+    @apply hover:bg-card active:scale-100;
   }
   :where([data-slot="console-tile-go"])[data-s-console-tile-go] {
     @apply group-hover:translate-x-0.5 group-hover:text-foreground group-focus-visible:translate-x-0.5 group-focus-visible:text-foreground;

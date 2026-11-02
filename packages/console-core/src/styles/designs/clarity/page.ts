@@ -28,6 +28,8 @@ export const pageSlots: Record<string, string> = {
   "console-tile-chips": "[scrollbar-width:none]",
   "console-tile-chip":
     "gap-2 rounded-[var(--radius-badge)] border-[var(--border)] px-[11px] text-(length:--fs-control) leading-(--lh-control) transition-[opacity,translate,border-color,background-color] delay-[calc(var(--i)*35ms+80ms)] duration-[var(--dur-base)] ease-[var(--ease-spring)] hover:border-[var(--muted-2)] hover:bg-card active:scale-[0.98] focus-visible:outline-none focus-visible:ring-0 focus-visible:shadow-[var(--focus-halo)] [[data-open=false]_&]:translate-y-1 [[data-open=false]_&]:opacity-0 [[data-open=false]_&]:delay-0",
+  // A chip for a plain figure does nothing when pressed, so it neither lights nor sinks.
+  "console-tile-chip pressable=false": "cursor-not-allowed hover:border-[var(--border)] active:scale-100",
   // The tint the tile carries is a class the figure is handed at runtime, so it is outweighed.
   "console-tile-chip-figure": "text-(length:--fs-control) leading-(--lh-control)",
   "console-tile-chip-figure tone=warning": "text-[var(--warning-text)]!",
@@ -47,6 +49,7 @@ export const pageSlots: Record<string, string> = {
 
   // A tile the reader is dragging, and the one it would land on.
   "console-tile drop=true": "ring-0 shadow-[var(--focus-halo)]",
+  "console-tile pressable=false": "cursor-not-allowed",
   "console-tile-grip":
     "size-[22px] rounded-[calc(var(--radius-control)-2px)] text-[var(--muted-2)] duration-[var(--dur-fast)] hover:bg-[var(--hover-bg-strong)] hover:text-foreground",
   "console-tile-go":
