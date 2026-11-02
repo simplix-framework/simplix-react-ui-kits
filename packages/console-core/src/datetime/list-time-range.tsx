@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo } from "react";
 import { useTranslation } from "@simplix-react/i18n/react";
 import { TimeRangeSelector } from "@simplix-react/ui";
 import type { CrudListFilters, HeatmapColorTheme, TimeRange, TimeRangeValue, WindowPreset } from "@simplix-react/ui";
@@ -77,6 +77,84 @@ export function useTimeWindowPresets(only: readonly string[]): WindowPreset[] {
   });
 }
 
+/** The operators of one field that bound a window, besides the strip's own `between`. */
+const BOUNDS = { from: ["greaterThanOrEqualTo", "greaterThan"], to: ["lessThanOrEqualTo", "lessThan"] } as const;
+
+const instantOf = (value: unknown): Date | undefined => {
+  if (typeof value !== "string" || value.trim() === "") return undefined;
+  const at = new Date(value.trim());
+  return Number.isNaN(at.getTime()) ? undefined : at;
+};
+
+/** Every filter key that bounds `field` in time: the strip's `between` and the filter bar's pair. */
+export function windowKeysOf(field: string): string[] {
+  return [`${field}.between`, ...BOUNDS.from.map((op) => `${field}.${op}`), ...BOUNDS.to.map((op) => `${field}.${op}`)];
+}
+
+/**
+ * The window a list is narrowed to on `field`, read from its committed filters.
+ *
+ * <p>Two controls write a window: the strip (`<field>.between`, a pair) and the filter bar's
+ * period filter, or an action that commits one bound (a notice's "since" instant). The rows are
+ * read under all of them at once, so the window is their intersection: the latest start and the
+ * earliest end. A start with no end runs to `now`. A window with an end and no start, or an empty
+ * one, cannot be drawn on the strip, and the strip then shows nothing selected rather than a
+ * window the list is not under.
+ *
+ * @param committed the list's committed filter values
+ * @param field the field the list is read by in time
+ * @param now where an open-ended window stops
+ * @returns the window, or `null` when none is committed or it cannot be drawn
+ */
+export function committedWindow(committed: Readonly<Record<string, unknown>>, field: string, now: Date): TimeRange | null {
+  const froms: Date[] = [];
+  const tos: Date[] = [];
+  const between = committed[`${field}.between`];
+  if (typeof between === "string" && between.includes(",")) {
+    const [a, b] = between.split(",");
+    const from = instantOf(a);
+    const to = instantOf(b);
+    if (from) froms.push(from);
+    if (to) tos.push(to);
+  }
+  for (const op of BOUNDS.from) {
+    const at = instantOf(committed[`${field}.${op}`]);
+    if (at) froms.push(at);
+  }
+  for (const op of BOUNDS.to) {
+    const at = instantOf(committed[`${field}.${op}`]);
+    if (at) tos.push(at);
+  }
+  if (froms.length === 0) return null;
+  const from = new Date(Math.max(...froms.map((one) => one.getTime())));
+  const to = tos.length > 0 ? new Date(Math.min(...tos.map((one) => one.getTime()))) : now;
+  return to.getTime() > from.getTime() ? { from, to } : null;
+}
+
+/**
+ * What a selected slice commits: the strip's own pair, and every other bound of the field cleared in
+ * the same commit. Left standing, the filter bar's bounds would narrow the rows under the new
+ * window too, and the list would show a slice the strip does not.
+ *
+ * @param field the field the list is read by in time
+ * @param from the slice's first instant
+ * @param to the instant the slice ends at
+ */
+export function windowCommit(field: string, from: Date, to: Date): Record<string, string | undefined> {
+  const cleared = Object.fromEntries(windowKeysOf(field).map((key) => [key, undefined]));
+  return { ...cleared, [`${field}.between`]: `${from.toISOString()},${to.toISOString()}` };
+}
+
+/**
+ * The list's committed conditions without any bound of the strip's field, empty values dropped.
+ * Counting under the window would flatten the strip to the shape of what is already selected, and
+ * a cleared filter is still a key whose `undefined` reaches the server as an operator with no value.
+ */
+export function conditionsWithoutWindow(committed: Readonly<Record<string, unknown>>, field: string): Record<string, unknown> {
+  const own = new Set(windowKeysOf(field));
+  return Object.fromEntries(Object.entries(committed).filter(([key, value]) => !own.has(key) && value != null && value !== ""));
+}
+
 export interface ListTimeRangeProps {
   /** The list state the strip reads its conditions from and writes its selection to. */
   filters: CrudListFilters;
@@ -118,8 +196,11 @@ export interface ListTimeRangeProps {
  * <p>Reads the same conditions the list is filtered by, so narrowing to one customer thins the
  * strip too — a strip that kept its full shape would be describing rows the operator cannot see.
  *
- * <p>Selecting a range writes the window back to the list as the field's own `between` filter, so
- * the rows and the strip never disagree about which slice is being read.
+ * <p>Selecting a range writes the window back to the list as the field's own `between` filter and
+ * clears the filter bar's bounds on the same field, so one window is in force. The strip draws the
+ * window the list is committed to ({@link committedWindow}), whichever control committed it: a
+ * notice that commits a start instant moves the strip to that window instead of leaving it on its
+ * own default.
  */
 export function ListTimeRange({
   filters,
@@ -131,28 +212,23 @@ export function ListTimeRange({
   colorTheme = "tokens",
 }: ListTimeRangeProps) {
   const zone = useAppTimeZone();
-  // Nothing is selected until somebody selects something. The strip opens on its default window
-  // and the list under it stays unnarrowed — a page that loaded already filtered would be
-  // hiding rows nobody asked it to hide.
-  const [range, setRange] = useState<TimeRange | null>(null);
-
   const committed = filters.committedValues;
-  const windowKey = `${field}.between`;
+  const windowKeys = useMemo(() => windowKeysOf(field), [field]);
+
+  // Nothing is selected until the list is narrowed in time. The strip opens on its default window
+  // and the list under it stays unnarrowed - a page that loaded already filtered would be
+  // hiding rows nobody asked it to hide. Once any control commits a bound, the strip shows it.
+  // `now` is fixed per committed window, so an open-ended window does not move on every render.
+  const windowText = JSON.stringify(windowKeys.map((key) => committed[key] ?? null));
+  const range = useMemo(() => committedWindow(committed, field, new Date()), [windowText, field]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Keyed by content, not by the filter object's identity: the list hands back a fresh object
   // on every render, and a strip that re-fetched on each of them would ask the same question
   // three times per load.
-  const conditionsKey = useMemo(() => {
-    const rest: Record<string, unknown> = { ...committed };
-    delete rest[windowKey];
-    // A cleared filter is still a key, and the entries round-trip below turns its `undefined`
-    // into `null` — which reaches the server as an operator with no value and is refused. Dropped
-    // here rather than at each caller, because every list that clears a filter would hit it.
-    for (const [key, value] of Object.entries(rest)) {
-      if (value == null || value === "") delete rest[key];
-    }
-    return JSON.stringify(Object.entries(rest).sort(([a], [b]) => a.localeCompare(b)));
-  }, [committed, windowKey]);
+  const conditionsKey = useMemo(
+    () => JSON.stringify(Object.entries(conditionsWithoutWindow(committed, field)).sort(([a], [b]) => a.localeCompare(b))),
+    [committed, field],
+  );
 
   const conditions = useMemo(
     () => Object.fromEntries(JSON.parse(conditionsKey) as [string, unknown][]),
@@ -167,12 +243,10 @@ export function ListTimeRange({
 
   const select = useCallback(
     (next: TimeRangeValue) => {
-      setRange({ from: next.from, to: next.to });
-      // The pair the `between` operator reads, in the order it reads them.
-      filters.commitValue(windowKey, `${next.from.toISOString()},${next.to.toISOString()}`);
+      filters.commitValues(windowCommit(field, next.from, next.to));
       onRangeChange?.({ from: next.from, to: next.to });
     },
-    [filters, onRangeChange, windowKey],
+    [field, filters, onRangeChange],
   );
 
   return (
