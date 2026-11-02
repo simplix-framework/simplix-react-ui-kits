@@ -50,6 +50,23 @@ Cards sit in a fit grid: as many columns as hold a card no narrower than the `--
 
 `viewToggle` offers the reader the table and the cards as two views, in the filter bar or, on a list with no filters, in the list's own toolbar (`CrudList.ViewToggle`). `presentation` is what the list opens in. With a `viewKey` (what names the list among the product's lists) the browser remembers the reader's last choice under `console.listView.<viewKey>` and the next visit opens in it; a list without a switch never reads a saved view, so its presentation is its only view. The decision is made in the screen's design entry (`list.presentation`, `list.viewToggle`, `list.cardTitle`), passed to the scaffold as `--list-presentation`, `--view-toggle` and `--card-title`, and the mockup kit's `screen-design` check refuses a list file or a board frame whose `<RecordList>` declares anything else.
 
+## Row actions
+
+`RecordList` and `RecordTree` draw `actions` as an icon strip in the row and as the same strip on a card; a row the action cannot run on shows it disabled with the reason. The kit names the verbs a framework type has no glyph for (`retry`, `reset`, `test`, `reprocess`, `enable`, `disable`, `suspend`, `reinstate`), each with a glyph of its own, so a screen never borrows `duplicate` for a retry.
+
+A verb that flips with the row's state is one action, not two: give `type` and `label` as functions of the row.
+
+```ts
+{
+  type: (row) => (row.enabled ? "disable" : "enable"),
+  label: (row) => (row.enabled ? t("connection.disable") : t("connection.enable")),
+  onClick: (row) => setSwitching({ row, turnOn: !row.enabled }),
+  disabled: (row) => blocked(row),
+}
+```
+
+A function `type` returns a kit verb, because a framework type's glyph is the framework's and cannot follow the row. Declaring Enable and Disable as two actions, one always disabled, is the form to leave. A labelled strip (two actions sharing one framework type, which the region contract refuses) sizes its column by the widest label the rows hold.
+
 ## Using a kit in a product
 
 Add this repository as a git submodule and its packages to the product's pnpm workspace:

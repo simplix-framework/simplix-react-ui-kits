@@ -1,7 +1,7 @@
 import { useMemo, type ReactNode } from "react";
 import { ChipFilter, CrudTree, useFilterBarState, type RowActionDef } from "@simplix-react/ui";
 
-import { actionGlyph, type RecordAction, type RecordColumn } from "./record-list";
+import { toRowAction, type RecordAction, type RecordColumn } from "./record-list";
 import { RecordValueView } from "./record-value";
 
 /**
@@ -82,15 +82,7 @@ export function RecordTree<Row>({
     // `on` reads the features prop, which the dependency list carries.
   }, [rows, chips, lit.join("|"), childrenField, features.chips]);
 
-  const rowActions: RowActionDef<Row>[] = on("rowActions")
-    ? actions.map((action) => ({
-        ...actionGlyph(action),
-        label: action.label,
-        onClick: (row: Row) => action.onClick?.(row),
-        disabled: action.disabled ? (row: Row) => Boolean(action.disabled?.(row)) : undefined,
-        disabledReason: action.disabled ? (row: Row) => action.disabled?.(row) || undefined : undefined,
-      }))
-    : [];
+  const rowActions: RowActionDef<Row>[] = on("rowActions") ? actions.map(toRowAction) : [];
 
   const chipRow =
     on("chips") && chips ? (

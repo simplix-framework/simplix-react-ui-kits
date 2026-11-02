@@ -53,6 +53,22 @@ describe("RecordList presentation", () => {
     expect(() => html({ presentation: "cards", cardTitle: "missing" })).toThrow(/names no column/);
   });
 
+  it("draws a toggle action with the glyph of each row's state, in the row and on the card", () => {
+    // The label read from the row is proved in the framework's own row action test and on
+    // `toRowAction` here; this render resolves the framework's built output, which is what draws
+    // the glyph function.
+    const flipped = [
+      { id: "a", name: "Alpha", status: "On" },
+      { id: "b", name: "Beta", status: "Off" },
+    ];
+    const toggle = { type: (row: Row) => (row.status === "On" ? ("disable" as const) : ("enable" as const)), label: (row: Row) => (row.status === "On" ? "Disable" : "Enable"), onClick: () => undefined };
+    for (const presentation of ["table", "cards"] as const) {
+      const out = html({ rows: flipped, presentation, actions: [toggle] });
+      expect(out).toContain("lucide-power-off");
+      expect(out.replace("lucide-power-off", "")).toContain("lucide-power");
+    }
+  });
+
   it("draws a table list exactly as it did before the presentation props existed", () => {
     expect(html({ presentation: "table", viewToggle: false })).toBe(html());
   });

@@ -23,7 +23,7 @@ import {
 } from "@simplix-react/ui";
 import { partAttributes, slotAttributes } from "@simplix-react/ui/design";
 import { BulkActionBar } from "@simplix-react/ui/interaction";
-import { FlaskConical, Power, PowerOff, RefreshCw, RotateCcw, TimerReset } from "lucide-react";
+import { CirclePause, CirclePlay, FlaskConical, Power, PowerOff, RefreshCw, RotateCcw, TimerReset } from "lucide-react";
 
 import { useReflowFlip } from "../layout/use-reflow-flip";
 import { PACKAGE_NAMESPACE } from "./locales";
@@ -113,7 +113,7 @@ export type RecordFilter<Row> =
  * The verbs the kit names beyond the framework's action types, each with its own glyph, so a screen
  * never borrows an unrelated type (`duplicate` for a retry) to reach the icon strip.
  */
-export type RecordVerbType = "retry" | "reset" | "test" | "reprocess" | "enable" | "disable";
+export type RecordVerbType = "retry" | "reset" | "test" | "reprocess" | "enable" | "disable" | "suspend" | "reinstate";
 
 const VERB_GLYPHS: Record<RecordVerbType, { readonly type: ActionType; readonly icon: ReactNode }> = {
   retry: { type: "view", icon: <RotateCcw /> },
@@ -122,12 +122,22 @@ const VERB_GLYPHS: Record<RecordVerbType, { readonly type: ActionType; readonly 
   reprocess: { type: "view", icon: <RefreshCw /> },
   enable: { type: "view", icon: <Power /> },
   disable: { type: "view", icon: <PowerOff /> },
+  suspend: { type: "view", icon: <CirclePause /> },
+  reinstate: { type: "view", icon: <CirclePlay /> },
 };
 
-/** A row action, in the row's action cell. */
+/**
+ * A row action, in the row's action cell.
+ *
+ * <p>One action serves a verb that flips with the row's state: give `label` and `type` as
+ * functions of the row and the strip draws Disable on an enabled row and Enable on a disabled one,
+ * each with its own glyph, so a list never carries two actions of which one is always disabled.
+ * A function `type` returns a kit verb ({@link RecordVerbType}), because a framework type's glyph
+ * is the framework's and cannot follow the row. A fixed `label` and `type` stay valid.
+ */
 export interface RecordAction<Row> {
-  readonly type: ActionType | RecordVerbType;
-  readonly label: string;
+  readonly type: ActionType | RecordVerbType | ((row: Row) => RecordVerbType);
+  readonly label: string | ((row: Row) => string);
   readonly onClick?: (row: Row) => void;
   /** Rows the action is drawn for but cannot run on, with the reason a reader hovers to see. */
   readonly disabled?: (row: Row) => string | false | undefined;
@@ -395,18 +405,55 @@ const LABEL_GAP = 8;
  * then every action is a labelled button instead, which the region contract refuses: give the
  * second verb its own icon. An action carrying its own icon is distinct by that icon and never forces labels.
  */
-export function actionsNeedLabels(actions: readonly { readonly type: string; readonly icon?: unknown }[]): boolean {
-  const typeGlyphs = actions.filter((action) => (action.icon === undefined || action.icon === null) && !(action.type in VERB_GLYPHS)).map((action) => action.type);
+export function actionsNeedLabels(actions: readonly { readonly type: string | ((row: never) => string); readonly icon?: unknown }[]): boolean {
+  // A type read from the row draws a kit verb's glyph, which is its own.
+  const typeGlyphs = actions
+    .filter((action) => (action.icon === undefined || action.icon === null) && typeof action.type === "string" && !(action.type in VERB_GLYPHS))
+    .map((action) => action.type as string);
   return new Set(typeGlyphs).size < typeGlyphs.length;
 }
 
-/** The framework type and glyph an action draws with: a kit verb maps to its own glyph. */
-export function actionGlyph(action: { readonly type: ActionType | RecordVerbType; readonly icon?: ReactNode }): { type: ActionType; icon?: ReactNode } {
-  if (action.type in VERB_GLYPHS) {
-    const verb = VERB_GLYPHS[action.type as RecordVerbType];
+/**
+ * The framework type and glyph an action draws with: a kit verb maps to its own glyph. A type read
+ * from the row maps to the glyph of the verb it answers for that row.
+ */
+export function actionGlyph<Row = never>(action: {
+  readonly type: ActionType | RecordVerbType | ((row: Row) => RecordVerbType);
+  readonly icon?: ReactNode;
+}): { type: ActionType; icon?: ReactNode | ((row: Row) => ReactNode) } {
+  const { type } = action;
+  if (typeof type === "function") {
+    return { type: "view", icon: (row: Row) => action.icon ?? VERB_GLYPHS[type(row)].icon };
+  }
+  if (type in VERB_GLYPHS) {
+    const verb = VERB_GLYPHS[type as RecordVerbType];
     return { type: verb.type, icon: action.icon ?? verb.icon };
   }
-  return { type: action.type as ActionType, icon: action.icon };
+  return { type: type as ActionType, icon: action.icon };
+}
+
+/** The type an action has on this row: its own, or the one it reads from the row. */
+export function actionTypeFor<Row>(action: Pick<RecordAction<Row>, "type">, row: Row): ActionType | RecordVerbType {
+  return typeof action.type === "function" ? action.type(row) : action.type;
+}
+
+/** The label an action carries on this row: its own, or the one it reads from the row. */
+export function actionLabelFor<Row>(action: Pick<RecordAction<Row>, "label">, row: Row): string {
+  return typeof action.label === "function" ? action.label(row) : action.label;
+}
+
+/**
+ * A {@link RecordAction} as the framework's row action, shared by every kit part that draws one so
+ * the list, the tree and the row dialog read a row-dependent label and type the same way.
+ */
+export function toRowAction<Row>(action: RecordAction<Row>): RowActionDef<Row> {
+  return {
+    ...actionGlyph(action),
+    label: action.label,
+    onClick: (row: Row) => action.onClick?.(row),
+    disabled: action.disabled ? (row: Row) => Boolean(action.disabled?.(row)) : undefined,
+    disabledReason: action.disabled ? (row: Row) => action.disabled?.(row) || undefined : undefined,
+  };
 }
 
 /** The action column's width when every action is a labelled button. */
@@ -588,19 +635,12 @@ export function RecordList<Row>({
 
   const counted = features.count === "filtered" ? isNarrowed(list, rows.length, serverList !== undefined) : on("count");
 
-  const rowActions: RowActionDef<Row>[] = on("rowActions")
-    ? actions.map((action) => ({
-        ...actionGlyph(action),
-        label: action.label,
-        onClick: (row: Row) => action.onClick?.(row),
-        disabled: action.disabled ? (row: Row) => Boolean(action.disabled?.(row)) : undefined,
-        disabledReason: action.disabled ? (row: Row) => action.disabled?.(row) || undefined : undefined,
-      }))
-    : [];
+  const rowActions: RowActionDef<Row>[] = on("rowActions") ? actions.map(toRowAction) : [];
 
   const labelled = rowActions.length > 0 && actionsNeedLabels(actions);
-  const actionCell =
-    rowActions.length === 0 ? 0 : labelled ? labelledActionWidth(rowActions.map((action) => action.label ?? "")) : rowActions.length * ACTION_WIDTH + ACTION_CELL_INSET;
+  // A label read from the row is as wide as the widest one the rows hold.
+  const widestLabels = actions.map((action) => (typeof action.label === "string" ? action.label : rows.map((row) => actionLabelFor(action, row)).sort((a, b) => b.length - a.length)[0] ?? ""));
+  const actionCell = rowActions.length === 0 ? 0 : labelled ? labelledActionWidth(widestLabels) : rowActions.length * ACTION_WIDTH + ACTION_CELL_INSET;
 
   // The table's columns: the leading one and the one the rows are sorted by never drop for want of
   // width, the rest drop from the end. The card keeps the declared columns, which it places by shape.

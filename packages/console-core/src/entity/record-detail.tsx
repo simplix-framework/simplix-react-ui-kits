@@ -27,7 +27,7 @@ import { RecordNote, RecordNotices, RecordVerbButton, RecordVerbs, type RecordNo
 import { PermissionMatrix, type PermissionMatrixProps } from "./permission-matrix";
 import { BoundedDialogContent } from "../layout/bounded-dialog-content";
 import { recordHeadFigureLabelStyle, recordHeadFigureStyle, recordHeadFigureValueStyle, recordHeadFiguresStyle, recordHeadStyle, recordHeadSubtitleStyle, recordSublistStyle } from "./record-detail.style";
-import { RecordList, RecordListNestingContext, type RecordAction, type RecordColumn, type RecordListProps } from "./record-list";
+import { actionLabelFor, actionTypeFor, RecordList, RecordListNestingContext, type RecordAction, type RecordColumn, type RecordListProps } from "./record-list";
 import { TileSpark } from "../layout/tile-spark";
 import { RecordValueView, type RecordBadge, type RecordValue } from "./record-value";
 import { StageGate, type StageGateProps } from "./stage-gate";
@@ -281,9 +281,9 @@ function RecordRowDialog<Row>({
     row === null
       ? []
       : actions
-          .filter((action) => DESTRUCTIVE_ACTIONS.has(action.type) === danger)
+          .filter((action) => DESTRUCTIVE_ACTIONS.has(actionTypeFor(action, row)) === danger)
           .map((action) => ({
-            label: action.label,
+            label: actionLabelFor(action, row),
             kind: danger ? "danger" : "plain",
             disabled: action.disabled?.(row) || undefined,
             onClick: () => {
