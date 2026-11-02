@@ -160,6 +160,12 @@ export const CONTRACT_COLUMN_SIZE: Readonly<Record<ContractFieldKind, { readonly
 export type ContractFilter =
   | { readonly kind: "choice"; readonly field: string; readonly enumName?: string; readonly options: readonly string[] }
   | { readonly kind: "toggle"; readonly field: string }
+  /**
+   * A text the reader types a part of (a provider, a plan code), matched as contained. The
+   * generator leaves text fields to the keyword search; a screen whose question is asked by one of
+   * them declares it.
+   */
+  | { readonly kind: "text"; readonly field: string }
   /** A figure; a `money` field also names its currency and scale, so the reader types currency units. */
   | { readonly kind: "number"; readonly field: string; readonly currency?: string; readonly scale?: number }
   | { readonly kind: "dateRange"; readonly field: string; readonly dateOnly?: boolean }

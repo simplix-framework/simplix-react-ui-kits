@@ -48,3 +48,15 @@ describe("a filter over the key of another record", () => {
     });
   });
 });
+
+describe("a filter over a text the reader types a part of", () => {
+  it("is a text filter labelled by its field, with no option list", () => {
+    const filter = recordFilterOf({ kind: "text", field: "provider" }, "Provider", enumLabel, undefined);
+    expect(filter).toEqual({ kind: "text", field: "provider", label: "Provider" });
+  });
+
+  it("becomes a text filter definition the filter bar draws", () => {
+    const def = filterDef({ kind: "text", field: "provider", label: "Provider" });
+    expect(def).toMatchObject({ type: "text", field: "provider", label: "Provider" });
+  });
+});
