@@ -17,18 +17,36 @@ export interface ActionConfirmConfig<T> {
   readonly title: ConfirmSentence<T>;
   /** What happens if they say yes, and what it costs. */
   readonly description: ConfirmSentence<T>;
-  /** The word on the button that does it — 「다시 보내기」, never 「확인」. */
-  readonly confirmLabel: string;
-  /** The word while it is running. */
-  readonly runningLabel: string;
+  /**
+   * The word on the button that does it — 「다시 보내기」, never 「확인」. A verb that flips with the
+   * record (suspend and lift, revoke and reinstate) words the button from the record the question is
+   * about, so one confirmation serves both directions.
+   */
+  readonly confirmLabel: ConfirmSentence<T>;
+  /** The word while it is running; a function reads the same record as {@link confirmLabel}. */
+  readonly runningLabel: ConfirmSentence<T>;
   /** The word on the way out. */
   readonly cancelLabel: string;
   /** What the verb does, once somebody has said yes. */
   readonly onConfirm: (target: T) => void;
   /** Whether it is running now, so the dialog can say so and refuse a second press. */
   readonly running?: boolean;
-  /** Draws the button in the danger tone, for a verb that deletes or takes a record out of use. */
-  readonly destructive?: boolean;
+  /**
+   * Draws the button in the danger tone, for a verb that deletes or takes a record out of use. A
+   * function decides from the record, for a verb whose one direction takes it out of use and whose
+   * other brings it back.
+   */
+  readonly destructive?: boolean | ((target: T) => boolean);
+}
+
+/** Resolves a sentence against the record the question is about; no record held, no sentence. */
+export function confirmSentence<T>(sentence: ConfirmSentence<T>, target: T | null): string {
+  return typeof sentence === "function" ? (target === null ? "" : sentence(target)) : sentence;
+}
+
+/** Resolves whether the confirm button is drawn in the danger tone for the record held. */
+export function confirmDestructive<T>(destructive: ActionConfirmConfig<T>["destructive"], target: T | null): boolean {
+  return typeof destructive === "function" ? target !== null && destructive(target) : (destructive ?? false);
 }
 
 /** What the screen wires: one function for the press, one node to render. */
@@ -91,8 +109,7 @@ export function useActionConfirm<T>(config: ActionConfirmConfig<T>): ActionConfi
   // Written from the target rather than beside the labels, so a sentence naming the record has the
   // record to name. Resolved only while one is held: the dialog is closed otherwise and the
   // sentence has nothing to be about.
-  const say = (sentence: ConfirmSentence<T>) =>
-    typeof sentence === "function" ? (target === null ? "" : sentence(target)) : sentence;
+  const say = (sentence: ConfirmSentence<T>) => confirmSentence(sentence, target);
 
   const dialog = (
     <ConfirmDialog
@@ -104,10 +121,10 @@ export function useActionConfirm<T>(config: ActionConfirmConfig<T>): ActionConfi
       title={say(title)}
       description={say(description)}
       cancelLabel={cancelLabel}
-      confirmLabel={confirmLabel}
-      pendingLabel={runningLabel}
+      confirmLabel={say(confirmLabel)}
+      pendingLabel={say(runningLabel)}
       isPending={running}
-      destructive={destructive}
+      destructive={confirmDestructive(destructive, target)}
     />
   );
 

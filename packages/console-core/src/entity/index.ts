@@ -21,7 +21,7 @@ export { ListQuickSearch } from "./list-quick-search";
 export type { ListQuickSearchProps } from "./list-quick-search";
 export { useOptionLabel } from "./option-label";
 export { useActionConfirm } from "./action-confirm";
-export type { ActionConfirm, ActionConfirmConfig } from "./action-confirm";
+export type { ActionConfirm, ActionConfirmConfig, ConfirmSentence } from "./action-confirm";
 export { paginationHandlers } from "@simplix-react/headless";
 export type { PaginationHandlers } from "@simplix-react/headless";
 export { missingRequired } from "@simplix-react/headless";
