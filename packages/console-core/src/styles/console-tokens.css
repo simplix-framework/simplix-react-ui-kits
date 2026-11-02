@@ -15,11 +15,6 @@
      one past this width. */
   --console-card-label-max: 8rem;
 
-  /* The widest a card of a list's grid view is drawn. The grid shares a row among the cards there are,
-     so a lone card would fill it; the framework's card reads --card-max-width, which this maps. */
-  --console-card-max: 36rem;
-  --card-max-width: var(--console-card-max);
-
   /* The title type step a sign-in panel's heading reads (the product theme writes its own). */
   --text-title: 26px;
   --text-title--line-height: 32px;
