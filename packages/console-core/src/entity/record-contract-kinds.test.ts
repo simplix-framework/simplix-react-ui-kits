@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { peekKindOf, recordNameIsCode } from "./record-contract";
+import { detailFieldIsWide, peekKindOf, recordNameIsCode } from "./record-contract";
 
 /**
  * A reference whose target a sibling field picks opens the peek of the row's own kind, and a kind
@@ -33,5 +33,15 @@ describe("recordNameIsCode", () => {
     expect(recordNameIsCode([{ name: "eventType", kind: "text", code: true }, { name: "createdAt", kind: "instant" }])).toBe(false);
     expect(recordNameIsCode([{ name: "name", kind: "text" }])).toBe(false);
     expect(recordNameIsCode([])).toBe(false);
+  });
+});
+
+describe("detailFieldIsWide", () => {
+  it("gives long text, JSON and a machine message the panel's full width", () => {
+    for (const kind of ["longText", "json", "excerpt"] as const) expect(detailFieldIsWide({ name: "x", kind })).toBe(true);
+  });
+
+  it("leaves a short kind in its grid cell", () => {
+    for (const kind of ["text", "number", "instant", "enum", "bytes", "credits"] as const) expect(detailFieldIsWide({ name: "x", kind })).toBe(false);
   });
 });

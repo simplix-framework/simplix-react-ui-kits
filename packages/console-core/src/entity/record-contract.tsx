@@ -562,7 +562,7 @@ export function useRecordContract(entity: string, overrides: ContractOverrides =
     (field: ContractField, row: Row | undefined) => ({
       label: fieldLabel(field.name),
       value: value(field, row),
-      wide: field.kind === "longText" || field.kind === "json",
+      wide: detailFieldIsWide(field),
       copy: field.identifier === true,
     }),
     [fieldLabel, value],
@@ -607,6 +607,17 @@ export function recordValueText(value: RecordValue): string {
  */
 export function recordNameOf(values: readonly RecordValue[]): string {
   return values.map(recordValueText).filter((part) => part !== "").join(" ");
+}
+
+/**
+ * Whether a detail draws a field across the panel's full width rather than in a cell of its
+ * two-column grid. Long text, JSON and a machine message (an error, a hash, a storage path) run past
+ * half a panel, so a half-width cell clips them or pushes them out of the panel.
+ *
+ * @param field the contract field
+ */
+export function detailFieldIsWide(field: ContractField): boolean {
+  return field.kind === "longText" || field.kind === "json" || field.kind === "excerpt";
 }
 
 /**

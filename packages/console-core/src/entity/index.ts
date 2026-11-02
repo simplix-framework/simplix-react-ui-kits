@@ -67,7 +67,7 @@ export type { RecordFieldViewProps } from "./record-form-fields";
 export { disabledReason, emptyRow, formFieldErrors, initialFieldValue, isRangeOutOfOrder, validateField } from "./record-form-rules";
 export type { FieldErrorCode } from "./record-form-rules";
 export type { CheckPairValue, ChoiceDetailValue, FieldCommon, FieldEvidence, RangeValue, RecordFormFieldKind, RecordRowColumn, SignatureActing, SignatureValue, VerdictChoice, VerdictValue } from "./record-form-types";
-export { CONTRACT_COLUMN_SIZE, enumValueOf, fieldEnumsOf, groupedNumber, isBlankSecret, moneyAmount, moneyFilterTransform, moneyStored, moneyText, secretFormField, recordNameIsCode, recordNameOf, recordValueText, useRecordContract, valueAtPath } from "./record-contract";
+export { CONTRACT_COLUMN_SIZE, detailFieldIsWide, enumValueOf, fieldEnumsOf, groupedNumber, isBlankSecret, moneyAmount, moneyFilterTransform, moneyStored, moneyText, secretFormField, recordNameIsCode, recordNameOf, recordValueText, useRecordContract, valueAtPath } from "./record-contract";
 export { useScreenWords, type ScreenWords } from "./screen-words";
 export { decideAccess, permissionOf, useAllowed, type OperationAccess, type PermissionTerm } from "./allowed";
 export { figureValue } from "./record-contract";
