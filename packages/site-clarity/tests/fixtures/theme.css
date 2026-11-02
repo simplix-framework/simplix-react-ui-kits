@@ -1,0 +1,30 @@
+/* The values a product's token file writes, as measured on the reference the kit's measure.json was
+   taken from. The verification page draws with them so its computed styles can be held to the
+   reference's; the kit's own defaults are in src/styles/site-tokens.css. */
+:root {
+  --background: #f4f7f7;
+  --card: #ffffff;
+  --muted: #eef2f2;
+  --border: #dce4e3;
+  --foreground: #12201f;
+  --muted-foreground: #566765;
+  --primary: #0b7a73;
+  --primary-foreground: #ffffff;
+  --accent: #ddf1ee;
+
+  --site-accent-strong: #075c57;
+  --site-ink-disabled: #6f8180;
+  --site-control-disabled: #e3e9e9;
+  --site-shadow-accent: 0 2px 8px #0b7a7347;
+  --site-font-sans: system-ui, -apple-system, "Segoe UI", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
+  --site-font-display: "Bricolage Grotesque", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --site-dark-canvas: #0c1315;
+  --site-dark-ink: #ddf1ee;
+  --site-dark-ink-muted: #8ca1a3;
+  --site-dark-accent: #3ddbc9;
+  --site-dark-on-accent: #062421;
+  --site-dark-accent-strong: #3ddbc9;
+  --site-dark-accent-soft: #062421;
+  --site-dark-surface-sunken: #142024;
+}
