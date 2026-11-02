@@ -68,6 +68,15 @@ export function useCrudPresentation(): CrudPresentation | undefined {
   return useContext(CrudPresentationContext);
 }
 
+/**
+ * The title a record shown as the page publishes. On a phone the bar carries the title and the
+ * header draws none, so the record keeps the list's title there as the place the reader is in; a bar
+ * with no title reads as a screen with no name. Wider, the record's own identifier is the heading.
+ */
+export function recordPageTitle(onAPhone: boolean, listTitle: string): string {
+  return onAPhone ? listTitle : "";
+}
+
 /** Props for {@link CrudPage}. */
 export interface CrudPageProps {
   /** The page around the list: header, figures, notices, help, tabs. Its `body` is the list and its record. */
@@ -206,6 +215,6 @@ export function CrudPage({
     notice: raised.length > 0 ? [...declared, ...raised] : spec.notice,
     tilesFilters: spec.tilesFilters ?? tileFilters,
   };
-  const pageSpec = recordAsPage ? { title: "", layout: spec.layout, width: spec.width } : listSpec;
+  const pageSpec = recordAsPage ? { title: recordPageTitle(onAPhone, spec.title), layout: spec.layout, width: spec.width } : listSpec;
   return <ConsolePage spec={{ ...pageSpec, body }} search={search} onNavigate={onNavigate} />;
 }

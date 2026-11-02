@@ -1,9 +1,18 @@
 import { Flex, Heading, Stack, Text, usePageHeaderState } from "@simplix-react/ui";
 
-import { NoticeMenu } from "../notice";
+import { NoticeMenu, useNoticeEntries } from "../notice";
 import { useConsoleOnAPhone } from "./phone-shell";
 import { pageHeaderActionsStyle, pageHeaderDescriptionStyle, pageHeaderMetadataStyle, pageHeaderStyle } from "./page-header.style";
 import { partAttributes } from "@simplix-react/ui/design";
+
+/**
+ * Whether the phone's header row has anything to draw: a way back, verbs, or a card to bring back.
+ * A record shown as the page publishes the list's title for the bar and nothing else, and a row
+ * with none of the three would only push the record down.
+ */
+export function phoneRowHasContent({ back, actions, noticeCount }: { readonly back: unknown; readonly actions: unknown; readonly noticeCount: number }): boolean {
+  return Boolean(back) || Boolean(actions) || noticeCount > 0;
+}
 
 /**
  * The band at the top of every routed screen — its title, what it is for, and what it offers.
@@ -37,8 +46,10 @@ import { partAttributes } from "@simplix-react/ui/design";
 export function ConsolePageHeader() {
   const { title, back, description, metadata, center, actions } = usePageHeaderState();
   const onAPhone = useConsoleOnAPhone();
+  const notices = useNoticeEntries();
   if (!title) return null;
   if (onAPhone) {
+    if (!phoneRowHasContent({ back, actions, noticeCount: notices.length })) return null;
     // **The notice controls do not depend on the screen having actions.** This path drew nothing at
     // all where a screen passed none — and a screen passes none exactly when its verbs moved into
     // the phone's own action bar, which is the case for the one screen that does it. A card put
