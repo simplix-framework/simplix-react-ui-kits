@@ -531,7 +531,7 @@ function cellOf<Row>(column: RecordColumn<Row>, row: Row): ReactNode {
  */
 function cellIn<Row>(column: RecordColumn<Row>, row: Row): ReactNode {
   if (column.wrap) return <div className="whitespace-normal break-words">{cellOf(column, row)}</div>;
-  if (column.minWidth !== undefined) return <div className="block truncate">{cellOf(column, row)}</div>;
+  if (column.minWidth !== undefined) return <div className="block truncate-halo">{cellOf(column, row)}</div>;
   return cellOf(column, row);
 }
 

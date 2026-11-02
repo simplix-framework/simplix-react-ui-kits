@@ -51,6 +51,16 @@
    A grid whose single row is sized 0fr → 1fr rather than a height transition: the tiles' own
    height is whatever their content comes to, and a transition needs two numbers. The child owns
    the clipping, which is also what cuts the strip's top edge off against the rule above it. */
+/* One line ellipsized like `truncate`, around content that may hold a control (a name that opens a
+   peek): `overflow: clip` cuts the text at the box as `hidden` does, and its clip margin leaves the
+   control's keyboard focus halo the gutter it reaches past the box. */
+@utility truncate-halo {
+  overflow: clip;
+  overflow-clip-margin: var(--focus-gutter);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 @utility tiles-fold {
   display: grid;
   grid-template-rows: 0fr;

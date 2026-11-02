@@ -893,7 +893,7 @@
     @apply bg-accent text-accent-foreground;
   }
   [data-slot="presentation-group"][data-slot][data-s-presentation-group] {
-    @apply overflow-hidden rounded-[var(--radius-control)] shadow-[var(--shadow-outline)];
+    @apply overflow-hidden rounded-[var(--radius-control)] shadow-[var(--shadow-outline)] [--focus-halo:var(--focus-halo-inset)];
   }
   [data-slot="presentation-hint"][data-slot][data-s-presentation-hint] {
     @apply text-xs text-muted-foreground;
@@ -1855,7 +1855,7 @@
     @apply hover:bg-[var(--hover-bg-strong)];
   }
   :where([data-slot="presentation-group"])[data-s-presentation-group] {
-    @apply [&>button]:!h-6 [&>button]:!w-7 [&>button]:!min-w-0 [&>button]:!p-0 [&_svg]:!size-3.5 [&>button]:rounded-none [&>button:first-child]:rounded-l-md [&>button:last-child]:rounded-r-md [&>button]:!border-0 [&>button]:!shadow-none [&>button+button]:!border-l [&>button+button]:!border-border [&>button[aria-pressed=true]]:bg-accent! [&>button[aria-pressed=true]]:text-accent-foreground! [&>button:not([aria-pressed=true])]:text-muted-foreground;
+    @apply [&>button:focus-visible]:!shadow-[var(--focus-halo)] [&>button]:!h-6 [&>button]:!w-7 [&>button]:!min-w-0 [&>button]:!p-0 [&_svg]:!size-3.5 [&>button]:rounded-none [&>button:first-child]:rounded-l-md [&>button:last-child]:rounded-r-md [&>button]:!border-0 [&>button]:!shadow-none [&>button+button]:!border-l [&>button+button]:!border-border [&>button[aria-pressed=true]]:bg-accent! [&>button[aria-pressed=true]]:text-accent-foreground! [&>button:not([aria-pressed=true])]:text-muted-foreground;
   }
   :where([data-slot="console-plan-palette-item"][data-placeable="true"])[data-s-console-plan-palette-item] {
     @apply hover:bg-[var(--hover-bg-strong)];
