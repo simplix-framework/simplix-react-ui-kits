@@ -85,6 +85,7 @@
       ],
       "controls": [
         "crud-filter-bar-trigger",
+        "crud-filter-bar-clear-button",
         "crud-filter-bar-columns-button",
         "crud-chip-filter-chip",
         "button"
