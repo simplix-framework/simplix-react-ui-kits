@@ -9,6 +9,21 @@ export interface CardLayout<K> {
   readonly lines: readonly { readonly key: K; readonly header: string; readonly value: RecordValue; readonly wide: boolean }[];
 }
 
+/**
+ * The columns of a card's labelled grid: a label column as wide as its longest label up to
+ * `--console-card-label-max`, then the value, once for a card too narrow for two cells to a row and
+ * twice for one that holds both. A label is read out of the card's own lines, so a long one
+ * ("Monthly budget", "기간당 크레딧") keeps one line without a fixed measure, and the values still
+ * stand in one column down the card.
+ */
+export const CARD_LINES_GRID = [
+  "grid-cols-[fit-content(var(--console-card-label-max))_minmax(0,1fr)]",
+  "@sm:grid-cols-[fit-content(var(--console-card-label-max))_minmax(0,1fr)_fit-content(var(--console-card-label-max))_minmax(0,1fr)]",
+].join(" ");
+
+/** Where a wide line's value stands: across the cells the second labelled pair would take. */
+export const CARD_LINE_WIDE_VALUE = "@sm:col-span-3";
+
 /** Characters past which a labelled value takes the card's full width rather than a grid cell. */
 export const CARD_WIDE_TEXT = 14;
 

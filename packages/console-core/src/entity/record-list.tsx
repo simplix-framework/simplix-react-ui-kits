@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useMemo, useRef, useState, type ReactNode } from "react";
+import { createContext, Fragment, useCallback, useContext, useMemo, useRef, useState, type ReactNode } from "react";
 import { useTranslation } from "@simplix-react/i18n/react";
 import {
   addToast,
@@ -28,7 +28,7 @@ import { CirclePause, CirclePlay, FlaskConical, Power, PowerOff, RefreshCw, Rota
 import { useReflowFlip } from "../layout/use-reflow-flip";
 import { PACKAGE_NAMESPACE } from "./locales";
 import { recordListStyle, recordListToolbarStyle } from "./record-list.style";
-import { cardLayout, isBadge, isEmpty, keptColumns, packedLines, wideColumns, type CardPlace } from "./record-card";
+import { CARD_LINES_GRID, CARD_LINE_WIDE_VALUE, cardLayout, isBadge, isEmpty, keptColumns, packedLines, wideColumns, type CardPlace } from "./record-card";
 import { RecordValueView, type RecordValue } from "./record-value";
 import { enumValueOf } from "./record-contract";
 import { missingTileFacets, useTileFacets } from "./tile-facets";
@@ -856,17 +856,17 @@ export function RecordList<Row>({
                         ))}
                       </Flex>
                     ) : layout.lines.length > 0 ? (
-                      <Grid columns={2} gap="xs">
+                      <Grid columns={2} gap="xs" gapX="sm" className={`items-center ${CARD_LINES_GRID}`}>
+                        {/* A label and its value are two cells of one grid, so the label column is as wide as the longest label and no wider than the kit's cap. */}
                         {layout.lines.map((line) => (
-                          <Flex key={line.key} align="center" gap="sm" minSize className={line.wide ? "col-span-2" : undefined}>
-                            {/* A fixed label measure, so the values line up down each column of the grid. */}
-                            <Text as="span" size="caption" tone="muted" className="w-16 shrink-0">
+                          <Fragment key={line.key}>
+                            <Text as="span" size="caption" tone="muted" className={line.wide ? "col-start-1" : undefined}>
                               {line.header}
                             </Text>
-                            <Flex flex minSize align="center">
+                            <Flex flex minSize align="center" className={line.wide ? CARD_LINE_WIDE_VALUE : undefined}>
                               <RecordValueView value={line.value} />
                             </Flex>
-                          </Flex>
+                          </Fragment>
                         ))}
                       </Grid>
                     ) : null}

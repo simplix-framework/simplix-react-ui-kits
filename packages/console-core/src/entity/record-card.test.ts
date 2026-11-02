@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { cardLayout, keptColumns, packedLines, wideColumns } from "./record-card";
+import { CARD_LINES_GRID, cardLayout, keptColumns, packedLines, wideColumns } from "./record-card";
 
 describe("cardLayout", () => {
   const columns = [
@@ -66,5 +66,14 @@ describe("keptColumns", () => {
     expect([...kept]).toEqual(["a", "b"]);
     const layout = cardLayout([{ key: "a", header: "A", value: "2" }, { key: "b", header: "B", value: null, keep: kept.has("b") }]);
     expect(layout.lines.map((l) => l.key)).toEqual(["a", "b"]);
+  });
+});
+
+describe("the labelled grid of a card", () => {
+  it("sizes the label column to the longest label up to the kit's cap, once for a narrow card and twice for a wide one", () => {
+    expect(CARD_LINES_GRID).toContain("grid-cols-[fit-content(var(--console-card-label-max))_minmax(0,1fr)]");
+    expect(CARD_LINES_GRID).toContain("@sm:grid-cols-[fit-content(var(--console-card-label-max))_minmax(0,1fr)_fit-content(var(--console-card-label-max))_minmax(0,1fr)]");
+    // A fixed measure (`w-16`) is what wrapped "Monthly budget"; no class in the grid may be one.
+    expect(CARD_LINES_GRID).not.toMatch(/\bw-\d/);
   });
 });

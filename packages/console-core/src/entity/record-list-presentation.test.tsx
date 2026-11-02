@@ -69,6 +69,23 @@ describe("RecordList presentation", () => {
     }
   });
 
+  it("sets a card's labelled values in one grid whose label column follows the longest label, a wide value across the pair", () => {
+    const columnsWithLabels: readonly RecordColumn<Row>[] = [
+      { key: "name", header: "Name", field: "name" },
+      { key: "budget", header: "Monthly budget", value: () => "$50" },
+      { key: "wide", header: "Reason", value: () => "A reason that runs long enough to take the whole card" },
+    ];
+    const out = html({ presentation: "cards", columns: columnsWithLabels });
+    expect(out).toContain("grid-cols-[fit-content(var(--console-card-label-max))_minmax(0,1fr)]");
+    // A label is a cell of the grid, not a fixed-measure box beside its value.
+    expect(out).not.toMatch(/class="[^"]*\bw-16\b[^"]*"[^>]*>Monthly budget/);
+    // The wide value takes the cells of the second pair and its label starts a row.
+    expect(out).toMatch(/col-start-1[^>]*>Reason/);
+    expect(out).toContain("@sm:col-span-3");
+    // A short value stays in its cell.
+    expect(out.match(/@sm:col-span-3/g)?.length).toBe(2);
+  });
+
   it("draws a table list exactly as it did before the presentation props existed", () => {
     expect(html({ presentation: "table", viewToggle: false })).toBe(html());
   });

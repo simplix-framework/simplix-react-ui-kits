@@ -11,6 +11,10 @@
   /* The narrowest a figure tile is drawn: a row holds as many tiles as fit at this width, up to five. */
   --tile-min-width: 12rem;
 
+  /* The widest a card's label column grows: a card sizes the column to its longest label and wraps
+     one past this width. */
+  --console-card-label-max: 8rem;
+
   /* The title type step a sign-in panel's heading reads (the product theme writes its own). */
   --text-title: 26px;
   --text-title--line-height: 32px;
