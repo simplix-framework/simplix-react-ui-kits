@@ -19,8 +19,8 @@ A mockup draws every screen with one UI kit (a package of screen types built on 
 | `storybook/mockup-settings.tsx` | `useMockupSettings()`: the toolbar's settings, read by a screen |
 | `.storybook/` | The kit's own Storybook: every framework story rendered with a design |
 | `scaffold/` | Files `init-mockup` copies into a new mockup root |
-| `checks/` | `check-screens`, `check-designs`, `check-imports`, `check-versions`, `console-menu`, `screen-design`, `new-override`, `extract-tokens`, `capture`, `init-mockup` |
-| `lib/` | Helpers the checks and the plugin share; `console-menu.mjs` holds the console menu readers and checks, proved by `console-menu.test.mjs`; `screen-design.mjs` holds the screen design checks, proved by `screen-design.test.mjs` (`pnpm test`) |
+| `checks/` | `check-screens`, `check-designs`, `check-imports`, `check-versions`, `console-menu`, `screen-design`, `run-stages`, `new-override`, `extract-tokens`, `capture`, `init-mockup` |
+| `lib/` | Helpers the checks and the plugin share; `console-menu.mjs` holds the console menu readers and checks, proved by `console-menu.test.mjs`; `screen-design.mjs` holds the screen design checks, proved by `screen-design.test.mjs`; `run-stages.mjs` runs a root's check stages, proved by `run-stages.test.mjs` (`pnpm test`) |
 
 ## Designs
 
@@ -102,6 +102,14 @@ SIMPLIX_FRAMEWORK=<simplix-react checkout> KIT_DESIGN=<design> pnpm storybook
 ```
 
 It renders every framework story with the framework's own preview and the design applied. One Storybook serves one design.
+
+## Running a root's checks together
+
+A root's `pnpm check` is the list of its stages, run by `run-stages` so that one failing stage does not hide the others: a chain of commands joined by `&&` stops at the first failure, and an unfinished file in one cluster then masks every stage behind it. The stages are the key `checkStages` of the root's `mockup.config.json`, `[{ "name", "command" }]`, run in order from the root through a shell. Every stage runs, the run ends with one line per stage and the names of the stages that failed, and the exit code is 1 when any failed (2 when the list is missing or malformed).
+
+```bash
+node kit/checks/run-stages.mjs [--root <mockup root>]
+```
 
 ## Screen design
 

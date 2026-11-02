@@ -11,7 +11,8 @@
     "new-override": "node checks/new-override.mjs",
     "console-menu": "node checks/console-menu.mjs",
     "screen-design": "node checks/screen-design.mjs",
-    "test": "node --test lib/console-menu.test.mjs lib/screen-design.test.mjs"
+    "test": "node --test lib/console-menu.test.mjs lib/screen-design.test.mjs lib/run-stages.test.mjs",
+    "run-stages": "node checks/run-stages.mjs"
   },
   "dependencies": {
     "@dnd-kit/core": "6.3.1",
