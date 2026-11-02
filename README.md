@@ -120,8 +120,8 @@ One entry per routed screen:
 | `decided` | `false` while the design is open; the run fails on it |
 | `persona`, `question` | who opens the screen and the one question they bring |
 | `description`, `cards`, `notices` | `{ shown, reason }`; `cards` and `notices` carry `items` when shown. A decision of none needs its reason as much as one of shown |
-| `list` | `{ presentation: "table" \| "cards" \| "none", viewToggle, cardTitle, leading, columns, sort: { field, direction }, filters, rowActions, headerActions }`; `none` carries a `reason`. `cards` draws every row as a card in a grid; `viewToggle` offers the reader the table and the cards as two views (the presentation is what the list opens in); `cardTitle` is the key of the column that titles a card, the first column when absent |
-| `detail` | `{ header, sections, notices }`; the sections in reading order |
+| `list` | `{ presentation: "table" \| "cards" \| "none", viewToggle, cardTitle, leading, columns, sort: { field, direction }, filters, rowActions, headerActions }`; `none` carries a `reason`. `cards` draws every row as a card in a grid; `viewToggle` offers the reader the table and the cards as two views (the presentation is what the list opens in); `cardTitle` is the key of the column that titles a card, the first column when absent. `reason` (optional) says why the list is shaped so; when it is stated it must not be empty |
+| `detail` | `{ header, reason, sections, notices }`; the sections in reading order. `reason` (optional) says why the detail is laid out so. A section is a sentence, or `{ title, fields, reason }` with the title the detail draws for it as data, so a run can set the screen's and the frame's section titles against the entry without a browser (`detailSectionTitles` in `lib/screen-design.mjs` lists them); a stated title is non-empty and unique within the detail |
 | `timeRange` | `{ shown, reason, field }` where the list is read by when its rows happened |
 | `menu` | `{ group, icon }`: the menu group the screen sits in and the icon its entry draws, for a screen the menu opens |
 
