@@ -71,9 +71,11 @@ export interface RecordColumn<Row> {
    */
   readonly cardPlace?: CardPlace;
   /**
-   * Whether a card whose own value is empty keeps this column's cell when other cards fill it.
-   * Default true; false for a column drawn only on some rows (a due date on open rows only), whose
-   * absence is the point rather than a gap.
+   * Whether a card whose own value is empty keeps this column's cell. Absent, a card keeps it when
+   * some card of the page fills it, and no card draws a column that none fills. `false` for a
+   * column drawn only on some rows (a due date on open rows only), whose absence is the point
+   * rather than a gap. `true` for a column every card holds even when none fills it, so the cards
+   * keep one height whatever the data (the line reads as a dash).
    */
   readonly cardKeep?: boolean;
 }
@@ -660,7 +662,8 @@ export function RecordList<Row>({
       return column ? valueOf(column, row) : null;
     },
   );
-  // A labelled column some card fills keeps its cell on every card.
+  // A labelled column some card fills keeps its cell on every card, and one that asks (`cardKeep`) keeps it whoever fills it.
+  const alwaysKept = lineColumns.filter((column) => column.cardKeep === true && column.cardPlace !== "hidden" && column.cardPlace !== "badges").map((column) => column.key);
   const keptCards = keptColumns(
     lineColumns.filter((column) => column.cardKeep !== false).map((column) => column.key),
     list.data,
@@ -669,11 +672,13 @@ export function RecordList<Row>({
       return column ? valueOf(column, row) : null;
     },
     nested,
+    alwaysKept,
   );
   // A list whose labelled values are all short sets them in one line from the left on every card.
   const packedCards =
     !nested &&
     wideCards.size === 0 &&
+    alwaysKept.length === 0 &&
     packedLines(
       lineColumns
         .filter((column) => column.cardPlace !== "hidden" && column.cardPlace !== "badges" && list.data.some((row) => { const value = valueOf(column, row); return !isEmpty(value) && !isBadge(value); }))

@@ -86,6 +86,23 @@ describe("RecordList presentation", () => {
     expect(out.match(/@sm:col-span-3/g)?.length).toBe(2);
   });
 
+  it("draws a line no card fills on none, one a card fills on every card, and one that asks to be kept on every card", () => {
+    const withLines = (cardKeep?: boolean): readonly RecordColumn<Row>[] => [
+      { key: "name", header: "Name", field: "name" },
+      { key: "empty", header: "Opens at", value: () => null, ...(cardKeep === undefined ? {} : { cardKeep }) },
+      { key: "some", header: "Closes at", value: (row) => (row.id === "a" ? "10:00 to 12:00 on weekdays" : null) },
+    ];
+    const count = (out: string, label: string) => out.split(`>${label}<`).length - 1;
+    const plain = html({ presentation: "cards", columns: withLines() });
+    expect(count(plain, "Opens at")).toBe(0);
+    expect(count(plain, "Closes at")).toBe(2);
+    const kept = html({ presentation: "cards", columns: withLines(true) });
+    expect(count(kept, "Opens at")).toBe(2);
+    expect(count(kept, "Closes at")).toBe(2);
+    const optedOut = html({ presentation: "cards", columns: withLines(false) });
+    expect(count(optedOut, "Opens at")).toBe(0);
+  });
+
   it("draws a table list exactly as it did before the presentation props existed", () => {
     expect(html({ presentation: "table", viewToggle: false })).toBe(html());
   });

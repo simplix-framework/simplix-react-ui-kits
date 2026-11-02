@@ -108,15 +108,22 @@ export function packedLines<K, Row>(keys: readonly K[], rows: readonly Row[], va
 }
 
 /**
- * The labelled columns some card of the page fills, so every card keeps their cells even where its
- * own value is empty, and a label never moves from one card to the next.
+ * The labelled columns whose cell every card of the page keeps, so a label never moves from one
+ * card to the next and the cards are as tall as one another.
+ *
+ * <p>A column is kept when some card of the page fills it. A column no card fills is left out of
+ * every card, since a line drawn as a dash on each card says nothing. A column that asks to be kept
+ * (`always`) holds its cell even then, for a page whose cards must keep one height whatever the
+ * data: its line reads as a dash until a card has a value.
  *
  * @param keys the columns after the title column
  * @param rows the rows the cards draw
  * @param value each row's value for a column
  * @param badgesInLines whether the cards draw badge values as labelled lines too (a list inside a record)
+ * @param always the columns that keep their cell whether or not a card fills it
  */
-export function keptColumns<K, Row>(keys: readonly K[], rows: readonly Row[], value: (key: K, row: Row) => RecordValue, badgesInLines = false): ReadonlySet<K> {
+export function keptColumns<K, Row>(keys: readonly K[], rows: readonly Row[], value: (key: K, row: Row) => RecordValue, badgesInLines = false, always: readonly K[] = []): ReadonlySet<K> {
   // A column of badges joins the unlabelled badge row, which keeps no cells, unless the card draws every value labelled.
-  return new Set(keys.filter((key) => rows.some((row) => { const v = value(key, row); return !isEmpty(v) && (badgesInLines || !isBadge(v)); })));
+  const filled = keys.filter((key) => rows.some((row) => { const v = value(key, row); return !isEmpty(v) && (badgesInLines || !isBadge(v)); }));
+  return new Set([...filled, ...always]);
 }

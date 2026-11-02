@@ -77,3 +77,37 @@ describe("the labelled grid of a card", () => {
     expect(CARD_LINES_GRID).not.toMatch(/\bw-\d/);
   });
 });
+
+describe("the lines a page's cards draw", () => {
+  const value = (key: string, row: Record<string, string | null>) => row[key] ?? null;
+  const columnsOf = (kept: ReadonlySet<string>, row: Record<string, string | null>) =>
+    cardLayout(["a", "until"].map((key) => ({ key, header: key, value: row[key] ?? null, keep: kept.has(key) }))).lines.map((l) => l.key);
+
+  it("draws a line no card fills on none of them", () => {
+    const rows = [{ a: "1", until: null }, { a: "2", until: null }];
+    const kept = keptColumns(["a", "until"], rows, value);
+    expect(kept.has("until")).toBe(false);
+    for (const row of rows) expect(columnsOf(kept, row)).toEqual(["a"]);
+  });
+
+  it("draws a line one card fills on every card, so the cards stand at one height", () => {
+    const rows = [{ a: "1", until: "2026-11-02" }, { a: "2", until: null }];
+    const kept = keptColumns(["a", "until"], rows, value);
+    for (const row of rows) expect(columnsOf(kept, row)).toEqual(["a", "until"]);
+  });
+
+  it("draws a line that asks to be kept on every card whether or not one fills it", () => {
+    const rows = [{ a: "1", until: null }, { a: "2", until: null }];
+    const kept = keptColumns(["a", "until"], rows, value, false, ["until"]);
+    for (const row of rows) expect(columnsOf(kept, row)).toEqual(["a", "until"]);
+  });
+
+  it("leaves a column that opts out of keeping to the cards that fill it", () => {
+    // The caller lists only the columns that did not opt out (`cardKeep: false` is filtered before the call).
+    const rows = [{ a: "1", until: "x" }, { a: "2", until: null }];
+    const kept = keptColumns(["a"], rows, value);
+    expect(columnsOf(kept, rows[1]!)).toEqual(["a"]);
+    expect(columnsOf(kept, rows[0]!)).toEqual(["a", "until"]);
+  });
+});
+
