@@ -18,6 +18,9 @@
 //   - an entry or group has no words in a locale, or the catalogue holds menu words no entry uses,
 //   - an entry's words differ from the plural label of its entity in a locale, unless the root
 //     lists the entry under `menu.labelExceptions` with the reason.
+// The agreement with the screen design holds in both modes (it is not something a write can fix):
+// an entry that opens an entity list has a design entry whose `menu: { group, icon }` names the
+// group the menu puts it in and the icon it draws.
 //   console-menu [--root <mockup root>] [--check]
 //
 // Everything specific to a product is the root's `mockup.config.json`, key `menu`, with paths
@@ -29,6 +32,8 @@
 //                    `shell.menu` and `shell.groups` hold the words
 //   storyIdPrefix    what a frame's story id starts with, before its screen name
 //   output           the file to write
+//   designApp        the app (as the design manifest names it) whose screens this menu opens; the
+//                    screens are read from `screenDesign.manifest`. Absent, an entry matches by route
 //   labelExceptions  entry key -> why its words differ from its entity's, on purpose
 //   menuConstant     the menu constant's name (default ADMIN_MENU)
 //   accountConstant  the account entry constant's name (default ACCOUNT_ENTRY)
@@ -41,6 +46,7 @@ import { join, resolve } from "node:path";
 import { parseArgs } from "../lib/fs-util.mjs";
 import {
   camel,
+  menuDecisionProblems,
   readClaimedFrames,
   readMenu,
   readRoutes,
@@ -89,6 +95,13 @@ const frame = (file) => (existsSync(join(screens, file)) ? readFileSync(join(scr
 const resolved = resolveMenu(menu, { routes, claimed, frame, prefix: settings.storyIdPrefix });
 const entryCount = resolved.groups.flatMap((group) => group.entries).length;
 
+// The menu's placement is a decision of the screen's design entry; it is checked in either mode.
+const designProblems = [];
+if (config.screenDesign?.manifest) {
+  const manifest = readJson(at(config.screenDesign.manifest));
+  designProblems.push(...menuDecisionProblems(resolved, manifest.screens ?? [], { app: settings.designApp }));
+}
+
 const output = at(settings.output);
 const text = renderMenu(resolved, { iconModule: settings.iconModule, iconType: settings.iconType });
 const current = existsSync(output) ? readFileSync(output, "utf8") : undefined;
@@ -96,10 +109,14 @@ if (!check) {
   if (current !== text) writeFileSync(output, text);
   const open = resolved.groups.flatMap((group) => group.entries).filter((entry) => entry.screen !== undefined).length;
   console.log(`console menu: ${entryCount} entries, ${open} open a screen, ${current === text ? "unchanged" : "written"}`);
+  if (designProblems.length > 0) {
+    console.error(`console menu does not follow the screen design:\n${designProblems.map((problem) => `  ${problem}`).join("\n")}`);
+    process.exit(1);
+  }
   process.exit(0);
 }
 
-const problems = [];
+const problems = [...designProblems];
 if (current !== text) problems.push(`${settings.output} differs from the product's menu (run console-menu without --check)`);
 for (const key of resolved.unframed) {
   problems.push(`entry "${key}" has a product route and no frame (scaffold one, or claim an existing frame under templates.story.files)`);

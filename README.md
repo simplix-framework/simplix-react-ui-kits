@@ -78,6 +78,7 @@ The root's `mockup.config.json` holds everything specific to the product, under 
 | `storyIdPrefix` | What a frame's story id starts with, before its screen name |
 | `output` | The generated file; the preview imports its `MENU` and `ACCOUNT_ENTRY` |
 | `labelExceptions` | Entry key to the reason its words differ from its entity's |
+| `designApp` | The app, as the design manifest names it, whose screens this menu opens; the menu is checked against their `menu` decisions |
 | `menuConstant`, `accountConstant` | The constants' names; default `ADMIN_MENU` and `ACCOUNT_ENTRY` |
 | `iconModule`, `iconType` | Where the marks come from and the type of one mark; default `lucide-react` and `LucideIcon` |
 | `entityCatalog` | Where an entity's words live under `locales/`, with `{entity}` in camel case; default `entity/{entity}` |
@@ -110,7 +111,23 @@ A screen is designed for its purpose before it is scaffolded. `screen-design` re
 node kit/checks/screen-design.mjs [--root <mockup root>]
 ```
 
-It fails when a routed screen has no entry, an entry is undecided (`"decided": false`), a decision has no reason, a list sorts by its primary key, or a screen's blocks file is still an empty stub while its entry asks for a description, cards or notices. A screen not yet customised is listed under `acknowledged` with its reason, and an acknowledgement whose blocks have since been customised fails as stale.
+One entry per routed screen:
+
+| Field | Holds |
+| --- | --- |
+| `app`, `route`, `entity` | the app, the route path the screen is routed at, and the entity it lists (kebab case) |
+| `blocks` | the file that draws the page's own parts: the generated `crud-page.tsx`, or a `*.blocks.tsx` |
+| `decided` | `false` while the design is open; the run fails on it |
+| `persona`, `question` | who opens the screen and the one question they bring |
+| `description`, `cards`, `notices` | `{ shown, reason }`; `cards` and `notices` carry `items` when shown. A decision of none needs its reason as much as one of shown |
+| `list` | `{ presentation: "table" \| "cards" \| "none", leading, columns, sort: { field, direction }, filters, rowActions, headerActions }`; `none` carries a `reason` |
+| `detail` | `{ header, sections, notices }`; the sections in reading order |
+| `timeRange` | `{ shown, reason, field }` where the list is read by when its rows happened |
+| `menu` | `{ group, icon }`: the menu group the screen sits in and the icon its entry draws, for a screen the menu opens |
+
+It fails when a routed screen has no entry, an entry is undecided (`"decided": false`), a decision has no reason, a list sorts by its primary key, or a screen's page does not draw what its entry asks for. A page laid down whole from the kit template and not yet edited draws the description (and the figure row where the entity's Meta counts), so a design asking for those passes untouched; notices, and figures the template does not draw, take the screen's own code, and a header comment naming them does not count. A screen not yet customised is listed under `acknowledged` with its reason, and an acknowledgement whose page has since been customised fails as stale.
+
+`console-menu` reads the `menu` decision: every menu entry that opens an entity list has a design entry whose `menu.group` and `menu.icon` equal the group the product's menu puts it in and the icon it draws (`menu.designApp` in the root's config names the app whose design entries the menu belongs to). Scaffolding the screen with `--menu-group <group> --menu-icon <Icon>` places the entry as decided.
 
 Everything specific to a product is the root's `mockup.config.json` key `screenDesign`; a root without the key is left alone:
 
