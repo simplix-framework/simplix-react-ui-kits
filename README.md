@@ -120,7 +120,7 @@ One entry per routed screen:
 | `decided` | `false` while the design is open; the run fails on it |
 | `persona`, `question` | who opens the screen and the one question they bring |
 | `description`, `cards`, `notices` | `{ shown, reason }`; `cards` and `notices` carry `items` when shown. A decision of none needs its reason as much as one of shown |
-| `list` | `{ presentation: "table" \| "cards" \| "none", leading, columns, sort: { field, direction }, filters, rowActions, headerActions }`; `none` carries a `reason` |
+| `list` | `{ presentation: "table" \| "cards" \| "none", viewToggle, cardTitle, leading, columns, sort: { field, direction }, filters, rowActions, headerActions }`; `none` carries a `reason`. `cards` draws every row as a card in a grid; `viewToggle` offers the reader the table and the cards as two views (the presentation is what the list opens in); `cardTitle` is the key of the column that titles a card, the first column when absent |
 | `detail` | `{ header, sections, notices }`; the sections in reading order |
 | `timeRange` | `{ shown, reason, field }` where the list is read by when its rows happened |
 | `menu` | `{ group, icon }`: the menu group the screen sits in and the icon its entry draws, for a screen the menu opens |
@@ -129,6 +129,8 @@ It fails when a routed screen has no entry, an entry is undecided (`"decided": f
 
 `console-menu` reads the `menu` decision: every menu entry that opens an entity list has a design entry whose `menu.group` and `menu.icon` equal the group the product's menu puts it in and the icon it draws (`menu.designApp` in the root's config names the app whose design entries the menu belongs to). Scaffolding the screen with `--menu-group <group> --menu-icon <Icon>` places the entry as decided.
 
+The list decision is compared with the files that draw the list. The root's `screenDesign.listFiles` names them as paths relative to the root, with `{entity}` for the entry's entity and `{module}` for the directory above the `src` its `blocks` file sits in (`"{module}/src/widgets/{entity}/list.tsx"`, `"screens/{entity}.stories.tsx"`). The `<RecordList>` element in each must declare the entry's `presentation`, `viewToggle` and `cardTitle` (`presentation="cards"`, `viewToggle`, `cardTitle="name"`; a table with no switch declares none of them). A file that does not exist, or draws no `RecordList`, is refused for a decision that needs it and left alone for a plain table. Scaffolding with `--list-presentation cards --view-toggle --card-title <column>` lays down the list and the frame as decided.
+
 Everything specific to a product is the root's `mockup.config.json` key `screenDesign`; a root without the key is left alone:
 
 ```json
@@ -136,7 +138,8 @@ Everything specific to a product is the root's `mockup.config.json` key `screenD
   "screenDesign": {
     "manifest": "screen-design.json",
     "routes": [{ "app": "<app>", "dir": "<path to the app's routes>" }],
-    "primaryKey": "{entity}Id"
+    "primaryKey": "{entity}Id",
+    "listFiles": ["{module}/src/widgets/{entity}/list.tsx", "screens/{entity}.stories.tsx"]
   }
 }
 ```

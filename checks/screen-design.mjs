@@ -19,6 +19,10 @@
 //   routes      `[{ app, dir }]`: each app's directory of TanStack route files; a file whose name
 //               starts with `__` is a layout, not a screen
 //   primaryKey  how an entity's primary key is named, `{entity}` in camel case (default {entity}Id)
+//   listFiles   the paths of the files that draw a screen's list, relative to the root, with `{entity}` for
+//               the entry's entity and `{module}` for the directory above the `src` its blocks file sits in.
+//               The entry's list presentation, view switch and card title must equal what the
+//               `<RecordList>` element in each declares (`presentation`, `viewToggle`, `cardTitle`).
 //   descriptionCatalog  `{ file, key, locales }`: where a screen's description sentence lives. `file` is
 //               the catalog path inside the screen's module (the directory above the `src` its blocks
 //               file sits in) with `{locale}`, `key` the dotted path with `{entity}` in camel case. An
@@ -26,7 +30,7 @@
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { dirname, join, relative, resolve } from "node:path";
 import { parseArgs } from "../lib/fs-util.mjs";
-import { descriptionCatalogProblems, manifestProblems, readRoutePath } from "../lib/screen-design.mjs";
+import { descriptionCatalogProblems, listViewProblems, manifestProblems, readRoutePath } from "../lib/screen-design.mjs";
 
 const args = parseArgs(process.argv.slice(2));
 const root = resolve(args.root ?? process.cwd());
@@ -67,6 +71,9 @@ const base = (path) => {
 };
 const problems = manifestProblems(manifest, routed, blocks, { primaryKey: settings.primaryKey }, base);
 if (settings.descriptionCatalog) problems.push(...descriptionCatalogProblems(manifest, settings.descriptionCatalog, (path) => (existsSync(at(path)) ? JSON.parse(readFileSync(at(path), "utf8")) : undefined), blocks));
+// The list decision (table or cards, the view switch, the card title) is compared with every file that
+// draws the list: the screen's list widget and its board frame.
+if (settings.listFiles) problems.push(...listViewProblems(manifest, settings.listFiles, (path) => (existsSync(at(path)) ? readFileSync(at(path), "utf8") : undefined)));
 if (problems.length > 0) {
   console.error(`screen design is not complete:\n${problems.map((problem) => `  ${problem}`).join("\n")}`);
   process.exit(1);
