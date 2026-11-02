@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { peekKindOf } from "./record-contract";
+import { peekKindOf, recordNameIsCode } from "./record-contract";
 
 /**
  * A reference whose target a sibling field picks opens the peek of the row's own kind, and a kind
@@ -21,5 +21,17 @@ describe("peekKindOf", () => {
 
   it("keeps a plain reference's own peek", () => {
     expect(peekKindOf({ peekKind: "plan" }, { ownerType: "TEAM" })).toBe("plan");
+  });
+});
+
+describe("recordNameIsCode", () => {
+  it("is true when every field the record is named by is drawn as code", () => {
+    expect(recordNameIsCode([{ name: "eventType", kind: "text", code: true }])).toBe(true);
+  });
+
+  it("is false for a name with a field drawn as prose, or with no name field", () => {
+    expect(recordNameIsCode([{ name: "eventType", kind: "text", code: true }, { name: "createdAt", kind: "instant" }])).toBe(false);
+    expect(recordNameIsCode([{ name: "name", kind: "text" }])).toBe(false);
+    expect(recordNameIsCode([])).toBe(false);
   });
 });

@@ -47,3 +47,18 @@ describe("RecordDetail notices", () => {
     expect(out.indexOf("Health marker")).toBeLessThan(out.indexOf("Note marker"));
   });
 });
+
+describe("RecordDetail title", () => {
+  it("draws the title as text by default", () => {
+    const out = html({ title: "subscription.updated", sections });
+    expect(out).toContain("subscription.updated");
+    expect(out).not.toMatch(/<code[^>]*>subscription\.updated/);
+  });
+
+  it("draws an identifier title in the monospaced face when titleCode is set", () => {
+    const out = html({ title: "subscription.updated", titleCode: true, sections });
+    expect(out).toMatch(/<code[^>]*>subscription\.updated<\/code>/);
+    // The code face sits inside the heading, so the head keeps its place and truncation.
+    expect(out).toMatch(/<h4[^>]*><code/);
+  });
+});

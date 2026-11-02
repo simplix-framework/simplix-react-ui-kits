@@ -610,6 +610,17 @@ export function recordNameOf(values: readonly RecordValue[]): string {
 }
 
 /**
+ * Whether a record's name is an identifier: every field it is named by is drawn as code. The detail
+ * then draws its title in the code face (`RecordDetail.titleCode`), as the list draws the column, so
+ * the two agree by construction.
+ *
+ * @param fields the fields the record is named by
+ */
+export function recordNameIsCode(fields: readonly ContractField[]): boolean {
+  return fields.length > 0 && fields.every((field) => field.code === true);
+}
+
+/**
  * A field table's enum fields, field name to enum name: what a changes tab needs to label an enum
  * value the audit record names no enum for.
  *

@@ -16,6 +16,7 @@ import {
   Tabs,
   TabsContent,
   TabsList,
+  Text,
 } from "@simplix-react/ui";
 
 import { partAttributes, slotAttributes } from "@simplix-react/ui/design";
@@ -144,6 +145,12 @@ export interface RecordHeadFigure {
 export interface RecordDetailProps {
   /** What the record is called, at the head of the panel. */
   readonly title: string;
+  /**
+   * Draws the title in the monospaced face, for a record named by an identifier the reader may type
+   * or compare (a provider's event name, a setting key). The face tells the screen's title from an
+   * untranslated key, which an identifier's dotted shape otherwise resembles.
+   */
+  readonly titleCode?: boolean;
   /** What the record is to the reader, under its name: a role and where it belongs. */
   readonly subtitle?: string;
   /**
@@ -460,6 +467,7 @@ function withPresentationSwitch(head: ReactNode, presentationSwitch: DetailPrese
  */
 export function RecordDetail({
   title,
+  titleCode,
   subtitle,
   figures,
   avatar,
@@ -535,7 +543,7 @@ export function RecordDetail({
           {avatar !== undefined ? <InitialsAvatar name={title} seed={avatar} size="lg" /> : null}
           <Stack gap="none" minSize>
             <Flex align="center" gap="sm" wrap minSize>
-              <Heading level={4}>{title}</Heading>
+              <Heading level={4}>{titleCode ? <Text as="code" font="mono">{title}</Text> : title}</Heading>
               {status ? <RecordValueView value={{ badge: status }} /> : null}
             </Flex>
             {subtitle ? <span {...slotAttributes(recordHeadSubtitleStyle, {})}>{subtitle}</span> : null}
