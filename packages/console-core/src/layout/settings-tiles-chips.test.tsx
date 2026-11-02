@@ -79,3 +79,27 @@ describe("tile cards", () => {
     expect(wrappers.filter((w) => w.includes('data-pressable="false"'))).toHaveLength(2);
   });
 });
+
+describe("folds that are out of the keyboard's path", () => {
+  /** The two fold wrappers of a titled row in document order: the chips' fold, then the cards' fold. */
+  function folds(folded: boolean): string[] {
+    const out = renderToStaticMarkup(
+      createElement(UIProvider, { children: createElement(SettingsTiles, { tiles, folded, title: "Summary", filters }) }),
+    );
+    return [...out.matchAll(/<div[^>]*class="tiles-fold"[^>]*>/g)].map((m) => m[0]);
+  }
+
+  it("makes the hidden cards inert and leaves the chips reachable while the row is folded", () => {
+    const [chipsFold, cardsFold] = folds(true);
+    expect(chipsFold).not.toMatch(/\binert\b/);
+    expect(cardsFold).toMatch(/\binert\b/);
+    expect(cardsFold).toContain('aria-hidden="true"');
+  });
+
+  it("makes the hidden chips inert and leaves the cards reachable while the row is open", () => {
+    const [chipsFold, cardsFold] = folds(false);
+    expect(chipsFold).toMatch(/\binert\b/);
+    expect(cardsFold).not.toMatch(/\binert\b/);
+    expect(chipsFold).toContain('aria-hidden="true"');
+  });
+});

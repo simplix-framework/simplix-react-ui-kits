@@ -461,7 +461,7 @@ export function SettingsTiles({ tiles, columns = MAX_TILE_COLUMNS, reorderKey, t
             {title}
           </h2>
           <div className="min-w-0 flex-1">
-            <div className="tiles-fold" data-open={collapsed ? "true" : "false"} aria-hidden={!collapsed}>
+            <div className="tiles-fold" data-open={collapsed ? "true" : "false"} aria-hidden={!collapsed} inert={!collapsed}>
               {/* Folded, every figure as a chip that does what its card does. The fold clips its
                   child, so the chips sit in a wrapper of their own. */}
               <div>
@@ -487,7 +487,7 @@ export function SettingsTiles({ tiles, columns = MAX_TILE_COLUMNS, reorderKey, t
             </span>
           </button>
         </div>
-        <div className="tiles-fold" data-open={collapsed ? "false" : "true"} aria-hidden={collapsed}>
+        <div className="tiles-fold" data-open={collapsed ? "false" : "true"} aria-hidden={collapsed} inert={collapsed}>
           <div {...slotAttributes(tileGutterStyle, {})}>
             <div {...slotAttributes(tileRowStyle, {})}>
               <TileGrid tiles={tiles} columns={columns} reorderKey={reorderKey} loading={loading} filters={filters} className="tiles-cascade" />
@@ -512,7 +512,7 @@ export function SettingsTiles({ tiles, columns = MAX_TILE_COLUMNS, reorderKey, t
     <div ref={anchor} className="relative" {...slotAttributes(tileReachStyle, { leads: reachFrom })}>
       {/* The strip. Its own fold rather than a `collapsed &&`, so it slides away under the rule as
           the tiles come down instead of vanishing on the frame the press landed on. */}
-      <div className="tiles-fold" data-open={collapsed ? "true" : "false"} aria-hidden={!collapsed}>
+      <div className="tiles-fold" data-open={collapsed ? "true" : "false"} aria-hidden={!collapsed} inert={!collapsed}>
         {/* Inset from both ends by a hair, so the rule still reads as the wider thing the strip
             came out from under. */}
         <div {...slotAttributes(tileStripInsetStyle, {})}>
@@ -532,7 +532,7 @@ export function SettingsTiles({ tiles, columns = MAX_TILE_COLUMNS, reorderKey, t
       </div>
 
       {/* The tiles. */}
-      <div className="tiles-fold" data-open={collapsed ? "false" : "true"} aria-hidden={collapsed}>
+      <div className="tiles-fold" data-open={collapsed ? "false" : "true"} aria-hidden={collapsed} inert={collapsed}>
         {/* The fold clips on both axes, so the row is given a gutter its cards' focus rings can
             live in — without it the leftmost and rightmost rings are shaved off while every other
             card on the screen draws a whole one (frontend invariant #58: the arithmetic is fixed
