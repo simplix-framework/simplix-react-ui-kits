@@ -14,6 +14,7 @@ import {
   useCrudList,
   type ActionType,
   type CrudListFilters,
+  type CrudListViewMode,
   type EntityFacet,
   type FilterDef,
   type ListHook,
@@ -32,6 +33,7 @@ import { RecordValueView, type RecordValue } from "./record-value";
 import { enumValueOf } from "./record-contract";
 import { missingTileFacets, useTileFacets } from "./tile-facets";
 import { FLUID_COLUMN_MIN, keepColumnsDrawn } from "./column-priority";
+import { useRememberedView } from "./list-view-memory";
 
 /** One column of a {@link RecordList}. */
 export interface RecordColumn<Row> {
@@ -255,6 +257,29 @@ export interface RecordListProps<Row> {
    */
   readonly cardBreakpoint?: number | false;
   /**
+   * How the rows are drawn. `"table"` (the default) is the table, which falls to cards below
+   * {@link cardBreakpoint}. `"cards"` draws every row as a card in a grid at every width, the same
+   * card the narrow table falls to: the card title column, the badge row, the labelled lines and the
+   * row actions beside the title, so every column declaration serves both presentations.
+   */
+  readonly presentation?: RecordPresentation;
+  /**
+   * Offers the reader a switch between the table and the cards, in the toolbar. The presentation is
+   * what the list opens in; the reader's choice replaces it on the next visit when {@link viewKey} names
+   * the list. Off by default: a list draws one presentation.
+   */
+  readonly viewToggle?: boolean;
+  /**
+   * What names this list among the lists of the product, for the browser to remember the reader's
+   * view under. Without it the choice made with {@link viewToggle} lasts as long as the page.
+   */
+  readonly viewKey?: string;
+  /**
+   * The key of the column drawn as the card's title, the first column when absent. The other columns
+   * keep their order as the card's badges and labelled lines.
+   */
+  readonly cardTitle?: string;
+  /**
    * Lets the reader select rows (a checkbox column with select-all) and act on the selection from
    * a bar that rises while any are selected.
    */
@@ -316,6 +341,39 @@ export function orderUpdates<Row>(before: readonly Row[], after: readonly Row[],
     const was = (before.find((one) => (one as Record<string, unknown>)[idField] === id) as Record<string, unknown> | undefined)?.[orderField];
     return values[index] === Number(was) ? [] : [{ [idField]: id, [orderField]: values[index] }];
   });
+}
+
+/** How a {@link RecordList} draws its rows: as a table, or as a grid of cards. */
+export type RecordPresentation = "table" | "cards";
+
+/**
+ * The column a card is titled by and the columns that fill the card under it.
+ *
+ * @param columns the list's columns in their declared order
+ * @param cardTitle the key of the title column; absent, the first column titles the card
+ * @throws Error when `cardTitle` names no column of the list
+ */
+export function splitCardColumns<Row>(
+  columns: readonly RecordColumn<Row>[],
+  cardTitle?: string,
+): { readonly title: RecordColumn<Row> | undefined; readonly lines: readonly RecordColumn<Row>[] } {
+  if (cardTitle === undefined) return { title: columns[0], lines: columns.slice(1) };
+  const title = columns.find((column) => column.key === cardTitle);
+  if (!title) throw new Error(`RecordList cardTitle "${cardTitle}" names no column; the columns are ${columns.map((column) => column.key).join(", ")}`);
+  return { title, lines: columns.filter((column) => column !== title) };
+}
+
+/**
+ * The view a list opens in. The presentation names it, and the reader's saved view replaces it only
+ * where the list offers the switch: a list without one draws its presentation and nothing else.
+ *
+ * @param presentation what the screen decided the rows are drawn as
+ * @param viewToggle whether the list offers the reader a switch
+ * @param saved the view the reader last chose for this list, if any
+ */
+export function openingView(presentation: RecordPresentation, viewToggle: boolean, saved: CrudListViewMode | undefined): CrudListViewMode {
+  if (viewToggle && saved !== undefined) return saved;
+  return presentation === "cards" ? "grid" : "list";
 }
 
 const DEFAULT_PAGE_SIZE = 20;
@@ -493,6 +551,10 @@ export function RecordList<Row>({
   features = {},
   narrowing,
   cardBreakpoint,
+  presentation = "table",
+  viewToggle = false,
+  viewKey,
+  cardTitle,
   bulkActions,
   keyboard = false,
   reorder,
@@ -542,7 +604,11 @@ export function RecordList<Row>({
   // width, the rest drop from the end. The card keeps the declared columns, which it places by shape.
   const sortedBy = on("sort") ? list.sort.field : null;
   const tableColumns = useMemo(() => keepColumnsDrawn(columns, sortedBy), [columns, sortedBy]);
-  const [titleColumn, ...lineColumns] = columns;
+  const { title: titleColumn, lines: lineColumns } = splitCardColumns(columns, cardTitle);
+  // The view the list opens in: the presentation, unless the reader's saved choice replaces it where
+  // the switch is offered. A list with no switch never reads a saved view.
+  const remembered = useRememberedView(viewToggle ? viewKey : undefined);
+  const openView = openingView(presentation, viewToggle, remembered.saved);
   // Decided over the page's rows, so a label holds the same cell on every card.
   const wideCards = wideColumns(
     lineColumns.map((column) => column.key),
@@ -629,7 +695,7 @@ export function RecordList<Row>({
   return (
     // `data-pager="off"` marks a pager the caller turned off, so a check can tell it from a lost one.
     <div ref={rootRef} className="@container/record-list" data-pager={on("pagination") ? undefined : "off"} {...slotAttributes(recordListStyle, { nested })}>
-    <CrudList>
+    <CrudList defaultViewMode={openView} onViewModeChange={viewToggle ? remembered.remember : undefined}>
       {filtered ? (
         <CrudList.FilterBar
           filters={filterDefs}
@@ -648,7 +714,7 @@ export function RecordList<Row>({
           maxBadges={3}
           className="[&>[data-slot=crud-filter-bar-trailing]]:min-w-0 [&>[data-slot=crud-filter-bar-trailing]]:flex-1 [&>[data-slot=crud-filter-bar-trailing]]:basis-48 [&>[data-slot=crud-filter-bar-trailing]]:justify-end @max-md/record-list:[&>[data-slot=crud-filter-bar-trailing]]:ml-0 @max-md/record-list:[&>[data-slot=crud-filter-bar-trailing]]:basis-full @max-md/record-list:[&>[data-slot=crud-filter-bar-trailing]]:flex-nowrap"
         />
-      ) : counted || leading || chipRow || search || arrangeControl ? (
+      ) : counted || leading || chipRow || search || arrangeControl || viewToggle ? (
         // No filters to offer: the count, the chips and the search stand on their own row rather
         // than beside a filter control that would open onto nothing.
         // The same inset as the filter bar, so the toolbar's first item lines up with the table's
@@ -659,6 +725,7 @@ export function RecordList<Row>({
             {leading}
             {chipRow}
             {arrangeControl}
+            {viewToggle ? <CrudList.ViewToggle /> : null}
           </Flex>
           {search}
         </Flex>
@@ -702,6 +769,7 @@ export function RecordList<Row>({
         emptyState={empty}
         slots={nested ? { empty: ({ reason }) => (empty && reason === "no-data" ? <EmptyState size="sm" title={empty.title} description={empty.description} /> : <CrudList.Empty reason={reason} />) } : undefined}
         cardBreakpoint={titleColumn ? breakpoint : undefined}
+        gridView={viewToggle ? true : undefined}
         // A list inside a record has no table head above its cards, so there every value carries its
         // column header (「차수 1」) rather than standing bare.
         cardTitle={
