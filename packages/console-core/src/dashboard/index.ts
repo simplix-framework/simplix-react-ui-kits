@@ -38,7 +38,7 @@ export { DashboardTaskList, type DashboardTaskListProps, type TaskEntry } from "
 export { DashboardFactList, type DashboardFactListProps, type FactEntry } from "./fact-list";
 export { DashboardCaption, DashboardEmpty, DashboardFigure, DashboardSkeleton, type DashboardFigureProps } from "./dashboard-figure";
 export { DashboardReadState, dashboardReadStage, type DashboardReadStage, type DashboardReadStateProps } from "./dashboard-read-state";
-export { sparseLabels, sumByCategory, sumsByKey } from "./chart-model";
+export { axisDayLabel, sparseLabels, sumByCategory, sumsByKey } from "./chart-model";
 export { StageFlowBar, type FlowStageCount, type StageFlowBarProps } from "./stage-flow-bar";
 export { ProgressRing, type ProgressRingProps } from "./progress-ring";
 export { RiskRows, type RiskCell, type RiskColumn, type RiskRowEntry, type RiskRowsProps } from "./risk-rows";

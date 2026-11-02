@@ -141,3 +141,18 @@ export function sparseLabels(labels: readonly string[], step: number): string[] 
   const every = Math.max(1, Math.floor(step));
   return labels.map((label, i) => ((labels.length - 1 - i) % every === 0 ? label : ""));
 }
+
+/**
+ * A calendar day as a chart's axis writes it, month and day only (「3/14」, 「3. 14.」), read from the
+ * string's own components, since a calendar day has no zone and parsing it as an instant moves it a
+ * day either way for half the world. The tooltip names the day in full instead.
+ *
+ * @param day the calendar day, as `yyyy-MM-dd`
+ * @param locale the reader's locale
+ * @returns the month and day, or the input unchanged when it is not a calendar day
+ */
+export function axisDayLabel(day: string, locale: string): string {
+  const [year, month, date] = day.split("-").map(Number);
+  if (!year || !month || !date) return day;
+  return new Intl.DateTimeFormat(locale, { month: "numeric", day: "numeric" }).format(new Date(year, month - 1, date));
+}

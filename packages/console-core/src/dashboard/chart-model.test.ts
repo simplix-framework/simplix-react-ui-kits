@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { heatStep, ringDash, ringReading, sparkChange, sparkPoints, stageSpans } from "./chart-model";
+import { axisDayLabel, heatStep, ringDash, ringReading, sparkChange, sparkPoints, stageSpans } from "./chart-model";
 
 describe("stageSpans", () => {
   it("shares the bar by count and skips empty stages", () => {
@@ -65,5 +65,18 @@ describe("sparkPoints", () => {
     expect(points[2].y).toBe(2);
     expect(points[0].y).toBe(18);
     expect(sparkChange([4, 7, 2])).toBe(-2);
+  });
+});
+
+describe("axisDayLabel", () => {
+  it("writes the month and day from the day's own components, in the reader's language", () => {
+    expect(axisDayLabel("2026-03-14", "en-US")).toBe("3/14");
+    expect(axisDayLabel("2026-03-14", "ko")).toBe("3. 14.");
+    // The first of a month stays the first whatever zone the test runs in.
+    expect(axisDayLabel("2026-11-01", "en-US")).toBe("11/1");
+  });
+
+  it("gives back what is not a calendar day", () => {
+    expect(axisDayLabel("today", "en-US")).toBe("today");
   });
 });
