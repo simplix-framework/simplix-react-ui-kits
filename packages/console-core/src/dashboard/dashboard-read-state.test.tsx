@@ -3,6 +3,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 
 import { sumByCategory, sumsByKey } from "./chart-model";
+import { DashboardCard } from "./dashboard-card";
 import { DashboardReadState, dashboardReadStage } from "./dashboard-read-state";
 
 const draw = (props: Parameters<typeof DashboardReadState>[0]) => renderToStaticMarkup(createElement(DashboardReadState, props));
@@ -67,5 +68,23 @@ describe("sumsByKey", () => {
       { key: "b", value: 3 },
       { key: "d", value: 0 },
     ]);
+  });
+});
+
+describe("DashboardCard's link to its list", () => {
+  const card = (props: Partial<Parameters<typeof DashboardCard>[0]>) =>
+    renderToStaticMarkup(createElement(DashboardCard, { title: "Recent activity", children: "rows", ...props }));
+  it("draws the link at the heading's end, after the context, in one group", () => {
+    const html = card({ trailing: "8 latest", action: { label: "Open the audit log", onClick: () => {} } });
+    const group = html.indexOf('class="inline-flex');
+    expect(group).toBeGreaterThan(html.indexOf("Recent activity"));
+    expect(html.indexOf("8 latest")).toBeGreaterThan(group);
+    expect(html.indexOf("Open the audit log")).toBeGreaterThan(html.indexOf("8 latest"));
+    expect(html).toContain('data-slot="figure-action"');
+  });
+  it("draws no link and no group without one", () => {
+    const html = card({ trailing: "8 latest" });
+    expect(html).not.toContain("figure-action");
+    expect(html).not.toContain("inline-flex");
   });
 });
