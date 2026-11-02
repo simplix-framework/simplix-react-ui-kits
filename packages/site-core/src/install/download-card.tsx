@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { useId, type ReactNode } from "react";
 import { slotAttributes } from "@simplix-react/ui/design";
 
 import { SiteAction, type SiteActionSpec } from "../action/site-action";
@@ -29,7 +29,10 @@ export interface DownloadCardProps {
   readonly title: ReactNode;
   /** What it needs and what it installs. */
   readonly body: ReactNode;
-  /** The file it gives, its size and what it runs on. */
+  /**
+   * The file it gives, its size and what it runs on; while there is no file to give, the line saying
+   * so, which describes the disabled action.
+   */
   readonly file?: ReactNode;
   /** The download itself; the highlighted card's is the primary action. */
   readonly action?: SiteActionSpec;
@@ -39,14 +42,23 @@ export interface DownloadCardProps {
 
 /** One download: its title, what it needs, its file and its action. A phone draws it without file or action. */
 export function DownloadCard({ title, body, file, action, highlight = false }: DownloadCardProps) {
+  const fileId = useId();
   return (
     <section {...slotAttributes(siteDownloadStyle, { highlight })}>
       <b {...slotAttributes(siteCardTitleStyle, {})}>{title}</b>
       <p {...slotAttributes(siteCardTextStyle, {})}>{body}</p>
-      {file !== undefined ? <span {...slotAttributes(siteDownloadFileStyle, {})}>{file}</span> : null}
+      {file !== undefined ? (
+        <span {...slotAttributes(siteDownloadFileStyle, {})} id={fileId}>
+          {file}
+        </span>
+      ) : null}
       {action !== undefined ? (
         <span {...slotAttributes(siteDownloadActionStyle, {})}>
-          <SiteAction {...action} tone={action.tone ?? (highlight ? "primary" : "secondary")} />
+          <SiteAction
+            {...action}
+            describedBy={action.describedBy ?? (action.disabled === true && file !== undefined ? fileId : undefined)}
+            tone={action.tone ?? (highlight ? "primary" : "secondary")}
+          />
         </span>
       ) : null}
     </section>

@@ -28,21 +28,28 @@ export interface OfferRowProps {
   readonly about?: ReactNode;
   /** The row's one action, at its end. */
   readonly action?: SiteActionSpec;
-  /** A note across the row under it, such as why the action is not open yet. */
+  /** A note across the row under it, such as why the action is not open yet; a disabled action is described by it. */
   readonly note?: ReactNode;
 }
 
 /** An offer in one row (a team plan to come, extra credits): title, what it is, its action, and a note. */
 export function OfferRow({ title, about, action, note }: OfferRowProps) {
   const id = useId();
+  const noteId = useId();
   return (
     <section {...slotAttributes(siteOfferRowStyle, {})} aria-labelledby={id}>
       <h3 {...slotAttributes(siteOfferRowTitleStyle, {})} id={id}>
         {title}
       </h3>
       {about !== undefined ? <span {...slotAttributes(siteOfferRowAboutStyle, {})}>{about}</span> : null}
-      {action !== undefined ? <SiteAction {...action} size="sm" /> : null}
-      {note !== undefined ? <p {...slotAttributes(siteOfferRowNoteStyle, {})}>{note}</p> : null}
+      {action !== undefined ? (
+        <SiteAction {...action} describedBy={action.describedBy ?? (action.disabled === true && note !== undefined ? noteId : undefined)} size="sm" />
+      ) : null}
+      {note !== undefined ? (
+        <p {...slotAttributes(siteOfferRowNoteStyle, {})} id={noteId}>
+          {note}
+        </p>
+      ) : null}
     </section>
   );
 }

@@ -45,3 +45,21 @@ export function tabStops(html: string): MarkupTag[] {
     return focusable && tag.attributes.tabindex !== "-1" && tag.attributes.disabled === undefined;
   });
 }
+
+/**
+ * The disabled site actions refused in silence: a disabled `site-action` whose `aria-describedby` is
+ * missing or names no element of the markup. `except` lists action ids whose label already is the
+ * statement (a plan card's "Your plan").
+ */
+export function silentRefusals(html: string, except: readonly string[] = []): string[] {
+  const tags = tagsOf(html);
+  const ids = new Set(tags.map((tag) => tag.attributes.id).filter((id): id is string => id !== undefined));
+  return tags
+    .filter((tag) => tag.attributes["data-slot"] === "site-action" && tag.attributes.disabled !== undefined)
+    .filter((tag) => !except.includes(tag.attributes["data-action"] ?? ""))
+    .filter((tag) => {
+      const described = (tag.attributes["aria-describedby"] ?? "").split(/\s+/).filter(Boolean);
+      return described.length === 0 || !described.every((id) => ids.has(id));
+    })
+    .map((tag) => tag.attributes["data-action"] ?? "?");
+}

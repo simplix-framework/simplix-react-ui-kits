@@ -1,7 +1,7 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 
-import { bySlot, tabStops, unmarked } from "../testing/markup";
+import { bySlot, silentRefusals, tabStops, unmarked } from "../testing/markup";
 import { OfferRow, PriceTable, QuestionList } from "./offer-parts";
 import { FeatureList, PlanCard, PlanGrid } from "./plan-card";
 import { sitePlanGridStyle, siteQuestionListStyle, siteFeatureListStyle, siteSwitchOptionStyle } from "./pricing.style";
@@ -128,6 +128,23 @@ describe("PlanCard", () => {
     expect(bySlot(renderToStaticMarkup(<PlanCard name="Pro" price="$12" actions={actions} />), "site-plan-card-reason")).toEqual([]);
   });
 
+  it("describes every disabled action by its reason line, and an open action by nothing", () => {
+    const disabled = actions.map((action) => ({ ...action, disabled: true }));
+    const html = renderToStaticMarkup(<PlanCard name="Pro" price="$12" actions={disabled} reason="Buying opens with the checkout" />);
+    const reasonId = bySlot(html, "site-plan-card-reason")[0]?.attributes.id;
+    expect(reasonId).toBeTruthy();
+    expect(bySlot(html, "site-action").map((action) => action.attributes["aria-describedby"])).toEqual(disabled.map(() => reasonId));
+    expect(silentRefusals(html)).toEqual([]);
+    // Without the reason line the same disabled actions are refused in silence, which the reader reports.
+    expect(silentRefusals(renderToStaticMarkup(<PlanCard name="Pro" price="$12" actions={disabled} />))).toEqual(disabled.map((action) => action.id));
+    const open = renderToStaticMarkup(<PlanCard name="Pro" price="$12" actions={actions} reason="Buying opens with the checkout" />);
+    expect(bySlot(open, "site-action").map((action) => action.attributes["aria-describedby"])).toEqual(actions.map(() => undefined));
+    // The current offer's disabled action says it all in its label.
+    const current = renderToStaticMarkup(<PlanCard name="Pro" price="$12" current="Your plan" actions={disabled} reason="Buying opens with the checkout" />);
+    expect(silentRefusals(current, ["current"])).toEqual([]);
+    expect(bySlot(current, "site-action")[0]?.attributes["aria-describedby"]).toBeUndefined();
+  });
+
   it("draws no badge, unit, note or features it was not handed, and is not marked current", () => {
     const html = renderToStaticMarkup(<PlanCard name="Free" price="$0" actions={[]} />);
     for (const slot of ["site-plan-card-badge", "site-plan-card-unit", "site-plan-card-note", "site-plan-card-pitch", "site-feature-list", "site-action"]) {
@@ -167,6 +184,14 @@ describe("OfferRow", () => {
     expect(action?.name).toBe("button");
     expect(bySlot(html, "site-offer-row")[0]?.attributes["aria-labelledby"]).toBe(bySlot(html, "site-offer-row-title")[0]?.attributes.id);
     expect(unmarked(html)).toEqual([]);
+    expect(action?.attributes["aria-describedby"]).toBe(bySlot(html, "site-offer-row-note")[0]?.attributes.id);
+    expect(silentRefusals(html)).toEqual([]);
+    expect(silentRefusals(renderToStaticMarkup(<OfferRow title="Extra credits" action={{ id: "top-up", label: "Top up credits", disabled: true }} />))).toEqual(["top-up"]);
+  });
+
+  it("describes an open action by nothing, though a note stands beside it", () => {
+    const html = renderToStaticMarkup(<OfferRow title="Team" action={{ id: "notify", label: "Tell me", onSelect: () => {} }} note="Opens later this year" />);
+    expect(bySlot(html, "site-action")[0]?.attributes["aria-describedby"]).toBeUndefined();
   });
 
   it("draws an open action as a link and no note when none is handed", () => {

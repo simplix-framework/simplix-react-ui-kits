@@ -2,7 +2,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 
 import { SiteCaption, SiteChip, SiteLive, SiteSpinner } from "../page/site-bits";
-import { bySlot, tabStops, unmarked } from "../testing/markup";
+import { bySlot, silentRefusals, tabStops, unmarked } from "../testing/markup";
 import { CheckCard, checkPassed } from "./check-card";
 import { ActionLine, CopyBlock, DisclosureList, NumberedList } from "./disclosure-list";
 import { DownloadCard, DownloadGrid, NoticeCard } from "./download-card";
@@ -55,6 +55,15 @@ describe("DownloadCard and NoticeCard", () => {
     expect(bySlot(html, "site-action").map((action) => action.attributes["data-tone"])).toEqual(["primary", "secondary"]);
     expect(siteDownloadGridStyle.base).toContain("@max-page-narrow/page:grid-cols-1");
     expect(unmarked(html)).toEqual([]);
+  });
+
+  it("describes a disabled download by its file line, which says there is no file yet", () => {
+    const html = renderToStaticMarkup(<DownloadCard title="Windows" body="Windows 10 or later." file="Not available yet" action={{ id: "win", label: "Download for Windows", disabled: true }} />);
+    expect(bySlot(html, "site-action")[0]?.attributes["aria-describedby"]).toBe(bySlot(html, "site-download-file")[0]?.attributes.id);
+    expect(silentRefusals(html)).toEqual([]);
+    expect(silentRefusals(renderToStaticMarkup(<DownloadCard title="Windows" body="Windows 10 or later." action={{ id: "win", label: "Download for Windows", disabled: true }} />))).toEqual(["win"]);
+    const open = renderToStaticMarkup(<DownloadCard title="Windows" body="Windows 10 or later." file="Setup.exe · 64 MB" action={{ id: "win", label: "Download for Windows" }} />);
+    expect(bySlot(open, "site-action")[0]?.attributes["aria-describedby"]).toBeUndefined();
   });
 
   it("draws neither file nor action when a phone cannot install", () => {

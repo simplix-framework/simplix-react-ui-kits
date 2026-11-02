@@ -28,6 +28,12 @@ export interface SiteActionSpec {
   readonly pressed?: boolean;
   /** The accessible name, where the label alone repeats elsewhere on the page. */
   readonly name?: string;
+  /**
+   * The id of the line on the page that says more about the action, read after its name: a disabled
+   * action is described by the line saying why it cannot run now, so it is never refused in silence.
+   * A part that draws such a line beside its actions passes it here itself.
+   */
+  readonly describedBy?: string;
 }
 
 /** Props for {@link SiteAction}. */
@@ -44,7 +50,7 @@ export interface SiteActionProps extends SiteActionSpec {
  * action is always a disabled button: a link cannot be disabled, and one that only looks disabled
  * still navigates.
  */
-export function SiteAction({ id, label, href, onSelect, tone, disabled = false, icon, pressed, name, size, block, submit = false }: SiteActionProps) {
+export function SiteAction({ id, label, href, onSelect, tone, disabled = false, icon, pressed, name, describedBy, size, block, submit = false }: SiteActionProps) {
   const marks = slotAttributes(siteActionStyle, { tone, size, block, pad: actionPad(tone, size) });
   const content = (
     <>
@@ -54,13 +60,13 @@ export function SiteAction({ id, label, href, onSelect, tone, disabled = false, 
   );
   if (href !== undefined && !disabled && !submit && pressed === undefined) {
     return (
-      <SiteLink {...marks} data-action={id} href={href} onClick={onSelect} aria-label={name}>
+      <SiteLink {...marks} data-action={id} href={href} onClick={onSelect} aria-label={name} aria-describedby={describedBy}>
         {content}
       </SiteLink>
     );
   }
   return (
-    <button {...marks} data-action={id} type={submit ? "submit" : "button"} disabled={disabled} aria-pressed={pressed} aria-label={name} onClick={onSelect}>
+    <button {...marks} data-action={id} type={submit ? "submit" : "button"} disabled={disabled} aria-pressed={pressed} aria-label={name} aria-describedby={describedBy} onClick={onSelect}>
       {content}
     </button>
   );

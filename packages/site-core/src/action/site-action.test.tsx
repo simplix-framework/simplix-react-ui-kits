@@ -36,6 +36,14 @@ describe("SiteAction", () => {
     expect(set?.attributes["data-action"]).toBe("a");
   });
 
+  it("is described by the line it names, as a link and as a disabled button", () => {
+    const button = bySlot(renderToStaticMarkup(<SiteAction id="a" label="Top up" disabled describedBy="why" />), "site-action")[0];
+    expect(button?.attributes["aria-describedby"]).toBe("why");
+    const link = bySlot(renderToStaticMarkup(<SiteAction id="a" label="Open" href="/a" describedBy="about" />), "site-action")[0];
+    expect(link?.attributes["aria-describedby"]).toBe("about");
+    expect(bySlot(renderToStaticMarkup(<SiteAction id="a" label="A" />), "site-action")[0]?.attributes["aria-describedby"]).toBeUndefined();
+  });
+
   it("draws its icon before its label", () => {
     const html = renderToStaticMarkup(<SiteAction id="a" label="Download" icon={<svg data-slot="glyph" />} />);
     expect(html.indexOf("glyph")).toBeLessThan(html.indexOf("Download"));

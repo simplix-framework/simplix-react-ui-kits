@@ -91,7 +91,8 @@ export interface PlanCardProps {
   readonly actions?: readonly SiteActionSpec[];
   /**
    * Why the card's actions cannot run now, drawn under them, such as an offer that cannot be bought
-   * before the checkout opens. Give it with every disabled action, so no action is refused in silence.
+   * before the checkout opens. Give it with every disabled action, so no action is refused in silence:
+   * each disabled action is described by it.
    */
   readonly reason?: ReactNode;
 }
@@ -102,7 +103,9 @@ export interface PlanCardProps {
  */
 export function PlanCard({ name, price, unit, note, pitch, detail, features, highlight, current, actions = [], reason }: PlanCardProps) {
   const id = useId();
+  const reasonId = useId();
   const isCurrent = current !== undefined;
+  const hasReason = reason !== undefined && !isCurrent;
   return (
     <section {...slotAttributes(sitePlanCardStyle, { highlight: highlight !== undefined })} aria-labelledby={id} data-current={isCurrent ? "true" : undefined}>
       {highlight !== undefined ? <span {...slotAttributes(sitePlanCardBadgeStyle, {})}>{highlight}</span> : null}
@@ -122,10 +125,14 @@ export function PlanCard({ name, price, unit, note, pitch, detail, features, hig
         {isCurrent ? (
           <SiteAction id="current" label={current} disabled block />
         ) : (
-          actions.map((action) => <SiteAction key={action.id} {...action} block />)
+          actions.map((action) => <SiteAction key={action.id} {...action} describedBy={action.describedBy ?? (action.disabled === true && hasReason ? reasonId : undefined)} block />)
         )}
       </div>
-      {reason !== undefined && !isCurrent ? <p {...slotAttributes(sitePlanCardReasonStyle, {})}>{reason}</p> : null}
+      {hasReason ? (
+        <p {...slotAttributes(sitePlanCardReasonStyle, {})} id={reasonId}>
+          {reason}
+        </p>
+      ) : null}
     </section>
   );
 }
