@@ -40,20 +40,22 @@ export const paletteStyle = defineSlotStyle({
 });
 
 /**
- * The palette's field. The field is where the keys go for as long as the palette stands open, so it
- * carries the focus ring, drawn inside its box because the panel clips at its edge.
+ * The palette's header row: the framework's search row (glyph, field) and the Esc keycap after it,
+ * one row with one bottom rule. The field draws no border and no ring of its own: it holds the
+ * keys for as long as the palette stands open, so the open panel and the caret already say where
+ * focus is, and a box around the field inside the panel reads as a second border.
  */
 export const paletteFieldStyle = defineSlotStyle({
   slot: "console-palette-field",
-  base: "[&_input]:focus-visible:outline-none [&_input]:focus-visible:shadow-[var(--focus-halo-inset)]",
+  base: "gap-3 border-b border-[var(--border)] pr-4 [&_[cmdk-input-wrapper]]:min-w-0 [&_[cmdk-input-wrapper]]:flex-1 [&_[cmdk-input-wrapper]]:border-b-0 [&_input]:outline-none [&_input]:shadow-none",
   variants: {},
   defaultVariants: {},
 });
 
-/** The Esc keycap at the end of the palette's field, which says how to put it away. */
+/** The Esc keycap at the end of the palette's header row, which says how to put it away. */
 export const paletteEscStyle = defineSlotStyle({
   slot: "console-palette-esc",
-  base: "inset-y-0 right-4",
+  base: "",
   variants: {},
   defaultVariants: {},
 });

@@ -1178,7 +1178,10 @@
     @apply border-[var(--border)] bg-transparent;
   }
   [data-slot="console-palette-esc"][data-slot][data-s-console-palette-esc] {
-    @apply inset-y-0 right-4;
+    @apply right-4;
+  }
+  [data-slot="console-palette-field"][data-slot][data-s-console-palette-field] {
+    @apply gap-3 border-b border-[var(--border)] pr-4;
   }
   [data-slot="console-palette-foot"][data-slot][data-s-console-palette-foot] {
     @apply border-t text-muted-foreground gap-4 border-[var(--border)] px-3.5 py-2 text-(length:--fs-badge) leading-(--lh-badge);
@@ -1858,7 +1861,7 @@
     @apply focus-visible:outline-none focus-visible:shadow-[var(--focus-halo)] max-[1281px]:w-8 max-[1281px]:justify-center max-[1281px]:pl-0 max-[1281px]:pr-0 max-[1281px]:[&>kbd]:!hidden max-[1281px]:[&>span]:!hidden hover:border-muted-foreground hover:bg-[var(--surface-2)] max-[1441px]:w-50;
   }
   :where([data-slot="console-palette-field"])[data-s-console-palette-field] {
-    @apply [&_input]:focus-visible:outline-none [&_input]:focus-visible:shadow-[var(--focus-halo-inset)];
+    @apply [&_[cmdk-input-wrapper]]:min-w-0 [&_[cmdk-input-wrapper]]:flex-1 [&_[cmdk-input-wrapper]]:border-b-0 [&_input]:outline-none [&_input]:shadow-none;
   }
   :where([data-slot="console-content-column"])[data-s-console-content-column] {
     @apply [&_[data-slot=console-record-list]_[data-slot=crud-list-view][data-grid=false]_[data-slot=crud-card]]:rounded-none [&_[data-slot=console-record-list]_[data-slot=crud-list-view][data-grid=false]_[data-slot=crud-card]]:border-0 [&_[data-slot=console-record-list]_[data-slot=crud-list-view][data-grid=false]_[data-slot=crud-card]]:border-b [&_[data-slot=console-record-list]_[data-slot=crud-list-view][data-grid=false]_[data-slot=crud-card]]:shadow-none [&_[data-slot=console-record-list]_[data-slot=crud-list-view][data-grid=false]_[data-slot=crud-card]:last-child]:border-b-0 [&_[data-slot=console-record-list]_[data-slot=crud-list-view][data-grid=false]]:p-0 [&_[data-slot=console-record-list]_[data-slot=crud-list-view][data-grid=false]>[data-slot=stack]]:gap-0 [&_[data-slot=crud-list-detail-detail]_[data-slot=section-shell]]:rounded-none [&_[data-slot=crud-list-detail-detail]_[data-slot=section-shell]]:border-0 [&_[data-slot=section-shell]_[data-slot=table-card-frame]]:rounded-none [&_[data-slot=section-shell]_[data-slot=table-card-frame]]:border-x-0 [&_[data-slot=crud-list-detail-detail]_[data-slot=empty-state]]:border-0 [&_[data-slot=crud-list-detail-detail]_[data-slot=empty-state]]:bg-transparent [&_[data-slot=console-record-list]_[data-slot=empty-state]]:border-0 [&_[data-slot=console-record-list]_[data-slot=empty-state]]:bg-transparent [&_[data-slot=crud-list-detail-detail]_[data-slot=table-card-frame]]:rounded-none [&_[data-slot=crud-list-detail-detail]_[data-slot=table-card-frame]]:border-x-0 [&_[data-slot=crud-list-detail-detail]_[data-slot=console-matrix-frame]]:rounded-none [&_[data-slot=crud-list-detail-detail]_[data-slot=console-matrix-frame]]:border-x-0 [&_[data-slot=crud-list-detail-detail]_[data-slot=console-record-list]]:rounded-none [&_[data-slot=crud-list-detail-detail]_[data-slot=console-record-list]]:border-x-0 max-[900px]:px-5 max-[900px]:pt-5;

@@ -334,14 +334,14 @@ export function ConsoleCommandPalette({ open, onOpenChange, commands, records, r
       >
         <DialogTitle className="sr-only">{t("palette.title")}</DialogTitle>
         <Command shouldFilter={false} loop value={selected} onValueChange={setSelected} onKeyDown={onKeyDown}>
-          <div className="relative" {...slotAttributes(paletteFieldStyle, {})}>
+          <div className="flex items-center" {...slotAttributes(paletteFieldStyle, {})}>
             <CommandInput
               value={query}
               onValueChange={setQuery}
               placeholder={t(searching ? "palette.placeholderRecords" : "palette.placeholder")}
               aria-label={t(searching ? "palette.placeholderRecords" : "palette.placeholder")}
             />
-            <span aria-hidden className="pointer-events-none absolute flex items-center" {...slotAttributes(paletteEscStyle, {})}>
+            <span aria-hidden className="flex shrink-0 items-center" {...slotAttributes(paletteEscStyle, {})}>
               <ConsoleKeyCap>Esc</ConsoleKeyCap>
             </span>
           </div>
