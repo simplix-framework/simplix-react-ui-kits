@@ -7,6 +7,7 @@ import { avatarInitial, menuKeyTarget, SiteBar, type SiteBarProps } from "./site
 import { siteBarAccountNameStyle, siteBarMenuStyle, siteBarMoreStyle, siteBarNavStyle, siteBarStyle, siteFooterStyle, siteWindowStyle } from "./site-shell.style";
 import { SiteFooter } from "./site-footer";
 import { SiteBand, SiteWindow } from "./site-window";
+import { followSystemScheme, type SchemeQuery } from "./site-scheme";
 
 const links: SiteBarProps["links"] = [
   { key: "intro", label: "Product", href: "/" },
@@ -118,6 +119,19 @@ describe("SiteBar", () => {
     expect(bySlot(renderToStaticMarkup(bar()), "site-bar-menu")).toEqual([]);
   });
 
+  it("draws a page that is not open yet as plain text in its place, reached by no Tab", () => {
+    const pending = links.map((link) => (link.key === "download" || link.key === "help" ? { ...link, href: undefined } : link));
+    const html = renderToStaticMarkup(bar({ links: pending }));
+    const pageLinks = bySlot(html, "site-bar-link");
+    expect(pageLinks.map((link) => link.name)).toEqual(["a", "a", "span", "span"]);
+    expect(pageLinks.map((link) => link.attributes["data-pending"])).toEqual(["false", "false", "true", "true"]);
+    expect(pageLinks.slice(2).every((link) => link.attributes.href === undefined && link.attributes["aria-current"] === undefined)).toBe(true);
+    expect(html).toContain(">Download</span>");
+    const stops = tabStops(html).map((tag) => tag.attributes["data-slot"]);
+    expect(stops).toEqual(["site-bar-brand", "site-bar-link", "site-bar-link", "site-action", "site-bar-more"]);
+    expect(unmarked(html)).toEqual([]);
+  });
+
   it("continues a dark band into the bar", () => {
     const dark = bySlot(renderToStaticMarkup(bar({ tone: "dark" })), "site-bar")[0];
     expect(dark?.attributes["data-band"]).toBe("dark");
@@ -174,8 +188,65 @@ describe("SiteFooter", () => {
     expect(bySlot(html, "site-footer-links")[0]?.attributes["aria-label"]).toBe("Legal");
   });
 
+  it("draws a legal page that is not open yet as plain text in its place, reached by no Tab", () => {
+    const html = renderToStaticMarkup(
+      <SiteFooter
+        owner="©"
+        linksLabel="Legal"
+        links={[
+          { key: "terms", label: "Terms of use" },
+          { key: "privacy", label: "Privacy policy", emphasis: true },
+          { key: "business", label: "Business information", href: "/business" },
+        ]}
+      />,
+    );
+    const legal = bySlot(html, "site-footer-link");
+    expect(legal.map((link) => [link.name, link.attributes["data-pending"], link.attributes["data-emphasis"]])).toEqual([
+      ["span", "true", "false"],
+      ["span", "true", "true"],
+      ["a", "false", "false"],
+    ]);
+    expect(tabStops(html).map((tag) => tag.attributes.href)).toEqual(["/business"]);
+  });
+
   it("draws no language place when the product hands no picker", () => {
     const html = renderToStaticMarkup(<SiteFooter owner="©" links={[]} linksLabel="Legal" />);
     expect(bySlot(html, "site-footer-language")).toEqual([]);
+  });
+});
+
+describe("followSystemScheme", () => {
+  function fakes(matches: boolean) {
+    const listeners = new Set<(event: { readonly matches: boolean }) => void>();
+    const query: SchemeQuery = {
+      matches,
+      addEventListener: (_type, listener) => listeners.add(listener),
+      removeEventListener: (_type, listener) => listeners.delete(listener),
+    };
+    const classes = new Set<string>();
+    const target = { classList: { toggle: (token: string, force: boolean) => (force ? classes.add(token) : classes.delete(token), force) } };
+    return { query, target, classes, listeners, change: (dark: boolean) => listeners.forEach((listener) => listener({ matches: dark })) };
+  }
+
+  it("draws the dark scheme exactly while the system asks for it, and follows a later change", () => {
+    const dark = fakes(true);
+    followSystemScheme(dark.query, dark.target);
+    expect(dark.classes.has("dark")).toBe(true);
+    dark.change(false);
+    expect(dark.classes.has("dark")).toBe(false);
+    const light = fakes(false);
+    light.classes.add("dark");
+    followSystemScheme(light.query, light.target);
+    expect(light.classes.has("dark")).toBe(false);
+  });
+
+  it("stops following once the returned function runs", () => {
+    const scheme = fakes(false);
+    const stop = followSystemScheme(scheme.query, scheme.target);
+    expect(scheme.listeners.size).toBe(1);
+    stop();
+    expect(scheme.listeners.size).toBe(0);
+    scheme.change(true);
+    expect(scheme.classes.has("dark")).toBe(false);
   });
 });

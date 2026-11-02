@@ -114,6 +114,14 @@ export const sitePlanCardActionsStyle = defineSlotStyle({
   defaultVariants: {},
 });
 
+/** Why a plan card's actions cannot run now, under them in the card's muted caption. */
+export const sitePlanCardReasonStyle = defineSlotStyle({
+  slot: "site-plan-card-reason",
+  base: "m-0 text-(length:--site-fs-caption) leading-(--site-lh-caption) font-(--site-fw-caption) text-(--site-ink-muted)",
+  variants: {},
+  defaultVariants: {},
+});
+
 /** What an offer includes, a mark before each line; a line it leaves out is drawn faint. */
 export const siteFeatureListStyle = defineSlotStyle({
   slot: "site-feature-list",

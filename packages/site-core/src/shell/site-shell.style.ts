@@ -64,7 +64,11 @@ export const siteBarNavStyle = defineSlotStyle({
   defaultVariants: {},
 });
 
-/** One page link of the bar; the current page is drawn in full ink and weight, the others recede. */
+/**
+ * One page link of the bar; the current page is drawn in full ink and weight, the others recede. A
+ * page that is not open yet (`pending`) is the same words as plain text: it keeps receding under the
+ * pointer and offers no press.
+ */
 export const siteBarLinkStyle = defineSlotStyle({
   slot: "site-bar-link",
   base:
@@ -74,8 +78,12 @@ export const siteBarLinkStyle = defineSlotStyle({
       true: "font-(--site-fw-strong)",
       false: "opacity-(--site-recede) hover:opacity-100",
     },
+    pending: {
+      true: "cursor-default hover:opacity-(--site-recede)",
+      false: "",
+    },
   },
-  defaultVariants: { current: false },
+  defaultVariants: { current: false, pending: false },
 });
 
 /** The room that pushes what follows it to the end of a row: the bar's action, the footer's links. */
@@ -153,8 +161,13 @@ export const siteBarMenuItemStyle = defineSlotStyle({
       true: "font-(--site-fw-strong)",
       false: "",
     },
+    // A page not open yet: plain text in the menu, faint, with no ground under the pointer.
+    pending: {
+      true: "cursor-default opacity-(--site-recede) hover:bg-transparent",
+      false: "",
+    },
   },
-  defaultVariants: { current: false },
+  defaultVariants: { current: false, pending: false },
 });
 
 /** The site footer: the owner, then the legal links and the language picker at the end. */
@@ -182,7 +195,11 @@ export const siteFooterLinksStyle = defineSlotStyle({
   defaultVariants: {},
 });
 
-/** One legal link; `emphasis` draws the one a law asks to stand out (a privacy policy) in full ink. */
+/**
+ * One legal link; `emphasis` draws the one a law asks to stand out (a privacy policy) in full ink. A
+ * page that is not open yet (`pending`) is the same words as plain text, with no underline under the
+ * pointer and no press.
+ */
 export const siteFooterLinkStyle = defineSlotStyle({
   slot: "site-footer-link",
   base:
@@ -192,8 +209,12 @@ export const siteFooterLinkStyle = defineSlotStyle({
       true: "font-(--site-fw-strong) text-(--site-ink)",
       false: "",
     },
+    pending: {
+      true: "cursor-default hover:no-underline",
+      false: "",
+    },
   },
-  defaultVariants: { emphasis: false },
+  defaultVariants: { emphasis: false, pending: false },
 });
 
 /** The place the product's language picker stands, at the footer's end. */

@@ -14,6 +14,7 @@ import {
   sitePlanCardNoteStyle,
   sitePlanCardPitchStyle,
   sitePlanCardPriceStyle,
+  sitePlanCardReasonStyle,
   sitePlanCardStyle,
   sitePlanCardUnitStyle,
   sitePlanGridStyle,
@@ -88,13 +89,18 @@ export interface PlanCardProps {
   readonly current?: ReactNode;
   /** The card's actions, the strongest first; ignored on the current offer. */
   readonly actions?: readonly SiteActionSpec[];
+  /**
+   * Why the card's actions cannot run now, drawn under them, such as an offer that cannot be bought
+   * before the checkout opens. Give it with every disabled action, so no action is refused in silence.
+   */
+  readonly reason?: ReactNode;
 }
 
 /**
  * One offer: its name, price, terms and what it includes, with its actions at the card's foot so
  * the actions of every card in a row line up.
  */
-export function PlanCard({ name, price, unit, note, pitch, detail, features, highlight, current, actions = [] }: PlanCardProps) {
+export function PlanCard({ name, price, unit, note, pitch, detail, features, highlight, current, actions = [], reason }: PlanCardProps) {
   const id = useId();
   const isCurrent = current !== undefined;
   return (
@@ -119,6 +125,7 @@ export function PlanCard({ name, price, unit, note, pitch, detail, features, hig
           actions.map((action) => <SiteAction key={action.id} {...action} block />)
         )}
       </div>
+      {reason !== undefined && !isCurrent ? <p {...slotAttributes(sitePlanCardReasonStyle, {})}>{reason}</p> : null}
     </section>
   );
 }

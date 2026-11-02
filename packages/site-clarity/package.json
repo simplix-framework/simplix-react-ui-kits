@@ -54,6 +54,7 @@
   "files": [
     "dist",
     "src",
+    "templates",
     "regions.json",
     "measure.json",
     "measure",
@@ -81,6 +82,7 @@
   },
   "devDependencies": {
     "@simplix-react-ui-kits/console-core": "workspace:*",
+    "@tanstack/react-router": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "oxlint": "catalog:",
@@ -89,5 +91,8 @@
     "tsup": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
+  },
+  "simplix": {
+    "templates": "templates"
   }
 }

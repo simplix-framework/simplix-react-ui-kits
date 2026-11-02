@@ -23,7 +23,11 @@ export interface SiteBarLink {
   /** A stable name among the bar's links. */
   readonly key: string;
   readonly label: ReactNode;
-  readonly href: string;
+  /**
+   * The page's address. Absent while the page is not open yet: the link is drawn as plain text in
+   * its place, so the bar keeps its shape and no link leads nowhere.
+   */
+  readonly href?: string;
   /** The page shown is this one, or one under it (checkout under pricing). */
   readonly current?: boolean;
   /** Runs on a press, before the link's own navigation. */
@@ -82,17 +86,23 @@ export function SiteBar({ brand, brandHref, brandLabel, onBrandSelect, links, na
         {brand}
       </SiteLink>
       <nav {...slotAttributes(siteBarNavStyle, {})} aria-label={navLabel}>
-        {links.map((link) => (
-          <SiteLink
-            key={link.key}
-            {...slotAttributes(siteBarLinkStyle, { current: link.current === true })}
-            href={link.href}
-            aria-current={link.current ? "page" : undefined}
-            onClick={link.onSelect}
-          >
-            {link.label}
-          </SiteLink>
-        ))}
+        {links.map((link) =>
+          link.href === undefined ? (
+            <span key={link.key} {...slotAttributes(siteBarLinkStyle, { current: link.current === true, pending: true })}>
+              {link.label}
+            </span>
+          ) : (
+            <SiteLink
+              key={link.key}
+              {...slotAttributes(siteBarLinkStyle, { current: link.current === true })}
+              href={link.href}
+              aria-current={link.current ? "page" : undefined}
+              onClick={link.onSelect}
+            >
+              {link.label}
+            </SiteLink>
+          ),
+        )}
       </nav>
       <span {...slotAttributes(siteSpacerStyle, {})} aria-hidden="true" />
       {account ? (
@@ -150,7 +160,7 @@ function SiteBarMore({ label, links }: { label: string; links: readonly SiteBarL
     return () => document.removeEventListener("pointerdown", away);
   }, [open]);
 
-  const items = () => [...(menu.current?.querySelectorAll<HTMLElement>("[data-slot=site-bar-menu-item]") ?? [])];
+  const items = () => [...(menu.current?.querySelectorAll<HTMLElement>("a[data-slot=site-bar-menu-item]") ?? [])];
   const onKeyDown = (event: KeyboardEvent<HTMLElement>) => {
     const list = items();
     const index = list.indexOf(document.activeElement as HTMLElement);
@@ -186,20 +196,27 @@ function SiteBarMore({ label, links }: { label: string; links: readonly SiteBarL
       </button>
       {open ? (
         <div {...slotAttributes(siteBarMenuStyle, {})} ref={menu} id={id} onKeyDown={onKeyDown}>
-          {links.map((link) => (
-            <SiteLink
-              key={link.key}
-              {...slotAttributes(siteBarMenuItemStyle, { current: link.current === true })}
-              href={link.href}
-              aria-current={link.current ? "page" : undefined}
-              onClick={(event) => {
-                link.onSelect?.(event);
-                setOpen(false);
-              }}
-            >
-              {link.label}
-            </SiteLink>
-          ))}
+          {links.map((link) =>
+            link.href === undefined ? (
+              // Not a menu item: the arrows walk only the pages that open.
+              <span key={link.key} {...slotAttributes(siteBarMenuItemStyle, { current: link.current === true, pending: true })}>
+                {link.label}
+              </span>
+            ) : (
+              <SiteLink
+                key={link.key}
+                {...slotAttributes(siteBarMenuItemStyle, { current: link.current === true })}
+                href={link.href}
+                aria-current={link.current ? "page" : undefined}
+                onClick={(event) => {
+                  link.onSelect?.(event);
+                  setOpen(false);
+                }}
+              >
+                {link.label}
+              </SiteLink>
+            ),
+          )}
         </div>
       ) : null}
     </>

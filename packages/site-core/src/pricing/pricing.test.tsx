@@ -100,6 +100,19 @@ describe("PlanCard", () => {
     expect(tabStops(html)).toEqual([]);
   });
 
+  it("says under its actions why they cannot run now, and draws no reason on the current offer", () => {
+    const disabled = actions.map((action) => ({ ...action, disabled: true }));
+    const html = renderToStaticMarkup(<PlanCard name="Pro" price="$12" actions={disabled} reason="Buying opens with the checkout" />);
+    expect(html.indexOf('data-slot="site-plan-card-actions"')).toBeLessThan(html.indexOf('data-slot="site-plan-card-reason"'));
+    expect(bySlot(html, "site-plan-card-reason")).toHaveLength(1);
+    expect(html).toContain(">Buying opens with the checkout</p>");
+    expect(tabStops(html)).toEqual([]);
+    expect(unmarked(html)).toEqual([]);
+    const current = renderToStaticMarkup(<PlanCard name="Pro" price="$12" current="Your plan" actions={disabled} reason="Buying opens with the checkout" />);
+    expect(bySlot(current, "site-plan-card-reason")).toEqual([]);
+    expect(bySlot(renderToStaticMarkup(<PlanCard name="Pro" price="$12" actions={actions} />), "site-plan-card-reason")).toEqual([]);
+  });
+
   it("draws no badge, unit, note or features it was not handed, and is not marked current", () => {
     const html = renderToStaticMarkup(<PlanCard name="Free" price="$0" actions={[]} />);
     for (const slot of ["site-plan-card-badge", "site-plan-card-unit", "site-plan-card-note", "site-plan-card-pitch", "site-feature-list", "site-action"]) {

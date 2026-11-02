@@ -1,0 +1,108 @@
+/**
+ * @simplix-generated page/site-app-shell
+ *
+ * The site's window, laid down once from the site-clarity kit's `app-shell.hbs` and owned by the app
+ * from then on: the bar with the site's pages and the visitor's or the account's action, the routed
+ * page, and the footer with the owner and the legal links. The brand, the pages, the actions, the
+ * legal links, the language picker and what wraps the routed pages are this file's own, in
+ * `useShellParts` below, and are customised here. A page whose route does not exist yet is listed
+ * without an address and is drawn as plain text, so no link leads nowhere. The strings come from the
+ * `{{namespace}}` catalog (English and Korean in the same change): `shell.title`, `shell.home`,
+ * `shell.navLabel`, `shell.menu`, `shell.legal`, `shell.owner` and the label of each link.
+ *
+ * <p>The colour scheme follows the reader's system: the site draws no control of its own for it.
+ */
+import { Outlet, useRouter, useRouterState } from "@tanstack/react-router";
+import type { MouseEvent, ReactNode } from "react";
+import { useTranslation } from "@simplix-react/i18n/react";
+import type { SiteActionSpec } from "@simplix-react-ui-kits/site-clarity/action";
+import type { SiteLinkProps } from "@simplix-react-ui-kits/site-clarity/link";
+import { SiteBar, SiteFooter, SiteWindow, useSystemScheme, type SiteBarAccount, type SiteBarLink, type SiteFooterLink } from "@simplix-react-ui-kits/site-clarity/shell";
+
+export interface ShellParts {
+  /** The product's mark at the bar's start, inside the link home. */
+  readonly brand: ReactNode;
+  /** The site's pages in reading order; one without an address is a page not open yet. */
+  readonly links: readonly SiteBarLink[];
+  /** The visitor's action at the bar's end, such as starting for free. */
+  readonly action?: SiteActionSpec;
+  /** The signed-in account at the bar's end, drawn in place of the visitor's action. */
+  readonly account?: SiteBarAccount;
+  /** The legal pages in the footer; one without an address is a page not open yet. */
+  readonly legal: readonly SiteFooterLink[];
+  /** The language picker at the footer's end. */
+  readonly language?: ReactNode;
+  /** The routes drawn without the window (signing in and the pages around it). */
+  readonly isOutsideTheShell: (route: string) => boolean;
+  /** Providers the routed page needs inside the window. */
+  readonly wrap: (page: ReactNode) => ReactNode;
+}
+
+/** The shell's parts for the route on screen, which the bar reads to mark where the reader stands. */
+export function useShellParts(route: string): ShellParts {
+  const { t } = useTranslation("{{namespace}}");
+  return {
+    brand: t("shell.title"),
+    links: [{ key: "home", label: t("shell.home"), href: "/", current: route === "/" }],
+    legal: [],
+    isOutsideTheShell: () => false,
+    wrap: (page) => page,
+  };
+}
+
+/** A press that opens the link in place: the main button with no key that asks for a new tab or window. */
+function isPlainPress(event: MouseEvent<HTMLAnchorElement>): boolean {
+  return event.button === 0 && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey;
+}
+
+/**
+ * The link every site part draws: an anchor with the real address, so it opens in a new tab too,
+ * whose plain press moves the router instead of loading the page again.
+ */
+function RouterLink({ href, onClick, ...anchor }: SiteLinkProps) {
+  const router = useRouter();
+  return (
+    <a
+      {...anchor}
+      href={href}
+      onClick={(event) => {
+        onClick?.(event);
+        if (event.defaultPrevented || !isPlainPress(event) || anchor.target !== undefined) return;
+        event.preventDefault();
+        void router.navigate({ href });
+      }}
+    />
+  );
+}
+
+/** Picks the shell a page wears: none for the routes drawn outside it, the site window otherwise. */
+export function RootLayout() {
+  useSystemScheme();
+  const { t } = useTranslation("{{namespace}}");
+  // What the outlet renders, not where the router is heading: the previous route stays on screen
+  // until the next one loads.
+  const route = useRouterState({ select: (s) => s.matches[s.matches.length - 1]?.pathname ?? s.location.pathname });
+  const parts = useShellParts(route);
+  if (parts.isOutsideTheShell(route)) return <Outlet />;
+  return (
+    <SiteWindow
+      page={route}
+      linkComponent={RouterLink}
+      bar={
+        <SiteBar
+          brand={parts.brand}
+          brandHref="/"
+          brandLabel={t("shell.home")}
+          links={parts.links}
+          navLabel={t("shell.navLabel")}
+          moreLabel={t("shell.menu")}
+          action={parts.action}
+          account={parts.account}
+        />
+      }
+      footer={<SiteFooter owner={t("shell.owner")} links={parts.legal} linksLabel={t("shell.legal")} language={parts.language} />}
+    >
+      {parts.wrap(<Outlet />)}
+    </SiteWindow>
+  );
+}
