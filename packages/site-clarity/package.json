@@ -38,6 +38,7 @@
     "./styles/*": "./src/styles/*",
     "./regions.json": "./regions.json",
     "./measure.json": "./measure.json",
+    "./measure/*": "./measure/*",
     "./scripts/site-regions-rendered.mjs": "./scripts/site-regions-rendered.mjs"
   },
   "files": [
@@ -45,6 +46,7 @@
     "src",
     "regions.json",
     "measure.json",
+    "measure",
     "scripts"
   ],
   "scripts": {

@@ -38,11 +38,14 @@ export function probe(input) {
     return layers.length ? layers.join(", ") : "none";
   };
   // Layout sizes, not painted ones: a reference drawn inside a scaled frame (a phone mock-up) paints
-  // smaller than it lays out, and its computed type is the unscaled value. An SVG has no offset box.
+  // smaller than it lays out, and its computed type is the unscaled value. An SVG element has no
+  // offset box, so its painted box is divided by the scale the root is painted at.
+  const rootBox = root.getBoundingClientRect();
+  const scale = root instanceof HTMLElement && root.offsetWidth > 0 && rootBox.width > 0 ? rootBox.width / root.offsetWidth : 1;
   const size = (el) => {
     if (el instanceof HTMLElement) return { width: el.offsetWidth, height: el.offsetHeight };
     const box = el.getBoundingClientRect();
-    return { width: box.width, height: box.height };
+    return { width: box.width / scale, height: box.height / scale };
   };
   const look = (el) => {
     if (!el) return null;
@@ -66,6 +69,8 @@ export function probe(input) {
       padding: s.padding,
       gap: s.display.includes("flex") || s.display.includes("grid") ? s.gap : "normal",
       opacity: s.opacity,
+      // A shape inside a drawing (a wave's bar) is painted by its fill; other elements have none.
+      ...(typeof SVGGeometryElement !== "undefined" && el instanceof SVGGeometryElement ? { fill: s.fill } : {}),
       maxWidth: s.maxWidth,
       columns: s.display.includes("grid") ? s.gridTemplateColumns.split(" ").filter(Boolean).length : 0,
       height: px(box.height),
@@ -136,17 +141,26 @@ export function judge(signature, type, c = contract) {
 }
 
 /** Properties compared exactly: colours, type, borders, radii, shadows, spacing. */
-const EXACT = ["family", "size", "weight", "lineHeight", "letterSpacing", "color", "background", "borderTop", "borderRight", "borderBottom", "borderLeft", "radius", "shadow", "padding", "gap", "opacity", "maxWidth", "columns"];
-/** Where a width is the layout's, not the text's: the frame, a region's own box, the cards and the switch track. */
-const WIDTH_PARTS = new Set(["frame.window", "frame.main", "frame.column", "plans.card", "plans.highlighted", "offers.root", "priceTable.root", "questions.root", "questions.list", "plans.root", "pageHead.root", "switches.root", "bar.root", "footer.root"]);
+const EXACT = ["family", "size", "weight", "lineHeight", "letterSpacing", "color", "background", "borderTop", "borderRight", "borderBottom", "borderLeft", "radius", "shadow", "padding", "gap", "opacity", "fill", "maxWidth", "columns"];
+/**
+ * The parts whose width the layout decides, as `<region>.<part>` keys: the frame always, and per
+ * region the `widths` regions.json lists (`root` names the region's own box). A width the text
+ * decides (a label, a link) is left alone.
+ */
+export function widthParts(c = contract) {
+  const parts = new Set(["frame.window", "frame.main", "frame.column"]);
+  for (const [key, region] of Object.entries(c.regions)) for (const part of region.widths ?? []) parts.add(`${key}.${part}`);
+  return parts;
+}
 
 /**
  * The differences between two signatures of the same page, as strings with both values: the region
  * order, a region or part one draws and the other does not, and every property that differs. Colours,
  * type, borders, radii, shadows and spacing must be equal; a height, and a width where the layout and
- * not the text decides it, may differ by `tolerance` pixels.
+ * not the text decides it (`widthParts`), may differ by `tolerance` pixels.
  */
-export function compare(reference, build, { tolerance = 1 } = {}) {
+export function compare(reference, build, { tolerance = 1, contract: c = contract } = {}) {
+  const sized = widthParts(c);
   if (reference.missing || build.missing) return [`nothing to compare: ${reference.missing ? "reference" : "build"} has no root ${reference.missing ?? build.missing}`];
   const problems = [];
   if (reference.order.join(">") !== build.order.join(">")) problems.push(`order: reference ${reference.order.join(" > ")} | build ${build.order.join(" > ")}`);
@@ -158,7 +172,7 @@ export function compare(reference, build, { tolerance = 1 } = {}) {
     }
     for (const prop of EXACT) if (String(a[prop]) !== String(b[prop])) problems.push(`${where} ${prop}: reference ${a[prop]} | build ${b[prop]}`);
     if (Math.abs(a.height - b.height) > tolerance) problems.push(`${where} height: reference ${a.height} | build ${b.height}`);
-    if (WIDTH_PARTS.has(where) && Math.abs(a.width - b.width) > tolerance) problems.push(`${where} width: reference ${a.width} | build ${b.width}`);
+    if (sized.has(where) && Math.abs(a.width - b.width) > tolerance) problems.push(`${where} width: reference ${a.width} | build ${b.width}`);
   };
   for (const key of new Set([...Object.keys(reference.frame), ...Object.keys(build.frame)])) looks(`frame.${key}`, reference.frame[key], build.frame[key]);
   for (const key of new Set([...Object.keys(reference.regions), ...Object.keys(build.regions)])) {

@@ -1,5 +1,5 @@
 {
-  "$comment": "The site page region contract. Per page type: the regions in drawing order, the part that fills each and the prop that feeds it (slot), the DOM marks (data-slot) that place an element in it, the named parts inside it a rendered check measures, and the control kinds it may hold. A type is `ready` when the kit draws every region it lists, or `planned` with the reason it is not yet. scripts/check-site-regions.mjs holds the contract to site-core's declared slots; scripts/site-regions-rendered.mjs reads a painted page against it.",
+  "$comment": "The site page region contract. Per page type: the regions in drawing order, the part that fills each and the prop that feeds it (slot), the DOM marks (data-slot) that place an element in it, the named parts inside it a rendered check measures, the control kinds it may hold, the parts whose width the layout decides (widths: \"root\" or a part name; a rendered compare holds those widths to 1px and leaves text-driven ones alone) and whether the region draws a card (carded: a root or part rounded with --site-radius-xl, which the site-demo selftest plants and must find). A type is `ready` when the kit draws every region it lists, or `planned` with the reason it is not yet. scripts/check-site-regions.mjs holds the contract to site-core's declared slots; scripts/site-regions-rendered.mjs reads a painted page against it.",
   "version": 1,
   "frame": {
     "$comment": "The window around every page and the column the page's regions stand in; measured on every page type, never a region of its own.",
@@ -29,7 +29,10 @@
         "action": "site-action",
         "account": "site-bar-account",
         "avatar": "site-avatar"
-      }
+      },
+      "widths": [
+        "root"
+      ]
     },
     "breadcrumb": {
       "part": "SiteBreadcrumb",
@@ -43,7 +46,8 @@
       "parts": {
         "step": "site-breadcrumb-link",
         "current": "site-breadcrumb-item[data-current=true]"
-      }
+      },
+      "widths": []
     },
     "pageHead": {
       "part": "SitePageHead",
@@ -56,7 +60,10 @@
         "eyebrow": "site-page-eyebrow",
         "title": "site-page-title",
         "lede": "site-page-lede"
-      }
+      },
+      "widths": [
+        "root"
+      ]
     },
     "switches": {
       "part": "SwitchRow",
@@ -71,7 +78,10 @@
         "track": "site-switch",
         "option": "site-switch-option[data-checked=false]",
         "chosen": "site-switch-option[data-checked=true]"
-      }
+      },
+      "widths": [
+        "root"
+      ]
     },
     "plans": {
       "part": "PlanGrid",
@@ -98,7 +108,13 @@
         "secondary": "site-action[data-tone=secondary]",
         "quiet": "site-action[data-tone=quiet]",
         "current": "site-action:disabled"
-      }
+      },
+      "widths": [
+        "root",
+        "card",
+        "highlighted"
+      ],
+      "carded": true
     },
     "offers": {
       "part": "OfferRow",
@@ -116,7 +132,11 @@
         "action": "site-action:enabled",
         "note": "site-offer-row-note",
         "disabled": "site-action:disabled"
-      }
+      },
+      "widths": [
+        "root"
+      ],
+      "carded": true
     },
     "priceTable": {
       "part": "PriceTable",
@@ -132,7 +152,11 @@
         "row": "site-price-table-row",
         "rowHead": "site-price-table-row-head",
         "cell": "site-price-table-cell"
-      }
+      },
+      "widths": [
+        "root"
+      ],
+      "carded": true
     },
     "questions": {
       "part": "QuestionList",
@@ -147,7 +171,11 @@
         "list": "site-question-list",
         "ask": "site-question-ask",
         "answer": "site-question-answer"
-      }
+      },
+      "widths": [
+        "root",
+        "list"
+      ]
     },
     "footer": {
       "part": "SiteFooter",
@@ -164,7 +192,10 @@
         "owner": "site-footer-owner",
         "link": "site-footer-link[data-emphasis=false]",
         "emphasis": "site-footer-link[data-emphasis=true]"
-      }
+      },
+      "widths": [
+        "root"
+      ]
     }
   },
   "types": {

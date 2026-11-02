@@ -179,3 +179,5 @@ export function PricingFixture({ signedIn = false, barTone = "light" }: PricingF
     </SiteWindow>
   );
 }
+
+export default PricingFixture;

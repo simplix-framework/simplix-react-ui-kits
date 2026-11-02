@@ -130,15 +130,15 @@ const reference = await other.evaluate(probe, { contract, type: "pricing", selec
 compare(reference, signature); // ["plans.card padding: reference 16px | build 12px", ...]
 ```
 
-`probe` reads, inside the page root, the regions in drawing order, the controls each holds and, for the frame, every region and every named part, the computed first font family, size, weight, line height, letter spacing, colour, background, borders, radius, shadow, padding, gap, opacity, maximum width, grid columns, and the layout height and width (offset sizes, so a reference painted inside a scaled frame reads at its layout size). `selectors` stands CSS selectors in for the marks when the reference page carries none. `compare` requires colours, type, borders, radii, shadows and spacing to be equal and a height, and a width the layout decides, to agree within 1px.
+`probe` reads, inside the page root, the regions in drawing order, the controls each holds and, for the frame, every region and every named part, the computed first font family, size, weight, line height, letter spacing, colour, background, borders, radius, shadow, padding, gap, opacity, an SVG shape's fill, maximum width, grid columns, and the layout height and width (offset sizes, so a reference painted inside a scaled frame reads at its layout size; an SVG element's painted box is divided by the scale the root is painted at). `selectors` stands CSS selectors in for the marks when the reference page carries none. `compare` requires colours, type, borders, radii, shadows, fills and spacing to be equal and a height, and a width the layout decides (`widthParts`: the frame and each region's `widths` in regions.json), to agree within 1px.
 
-`scripts/site-demo.mjs` is the kit's verification page: a pricing page composed from the parts (`tests/fixtures/pricing-page.tsx`), rendered on the server and drawn with the stylesheet compiled the way an app's Tailwind compiles it, with the product values of `tests/fixtures/theme.css`.
+`scripts/site-demo.mjs` renders the kit's verification pages: each `tests/fixtures/<name>-page.tsx` is a page composed from the parts (pricing, marketing, ...), rendered on the server and drawn with the stylesheet compiled the way an app's Tailwind compiles it, with the product values of `tests/fixtures/theme.css`. The fixtures carry the reference's words in English and Korean (`props.locale`).
 
 ```bash
-node scripts/site-demo.mjs --out page.html            # write the page
-node scripts/site-demo.mjs --probe --width 1440        # open it in ego-browser, print the regions and the verdict
-node scripts/site-demo.mjs --measure                   # hold it to every page measure.json records
-node scripts/site-demo.mjs --selftest                  # the same, plus a planted card radius that must be found
+node scripts/site-demo.mjs --out page.html --fixture marketing --props '{"locale":"ko"}'   # write a page
+node scripts/site-demo.mjs --probe --fixture pricing --width 1440                       # open it in ego-browser, print the regions and the verdict
+node scripts/site-demo.mjs --measure    # hold every page the measure files record to its recorded look
+node scripts/site-demo.mjs --selftest   # the same, plus each page with a planted card radius that must be found on its carded regions
 ```
 
-`measure.json` records the reference design's signature at each width it was measured at (1440, 1024 and 800 wide, a phone, signed in, and the bar over a dark band); `--measure` renders the page with each entry's props at its page-root width and prints every difference.
+The measure files record the reference design's signature per page: `measure.json` (pricing at 1440, 1024 and 800 wide, a phone, signed in, and the bar over a dark band) and `measure/<type>.json` for the other page types (each at 1440, 1024, 800 and a phone, in English and Korean, and in the states the parts draw). An entry names its page type, its fixture when the type's name is not it, its props, the viewport and the page-root width; `--measure` renders the fixture with those props at that width and prints every difference.

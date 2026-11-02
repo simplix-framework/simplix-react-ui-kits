@@ -39,6 +39,9 @@ export function problemsOf(contract, slots) {
     if (region.within) known(`regions.${key}.within`, region.within);
     for (const [part, mark] of Object.entries(region.parts ?? {})) known(`regions.${key}.parts.${part}`, mark);
     for (const control of region.controls ?? []) if (!["link", "button", "*"].includes(control)) known(`regions.${key}.controls`, control);
+    if (!Array.isArray(region.widths)) problems.push(`regions.${key}: lists no widths, so a compare cannot tell a layout width from a text width`);
+    for (const part of region.widths ?? []) if (part !== "root" && !(part in (region.parts ?? {}))) problems.push(`regions.${key}.widths: names "${part}", which is neither root nor one of its parts`);
+    if (region.carded !== undefined && typeof region.carded !== "boolean") problems.push(`regions.${key}.carded: is true or false`);
   }
   for (const [type, entry] of Object.entries(contract.types ?? {})) {
     if (entry.status === "ready") {
@@ -61,13 +64,13 @@ if (process.argv.includes("--selftest")) {
   const slots = new Set(["site-bar", "site-bar-link", "site-action", "site-page", "site-window", "site-main"]);
   const sound = {
     frame: { window: "site-window", main: "site-main", column: "site-page" },
-    regions: { bar: { part: "SiteBar", slot: "SiteWindow.bar", marks: ["site-bar"], controls: ["site-action", "link"], parts: { link: "site-bar-link[data-current=false]" } } },
+    regions: { bar: { part: "SiteBar", slot: "SiteWindow.bar", marks: ["site-bar"], controls: ["site-action", "link"], parts: { link: "site-bar-link[data-current=false]" }, widths: ["root", "link"], carded: false } },
     types: { pricing: { status: "ready", root: "[data-page]", regions: ["bar"], required: ["bar"] }, help: { status: "planned", reason: "next slice", plannedRegions: ["bar"] } },
   };
   const broken = {
     frame: { window: "site-window", main: "site-main", column: "site-column" },
     regions: {
-      bar: { part: "SiteBar", slot: "SiteWindow.bar", marks: ["site-topbar"], controls: ["site-chip"], parts: { link: "site-bar-anchor[data-current=false]" } },
+      bar: { part: "SiteBar", slot: "SiteWindow.bar", marks: ["site-topbar"], controls: ["site-chip"], parts: { link: "site-bar-anchor[data-current=false]" }, widths: ["root", "brand"], carded: "yes" },
       loose: { marks: [] },
     },
     types: {
@@ -85,6 +88,9 @@ if (process.argv.includes("--selftest")) {
     /regions\.bar\.parts\.link: names slot "site-bar-anchor"/,
     /regions\.loose: needs the part/,
     /regions\.loose: has no marks/,
+    /regions\.loose: lists no widths/,
+    /regions\.bar\.widths: names "brand"/,
+    /regions\.bar\.carded: is true or false/,
     /types\.pricing: a ready type names the root/,
     /types\.pricing: lists region "hero"/,
     /types\.pricing: lists a region twice/,
