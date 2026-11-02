@@ -42,3 +42,11 @@ describe.each(["auth-page.hbs", "error-page.hbs", "record-page.hbs", "dashboard-
     expect(typecheck({ [page]: source }, [page])).toEqual([]);
   });
 });
+
+describe("the generated dashboard-page.hbs and its story", () => {
+  it("lets the page be as tall as its cards, in the page and in the frame", () => {
+    const context = { NamePascal: "Thing", nameCamel: "thing", nameKebab: "thing", namespace: "common", storyTitle: "App/Thing" };
+    expect(render("dashboard-page.hbs", context)).toContain('layout: "flow"');
+    expect(render("dashboard-page.stories.hbs", context)).toContain('layout: "flow"');
+  });
+});

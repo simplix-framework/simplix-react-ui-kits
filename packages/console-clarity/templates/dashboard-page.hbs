@@ -24,6 +24,8 @@ export function {{NamePascal}}Page() {
         title: t("{{nameCamel}}.title"),
         description,
         tiles,
+        // Cards are as tall as they are, so the page scrolls rather than a box inside it.
+        layout: "flow",
         body: <DashboardColumns>{null}</DashboardColumns>,
       {{rdb}}
     />

@@ -18,7 +18,7 @@ function Screen() {
   const description = line && line !== "{{nameCamel}}.description" ? line : undefined;
   return (
     <ConsolePage
-      spec={{ldb}} title: t("{{nameCamel}}.title"), description, tiles: [], body: <DashboardColumns>{null}</DashboardColumns> {{rdb}}
+      spec={{ldb}} title: t("{{nameCamel}}.title"), description, tiles: [], layout: "flow", body: <DashboardColumns>{null}</DashboardColumns> {{rdb}}
     />
   );
 }
