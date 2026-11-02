@@ -128,6 +128,16 @@ export function {{EntityPascal}}List({ list, activeRowId, onRowClick, actions, n
       narrowing={narrowing}
       activeRowId={activeRowId}
       onRowClick={onRowClick}
+{{#if listCards}}
+      presentation="cards"
+{{/if}}
+{{#if viewToggle}}
+      viewToggle
+      viewKey="{{entity}}"
+{{/if}}
+{{#if cardTitle}}
+      cardTitle="{{cardTitle}}"
+{{/if}}
       empty={ { {{#if hasCreate}}title: words.emptyTitle, description: words.emptyDescription{{else}}title: words.emptyTitleRecorded, description: words.emptyDescriptionRecorded{{/if}} }}
 {{#unless hasKeywordSearch}}
       // The route declares no keyword field, so there is nothing for a search box to send.

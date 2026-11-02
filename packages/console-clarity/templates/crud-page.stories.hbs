@@ -225,6 +225,16 @@ function Screen({ open{{#if hasCreate}}, mode{{/if}} }: Args) {
 {{/if}}
           activeRowId={nav.selectedId}
           onRowClick={(row) => nav.showDetail(idOf(row))}
+{{#if listCards}}
+          presentation="cards"
+{{/if}}
+{{#if viewToggle}}
+          viewToggle
+          viewKey="{{entity}}"
+{{/if}}
+{{#if cardTitle}}
+          cardTitle="{{cardTitle}}"
+{{/if}}
 {{#unless hasKeywordSearch}}
           // The route declares no keyword field, so the screen draws no search box either.
           features={ { search: false } }
