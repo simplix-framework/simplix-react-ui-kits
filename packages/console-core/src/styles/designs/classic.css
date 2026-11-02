@@ -920,7 +920,7 @@
     @apply bg-success border-success;
   }
   [data-slot="console-history-line"][data-slot][data-s-console-history-line] {
-    @apply mt-1 -mb-1.5;
+    @apply absolute top-5.5 -bottom-0.5 left-1/2 w-0.5 -translate-x-1/2;
   }
   [data-slot="console-history-line"][data-skipped="true"][data-s-console-history-line] {
     @apply border-l-2 border-dashed border-muted-foreground/40 bg-transparent;

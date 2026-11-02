@@ -25,8 +25,9 @@ export const historyDotStyle = defineSlotStyle({
 /** The hairline from one dot to the next; it is dashed where the next node was skipped. */
 export const historyLineStyle = defineSlotStyle({
   slot: "console-history-line",
-  // Starts a hair under its dot and is pulled down by the next dot's top margin, so the line meets both.
-  base: "mt-1 -mb-1.5",
+  // Stands 4px under its dot (the dot is 12px high and sits 6px down) and stops 4px above the next
+  // one (which sits 6px below this row's end), so the two gaps are the same at every row height.
+  base: "absolute top-5.5 -bottom-0.5 left-1/2 w-0.5 -translate-x-1/2",
   variants: {
     skipped: {
       true: "border-l-2 border-dashed border-muted-foreground/40 bg-transparent",
