@@ -2,7 +2,7 @@ import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 
-import { sumByCategory, sumsByKey } from "./chart-model";
+import { sparseLabels, sumByCategory, sumsByKey } from "./chart-model";
 import { DashboardCard } from "./dashboard-card";
 import { DashboardReadState, dashboardReadStage } from "./dashboard-read-state";
 
@@ -86,5 +86,13 @@ describe("DashboardCard's link to its list", () => {
     const html = card({ trailing: "8 latest" });
     expect(html).not.toContain("figure-action");
     expect(html).not.toContain("inline-flex");
+  });
+});
+
+describe("sparseLabels", () => {
+  it("keeps the last label and every step-th one before it, and blanks the rest", () => {
+    expect(sparseLabels(["a", "b", "c", "d", "e", "f", "g"], 3)).toEqual(["a", "", "", "d", "", "", "g"]);
+    expect(sparseLabels(["a", "b"], 1)).toEqual(["a", "b"]);
+    expect(sparseLabels(["a", "b"], 0)).toEqual(["a", "b"]);
   });
 });

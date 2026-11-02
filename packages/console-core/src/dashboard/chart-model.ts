@@ -128,3 +128,16 @@ export function sumsByKey<R>(rows: readonly R[], keyOf: (row: R) => string | nul
   }
   return [...sums].map(([key, value]) => ({ key, value })).sort((a, b) => b.value - a.value || a.key.localeCompare(b.key));
 }
+
+/**
+ * Axis labels for a long series: every `step`th label counted back from the last kept, the rest
+ * blank, so the latest category (today) is always named and the labels never run into each other.
+ * The tooltip keeps the full label of every category.
+ *
+ * @param labels one label per category
+ * @param step how many categories one kept label stands for
+ */
+export function sparseLabels(labels: readonly string[], step: number): string[] {
+  const every = Math.max(1, Math.floor(step));
+  return labels.map((label, i) => ((labels.length - 1 - i) % every === 0 ? label : ""));
+}
