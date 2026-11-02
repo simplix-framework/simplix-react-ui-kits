@@ -23,7 +23,7 @@ import {
 } from "@simplix-react/ui";
 import { partAttributes, slotAttributes } from "@simplix-react/ui/design";
 import { BulkActionBar } from "@simplix-react/ui/interaction";
-import { CirclePause, CirclePlay, FlaskConical, Power, PowerOff, RefreshCw, RotateCcw, TimerReset } from "lucide-react";
+import { CirclePause, CirclePlay, CircleX, FlaskConical, Power, PowerOff, RefreshCw, RotateCcw, ShieldOff, TimerReset, Upload } from "lucide-react";
 
 import { useReflowFlip } from "../layout/use-reflow-flip";
 import { PACKAGE_NAMESPACE } from "./locales";
@@ -115,7 +115,7 @@ export type RecordFilter<Row> =
  * The verbs the kit names beyond the framework's action types, each with its own glyph, so a screen
  * never borrows an unrelated type (`duplicate` for a retry) to reach the icon strip.
  */
-export type RecordVerbType = "retry" | "reset" | "test" | "reprocess" | "enable" | "disable" | "suspend" | "reinstate";
+export type RecordVerbType = "retry" | "reset" | "test" | "reprocess" | "enable" | "disable" | "suspend" | "reinstate" | "cancel" | "revoke" | "upload";
 
 const VERB_GLYPHS: Record<RecordVerbType, { readonly type: ActionType; readonly icon: ReactNode }> = {
   retry: { type: "view", icon: <RotateCcw /> },
@@ -126,6 +126,11 @@ const VERB_GLYPHS: Record<RecordVerbType, { readonly type: ActionType; readonly 
   disable: { type: "view", icon: <PowerOff /> },
   suspend: { type: "view", icon: <CirclePause /> },
   reinstate: { type: "view", icon: <CirclePlay /> },
+  // `cancel` stops work that has not run; `revoke` takes access back, which the pause glyph of
+  // `suspend` does not say; `upload` sends a file the record then holds.
+  cancel: { type: "view", icon: <CircleX /> },
+  revoke: { type: "view", icon: <ShieldOff /> },
+  upload: { type: "view", icon: <Upload /> },
 };
 
 /**

@@ -19,7 +19,7 @@ describe("actionsNeedLabels", () => {
   });
 
   it("keeps the kit's own verbs in the icon strip, each with its glyph", () => {
-    expect(actionsNeedLabels([{ type: "view" }, { type: "retry" }, { type: "reset" }, { type: "test" }, { type: "reprocess" }, { type: "enable" }, { type: "disable" }, { type: "suspend" }, { type: "reinstate" }])).toBe(false);
+    expect(actionsNeedLabels([{ type: "view" }, { type: "retry" }, { type: "reset" }, { type: "test" }, { type: "reprocess" }, { type: "enable" }, { type: "disable" }, { type: "suspend" }, { type: "reinstate" }, { type: "cancel" }, { type: "revoke" }, { type: "upload" }])).toBe(false);
   });
 
   it("still labels two actions that both draw their type's icon", () => {
@@ -28,7 +28,7 @@ describe("actionsNeedLabels", () => {
 });
 
 describe("actionGlyph", () => {
-  const verbs: RecordVerbType[] = ["retry", "reset", "test", "reprocess", "enable", "disable", "suspend", "reinstate"];
+  const verbs: RecordVerbType[] = ["retry", "reset", "test", "reprocess", "enable", "disable", "suspend", "reinstate", "cancel", "revoke", "upload"];
 
   it("draws every kit verb through the view type with a glyph of its own", () => {
     const glyphs = verbs.map((verb) => actionGlyph({ type: verb }));
