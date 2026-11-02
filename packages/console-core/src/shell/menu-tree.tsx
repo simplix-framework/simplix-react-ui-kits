@@ -382,11 +382,15 @@ export function ConsoleMenuLinkRow({ icon, label, href, current }: ConsoleMenuLi
     <MenuLink
       href={href}
       className={MENU_ROW_LAYOUT}
-      attributes={slotAttributes(menuRowStyle, {
-        kind: "link",
-        strong: Boolean(current),
-        current: Boolean(current),
-      })}
+      attributes={{
+        ...slotAttributes(menuRowStyle, {
+          kind: "link",
+          strong: Boolean(current),
+          current: Boolean(current),
+        }),
+        // The ground marks the row for the eye; a screen reader hears the same from aria-current.
+        ...(current ? { "aria-current": "page" } : {}),
+      }}
     >
       <ConsoleMenuGlyph>{icon}</ConsoleMenuGlyph>
       <span className={MENU_LABEL} {...slotAttributes(menuLabelStyle, {})}>
