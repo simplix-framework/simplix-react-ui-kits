@@ -6,7 +6,7 @@ import { i18nBaseValue, seedI18nDefaults } from "@simplix-react/i18n";
 /** A text per content language, as the i18n helpers take it. */
 type I18nMap = Parameters<typeof i18nBaseValue>[0] & object;
 import { useEntityTranslation, useI18nEditLanguage, useLocale, useTranslation } from "@simplix-react/i18n/react";
-import type { EntitySearch, LanguageSelectorPlacement, StatusTone } from "@simplix-react/ui";
+import type { EntityFacet, EntitySearch, LanguageSelectorPlacement, StatusTone } from "@simplix-react/ui";
 
 import { PACKAGE_NAMESPACE } from "./locales";
 import { usePeekHost, type PeekTarget } from "../peek";
@@ -162,7 +162,48 @@ export type ContractFilter =
   | { readonly kind: "toggle"; readonly field: string }
   /** A figure; a `money` field also names its currency and scale, so the reader types currency units. */
   | { readonly kind: "number"; readonly field: string; readonly currency?: string; readonly scale?: number }
-  | { readonly kind: "dateRange"; readonly field: string; readonly dateOnly?: boolean };
+  | { readonly kind: "dateRange"; readonly field: string; readonly dateOnly?: boolean }
+  /**
+   * The key of another record, filtered by that record's name. It needs the screen's `facets`
+   * override for the field; without one the filter is left out, since a bar offering raw ids asks
+   * the reader for a value they cannot know.
+   */
+  | { readonly kind: "reference"; readonly field: string };
+
+/**
+ * The list filter a searchable field gives, or nothing for a reference the screen supplies no facet
+ * for.
+ *
+ * @param def the field as the generator wrote it
+ * @param label the field's label in the reader's language
+ * @param enumLabel the label of an enum value, by enum name and value
+ * @param facets field → the facet a reference filter reads
+ */
+export function recordFilterOf<R>(
+  def: ContractFilter,
+  label: string,
+  enumLabel: (enumName: string, value: string) => string,
+  facets?: Readonly<Record<string, EntityFacet>>,
+): RecordFilter<R> | undefined {
+  const field = def.field as keyof R & string;
+  switch (def.kind) {
+    case "reference": {
+      const facet = facets?.[def.field];
+      return facet ? { kind: "entity", field, label, facet } : undefined;
+    }
+    case "choice": {
+      const enumName = def.enumName;
+      return { kind: "choice", field, label, options: def.options.map((option) => ({ value: option, label: enumName ? enumLabel(enumName, option) : option })) };
+    }
+    case "dateRange":
+      return { kind: "dateRange", field, label, dateOnly: def.dateOnly ?? false };
+    case "number":
+      // A money filter is typed in the currency's units, so its label says which currency.
+      return { kind: "number", field, label: def.currency ? `${label} (${def.currency})` : label };
+    default:
+      return { kind: def.kind, field, label };
+  }
+}
 
 /** How many leading columns of a generated list draw at every pane width. */
 export const ALWAYS_DRAWN_COLUMNS = 4;
@@ -173,6 +214,8 @@ export interface ContractOverrides {
   readonly tones?: Readonly<Record<string, Readonly<Record<string, StatusTone>>>>;
   /** Field → the search a form's reference picker reads. A reference without one is edited as text. */
   readonly searches?: Readonly<Record<string, EntitySearch>>;
+  /** Field → the facet a list filter over a reference reads (`createEntityFacet`, called with the list's filters). */
+  readonly facets?: Readonly<Record<string, EntityFacet>>;
 }
 
 type Row = Readonly<Record<string, unknown>>;
@@ -328,7 +371,7 @@ export function useRecordContract(entity: string, overrides: ContractOverrides =
   const zone = useAppTimeZone();
   const peek = usePeekHost();
   const { languages } = useI18nEditLanguage();
-  const { tones, searches } = overrides;
+  const { tones, searches, facets } = overrides;
 
   const value = useCallback(
     (field: ContractField, row: Row | undefined): RecordValue => {
@@ -488,24 +531,11 @@ export function useRecordContract(entity: string, overrides: ContractOverrides =
   /** The searchable fields as list filters, labelled by the field and, for an enum, by its values. */
   const filters = useCallback(
     <R,>(defs: readonly ContractFilter[]): RecordFilter<R>[] =>
-      defs.map((def): RecordFilter<R> => {
-        const field = def.field as keyof R & string;
-        const label = fieldLabel(def.field);
-        switch (def.kind) {
-          case "choice": {
-            const enumName = def.enumName;
-            return { kind: "choice", field, label, options: def.options.map((option) => ({ value: option, label: enumName ? enumLabel(enumName, option) : option })) };
-          }
-          case "dateRange":
-            return { kind: "dateRange", field, label, dateOnly: def.dateOnly ?? false };
-          case "number":
-            // A money filter is typed in the currency's units, so its label says which currency.
-            return { kind: "number", field, label: def.currency ? `${label} (${def.currency})` : label };
-          default:
-            return { kind: def.kind, field, label };
-        }
+      defs.flatMap((def) => {
+        const one = recordFilterOf<R>(def, fieldLabel(def.field), enumLabel, facets);
+        return one ? [one] : [];
       }),
-    [enumLabel, fieldLabel],
+    [enumLabel, facets, fieldLabel],
   );
 
   const detailField = useCallback(

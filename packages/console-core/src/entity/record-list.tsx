@@ -14,6 +14,7 @@ import {
   useCrudList,
   type ActionType,
   type CrudListFilters,
+  type EntityFacet,
   type FilterDef,
   type ListHook,
   type RowActionDef,
@@ -98,7 +99,13 @@ export type RecordFilter<Row> =
       readonly field: keyof Row & string;
       readonly label: string;
       readonly options: readonly { readonly value: string; readonly label: string }[];
-    };
+    }
+  /**
+   * The key of another record, filtered by that record's name: the options are a server search of
+   * the referenced entity (a directory outgrows one page), and a picked value keeps its name. The
+   * `facet` is what the project's `createEntityFacet` hook answers with for this list's filters.
+   */
+  | { readonly kind: "entity"; readonly field: keyof Row & string; readonly label: string; readonly facet: EntityFacet };
 
 /**
  * The verbs the kit names beyond the framework's action types, each with its own glyph, so a screen
@@ -384,7 +391,20 @@ function cellIn<Row>(column: RecordColumn<Row>, row: Row): ReactNode {
   return cellOf(column, row);
 }
 
-function filterDef<Row>(filter: RecordFilter<Row>): FilterDef {
+export function filterDef<Row>(filter: RecordFilter<Row>): FilterDef {
+  if (filter.kind === "entity") {
+    return {
+      type: "faceted",
+      field: filter.field,
+      label: filter.label,
+      options: filter.facet.options,
+      multiSelect: true,
+      display: "dropdown",
+      onSearch: filter.facet.onSearch,
+      loading: filter.facet.loading,
+      selectedOptions: filter.facet.selectedOptions,
+    };
+  }
   if (filter.kind === "choice") {
     return { type: "faceted", field: filter.field, label: filter.label, options: [...filter.options], multiSelect: true };
   }

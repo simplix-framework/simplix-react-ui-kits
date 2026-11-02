@@ -9,6 +9,9 @@ import { adaptForcedList, adaptOrvalList{{#if hasKeywordSearch}}, SEARCHABLE_KEY
 import { {{#if hasMoneyFilter}}moneyFilterTransform, {{/if}}RecordList, {{#if figureTiles.aggregates}}withListRequest, {{/if}}{{#if hookOrder}}{{#if orderField}}useAllowed, {{/if}}{{/if}}useRecordContract, useScreenWords, type ContractField, type ContractFilter, type ContractOverrides, type RecordAction, type RecordColumn, type RecordFilter, type RecordListProps } from "@simplix-react-ui-kits/console-clarity/entity";
 
 import { {{hookList}}, {{#if hookOrder}}{{#if orderField}}{{hookOrder}}, {{#if accessOrder}}{{accessOrder}}, {{/if}}{{/if}}{{/if}}type {{listRowType}} } from "{{packageName}}";
+{{#each listFacetImports}}
+import { {{{this.hooks}}} } from "{{this.from}}";
+{{/each}}
 
 export type {{EntityPascal}}Row = {{listRowType}};
 
@@ -101,7 +104,11 @@ export function use{{EntityPascal}}Columns(overrides?: ContractOverrides): Recor
 export function {{EntityPascal}}List({ list, activeRowId, onRowClick, actions, narrowing }: {{EntityPascal}}ListProps) {
   const words = useScreenWords("{{entity}}");
   const generated = use{{EntityPascal}}Columns();
-  const contract = useRecordContract("{{entity}}");
+{{#each listFacets}}
+  // The filter over the key offers the referenced records by name, searched on the server.
+  const {{this.field}}Facet = {{this.hook}}(list.filters);
+{{/each}}
+  const contract = useRecordContract("{{entity}}"{{#if listFacets.length}}, { facets: { {{#each listFacets}}{{this.field}}: {{this.field}}Facet{{#unless @last}}, {{/unless}}{{/each}} } }{{/if}});
   const filters: readonly RecordFilter<{{EntityPascal}}Row>[] = contract.filters<{{EntityPascal}}Row>({{EntityPascal}}Filters);
 {{#if hookOrder}}
 {{#if orderField}}
