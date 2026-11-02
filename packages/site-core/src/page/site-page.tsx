@@ -20,8 +20,11 @@ import {
 
 /** Props for {@link SitePage}. */
 export interface SitePageProps {
-  /** `open` spaces a marketing page's sections further apart; `page` is every other page. */
-  readonly rhythm?: "page" | "open";
+  /**
+   * `spaced` sets the parts under a band that holds the page's head further apart, `open` a
+   * marketing page's sections further still; `page` is every other page.
+   */
+  readonly rhythm?: "page" | "spaced" | "open";
   readonly children: ReactNode;
 }
 

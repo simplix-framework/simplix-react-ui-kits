@@ -1,0 +1,314 @@
+{
+ "en": {
+  "status": "All services running · checked 14:20",
+  "title": "How can we help?",
+  "lede": "Write down what is happening, in your own words.",
+  "tryLabel": "Try searching",
+  "tries": [
+   "No voice comes out",
+   "Refund",
+   "Without PowerPoint"
+  ],
+  "searchLabel": "Search help",
+  "placeholder": "e.g. no voice comes out",
+  "query": "No voice comes out",
+  "emptyQuery": "xyzzy",
+  "found": "6 results",
+  "keys": "↑ ↓ to pick · Enter to open",
+  "results": [
+   [
+    "Notes and voices for your first presentation",
+    "Getting started"
+   ],
+   [
+    "When voices are not made",
+    "Troubleshooting · When you press Make voice and sentences are not made"
+   ],
+   [
+    "Opening and editing a pptx without PowerPoint",
+    "Getting started · When you edit and save a file straight from the app or a tablet"
+   ],
+   [
+    "When there is no sound while presenting",
+    "Troubleshooting · When a made voice is silent in the slide show"
+   ],
+   [
+    "Installing StageVoice",
+    "Getting started"
+   ],
+   [
+    "Changing the tone and length of notes",
+    "Task pane"
+   ]
+  ],
+  "empty": "Nothing matches “xyzzy”. Try other words or send us a question.",
+  "categories": [
+   {
+    "title": "Getting started",
+    "count": "5 articles",
+    "articles": [
+     "Installing StageVoice",
+     "Adding the add-in to PowerPoint",
+     "Notes and voices for your first presentation",
+     "Opening and editing a pptx without PowerPoint",
+     "Exporting a video and subtitles"
+    ]
+   },
+   {
+    "title": "Task pane",
+    "count": "3 articles",
+    "articles": [
+     "Opening and closing the task pane",
+     "Changing the tone and length of notes",
+     "Editing slides by chatting"
+    ]
+   },
+   {
+    "title": "Voices and my voice",
+    "count": "5 articles",
+    "articles": [
+     "Free voices and premium voices",
+     "Making your own voice",
+     "Deleting your own voice",
+     "Setting how words are read with the pronunciation dictionary",
+     "When voices go onto the slides"
+    ]
+   },
+   {
+    "title": "Payment and account",
+    "count": "5 articles",
+    "articles": [
+     "Getting a refund",
+     "Cancelling a subscription",
+     "Presentation pack or Pro",
+     "Receipts and business details",
+     "When do credits expire?"
+    ]
+   },
+   {
+    "title": "Troubleshooting",
+    "count": "4 articles",
+    "articles": [
+     "When voices are not made",
+     "When there is no sound while presenting",
+     "When the task pane stays on “App not found”",
+     "When it is not in Get Add-ins"
+    ]
+   }
+  ],
+  "popular": "Most read",
+  "week": "This week",
+  "mostRead": [
+   [
+    "01",
+    "When voices are not made",
+    "Troubleshooting · 1,820 people this week"
+   ],
+   [
+    "02",
+    "Getting a refund",
+    "Payment and account · 940 people this week"
+   ],
+   [
+    "03",
+    "Opening and editing a pptx without PowerPoint",
+    "Getting started · 760 people this week"
+   ],
+   [
+    "04",
+    "Making your own voice",
+    "Voices and my voice · 610 people this week"
+   ],
+   [
+    "05",
+    "Cancelling a subscription",
+    "Payment and account · 480 people this week"
+   ]
+  ],
+  "closed": {
+   "title": "Didn't find your answer?",
+   "body": "Support answers usually within 4 hours, at the latest the next business day. With the app running you can attach a diagnostic record, so we ask fewer questions back.",
+   "open": "Contact us",
+   "hours": "Weekdays 10:00 to 17:00"
+  },
+  "form": {
+   "title": "Contact us",
+   "category": "Category",
+   "categoryValue": "Voices and my voice",
+   "replyTo": "Reply to",
+   "email": "t@example.com",
+   "subject": "Subject",
+   "subjectPlaceholder": "e.g. Voices are not being made",
+   "body": "What happened?",
+   "bodyPlaceholder": "When it started, on which screen, and what you pressed.",
+   "attach": "Attach the app's diagnostic record",
+   "recommended": "Recommended",
+   "attachAbout": "Only versions, connection status and recent errors. Nothing from your presentation.",
+   "send": "Send",
+   "close": "Close",
+   "needFields": "Write a subject and a message"
+  },
+  "sent": {
+   "title": "We got your question",
+   "ticket": "SV-48213",
+   "body": "We answer t@example.com usually within 4 hours, at the latest the next business day. Questions received after 5 pm on a weekday count from the next business day. The diagnostic record came with it.",
+   "another": "Write another question"
+  }
+ },
+ "ko": {
+  "status": "모든 서비스 정상 · 14:20 확인",
+  "title": "무엇을 도와드릴까요?",
+  "lede": "겪고 있는 일을 그대로 적어 보세요.",
+  "tryLabel": "이렇게 찾아 보세요",
+  "tries": [
+   "음성이 안 나와요",
+   "환불",
+   "PowerPoint 없이"
+  ],
+  "searchLabel": "도움말 찾기",
+  "placeholder": "예: 음성이 안 나와요",
+  "query": "음성이 안 나와요",
+  "emptyQuery": "xyzzy",
+  "found": "6개 찾음",
+  "keys": "↑ ↓ 고르기 · Enter 열기",
+  "results": [
+   [
+    "음성이 만들어지지 않을 때",
+    "문제 해결 · ‘음성 만들기’를 눌렀는데 문장이 만들어지지 않을 때"
+   ],
+   [
+    "발표할 때 소리가 안 나올 때",
+    "문제 해결 · 만든 음성이 슬라이드 쇼에서 들리지 않을 때"
+   ],
+   [
+    "첫 발표에 노트와 음성 만들기",
+    "시작하기"
+   ],
+   [
+    "무료 음성과 프리미엄 음성의 차이",
+    "음성과 내 목소리"
+   ],
+   [
+    "음성을 슬라이드에 넣는 시점 정하기",
+    "음성과 내 목소리"
+   ],
+   [
+    "PowerPoint 없이 pptx 열어 고치기",
+    "시작하기 · 앱이나 태블릿에서 파일을 바로 고치고 저장할 때"
+   ]
+  ],
+  "empty": "‘xyzzy’에 맞는 글이 없습니다. 다른 말로 찾거나 문의를 남겨 주세요.",
+  "categories": [
+   {
+    "title": "시작하기",
+    "count": "글 5개",
+    "articles": [
+     "StageVoice 설치하기",
+     "PowerPoint에 추가기능 넣기",
+     "첫 발표에 노트와 음성 만들기",
+     "PowerPoint 없이 pptx 열어 고치기",
+     "영상과 자막으로 내보내기"
+    ]
+   },
+   {
+    "title": "작업창",
+    "count": "글 3개",
+    "articles": [
+     "작업창 열고 닫기",
+     "노트 말투와 길이 바꾸기",
+     "대화로 슬라이드 고치기"
+    ]
+   },
+   {
+    "title": "음성과 내 목소리",
+    "count": "글 5개",
+    "articles": [
+     "무료 음성과 프리미엄 음성의 차이",
+     "내 목소리 만들기",
+     "내 목소리 지우기",
+     "발음 사전으로 읽는 법 정하기",
+     "음성을 슬라이드에 넣는 시점 정하기"
+    ]
+   },
+   {
+    "title": "결제와 계정",
+    "count": "글 5개",
+    "articles": [
+     "환불 받기",
+     "구독 해지하기",
+     "발표 팩과 Pro 비교",
+     "영수증과 사업자 정보 넣기",
+     "크레딧은 언제 사라지나요"
+    ]
+   },
+   {
+    "title": "문제 해결",
+    "count": "글 4개",
+    "articles": [
+     "음성이 만들어지지 않을 때",
+     "발표할 때 소리가 안 나올 때",
+     "작업창이 ‘앱을 찾을 수 없음’에서 멈출 때",
+     "추가 기능 가져오기에서 안 보일 때"
+    ]
+   }
+  ],
+  "popular": "많이 보는 글",
+  "week": "이번 주",
+  "mostRead": [
+   [
+    "01",
+    "음성이 만들어지지 않을 때",
+    "문제 해결 · 이번 주 1,820명"
+   ],
+   [
+    "02",
+    "환불 받기",
+    "결제와 계정 · 이번 주 940명"
+   ],
+   [
+    "03",
+    "PowerPoint 없이 pptx 열어 고치기",
+    "시작하기 · 이번 주 760명"
+   ],
+   [
+    "04",
+    "내 목소리 만들기",
+    "음성과 내 목소리 · 이번 주 610명"
+   ],
+   [
+    "05",
+    "구독 해지하기",
+    "결제와 계정 · 이번 주 480명"
+   ]
+  ],
+  "closed": {
+   "title": "찾는 답이 없나요?",
+   "body": "지원팀이 보통 4시간 안에, 늦어도 다음 영업일에 답합니다. 앱이 켜져 있으면 진단 기록을 붙일 수 있어, 다시 묻는 일이 줄어듭니다.",
+   "open": "문의하기",
+   "hours": "평일 10:00–17:00"
+  },
+  "form": {
+   "title": "문의하기",
+   "category": "분류",
+   "categoryValue": "음성과 내 목소리",
+   "replyTo": "답 받을 메일",
+   "email": "t@example.com",
+   "subject": "제목",
+   "subjectPlaceholder": "예: 음성이 만들어지지 않습니다",
+   "body": "무슨 일이 있었나요?",
+   "bodyPlaceholder": "언제부터, 어떤 화면에서, 무엇을 눌렀을 때인지 적어 주세요.",
+   "attach": "앱의 진단 기록 붙이기",
+   "recommended": "권장",
+   "attachAbout": "버전, 연결 상태, 최근 오류만 넣습니다. 발표 내용은 넣지 않습니다.",
+   "send": "보내기",
+   "close": "닫기",
+   "needFields": "제목과 내용을 적어 주세요"
+  },
+  "sent": {
+   "title": "문의를 받았습니다",
+   "ticket": "SV-48213",
+   "body": "t@example.com으로 보통 4시간 안에, 늦어도 다음 영업일에 답합니다. 평일 오후 5시 뒤에 받은 문의는 다음 영업일부터 셉니다. 진단 기록을 함께 받았습니다.",
+   "another": "문의 하나 더 쓰기"
+  }
+ }
+}

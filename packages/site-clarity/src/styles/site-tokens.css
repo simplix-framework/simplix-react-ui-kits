@@ -17,6 +17,7 @@
   --site-surface: var(--card);
   --site-surface-sunken: var(--muted);
   --site-line: var(--border);
+  --site-control-line: var(--input);
   --site-ink: var(--foreground);
   --site-ink-muted: var(--muted-foreground);
   --site-ink-disabled: var(--muted-foreground);

@@ -1,5 +1,5 @@
 {
-  "$comment": "The site page region contract. Per page type: the regions in drawing order, the part that fills each and the prop that feeds it (slot), the DOM marks (data-slot) that place an element in it, the named parts inside it a rendered check measures, the control kinds it may hold, the parts whose width the layout decides (widths: \"root\" or a part name; a rendered compare holds those widths to 1px and leaves text-driven ones alone) and whether the region draws a card (carded: a root or part rounded with --site-radius-xl, which the site-demo selftest plants and must find). A type is `ready` when the kit draws every region it lists, or `planned` with the reason it is not yet. scripts/check-site-regions.mjs holds the contract to site-core's declared slots; scripts/site-regions-rendered.mjs reads a painted page against it.",
+  "$comment": "The site page region contract. Per page type: the regions in drawing order, the part that fills each and the prop that feeds it (slot), the DOM marks (data-slot) that place an element in it, the named parts inside it a rendered check measures, the control kinds it may hold, the parts whose width the layout decides (widths: \"root\" or a part name; a rendered compare holds those widths to 1px and leaves text-driven ones alone) and whether the region may draw a card (carded: a root or part rounded with --site-radius-xl, which the site-demo selftest plants and must find wherever a page draws it). A type is `ready` when the kit draws every region it lists, or `planned` with the reason it is not yet. scripts/check-site-regions.mjs holds the contract to site-core's declared slots; scripts/site-regions-rendered.mjs reads a painted page against it.",
   "version": 1,
   "frame": {
     "$comment": "The window around every page and the column the page's regions stand in; measured on every page type, never a region of its own.",
@@ -480,6 +480,140 @@
         "root"
       ]
     },
+    "search": {
+      "part": "SearchHero",
+      "slot": "SiteWindow children",
+      "marks": [
+        "site-search-hero"
+      ],
+      "controls": [
+        "site-action",
+        "site-search-input",
+        "site-search-option"
+      ],
+      "$comment": "The help centre head is one band: the status line, the h1 and the lede are parts of it, not regions of their own, so the band is read whole.",
+      "parts": {
+        "inner": "site-search-hero-inner",
+        "status": "site-status-line",
+        "dot": "site-status-dot",
+        "title": "site-search-hero-title",
+        "lede": "site-search-hero-lede",
+        "suggestions": "site-suggestions",
+        "suggestionsLabel": "site-suggestions-label",
+        "suggestion": "site-action",
+        "input": "site-search-input",
+        "results": "site-search-results",
+        "head": "site-search-head",
+        "option": "site-search-option[data-active=false]",
+        "active": "site-search-option[data-active=true]",
+        "optionTitle": "site-search-option-title",
+        "optionMeta": "site-search-option-meta",
+        "mark": "site-link-mark",
+        "empty": "site-search-empty"
+      },
+      "widths": [
+        "root",
+        "inner",
+        "suggestions",
+        "input",
+        "results",
+        "head",
+        "option",
+        "active",
+        "empty"
+      ],
+      "carded": true
+    },
+    "categories": {
+      "part": "CategoryGrid",
+      "slot": "SitePage children",
+      "marks": [
+        "site-category-grid"
+      ],
+      "controls": [
+        "site-category-link"
+      ],
+      "parts": {
+        "card": "site-category",
+        "title": "site-category-title",
+        "count": "site-category-count",
+        "list": "site-category-list",
+        "link": "site-category-link"
+      },
+      "widths": [
+        "root",
+        "card",
+        "list"
+      ],
+      "carded": true
+    },
+    "articles": {
+      "part": "ArticleList",
+      "slot": "SiteColumns children",
+      "marks": [
+        "site-article-list"
+      ],
+      "controls": [
+        "site-article-link"
+      ],
+      "parts": {
+        "head": "site-article-list-head",
+        "title": "site-article-list-title",
+        "badge": "site-chip",
+        "rows": "site-article-rows",
+        "link": "site-article-link",
+        "number": "site-article-number",
+        "name": "site-article-name",
+        "meta": "site-article-meta",
+        "mark": "site-link-mark"
+      },
+      "widths": [
+        "root",
+        "head",
+        "rows",
+        "link"
+      ],
+      "carded": true
+    },
+    "contact": {
+      "part": "ContactPanel | ContactForm | ContactSent",
+      "slot": "SiteColumns children",
+      "marks": [
+        "site-contact"
+      ],
+      "controls": [
+        "site-action",
+        "*"
+      ],
+      "$comment": "`*` admits the product controls the form lays in (select, inputs, checkbox).",
+      "parts": {
+        "heading": "site-card-heading",
+        "text": "site-card-text",
+        "actions": "site-contact-actions",
+        "primary": "site-action[data-tone=primary]",
+        "secondary": "site-action[data-tone=secondary]",
+        "disabled": "site-action:disabled",
+        "note": "site-contact-note",
+        "mark": "site-contact-mark",
+        "row": "site-contact-row",
+        "sentTitle": "site-contact-title",
+        "ticket": "site-chip[data-tone=neutral]",
+        "fieldRow": "site-field-row",
+        "field": "site-field",
+        "attach": "site-attach",
+        "attachTitle": "site-attach-title",
+        "attachBadge": "site-chip[data-tone=accent]",
+        "attachAbout": "site-attach-about"
+      },
+      "widths": [
+        "root",
+        "actions",
+        "fieldRow",
+        "field",
+        "attach"
+      ],
+      "carded": true
+    },
     "footer": {
       "part": "SiteFooter",
       "slot": "SiteWindow.footer",
@@ -564,18 +698,22 @@
       "$comment": "The download guide (the check of this computer, or on a phone the notice to open the page on the computer, the downloads, the steps with their sketches, the video and the way to troubleshooting) and the troubleshooting page (the symptoms and the line under them) share the type: a page draws the regions its view has, in this order."
     },
     "help": {
-      "status": "planned",
-      "reason": "needs the help segment (StatusLine, SearchHero, CategoryGrid, ArticleList, ArticleLayout, ContactForm)",
-      "plannedRegions": [
+      "status": "ready",
+      "root": "[data-page]",
+      "regions": [
         "bar",
-        "status",
-        "pageHead",
         "search",
         "categories",
         "articles",
         "contact",
         "footer"
-      ]
+      ],
+      "required": [
+        "bar",
+        "search",
+        "footer"
+      ],
+      "$comment": "The help centre: the search band (status, h1, lede, searches to try, the search and its matches), then the categories, and the most read articles beside the way to ask support (closed, the form, or sent). An article is the article type."
     },
     "legal": {
       "status": "planned",

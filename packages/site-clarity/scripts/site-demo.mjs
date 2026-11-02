@@ -170,8 +170,16 @@ export function measuredPages() {
   return pages;
 }
 
-/** The regions a planted card radius must be reported in: the carded regions a signature draws. */
-export const cardedIn = (signature, c = contract) => Object.keys(signature.regions ?? {}).filter((key) => c.regions[key]?.carded === true).sort();
+/**
+ * The regions a planted card radius must be reported in: the carded regions whose root or a part
+ * the signature draws with the card radius (`radius`, the reference's value of --site-radius-xl). A
+ * carded region that draws its card only in some states (the search's matches) counts where it does.
+ */
+export const cardedIn = (signature, c = contract, radius = "12px") =>
+  Object.entries(signature.regions ?? {})
+    .filter(([key, entry]) => c.regions[key]?.carded === true && [entry?.root, ...Object.values(entry?.parts ?? {})].some((look) => look?.radius === radius))
+    .map(([key]) => key)
+    .sort();
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === resolve(process.argv[1])) {
   const selftest = process.argv.includes("--selftest");

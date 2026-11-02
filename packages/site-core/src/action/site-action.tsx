@@ -28,6 +28,8 @@ export interface SiteActionProps extends SiteActionSpec {
   readonly size?: "md" | "sm" | "lg";
   /** Stretches the action over its column. */
   readonly block?: boolean;
+  /** Submits the form it stands in; drawn as a button even with an address. */
+  readonly submit?: boolean;
 }
 
 /**
@@ -35,7 +37,7 @@ export interface SiteActionProps extends SiteActionSpec {
  * action is always a disabled button: a link cannot be disabled, and one that only looks disabled
  * still navigates.
  */
-export function SiteAction({ id, label, href, onSelect, tone, disabled = false, icon, size, block }: SiteActionProps) {
+export function SiteAction({ id, label, href, onSelect, tone, disabled = false, icon, size, block, submit = false }: SiteActionProps) {
   const marks = slotAttributes(siteActionStyle, { tone, size, block });
   const content = (
     <>
@@ -43,7 +45,7 @@ export function SiteAction({ id, label, href, onSelect, tone, disabled = false, 
       {label}
     </>
   );
-  if (href !== undefined && !disabled) {
+  if (href !== undefined && !disabled && !submit) {
     return (
       <SiteLink {...marks} data-action={id} href={href} onClick={onSelect}>
         {content}
@@ -51,7 +53,7 @@ export function SiteAction({ id, label, href, onSelect, tone, disabled = false, 
     );
   }
   return (
-    <button {...marks} data-action={id} type="button" disabled={disabled} onClick={onSelect}>
+    <button {...marks} data-action={id} type={submit ? "submit" : "button"} disabled={disabled} onClick={onSelect}>
       {content}
     </button>
   );
