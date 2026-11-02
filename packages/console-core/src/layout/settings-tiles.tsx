@@ -462,10 +462,10 @@ export function SettingsTiles({ tiles, columns = MAX_TILE_COLUMNS, reorderKey, t
           </h2>
           <div className="min-w-0 flex-1">
             <div className="tiles-fold" data-open={collapsed ? "true" : "false"} aria-hidden={!collapsed}>
-              {/* Folded, every figure as a chip; pressing one unfolds the row. The fold clips its
+              {/* Folded, every figure as a chip that does what its card does. The fold clips its
                   child, so the chips sit in a wrapper of their own. */}
               <div>
-                <TileChips tiles={tiles} active={collapsed} onPress={toggle} />
+                <TileChips tiles={tiles} active={collapsed} filters={filters} />
               </div>
             </div>
           </div>
@@ -526,7 +526,7 @@ export function SettingsTiles({ tiles, columns = MAX_TILE_COLUMNS, reorderKey, t
             />
           </div>
           <div {...slotAttributes(tileStripChipsStyle, {})}>
-            <TileChips tiles={tiles} active={collapsed} onPress={toggle} />
+            <TileChips tiles={tiles} active={collapsed} filters={filters} />
           </div>
         </div>
       </div>
@@ -574,44 +574,94 @@ export function SettingsTiles({ tiles, columns = MAX_TILE_COLUMNS, reorderKey, t
 }
 
 /**
- * Every figure as a chip, for a folded row; pressing one unfolds the row.
+ * What pressing a tile does to the list's filter: narrows the list to the tile's rows, or lifts
+ * that narrowing when the tile is already pressed. The card and the folded chip share this one
+ * answer, so the same figure does the same thing whichever way it is drawn.
+ *
+ * @param tile the pressed figure, which must carry a filter
+ * @param tiles every figure of the row, since a figure's rows may be narrowed by its siblings
+ * @param filters the list's filter state
+ */
+function pressTile(tile: SettingsTile, tiles: readonly SettingsTile[], filters: TileFilters): void {
+  const committed = filters.committedValues ?? {};
+  const filter = tile.filter as TileFilter;
+  const pressed = pressedTileKeys(tiles, committed).has(tile.key);
+  filters.commitValues(pressed ? pressedValues(filter, committed) : narrowedValues(filter, tiles, committed));
+}
+
+/**
+ * Every figure as a chip, for a folded row.
+ *
+ * <p>A chip does what its card does and never unfolds the row: the handle at the right is the one
+ * control for that. A figure that narrows the list narrows it, with the pressed state shown; a
+ * figure that leads to a list leads there; a figure that is only a figure stays only a figure.
  *
  * <p>Each chip carries its position as `--i`, so a design can stagger their arrival.
  *
- * @param props the figures, whether the chips are reachable, and what pressing one does
+ * @param props the figures, whether the chips are reachable, and the list's filter state
  * @returns the chips
  */
 function TileChips({
   tiles,
   active,
-  onPress,
+  filters,
 }: {
   readonly tiles: readonly SettingsTile[];
   readonly active: boolean;
-  readonly onPress: () => void;
+  readonly filters?: TileFilters;
 }) {
+  const pressedKeys = pressedTileKeys(tiles, filters?.committedValues ?? {});
   return (
     <div className="flex items-center overflow-x-auto" {...slotAttributes(tileChipsStyle, {})}>
-      {tiles.map((tile, index) => (
-        <button
-          key={tile.key}
-          type="button"
-          tabIndex={active ? 0 : -1}
-          onClick={onPress}
-          className="inline-flex shrink-0 items-center"
-          style={{ "--i": index } as CSSProperties}
-          {...slotAttributes(tileChipStyle, {})}
-        >
-          <span>{tile.label}</span>
-          <NumericText
-            weight="semibold"
-            className={toneIconClass(tile)}
-            {...partAttributes(tileChipFigureStyle, { tone: shownTone(tile) ?? "none" })}
-          >
-            {tileFigure(tile)}
-          </NumericText>
-        </button>
-      ))}
+      {tiles.map((tile, index) => {
+        const content = (
+          <>
+            <span>{tile.label}</span>
+            <NumericText
+              weight="semibold"
+              className={toneIconClass(tile)}
+              {...partAttributes(tileChipFigureStyle, { tone: shownTone(tile) ?? "none" })}
+            >
+              {tileFigure(tile)}
+            </NumericText>
+          </>
+        );
+        const common = {
+          className: "inline-flex shrink-0 items-center",
+          style: { "--i": index } as CSSProperties,
+          ...slotAttributes(tileChipStyle, {}),
+        };
+        if (tile.filter && filters) {
+          return (
+            <button
+              key={tile.key}
+              type="button"
+              tabIndex={active ? 0 : -1}
+              aria-pressed={pressedKeys.has(tile.key)}
+              onClick={() => pressTile(tile, tiles, filters)}
+              {...common}
+            >
+              {content}
+            </button>
+          );
+        }
+        if (tile.href) {
+          return (
+            // `contents` keeps the wrapper out of the layout; it carries the stagger position and
+            // takes the link out of the keyboard's path while the row is unfolded.
+            <span key={tile.key} className="contents" style={common.style} inert={!active}>
+              <MenuLink href={tile.href} className={common.className} attributes={slotAttributes(tileChipStyle, {}) as Record<string, string>}>
+                {content}
+              </MenuLink>
+            </span>
+          );
+        }
+        return (
+          <span key={tile.key} {...common}>
+            {content}
+          </span>
+        );
+      })}
     </div>
   );
 }
@@ -863,10 +913,7 @@ function TileGrid({
               <button
                 type="button"
                 aria-pressed={pressedKeys.has(tile.key)}
-                onClick={() => {
-                  const filter = tile.filter as TileFilter;
-                  filters.commitValues(pressedKeys.has(tile.key) ? pressedValues(filter, committed) : narrowedValues(filter, tiles, committed));
-                }}
+                onClick={() => pressTile(tile, tiles, filters)}
                 className="block h-full w-full"
                 {...slotAttributes(tilePressStyle, { pressed: pressedKeys.has(tile.key) })}
               >
