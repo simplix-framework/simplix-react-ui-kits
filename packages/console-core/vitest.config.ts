@@ -1,25 +1,26 @@
 import { realpathSync } from "node:fs";
 import { createRequire } from "node:module";
-import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 
 import { defineConfig } from "vitest/config";
 
-// The linked framework checkout carries React and every library that calls into it (react-table,
-// lucide-react, the primitives) in its own tree, beside this package's React. A component of the
-// framework rendered here must run on the one React its own libraries use, so `react` and
-// `react-dom` resolve to the framework's copy for every import. Without a linked checkout (the
-// registry profile) there is a single tree and the lookup finds this package's own copies.
+// The linked framework checkout keeps React, react-table and lucide-react in its own tree. A
+// library loaded from there reads that tree's React, so a component of this package rendered beside
+// it only shares a dispatcher when this package's `react`, `react-dom` and `lucide-react` imports
+// resolve into the same tree. Where no framework is linked the lookup finds this package's own
+// copies, and the aliases change nothing.
 const uiDir = realpathSync(fileURLToPath(new URL("../../node_modules/@simplix-react/ui", import.meta.url)));
-const frameworkReact = (name: string) => dirname(createRequire(join(uiDir, "package.json")).resolve(`${name}/package.json`));
+const fromFramework = createRequire(join(uiDir, "package.json"));
+const frameworkDir = (name: string) => dirname(fromFramework.resolve(`${name}/package.json`));
 const alias = (name: string) => [
-  { find: new RegExp(`^${name}$`), replacement: frameworkReact(name) },
-  { find: new RegExp(`^${name}/(.*)$`), replacement: `${frameworkReact(name)}/$1` },
+  { find: new RegExp(`^${name}$`), replacement: frameworkDir(name) },
+  { find: new RegExp(`^${name}/(.*)$`), replacement: `${frameworkDir(name)}/$1` },
 ];
 
 // Only `*.test.*` files are tests: the design specs under `src/styles/designs` end in `.spec.ts`
 // and hold a design, not a suite.
 export default defineConfig({
-  resolve: { dedupe: ["react", "react-dom"], alias: [...alias("react"), ...alias("react-dom")] },
+  resolve: { dedupe: ["react", "react-dom"], alias: [...alias("react"), ...alias("react-dom"), ...alias("lucide-react")] },
   test: { include: ["src/**/*.test.{ts,tsx}"], server: { deps: { inline: [/@simplix-react\//] } } },
 });
