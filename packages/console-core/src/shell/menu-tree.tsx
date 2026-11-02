@@ -1,4 +1,5 @@
-import { ChevronRightIcon } from "lucide-react";
+import { ChevronRightIcon, ExternalLinkIcon } from "lucide-react";
+import { useTranslation } from "@simplix-react/i18n/react";
 import {
   forwardRef,
   useEffect,
@@ -21,6 +22,7 @@ import {
 } from "@simplix-react/ui";
 
 import { EllipsisText } from "../layout";
+import { PACKAGE_NAMESPACE } from "./locales";
 import {
   menuBranchStyle,
   menuCaretStyle,
@@ -32,6 +34,7 @@ import {
   menuGlyphStyle,
   menuLabelStyle,
   menuRailButtonStyle,
+  menuRailFootStyle,
   menuRailRuleStyle,
   menuRailStyle,
   menuRowStyle,
@@ -119,16 +122,24 @@ export interface ConsoleMenuRailProps {
   readonly lead?: ReactNode;
   /** One mark per cluster, each opening a flyout of what it stands for. */
   readonly children: ReactNode;
+  /**
+   * What the rail holds under its marks (the services beside the console), pushed to its foot. It
+   * draws its own rule; absent or drawing nothing, the rail ends with its last mark.
+   */
+  readonly foot?: ReactNode;
 }
 
 /**
  * The navigation column collapsed to one mark per cluster.
  *
+ * <p>The foot is held at the rail's end by a box with no look of its own, so a foot that draws
+ * nothing (no service configured) leaves no rule and no gap a reader could see.
+ *
  * <p><b>A rail with no flyout is unusable</b>, which is why {@link ConsoleMenuFlyout} sits beside
  * this: one mark stands for ten or more screens, and without somewhere to show them the reader has
  * to expand the column to read a name and collapse it again.
  */
-export function ConsoleMenuRail({ label, lead, children }: ConsoleMenuRailProps) {
+export function ConsoleMenuRail({ label, lead, children, foot }: ConsoleMenuRailProps) {
   return (
     <Flex
       direction="column"
@@ -141,6 +152,11 @@ export function ConsoleMenuRail({ label, lead, children }: ConsoleMenuRailProps)
       {lead}
       {lead != null && <Separator className="w-8" {...partAttributes(menuRailRuleStyle, {})} />}
       {children}
+      {foot != null && (
+        <Stack gap="xs" align="center" {...partAttributes(menuRailFootStyle, {})}>
+          {foot}
+        </Stack>
+      )}
     </Flex>
   );
 }
@@ -205,6 +221,12 @@ export interface ConsoleMenuColumnProps {
   readonly bodyRef?: RefObject<HTMLDivElement | null>;
   /** The clusters, each a branch row and the destinations under it. */
   readonly children: ReactNode;
+  /**
+   * What the column holds under its destinations (the services beside the console), drawn after the
+   * scrolling body so it stays at the column's foot however long the menu is. It draws its own rule
+   * and inset, so a foot that draws nothing leaves the column as it was.
+   */
+  readonly foot?: ReactNode;
 }
 
 /**
@@ -220,6 +242,7 @@ export function ConsoleMenuColumn({
   action,
   bodyRef,
   children,
+  foot,
 }: ConsoleMenuColumnProps) {
   return (
     <Flex
@@ -249,6 +272,7 @@ export function ConsoleMenuColumn({
         {children}
         <MenuInk />
       </Stack>
+      {foot}
     </Flex>
   );
 }
@@ -374,13 +398,20 @@ export interface ConsoleMenuLinkRowProps {
   readonly href: string;
   /** Whether the reader is standing on it. */
   readonly current?: boolean;
+  /**
+   * Whether it opens another service rather than a screen of this console. The row opens it in a new
+   * tab with no opener and no referrer, marks its end with the external-link glyph and tells a screen
+   * reader the tab is new, so the console the reader leaves stays where it was.
+   */
+  readonly external?: boolean;
 }
 
-/** A row that leaves for the screen it names. */
-export function ConsoleMenuLinkRow({ icon, label, href, current }: ConsoleMenuLinkRowProps) {
+/** A row that leaves for the screen it names, or opens the service it names in a new tab. */
+export function ConsoleMenuLinkRow({ icon, label, href, current, external }: ConsoleMenuLinkRowProps) {
   return (
     <MenuLink
       href={href}
+      linkTarget={external ? "BLANK" : undefined}
       className={MENU_ROW_LAYOUT}
       attributes={{
         ...slotAttributes(menuRowStyle, {
@@ -396,7 +427,24 @@ export function ConsoleMenuLinkRow({ icon, label, href, current }: ConsoleMenuLi
       <span className={MENU_LABEL} {...slotAttributes(menuLabelStyle, {})}>
         {label}
       </span>
+      {external && <NewTabMark />}
     </MenuLink>
+  );
+}
+
+/**
+ * The end of a row that opens a new tab: the external-link glyph for the eye, and the same said in
+ * words for a screen reader, which hears it as the end of the link's name.
+ */
+function NewTabMark() {
+  const { t } = useTranslation(`${PACKAGE_NAMESPACE}/chrome`);
+  return (
+    <>
+      <ConsoleMenuGlyph>
+        <ExternalLinkIcon />
+      </ConsoleMenuGlyph>
+      <span className="sr-only">{t("link.newTab")}</span>
+    </>
   );
 }
 

@@ -105,6 +105,14 @@ export {
   type ConsoleMenuLinkRowProps,
   type ConsoleMenuRailProps,
 } from "./menu-tree";
+export {
+  ConsoleServiceLinks,
+  configuredServiceLinks,
+  type ConfiguredServiceLink,
+  type ConsoleServiceLink,
+  type ConsoleServiceLinksLayout,
+  type ConsoleServiceLinksProps,
+} from "./service-links";
 export { AuthLayout } from "./auth-layout";
 export { AuthCard, type AuthCardNotice, type AuthCardProps } from "./auth-card";
 export { ConsolePageHeader } from "./page-header";

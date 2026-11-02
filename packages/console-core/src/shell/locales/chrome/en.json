@@ -95,5 +95,8 @@
     "go": "Go to {{name}}",
     "close": "Close",
     "list": "This list"
+  },
+  "link": {
+    "newTab": "(opens in a new tab)"
   }
 }

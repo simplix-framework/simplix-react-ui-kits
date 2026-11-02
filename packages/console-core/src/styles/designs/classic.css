@@ -1626,6 +1626,9 @@
   :where([data-part="console-menu-rail-button"])[data-part][data-p-console-menu-rail-button] {
     @apply size-[38px] [&_svg]:size-[18px];
   }
+  :where([data-part="console-menu-rail-foot"])[data-part][data-p-console-menu-rail-foot] {
+    @apply mt-auto pb-2;
+  }
   :where([data-part="console-menu-rail-rule"])[data-part][data-p-console-menu-rail-rule] {
     @apply my-[1.5px];
   }
@@ -1685,6 +1688,12 @@
   }
   :where([data-part="console-preview-topbar"])[data-part][data-p-console-preview-topbar] {
     @apply border-b bg-background;
+  }
+  :where([data-part="console-service-links"][data-part-layout="column"])[data-part][data-p-console-service-links] {
+    @apply border-t px-2.5 pb-3 pt-2;
+  }
+  :where([data-part="console-service-links-title"])[data-part][data-p-console-service-links-title] {
+    @apply px-2.5;
   }
   :where([data-part="console-band-controls"])[data-part][data-p-console-band-controls] {
     @apply ml-auto;

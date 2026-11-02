@@ -5,11 +5,12 @@
  * app from then on. On a wide window: the top bar, the menu column (folding to a rail) and the
  * routed screen beside it, and the status strip under them. On a phone: one screen at a time, the
  * destinations marked as phone tabs along the bottom, and a menu sheet holding every group with
- * the window-level controls. The menu, the brand, the top-bar controls and the account menu are
- * this file's own, in `useShellParts` below, and are customised here; `SHELL_FRAME` names the
- * routes drawn without the window and the pages drawn in place of it for a refused self read, so
- * the shell's own reads run only once a session stands. The screens reached without a session wear
- * `AuthLayout`.
+ * the window-level controls. The services beside the console stand at the foot of the column, the
+ * rail and the sheet, each opened in a new tab. The menu, the brand, the top-bar controls, the
+ * account menu and the services are this file's own, in `useShellParts` below, and are customised
+ * here; `SHELL_FRAME` names the routes drawn without the window and the pages drawn in place of it
+ * for a refused self read, so the shell's own reads run only once a session stands. The screens
+ * reached without a session wear `AuthLayout`.
  */
 import { Outlet, useRouter, useRouterState } from "@tanstack/react-router";
 import { createElement, useCallback, useEffect, useMemo, useState, type ComponentType, type ReactNode } from "react";
@@ -47,11 +48,13 @@ import {
   ConsolePhoneMenuSheet,
   ConsolePhoneSearchButton,
   ConsolePhoneShell,
+  ConsoleServiceLinks,
   ConsoleStatusStrip,
   ConsoleTopBar,
   type ConsoleCommand,
   type ConsolePhoneTab,
   type ConsoleSearch,
+  type ConsoleServiceLink,
   type ConsoleSearchDestination,
   type ConsoleStatusStripProps,
   type ConsoleTopBarAccount,
@@ -108,10 +111,22 @@ export interface ShellParts {
   readonly status?: ConsoleStatusStripProps;
   /** Rows the phone's menu sheet ends with, after the `tail` entries (signing out). */
   readonly phoneFooter?: ReactNode;
+  /**
+   * The services beside the console (another app of the product, the sign-in server's admin console),
+   * opened in a new tab from the foot of the menu column, the rail and the phone sheet. Each address
+   * is the installation's to set, read from its environment; a service with none is not drawn.
+   */
+  readonly services?: ShellServices;
   /** What the console's search finds beyond the menu: records, this reader's recents, the product's actions. */
   readonly search?: ShellSearchParts;
   /** Providers the window needs around itself and the routed screens, mounted once per window. */
   readonly wrap: (shell: ReactNode) => ReactNode;
+}
+
+/** The services beside the console, under one name. */
+export interface ShellServices {
+  readonly title: string;
+  readonly links: readonly ConsoleServiceLink[];
 }
 
 /**
@@ -279,6 +294,7 @@ function WindowShell({ parts, route, collapse, children }: ShellProps & { readon
                   <PanelLeftOpenIcon />
                 </Button>
               }
+              foot={parts.services ? <ConsoleServiceLinks layout="rail" {...parts.services} /> : undefined}
             >
               {parts.menu.map((group) => (
                 <RailGroup key={group.key} group={group} route={route} />
@@ -297,6 +313,7 @@ function WindowShell({ parts, route, collapse, children }: ShellProps & { readon
                   <PanelLeftCloseIcon />
                 </Button>
               }
+              foot={parts.services ? <ConsoleServiceLinks layout="column" {...parts.services} /> : undefined}
             >
               {parts.menu.map((group) => (
                 <ColumnGroup key={group.key} group={group} route={route} />
@@ -407,6 +424,7 @@ function PhoneShell({ parts, route, onSearch, children }: ShellProps & { readonl
             <ConsolePhoneMenuSection title={t("shell.nav.settings")}>
               <ChromeControlRows />
             </ConsolePhoneMenuSection>
+            {parts.services ? <ConsoleServiceLinks layout="sheet" {...parts.services} /> : null}
             {tail.length > 0 || parts.phoneFooter ? (
               <ConsolePhoneMenuSection>
                 {tail.map((entry) => (

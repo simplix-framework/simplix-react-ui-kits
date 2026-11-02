@@ -45,6 +45,7 @@ import {
   ConsoleMenuFold,
   ConsoleMenuSlot,
 } from "./menu-tree";
+import { ConsoleServiceLinks, type ConsoleServiceLink } from "./service-links";
 import { useSidebarCollapse } from "./sidebar-collapse";
 import { consoleWindowStyle } from "./console-window.style";
 
@@ -157,6 +158,11 @@ export interface ConsolePreviewChrome {
   readonly navigate?: (href: string) => void;
   /** The route the help panel answers for. */
   readonly manualRoute?: string;
+  /**
+   * The services beside the console, at the foot of the column and of the rail, as the console draws
+   * them. A service with no address is left out.
+   */
+  readonly services?: { readonly title: string; readonly links: readonly ConsoleServiceLink[] };
 }
 
 /** Whether an entry is the current destination or holds it. */
@@ -369,6 +375,7 @@ export function ConsolePreviewWindowChrome({
                     <PanelLeftOpenIcon />
                   </Button>
                 }
+                foot={chrome.services && <ConsoleServiceLinks layout="rail" {...chrome.services} />}
               >
                 {menu.groups.map((group) => (
                   <RailGroup key={group.key} group={group} current={chrome.current} />
@@ -383,6 +390,7 @@ export function ConsolePreviewWindowChrome({
                     <PanelLeftCloseIcon />
                   </Button>
                 }
+                foot={chrome.services && <ConsoleServiceLinks layout="column" {...chrome.services} />}
               >
                 {menu.groups.map((group) => (
                   <MenuGroup

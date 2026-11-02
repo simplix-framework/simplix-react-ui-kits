@@ -130,6 +130,18 @@ export const menuColumnBodyStyle = defineSlotStyle({
 });
 
 /**
+ * The box that holds what the rail keeps under its marks at the rail's foot. It carries position
+ * only, so a foot that draws nothing leaves nothing to see.
+ */
+export const menuRailFootStyle = defineSlotStyle({
+  slot: "console-menu-rail-foot",
+  as: "part",
+  base: "mt-auto pb-2",
+  variants: {},
+  defaultVariants: {},
+});
+
+/**
  * What one mark on the rail stands for, opened beside it: inset tighter than a popover's default
  * because it holds menu rows rather than prose. `PopoverContent` publishes no inset.
  */

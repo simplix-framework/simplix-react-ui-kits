@@ -64,6 +64,35 @@ describe("the generated top-bar shell on a phone", () => {
   });
 });
 
+describe("the generated console shell's services", () => {
+  const parts = "    wrap: (shell) => shell,\n";
+  const service =
+    '    services: { title: "Related services", links: [{ key: "portal", label: "Portal", href: "https://portal.example.test/" }, { key: "mail", label: "Mail", href: undefined }] },\n';
+
+  it("draws the services at the foot of the column, the rail and the phone sheet", () => {
+    const source = render("app-shell.hbs", context);
+    expect(source).toContain("readonly services?: ShellServices;");
+    for (const layout of ["column", "rail", "sheet"]) {
+      expect(source).toContain(`<ConsoleServiceLinks layout="${layout}" {...parts.services} />`);
+    }
+    expect(source.match(/foot=\{parts\.services \?/g)).toHaveLength(2);
+  });
+
+  it("compiles with a service declared, one of them unset", () => {
+    const source = render("app-shell.hbs", context);
+    expect(source).toContain(parts);
+    const withService = source.replace(parts, `${parts}${service}`);
+    expect(withService).toContain('key: "portal"');
+    expect(check(withService)).toEqual([]);
+  });
+
+  it("is a shape only the menu-column shell has: the top-bar shell has no column to stand at the foot of", () => {
+    const topBar = render("app-shell.top-bar.hbs", context);
+    expect(topBar).not.toContain("ConsoleServiceLinks");
+    expect(topBar).not.toContain("services");
+  });
+});
+
 describe.each(["auth-page.hbs", "error-page.hbs", "record-page.hbs", "dashboard-page.hbs", "static-page.hbs"])("the generated %s", (template) => {
   it("compiles alone as the whole page", () => {
     const page = join(virtualRoot, "apps", "app", "src", "pages", "thing", "page.tsx");
