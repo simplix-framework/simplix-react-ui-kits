@@ -42,7 +42,7 @@ export { lifecycleNodes } from "./record-lifecycle";
 export type { LifecycleOptions, LifecycleStep } from "./record-lifecycle";
 export type { MeterTone, RecordMeterValue } from "./record-meter";
 export { RecordExcerpt, excerptLine } from "./record-excerpt";
-export { bytesText, durationText, figureSign, signedText } from "./record-figure";
+export { bytesText, durationText, figureSign, ratioText, signedText } from "./record-figure";
 export type { FigureSign } from "./record-figure";
 export type { RecordBadge, RecordValue } from "./record-value";
 export { RecordDetail, RecordTabBody } from "./record-detail";

@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 
 import { figureValue } from "./record-contract";
 import { excerptLine } from "./record-excerpt";
-import { bytesText, durationText, figureSign, signedText } from "./record-figure";
+import { bytesText, durationText, figureSign, ratioText, signedText } from "./record-figure";
 import { RecordValueView } from "./record-value";
 
 describe("bytesText", () => {
@@ -61,5 +61,23 @@ describe("an excerpt", () => {
   });
   it("keeps a one-line message whole", () => {
     expect(excerptLine("  E_TIMEOUT  ")).toBe("E_TIMEOUT");
+  });
+});
+
+describe("ratioText", () => {
+  it("writes a part of a total as a percentage with one decimal at most", () => {
+    expect(ratioText(1, 8, "en")).toBe("12.5%");
+    expect(ratioText(3, 4, "en")).toBe("75%");
+  });
+  it("reads stored strings", () => {
+    expect(ratioText("2", "4", "en")).toBe("50%");
+  });
+  it("writes nothing when the total is zero or a value is not a number", () => {
+    expect(ratioText(0, 0, "en")).toBe("");
+    expect(ratioText(null, 5, "en")).toBe("");
+    expect(ratioText(2, undefined, "en")).toBe("");
+  });
+  it("keeps a true zero share", () => {
+    expect(ratioText(0, 6, "en")).toBe("0%");
   });
 });

@@ -81,3 +81,19 @@ export function signedText(text: string, sign: FigureSign | undefined): string {
   if (sign === "positive" && !text.startsWith("+")) return `+${text}`;
   return text;
 }
+
+/**
+ * One count as a share of another (`12.5%`), for a record that carries a total and the part of it
+ * that failed or was served from a cache. Nothing when the total is zero or either value is not a
+ * number, so a row with no calls draws the kit's empty mark instead of a false `0%`.
+ *
+ * @param part the stored count that is a share of the total
+ * @param total the stored total
+ * @param locale the reader's locale
+ */
+export function ratioText(part: unknown, total: unknown, locale: string): string {
+  const numerator = numberOf(part);
+  const denominator = numberOf(total);
+  if (numerator === null || denominator === null || denominator === 0) return "";
+  return new Intl.NumberFormat(locale, { style: "percent", maximumFractionDigits: 1 }).format(numerator / denominator);
+}
