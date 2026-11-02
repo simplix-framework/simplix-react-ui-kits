@@ -12,7 +12,7 @@
  * `AuthLayout`.
  */
 import { Outlet, useRouterState } from "@tanstack/react-router";
-import { useState, type ComponentType, type ReactNode } from "react";
+import { useEffect, useState, type ComponentType, type ReactNode } from "react";
 import { PanelLeftCloseIcon, PanelLeftOpenIcon } from "lucide-react";
 import { useTranslation } from "@simplix-react/i18n/react";
 import {
@@ -252,7 +252,13 @@ function WindowShell({ parts, route, children }: ShellProps) {
 
 /** One group in the expanded column, open while the reader stands inside it. */
 function ColumnGroup({ group, route }: { readonly group: ShellMenuGroup; readonly route: string }) {
-  const [open, setOpen] = useState(() => group.entries.some((entry) => holds(entry, route)));
+  const inside = group.entries.some((entry) => holds(entry, route));
+  const [open, setOpen] = useState(inside);
+  // Arriving inside the group from elsewhere (the brand, a figure, a card's link) opens it, so the row
+  // the reader stands on is shown as current; leaving it keeps whatever the reader chose.
+  useEffect(() => {
+    if (inside) setOpen(true);
+  }, [inside]);
   return (
     <Stack gap="xs">
       <ConsoleMenuBranchRow weight="cluster" icon={<group.icon aria-hidden />} label={group.label} open={open} onToggle={() => setOpen(!open)} />
