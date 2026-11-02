@@ -9,12 +9,18 @@ UI kits for simplix-react products. A kit is a design: the page patterns, layout
 | `@simplix-react-ui-kits/console-core` | The console parts every console design shares: page pattern (header, tiles, notices, tabs, list and detail), layout, notices, shell, screen widgets. Behaviour and markup only; each element carries the `data-slot` a design draws |
 | `@simplix-react-ui-kits/console-classic` | Operations console, classic design: `console-core` drawn with the framework's classic look |
 | `@simplix-react-ui-kits/console-clarity` | Operations console, clarity design: hairline borders on a near-white canvas, one accent, hierarchy from type weight and spacing |
+| `@simplix-react-ui-kits/site-core` | The parts every web site design shares: the site shell (window, bar, footer, dark band), the page column, head, section and breadcrumb, and the pricing parts. Behaviour and markup only; each element carries the `data-slot` a design draws |
+| `@simplix-react-ui-kits/site-clarity` | Web site, clarity design: `site-core` drawn with hairline borders, one accent and hierarchy from type, reading the `--site-*` variables a product sets; holds the site page region contract and its rendered checks |
 
 Every console kit ships every design's stylesheet, so the reader can switch design, colour theme, card fill, row density and dark mode at run time from `DisplaySettings` (`/shell`); the kit only decides which design a console opens in.
 
 A design kit re-exports `console-core` segment by segment and adds its stylesheet and its design defaults, so every console design behaves identically and differs only in how it looks.
 
 A kit is named `<area>-<design>`, because one area (a console, a kiosk, a field app) can have several designs.
+
+## Site kit
+
+A customer-facing web site (pricing, download, help, legal pages, an account area) is drawn with `site-clarity`, not with a console kit: its regions (a bar with the site's pages, a centred page column, plan cards, a footer with the legal links) are not a console's. The window is the `page` container, and every part reflows on the page tiers by the window's width. `packages/site-clarity/regions.json` is the site page region contract, `packages/site-clarity/README.md` lists the variables a product sets and the rendered checks (`site-regions-rendered.mjs`, `site-demo.mjs`).
 
 ## Console page order
 
