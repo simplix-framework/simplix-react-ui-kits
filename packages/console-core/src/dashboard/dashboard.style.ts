@@ -213,3 +213,19 @@ export const taskSideStyle = defineSlotStyle({
   variants: {},
   defaultVariants: {},
 });
+
+/** A row of a fact list: what is stated at the start, its value at the end; read, never pressed, so no hover. */
+export const factRowStyle = defineSlotStyle({
+  slot: "fact-row",
+  base: "min-h-11 gap-3 px-2.5 py-1.5 text-sm",
+  variants: {},
+  defaultVariants: {},
+});
+
+/** A fact's value at the row's end, in figures that line up down the list. */
+export const factValueStyle = defineSlotStyle({
+  slot: "fact-value",
+  base: "text-right font-medium tabular-nums",
+  variants: {},
+  defaultVariants: {},
+});

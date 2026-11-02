@@ -319,6 +319,12 @@
   [data-slot="dashboard-tip-lines"][data-slot][data-s-dashboard-tip-lines] {
     @apply gap-0.5;
   }
+  [data-slot="fact-row"][data-slot][data-s-fact-row] {
+    @apply min-h-11 gap-3 px-2.5 py-1.5 text-sm;
+  }
+  [data-slot="fact-value"][data-slot][data-s-fact-value] {
+    @apply text-right font-medium tabular-nums;
+  }
   [data-slot="schedule-go"][data-slot][data-s-schedule-go] {
     @apply text-muted-foreground transition-transform;
   }

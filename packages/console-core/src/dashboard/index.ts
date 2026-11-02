@@ -35,6 +35,7 @@ export {
 } from "./dashboard-layout";
 export { TodaySchedule, type ScheduleEntry, type TodayScheduleProps } from "./today-schedule";
 export { DashboardTaskList, type DashboardTaskListProps, type TaskEntry } from "./task-list";
+export { DashboardFactList, type DashboardFactListProps, type FactEntry } from "./fact-list";
 export { DashboardCaption, DashboardEmpty, DashboardFigure, DashboardSkeleton, type DashboardFigureProps } from "./dashboard-figure";
 export { DashboardReadState, dashboardReadStage, type DashboardReadStage, type DashboardReadStateProps } from "./dashboard-read-state";
 export { sparseLabels, sumByCategory, sumsByKey } from "./chart-model";
