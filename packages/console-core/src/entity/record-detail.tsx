@@ -523,7 +523,7 @@ export function RecordDetail({
   ) : (
     <Stack gap="sm">
       {tabsTrailing ? <Flex justify="end">{tabsTrailing}</Flex> : null}
-      <RecordTabBody content={{ sections, notices, note }} />
+      <RecordTabBody content={{ sections, note }} />
     </Stack>
   );
 
@@ -591,7 +591,8 @@ export function RecordDetail({
       }
     >
       <Stack gap="sm">
-        {tabs && tabs.length > 0 ? <RecordNotices notices={notices} /> : null}
+        {/* Above the body whether or not tabs follow: a notice explains the fields under it, so it is read first. */}
+        <RecordNotices notices={notices} />
         <FieldEnumsProvider value={fieldEnums}>{body}</FieldEnumsProvider>
         <Flex justify="end">
           <RecordVerbs verbs={verbs} end />
