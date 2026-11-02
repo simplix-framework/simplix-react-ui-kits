@@ -73,7 +73,7 @@
       "shortcuts": "ショートカットを表示",
       "toLight": "ライトモードに切り替え",
       "toDark": "ダークモードに切り替え",
-      "language": "{{language}}で表示",
+      "language": "{{language}}表示に切り替え",
       "expand": "メニューを展開",
       "collapse": "メニューを折りたたむ"
     },
