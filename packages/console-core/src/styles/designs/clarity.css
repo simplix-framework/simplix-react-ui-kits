@@ -931,11 +931,14 @@
   [data-slot="console-history-dot"][data-tone="success"][data-s-console-history-dot] {
     @apply bg-success border-success;
   }
+  [data-slot="console-history-line"][data-slot][data-s-console-history-line] {
+    @apply mt-1 -mb-1.5;
+  }
   [data-slot="console-history-line"][data-skipped="true"][data-s-console-history-line] {
-    @apply border-l border-dashed border-muted-foreground/40;
+    @apply border-l-2 border-dashed border-muted-foreground/40 bg-transparent;
   }
   [data-slot="console-history-line"][data-skipped="false"][data-s-console-history-line] {
-    @apply bg-border;
+    @apply rounded-full bg-muted-foreground/40;
   }
   [data-slot="console-live-notice-action"][data-slot][data-s-console-live-notice-action] {
     @apply ml-auto;

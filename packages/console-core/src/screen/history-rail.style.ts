@@ -25,11 +25,12 @@ export const historyDotStyle = defineSlotStyle({
 /** The hairline from one dot to the next; it is dashed where the next node was skipped. */
 export const historyLineStyle = defineSlotStyle({
   slot: "console-history-line",
-  base: "",
+  // Starts a hair under its dot and is pulled down by the next dot's top margin, so the line meets both.
+  base: "mt-1 -mb-1.5",
   variants: {
     skipped: {
-      true: "border-l border-dashed border-muted-foreground/40",
-      false: "bg-border",
+      true: "border-l-2 border-dashed border-muted-foreground/40 bg-transparent",
+      false: "rounded-full bg-muted-foreground/40",
     },
   },
   defaultVariants: { skipped: false },

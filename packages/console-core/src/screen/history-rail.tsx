@@ -119,11 +119,14 @@ export function HistoryRail({ nodes }: HistoryRailProps) {
               hairline that stretches to the next dot, and the padding that keeps that line
               unbroken between nodes. A `gap` on the outer stack would cut the line into segments,
               which is the one thing the rail cannot do, so the space is inside the row. */}
-          <Flex direction="column" align="center" className="w-4 shrink-0">
+          <Flex direction="column" align="center" className="w-4 shrink-0 self-stretch">
             <span className="size-3 shrink-0" {...slotAttributes(historyDotStyle, { state: node.state, tone: node.tone ?? "none" })} />
+            {/* The line runs from just under this dot to the top edge of the next one: it starts a
+                hair below the dot and is pulled down by the next dot's top margin, so no gap is left
+                where the eye expects the two to join. */}
             {index < nodes.length - 1 && (
               <span
-                className="w-px flex-1"
+                className="min-h-4 w-0.5 flex-1"
                 {...slotAttributes(historyLineStyle, { skipped: node.state === "skip" })}
               />
             )}
