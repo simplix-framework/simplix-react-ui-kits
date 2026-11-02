@@ -49,4 +49,13 @@ describe("the generated dashboard-page.hbs and its story", () => {
     expect(render("dashboard-page.hbs", context)).toContain('layout: "flow"');
     expect(render("dashboard-page.stories.hbs", context)).toContain('layout: "flow"');
   });
+
+  it("lays the cards out in the span grid, in the page and in the frame", () => {
+    const context = { NamePascal: "Thing", nameCamel: "thing", nameKebab: "thing", namespace: "common", storyTitle: "App/Thing" };
+    for (const template of ["dashboard-page.hbs", "dashboard-page.stories.hbs"]) {
+      const source = render(template, context);
+      expect(source).toContain("<DashboardGrid>");
+      expect(source).not.toContain("DashboardColumns");
+    }
+  });
 });

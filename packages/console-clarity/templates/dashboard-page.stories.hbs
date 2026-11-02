@@ -8,7 +8,7 @@
  */
 import type { Meta, StoryObj } from "@storybook/react";
 import { useTranslation } from "@simplix-react-ui-kits/console-clarity/i18n";
-import { DashboardColumns } from "@simplix-react-ui-kits/console-clarity/dashboard";
+import { DashboardGrid } from "@simplix-react-ui-kits/console-clarity/dashboard";
 import { ConsolePage } from "@simplix-react-ui-kits/console-clarity/page";
 
 function Screen() {
@@ -18,7 +18,7 @@ function Screen() {
   const description = line && line !== "{{nameCamel}}.description" ? line : undefined;
   return (
     <ConsolePage
-      spec={{ldb}} title: t("{{nameCamel}}.title"), description, tiles: [], layout: "flow", body: <DashboardColumns>{null}</DashboardColumns> {{rdb}}
+      spec={{ldb}} title: t("{{nameCamel}}.title"), description, tiles: [], layout: "flow", body: <DashboardGrid>{null}</DashboardGrid> {{rdb}}
     />
   );
 }

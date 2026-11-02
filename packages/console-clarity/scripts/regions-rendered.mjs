@@ -78,7 +78,61 @@ export function probe(regions, root = "main") {
       }),
     };
   }
+  // The dashboard grid as laid out: its width, its column gap and count, and each card's span and box, so
+  // `compareDashboardGrid` can hold every row full and every card to the width its span names.
+  const dash = scope.querySelector("[data-slot=dashboard-grid]");
+  if (dash) {
+    const px = (value) => parseFloat(value) || 0;
+    const style = getComputedStyle(dash);
+    const box = dash.getBoundingClientRect();
+    const round = (value) => Math.round(value * 100) / 100;
+    signature.dashboardGrid = {
+      width: round(box.width - px(style.paddingLeft) - px(style.paddingRight)),
+      gap: px(style.columnGap),
+      columns: Number(dash.dataset.columns) || style.gridTemplateColumns.split(" ").filter(Boolean).length,
+      cards: [...dash.querySelectorAll(":scope > [data-span]")].map((card) => {
+        const r = card.getBoundingClientRect();
+        return { span: Number(card.dataset.span), x: round(r.left - box.left - px(style.paddingLeft)), y: round(r.top - box.top), w: round(r.width) };
+      }),
+    };
+  }
   return signature;
+}
+
+/**
+ * The ways a dashboard grid breaks its row and width rule, as strings; empty when it holds. Every row is
+ * full: the columns its cards take sum to the grid's columns, with no gap left at the end. Every card is
+ * the width its span names at the grid's column count: one column, two columns and the gap between
+ * them, or the whole grid; a span wider than the grid takes the whole row. A span other than 1, 2 or 4 is
+ * refused. `grid` is `probe`'s `dashboardGrid`; `tolerance` is in px.
+ */
+export function compareDashboardGrid(grid, tolerance = 1) {
+  if (!grid || grid.cards.length === 0) return [];
+  const { width, gap, columns, cards } = grid;
+  const problems = [];
+  const off = (a, b) => Math.abs(a - b) > tolerance;
+  const column = (width - gap * (columns - 1)) / columns;
+  const widthOf = (take) => column * take + gap * (take - 1);
+  for (const [index, card] of cards.entries()) {
+    if (![1, 2, 4].includes(card.span)) {
+      problems.push(`dashboard grid: card ${index + 1} has span ${card.span}, not 1, 2 or 4`);
+      continue;
+    }
+    const take = Math.min(card.span, columns);
+    if (off(card.w, widthOf(take))) problems.push(`dashboard grid: card ${index + 1} (span ${card.span}) is ${card.w}px wide, ${Math.round(widthOf(take) * 100) / 100}px at ${columns} columns`);
+  }
+  const rows = [];
+  for (const card of cards) {
+    const row = rows.find((one) => !off(one.y, card.y));
+    if (row) row.cards.push(card);
+    else rows.push({ y: card.y, cards: [card] });
+  }
+  rows.forEach((row, index) => {
+    const taken = row.cards.reduce((sum, card) => sum + Math.min(card.span, columns), 0);
+    const right = Math.max(...row.cards.map((card) => card.x + card.w));
+    if (taken !== columns || off(right, width)) problems.push(`dashboard grid: row ${index + 1} takes ${taken} of ${columns} columns and ends ${Math.round((width - right) * 100) / 100}px short of the grid's edge`);
+  });
+  return problems;
 }
 
 /**
@@ -160,9 +214,10 @@ export function compare(signature, type, c = contract) {
   if (!t) return [`unknown page type ${type}`];
   const problems = [];
   if (signature.missing) return [`${type}: no element matches its root ${signature.missing}, so nothing was read`];
-  const { rows = 0, unboxedCards = 0, cardGrid, ...regions } = signature;
+  const { rows = 0, unboxedCards = 0, cardGrid, dashboardGrid, ...regions } = signature;
   if (unboxedCards > 0) problems.push(`cards: ${unboxedCards} card${unboxedCards === 1 ? "" : "s"} of the grid view drawn with no border on every side or no radius, so the cards read as loose text`);
   problems.push(...compareCardGrid(cardGrid));
+  problems.push(...compareDashboardGrid(dashboardGrid));
   for (const need of t.required ?? []) if (rows > 0 && !regions[need]) problems.push(`${need}: required on ${type} and missing over ${rows} rows`);
   for (const [region, { kinds, perCard }] of Object.entries(regions)) {
     const r = c.regions[region];
@@ -221,7 +276,29 @@ if (process.argv.includes("--selftest")) {
     says(gridGap, /neighbours, the grid gap is 16px/) &&
     says(gridRows, /between rows, the grid row gap is 24px/) &&
     gridInCompare.length === 1;
-  const ok = gridOk && unboxed.length === 1 && boxed.length === 0 && cardList.length === 0 && cardsNoStrip.length === 1 && switchInCell.length === 1 && linkTile.length === 0 && buttonTile.length === 1 && rampHit.length === 1 && rampMiss.length === 0 && vacuous.length === 1 && tokHit.length === 1 && tokMiss.length === 0 && miss.length === 0 && noStrip.length === 1 && empty.length === 0 && hit.length === 4 && compare(good, "system").length === 4;
-  console.log(ok ? "regions-rendered selftest: 13 region cases and 11 card grid cases hold" : `regions-rendered selftest FAILED\nhit: ${hit.join("\n")}\nmiss: ${miss.join("\n")}\ngrid: ${[gridGood, gridFewCards, gridOneColumn, gridWide, gridColumns, gridStart, gridGap, gridRows, gridInCompare].map((one) => one.join(" | ")).join("\n      ")}`);
+  // The dashboard grid: rows full and cards as wide as their spans, at four, two and one columns.
+  // 1124px at four columns with a 12px gap: a column is 272px, two are 556px, four are the whole 1124px.
+  const dash = (columns, width, cards) => ({ width, gap: 12, columns, cards });
+  const dashGood = compareDashboardGrid(dash(4, 1124, [
+    { span: 1, x: 0, y: 0, w: 272 }, { span: 1, x: 284, y: 0, w: 272 }, { span: 2, x: 568, y: 0, w: 556 },
+    { span: 4, x: 0, y: 300, w: 1124 },
+  ]));
+  // At two columns (760px: a column is 374px) a span of 2 and of 4 both take the row.
+  const dashTwo = compareDashboardGrid(dash(2, 760, [
+    { span: 1, x: 0, y: 0, w: 374 }, { span: 1, x: 386, y: 0, w: 374 }, { span: 2, x: 0, y: 300, w: 760 }, { span: 4, x: 0, y: 600, w: 760 },
+  ]));
+  const dashOne = compareDashboardGrid(dash(1, 358, [{ span: 2, x: 0, y: 0, w: 358 }, { span: 1, x: 0, y: 300, w: 358 }]));
+  const dashGap = compareDashboardGrid(dash(4, 1124, [{ span: 1, x: 0, y: 0, w: 272 }, { span: 2, x: 284, y: 0, w: 556 }]));
+  const dashWide = compareDashboardGrid(dash(4, 1124, [{ span: 2, x: 0, y: 0, w: 600 }, { span: 2, x: 612, y: 0, w: 512 }]));
+  const dashThree = compareDashboardGrid(dash(4, 1124, [{ span: 3, x: 0, y: 0, w: 840 }, { span: 1, x: 852, y: 0, w: 272 }]));
+  const dashInCompare = compare({ dashboardGrid: dash(4, 1124, [{ span: 1, x: 0, y: 0, w: 272 }]), rows: 0 }, "dashboard");
+  const dashOk =
+    dashGood.length === 0 && dashTwo.length === 0 && dashOne.length === 0 && compareDashboardGrid(undefined).length === 0 &&
+    says(dashGap, /row 1 takes 3 of 4 columns/) &&
+    says(dashWide, /card 1 \(span 2\) is 600px wide, 556px at 4 columns/) && says(dashWide, /card 2 \(span 2\) is 512px wide/) &&
+    says(dashThree, /card 1 has span 3, not 1, 2 or 4/) &&
+    dashInCompare.length === 1;
+  const ok = dashOk && gridOk && unboxed.length === 1 && boxed.length === 0 && cardList.length === 0 && cardsNoStrip.length === 1 && switchInCell.length === 1 && linkTile.length === 0 && buttonTile.length === 1 && rampHit.length === 1 && rampMiss.length === 0 && vacuous.length === 1 && tokHit.length === 1 && tokMiss.length === 0 && miss.length === 0 && noStrip.length === 1 && empty.length === 0 && hit.length === 4 && compare(good, "system").length === 4;
+  console.log(ok ? "regions-rendered selftest: 13 region cases, 11 card grid cases and 7 dashboard grid cases hold" : `regions-rendered selftest FAILED\nhit: ${hit.join("\n")}\nmiss: ${miss.join("\n")}\ngrid: ${[gridGood, gridFewCards, gridOneColumn, gridWide, gridColumns, gridStart, gridGap, gridRows, gridInCompare].map((one) => one.join(" | ")).join("\n      ")}\ndashboard: ${[dashGood, dashTwo, dashOne, dashGap, dashWide, dashThree, dashInCompare].map((one) => one.join(" | ")).join("\n      ")}`);
   process.exit(ok ? 0 : 1);
 }

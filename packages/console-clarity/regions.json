@@ -145,6 +145,7 @@
         "console-page-tab-panel",
         "console-page-body",
         "dashboard-columns",
+        "dashboard-grid",
         "dashboard-stack"
       ],
       "controls": [
@@ -313,7 +314,8 @@
       "PageTabSpec.when": "whether the tab exists for this reader",
       "PageTabSpec.unbuilt": "content: the tab names a capability the server does not offer yet",
       "PageSpec.tilesLoading": "state: the figures are still loading",
-      "PageSpec.tabClosesRecord": "behaviour: switching the tab closes the open record"
+      "PageSpec.tabClosesRecord": "behaviour: switching the tab closes the open record",
+      "PageSpec.tilesCollapsible": "behaviour: whether the figure row folds; a page whose figures are what it is for (a dashboard) keeps them open with no fold control"
     }
   },
   "dataSlots": {
