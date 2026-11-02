@@ -12,6 +12,7 @@ import {
   SheetHeader,
   SheetTitle,
   Icon,
+  MenuLink,
   Text,
   Tooltip,
   TooltipContent,
@@ -26,6 +27,7 @@ import {
 import { PHONE_WINDOW } from "../layout/window-size";
 import { ConsoleWindow } from "./console-window";
 import { PACKAGE_NAMESPACE } from "./locales";
+import { previewBrandLinkStyle } from "./preview-chrome.style";
 import {
   phoneActionBarStyle,
   phoneBarStyle,
@@ -98,6 +100,8 @@ export interface ConsolePhoneShellProps {
    * and is cut with an ellipsis rather than pushing the mark off.
    */
   readonly brand?: ReactNode;
+  /** Where pressing the brand leads and what that link is called for a screen reader; absent, the brand does nothing. */
+  readonly home?: { readonly href: string; readonly label: string };
   /** Whether there is somewhere to go back to. */
   readonly back?: boolean;
   /** The entries along the bottom. */
@@ -123,6 +127,7 @@ export interface ConsolePhoneShellProps {
 export function ConsolePhoneShell({
   title,
   brand,
+  home,
   back = false,
   tabs,
   activeTab,
@@ -161,9 +166,17 @@ export function ConsolePhoneShell({
             four lines tall at one character each. */}
         {brand != null && (
           <>
-            <Flex align="center" shrink={false}>
-              {brand}
-            </Flex>
+            {home ? (
+              <MenuLink href={home.href} attributes={{ ...slotAttributes(previewBrandLinkStyle, {}), "aria-label": home.label }}>
+                <Flex align="center" shrink={false}>
+                  {brand}
+                </Flex>
+              </MenuLink>
+            ) : (
+              <Flex align="center" shrink={false}>
+                {brand}
+              </Flex>
+            )}
             <Separator orientation="vertical" className="h-5" />
           </>
         )}

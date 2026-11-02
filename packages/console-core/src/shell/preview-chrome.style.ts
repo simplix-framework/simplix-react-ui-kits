@@ -28,6 +28,14 @@ export const previewTopBarLeadStyle = defineSlotStyle({
   defaultVariants: {},
 });
 
+/** The link a brand stands in when pressing it leads home: it shows the focus halo and no underline. */
+export const previewBrandLinkStyle = defineSlotStyle({
+  slot: "console-preview-brand-link",
+  base: "flex shrink-0 items-center rounded-md no-underline text-inherit focus-visible:outline-none focus-visible:shadow-[var(--focus-halo)]",
+  variants: {},
+  defaultVariants: {},
+});
+
 /** The product mark and the product's name. */
 export const previewBrandStyle = defineSlotStyle({
   slot: "console-preview-brand",

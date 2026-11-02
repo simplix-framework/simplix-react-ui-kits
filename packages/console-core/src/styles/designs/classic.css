@@ -1285,6 +1285,9 @@
   [data-slot="console-preview-badge"][data-slot][data-s-console-preview-badge] {
     @apply inline-flex shrink-0 items-center rounded-sm border border-border px-1.5 py-px text-(length:--fs-2xs) font-semibold uppercase leading-4 tracking-wide text-muted-foreground;
   }
+  [data-slot="console-preview-brand-link"][data-slot][data-s-console-preview-brand-link] {
+    @apply flex shrink-0 items-center rounded-md no-underline text-inherit;
+  }
   [data-slot="console-preview-clock"][data-slot][data-s-console-preview-clock] {
     @apply ml-3 gap-1.5 border-l pl-3 text-xs tabular-nums text-muted-foreground;
   }
@@ -1844,6 +1847,9 @@
   }
   :where([data-slot="console-preview-badge"])[data-s-console-preview-badge] {
     @apply max-[1180px]:hidden;
+  }
+  :where([data-slot="console-preview-brand-link"])[data-s-console-preview-brand-link] {
+    @apply focus-visible:outline-none focus-visible:shadow-[var(--focus-halo)];
   }
   :where([data-slot="console-preview-live-pulse"])[data-s-console-preview-live-pulse] {
     @apply motion-reduce:animate-none;

@@ -11,6 +11,7 @@ import {
   DropdownMenuTrigger,
   Flex,
   Heading,
+  MenuLink,
   Popover,
   PopoverTrigger,
   Stack,
@@ -33,6 +34,7 @@ import {
   previewAccountStyle,
   previewAvatarStyle,
   previewBadgeStyle,
+  previewBrandLinkStyle,
   previewBrandStyle,
   previewClockStyle,
   previewFlyoutTitleStyle,
@@ -94,6 +96,11 @@ export interface ConsoleTopBarProps {
   readonly title: ReactNode;
   /** A short tag after the title saying who the console is for, such as a staff marker. */
   readonly badge?: ReactNode;
+  /**
+   * Where pressing the brand leads (the console's first screen) and what that link is called for a
+   * screen reader. Absent, the brand is drawn and does nothing.
+   */
+  readonly home?: { readonly href: string; readonly label: string };
   readonly areas: readonly ConsoleArea[];
   readonly area: string;
   readonly onArea: (area: string) => void;
@@ -154,6 +161,7 @@ export function ConsoleTopBar({
   mark,
   title,
   badge,
+  home,
   areas,
   area,
   onArea,
@@ -241,13 +249,24 @@ export function ConsoleTopBar({
     <Stack gap="none" shrink={false} {...partAttributes(previewTopBarStyle, {})}>
       <Flex align="center" gap="sm" {...partAttributes(previewTopBarRowStyle, {})}>
         <Flex align="center" gap="md" flex minSize wrap {...partAttributes(previewTopBarLeadStyle, {})}>
-          <Flex align="center" gap="xs" shrink={false} {...partAttributes(previewBrandStyle, {})}>
-            {mark}
-            <Heading level={6} {...partAttributes(previewTitleStyle, {})}>
-              {title}
-            </Heading>
-            {badge && <span {...slotAttributes(previewBadgeStyle, {})}>{badge}</span>}
-          </Flex>
+          {(() => {
+            const brand = (
+              <Flex align="center" gap="xs" shrink={false} {...partAttributes(previewBrandStyle, {})}>
+                {mark}
+                <Heading level={6} {...partAttributes(previewTitleStyle, {})}>
+                  {title}
+                </Heading>
+                {badge && <span {...slotAttributes(previewBadgeStyle, {})}>{badge}</span>}
+              </Flex>
+            );
+            return home ? (
+              <MenuLink href={home.href} attributes={{ ...slotAttributes(previewBrandLinkStyle, {}), "aria-label": home.label }}>
+                {brand}
+              </MenuLink>
+            ) : (
+              brand
+            );
+          })()}
           <ConsoleAreaSwitch areas={areas} current={area} onSelect={onArea} />
         </Flex>
         <Flex align="center" gap="xs" shrink={false} {...partAttributes(previewToolsStyle, {})}>
