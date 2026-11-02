@@ -59,6 +59,10 @@
 
   & > * {
     overflow: hidden;
+    /* The fold clips on both axes, so what it holds is given a gutter the halo of a control on its
+       edge fits in; the negative margin takes back the room the padding adds. */
+    margin: calc(-1 * var(--focus-gutter));
+    padding: var(--focus-gutter);
     /* Without this a grid item refuses to go below its content's height and the fold never
        closes — the row simply stops animating, with nothing on screen saying why. */
     min-height: 0;

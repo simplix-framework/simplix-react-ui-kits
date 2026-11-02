@@ -51,7 +51,7 @@ export const previewBadgeStyle = defineSlotStyle({
 /** A bar control with nothing behind it yet: drawn as it will look, and quieter. */
 export const previewUnbuiltStyle = defineSlotStyle({
   slot: "console-preview-unbuilt",
-  base: "inline-flex cursor-default items-center opacity-60",
+  base: "inline-flex cursor-default items-center opacity-60 focus-visible:outline-none focus-visible:shadow-[var(--focus-halo)]",
   variants: {},
   defaultVariants: {},
 });

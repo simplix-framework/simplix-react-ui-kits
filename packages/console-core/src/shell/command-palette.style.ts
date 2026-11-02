@@ -17,7 +17,7 @@ export const keyCapStyle = defineSlotStyle({
  */
 export const barSearchStyle = defineSlotStyle({
   slot: "console-bar-search",
-  base: "h-8 gap-2 rounded-md border border-input bg-background pl-3 pr-1.5 text-sm text-muted-foreground transition-colors hover:bg-accent max-[1281px]:w-8 max-[1281px]:justify-center max-[1281px]:pl-0 max-[1281px]:pr-0 max-[1281px]:[&>kbd]:!hidden max-[1281px]:[&>span]:!hidden mr-2 w-60 max-w-none max-[1441px]:w-50",
+  base: "h-8 gap-2 rounded-md border border-input bg-background pl-3 pr-1.5 text-sm text-muted-foreground transition-colors hover:bg-accent focus-visible:outline-none focus-visible:shadow-[var(--focus-halo)] max-[1281px]:w-8 max-[1281px]:justify-center max-[1281px]:pl-0 max-[1281px]:pr-0 max-[1281px]:[&>kbd]:!hidden max-[1281px]:[&>span]:!hidden mr-2 w-60 max-w-none max-[1441px]:w-50",
   variants: {},
   defaultVariants: {},
 });

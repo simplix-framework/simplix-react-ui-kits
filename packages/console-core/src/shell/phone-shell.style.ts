@@ -23,7 +23,8 @@ export const phoneTabbarStyle = defineSlotStyle({
  */
 export const phoneTabStyle = defineSlotStyle({
   slot: "console-phone-tab",
-  base: "gap-0.5 py-1.5",
+  // The tabs run edge to edge against the window's bottom and sides, so their halo is drawn inside them.
+  base: "[--focus-halo:var(--focus-halo-inset)] gap-0.5 py-1.5 focus-visible:outline-none focus-visible:shadow-[var(--focus-halo)]",
   variants: {
     active: { true: "text-[var(--primary-text,color-mix(in_oklab,var(--primary)_70%,black))]", false: "text-muted-foreground" },
     unbuilt: { true: "cursor-not-allowed disabled:opacity-100", false: "" },

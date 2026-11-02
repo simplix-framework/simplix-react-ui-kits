@@ -20,6 +20,7 @@ import { ArrowRightIcon, ChevronDownIcon, GripVerticalIcon } from "lucide-react"
 import { PACKAGE_NAMESPACE } from "./locales";
 import {
   tileGoStyle,
+  tileLinkStyle,
   tileGripStyle,
   tileGutterStyle,
   tileHandleChevronStyle,
@@ -922,7 +923,7 @@ function TileGrid({
                 {card}
               </button>
             ) : tile.href ? (
-              <MenuLink href={tile.href} className="block h-full">
+              <MenuLink href={tile.href} className="block h-full" attributes={slotAttributes(tileLinkStyle, {}) as Record<string, string>}>
                 {card}
                 {/* Where the press goes, shown under the pointer on a tile that leads to a list. */}
                 <span aria-hidden className="pointer-events-none absolute bottom-3 end-3" {...slotAttributes(tileGoStyle, {})}>

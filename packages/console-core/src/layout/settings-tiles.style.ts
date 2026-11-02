@@ -271,6 +271,14 @@ export const tileGoStyle = defineSlotStyle({
   defaultVariants: {},
 });
 
+/** A tile that leads to its list: the link over the card carries the card's radius and the shared halo. */
+export const tileLinkStyle = defineSlotStyle({
+  slot: "console-tile-link",
+  base: "rounded-lg focus-visible:outline-none focus-visible:shadow-[var(--focus-halo)]",
+  variants: {},
+  defaultVariants: {},
+});
+
 /**
  * A tile that narrows the list under it: the press over the card. It carries the card's own ground
  * and radius, so the control the reader presses paints what it is; pressed, it is ringed the way
