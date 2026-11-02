@@ -1,4 +1,4 @@
-import { ArrowLeftIcon } from "lucide-react";
+import { ArrowLeftIcon, SearchIcon } from "lucide-react";
 import type { ReactNode } from "react";
 import { Link, useRouter } from "@tanstack/react-router";
 import { useTranslation } from "@simplix-react/i18n/react";
@@ -104,6 +104,11 @@ export interface ConsolePhoneShellProps {
   readonly home?: { readonly href: string; readonly label: string };
   /** Whether there is somewhere to go back to. */
   readonly back?: boolean;
+  /**
+   * Controls at the end of the bar, drawn on every screen: the console's search, which a phone has
+   * no top bar for. Each is a touch target of its own.
+   */
+  readonly actions?: ReactNode;
   /** The entries along the bottom. */
   readonly tabs: readonly ConsolePhoneTab[];
   /** Which of them this screen belongs to. */
@@ -129,6 +134,7 @@ export function ConsolePhoneShell({
   brand,
   home,
   back = false,
+  actions,
   tabs,
   activeTab,
   children,
@@ -183,6 +189,7 @@ export function ConsolePhoneShell({
         <Text size={brand != null ? undefined : "lg"} weight="semibold" className="min-w-0 flex-1 truncate">
           {title}
         </Text>
+        {actions}
       </Flex>
 
       {/* The screen, with its own footer inside it — a committing action belongs at the near end
@@ -384,6 +391,19 @@ export function PhoneEmptyState({
  */
 export function PhoneButton(props: ButtonProps) {
   return <Button {...props} className={cn(TOUCH_TARGET, props.className)} />;
+}
+
+/**
+ * The console's search on a phone: a glyph at the end of the bar that opens the command palette,
+ * as the top bar's search field does on a wide window.
+ */
+export function ConsolePhoneSearchButton({ onOpen }: { readonly onOpen: () => void }) {
+  const { t } = useTranslation(PACKAGE_NAMESPACE + "/chrome");
+  return (
+    <PhoneButton type="button" variant="ghost" aria-label={t("palette.search")} aria-haspopup="dialog" onClick={onOpen}>
+      <SearchIcon className="size-5" aria-hidden />
+    </PhoneButton>
+  );
 }
 
 /**

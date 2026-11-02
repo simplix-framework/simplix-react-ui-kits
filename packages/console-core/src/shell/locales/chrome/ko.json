@@ -55,11 +55,14 @@
     "title": "명령 팔레트",
     "search": "검색",
     "placeholder": "화면, 메뉴, 작업 찾기",
+    "placeholderRecords": "레코드, 화면, 작업 찾기",
     "empty": "「{{query}}」에 맞는 항목이 없습니다",
     "move": "이동",
     "run": "열기",
+    "newTab": "새 탭에서 열기",
     "choseong": "초성으로도 찾습니다",
     "groups": {
+      "recent": "최근",
       "go": "이동",
       "action": "작업",
       "menu": "메뉴"
@@ -69,7 +72,18 @@
       "help": "도움말 열기",
       "shortcuts": "단축키 보기",
       "toLight": "밝은 모드로 전환",
-      "toDark": "어두운 모드로 전환"
+      "toDark": "어두운 모드로 전환",
+      "language": "{{language}} 화면으로 전환",
+      "expand": "메뉴 펼치기",
+      "collapse": "메뉴 접기"
+    },
+    "records": {
+      "heading": "레코드",
+      "loading": "{{name}}에서 찾는 중…",
+      "failed": "{{name}} 검색에 실패했습니다",
+      "showAll": "{{name}}에서 모두 보기",
+      "none": "「{{query}}」에 맞는 레코드가 없습니다",
+      "tooShort": "두 글자 이상 입력하면 레코드도 찾습니다"
     }
   },
   "shortcuts": {

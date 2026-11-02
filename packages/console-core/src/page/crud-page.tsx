@@ -1,5 +1,5 @@
-import { createContext, useContext, type ReactNode } from "react";
-import { ListDetail, useCrudNavigation, useCrudPageState, useMediaQuery, useUIDefaults } from "@simplix-react/ui";
+import { createContext, useContext, useEffect, useRef, type ReactNode } from "react";
+import { ListDetail, type CrudListFilters, useCrudNavigation, useCrudPageState, useMediaQuery, useUIDefaults } from "@simplix-react/ui";
 
 import { PHONE_WINDOW } from "../layout/window-size";
 
@@ -10,6 +10,7 @@ import { ConsolePage } from "./console-page";
 import type { DetailPresentationSwitchProps } from "./detail-presentation-switch";
 import { useDetailWidthLimits, type DetailWidth } from "./detail-width";
 import type { DetailWidthSetting } from "./detail-width-memory";
+import { searchToType } from "./crud-page-search";
 import type { ConsoleSearch, PageNoticeSpec, PageSpec } from "./types";
 
 /**
@@ -29,6 +30,9 @@ export interface CrudPageNotice extends PageNoticeSpec {
 export function raisedNotices(notices: readonly CrudPageNotice[] | undefined): PageNoticeSpec[] {
   return (notices ?? []).filter((one) => one.when).map(({ when: _when, ...notice }) => notice);
 }
+
+/** The list state a {@link CrudPage} reads: what its figures narrow, and the search box an address fills. */
+export type CrudPageListFilters = TileFilters & Partial<Pick<CrudListFilters, "setSearch">>;
 
 /** Where a {@link CrudPage} opens the record a reader picked. */
 export type CrudPagePresentation = "panel" | "drawer" | "dialog" | "page";
@@ -92,8 +96,11 @@ export interface CrudPageProps {
    * {@link useDetailPresentationSetting} hands one that the browser remembers when the reader asks.
    */
   readonly detailWidths?: DetailWidthSetting;
-  /** The list's filter state the page's figures narrow: the state its chip row reads. */
-  readonly tileFilters?: TileFilters;
+  /**
+   * The list's filter state: the figures narrow it, the state its chip row reads, and an address
+   * carrying `?q=` types its text into the list's search box (`setSearch`) when the page opens.
+   */
+  readonly tileFilters?: CrudPageListFilters;
   /** Notices raised by the list's state, drawn directly under the figures after the spec's own notices. */
   readonly notices?: readonly CrudPageNotice[];
   readonly renderList: (nav: CrudPageNavigation) => ReactNode;
@@ -133,6 +140,16 @@ export function CrudPage({
   const shown = onAPhone ? "page" : (presentation ?? defaults.detailPresentation);
   const widthLimits = useDetailWidthLimits(shown);
   const nav = useCrudNavigation(search, onNavigate);
+  // `?q=`, from a link that opens the list searched (the console's search): typed into the list's
+  // search box once, so the rows are the search the link named.
+  const typed = useRef<string | undefined>(undefined);
+  const setSearch = tileFilters?.setSearch;
+  useEffect(() => {
+    const text = searchToType(search.q, typed.current);
+    if (text === undefined || !setSearch) return;
+    typed.current = text;
+    setSearch(text);
+  }, [search.q, setSearch]);
   const { state, fade, closePanel } = useCrudPageState(shown, nav);
   const handed: CrudPageNavigation = {
     selectedId: nav.selectedId,

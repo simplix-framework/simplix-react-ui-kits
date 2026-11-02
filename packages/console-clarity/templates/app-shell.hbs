@@ -11,8 +11,8 @@
  * the shell's own reads run only once a session stands. The screens reached without a session wear
  * `AuthLayout`.
  */
-import { Outlet, useRouterState } from "@tanstack/react-router";
-import { useEffect, useState, type ComponentType, type ReactNode } from "react";
+import { Outlet, useRouter, useRouterState } from "@tanstack/react-router";
+import { createElement, useCallback, useEffect, useMemo, useState, type ComponentType, type ReactNode } from "react";
 import { PanelLeftCloseIcon, PanelLeftOpenIcon } from "lucide-react";
 import { useTranslation } from "@simplix-react/i18n/react";
 import {
@@ -45,10 +45,14 @@ import {
   ConsoleMenuSlot,
   ConsolePhoneMenuSection,
   ConsolePhoneMenuSheet,
+  ConsolePhoneSearchButton,
   ConsolePhoneShell,
   ConsoleStatusStrip,
   ConsoleTopBar,
+  type ConsoleCommand,
   type ConsolePhoneTab,
+  type ConsoleSearch,
+  type ConsoleSearchDestination,
   type ConsoleStatusStripProps,
   type ConsoleTopBarAccount,
   type ConsoleTopBarProps,
@@ -56,7 +60,10 @@ import {
   DarkModeToggle,
   LocalePicker,
   type ShellRefusalPages,
+  type SidebarCollapse,
   useConsoleOnAPhone,
+  type FederatedSearchSource,
+  useConsoleSearch,
   useShellRefusalScreen,
   useSidebarCollapse,
 } from "@simplix-react-ui-kits/console-clarity/shell";
@@ -101,8 +108,26 @@ export interface ShellParts {
   readonly status?: ConsoleStatusStripProps;
   /** Rows the phone's menu sheet ends with, after the `tail` entries (signing out). */
   readonly phoneFooter?: ReactNode;
+  /** What the console's search finds beyond the menu: records, this reader's recents, the product's actions. */
+  readonly search?: ShellSearchParts;
   /** Providers the window needs around itself and the routed screens, mounted once per window. */
   readonly wrap: (shell: ReactNode) => ReactNode;
+}
+
+/**
+ * What the console's search finds beyond the menu, which always lists the destinations above and
+ * the console's own actions (language, light or dark, the menu's fold, the list of keys).
+ */
+export interface ShellSearchParts {
+  /** The lists asked for records once two characters are typed, each gated on its list access. */
+  readonly records?: readonly FederatedSearchSource[];
+  /**
+   * Where this reader's recents are kept: a key per signed-in account, outside the sign-in store's
+   * prefix. Absent or `null`, no recents are kept.
+   */
+  readonly recentsKey?: string | null;
+  /** The product's own actions, each a real operation the account may run. */
+  readonly actions?: readonly ConsoleCommand[];
 }
 
 /** What the root layout decides before a session stands, read without running any of the parts. */
@@ -132,6 +157,7 @@ export function useShellParts(): ShellParts {
       areas: [{ key: "main", label: t("shell.area") }],
       area: "main",
       onArea: () => undefined,
+      // Opened by the window's search, which `Console` wires to the palette.
       onSearch: UNBUILT,
       region: { label: t("shell.region"), empty: t("shell.noRegion"), items: [], onSelect: UNBUILT },
       notifications: { label: t("shell.notifications"), empty: t("shell.noNotifications"), onOpenChange: UNBUILT },
@@ -179,18 +205,56 @@ export function RootLayout() {
  * writer per window mounts once.
  */
 function Console({ route, onAPhone }: { readonly route: string; readonly onAPhone: boolean }) {
-  const parts = useShellParts();
+  const shell = useShellParts();
+  // The menu's fold is read here, so the search's fold action and the column are one state.
+  const collapse = useSidebarCollapse(shell.namespace);
+  const search = useShellSearch(shell, route, onAPhone ? undefined : collapse);
+  // The top bar's search field opens the window's one palette.
+  const parts: ShellParts = { ...shell, topBar: { ...shell.topBar, onSearch: search.open } };
   return parts.wrap(
-    onAPhone ? (
-      <PhoneShell parts={parts} route={route}>
-        <Outlet />
-      </PhoneShell>
-    ) : (
-      <WindowShell parts={parts} route={route}>
-        <Outlet />
-      </WindowShell>
-    ),
+    <>
+      {onAPhone ? (
+        <PhoneShell parts={parts} route={route} onSearch={search.open}>
+          <Outlet />
+        </PhoneShell>
+      ) : (
+        <WindowShell parts={parts} route={route} collapse={collapse}>
+          <Outlet />
+        </WindowShell>
+      )}
+      {search.element}
+    </>,
   );
+}
+
+/** Every destination the account may open, in menu order, the `tail` entries last. */
+function destinationsOf(parts: ShellParts): ConsoleSearchDestination[] {
+  const destination = (entry: ShellMenuEntry, sub?: string): ConsoleSearchDestination[] =>
+    entry.href ? [{ key: entry.key, label: entry.label, sub, icon: createElement(entry.icon, { "aria-hidden": true }), href: entry.href }] : [];
+  return [...parts.menu.flatMap((group) => group.entries.flatMap((entry) => destination(entry, group.label))), ...(parts.tail ?? []).flatMap((entry) => destination(entry))];
+}
+
+/**
+ * The window's search: the kit's palette over the menu the account may open and the parts'
+ * `search`, opened by the top bar's field, the phone bar's glyph and ⌘K or Ctrl+K.
+ */
+function useShellSearch(parts: ShellParts, route: string, collapse?: SidebarCollapse): ConsoleSearch {
+  const router = useRouter();
+  const navigate = useCallback((href: string) => router.history.push(href), [router]);
+  const entryKey = (entry: ShellMenuEntry) => `${entry.key}=${entry.label}=${entry.href ?? ""}`;
+  const menuKey = [...parts.menu.map((group) => `${group.label}:${group.entries.map(entryKey).join(",")}`), ...(parts.tail ?? []).map(entryKey)].join("|");
+  // The parts are rebuilt every render; the destinations change only when the menu's words or entries do.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const destinations = useMemo(() => destinationsOf(parts), [menuKey]);
+  return useConsoleSearch({
+    destinations,
+    route,
+    navigate,
+    records: parts.search?.records,
+    recentsKey: parts.search?.recentsKey ?? null,
+    actions: parts.search?.actions,
+    collapse,
+  });
 }
 
 interface ShellProps {
@@ -199,9 +263,9 @@ interface ShellProps {
   readonly children: ReactNode;
 }
 
-function WindowShell({ parts, route, children }: ShellProps) {
+function WindowShell({ parts, route, collapse, children }: ShellProps & { readonly collapse: SidebarCollapse }) {
   const { t } = useTranslation("{{namespace}}");
-  const { collapsed, toggle } = useSidebarCollapse(parts.namespace);
+  const { collapsed, toggle } = collapse;
   return (
     <ConsoleWindow>
       <ConsoleTopBar {...parts.topBar} mark={parts.brand.mark} title={parts.brand.title} badge={parts.brand.badge} account={parts.account} />
@@ -314,7 +378,7 @@ function EntryRow({ entry, route }: { readonly entry: ShellMenuEntry; readonly r
   return <ConsoleMenuLinkRow icon={<entry.icon aria-hidden />} label={entry.label} href={entry.href} current={holds(entry, route)} />;
 }
 
-function PhoneShell({ parts, route, children }: ShellProps) {
+function PhoneShell({ parts, route, onSearch, children }: ShellProps & { readonly onSearch: () => void }) {
   const { t } = useTranslation("{{namespace}}");
   const header = usePageHeaderState();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -326,7 +390,13 @@ function PhoneShell({ parts, route, children }: ShellProps) {
   tabs.push({ key: "menu", label: t("shell.nav.menu"), icon: "menu", onPress: () => setMenuOpen(true) });
   const standing = entries.find((entry) => entry.phoneTab && holds(entry, route));
   return (
-    <ConsolePhoneShell brand={parts.brand.mark} title={header.title ?? parts.brand.title} tabs={tabs} activeTab={menuOpen ? "menu" : (standing?.key ?? "")}>
+    <ConsolePhoneShell
+      brand={parts.brand.mark}
+      title={header.title ?? parts.brand.title}
+      actions={<ConsolePhoneSearchButton onOpen={onSearch} />}
+      tabs={tabs}
+      activeTab={menuOpen ? "menu" : (standing?.key ?? "")}
+    >
       <ConsoleContentColumn>{children}</ConsoleContentColumn>
       <ConsolePhoneMenuSheet
         open={menuOpen}

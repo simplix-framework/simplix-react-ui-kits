@@ -1,5 +1,5 @@
-import { SearchIcon } from "lucide-react";
-import { Fragment, useMemo, useState, type ReactNode } from "react";
+import { ArrowRightIcon, HistoryIcon, SearchIcon, TriangleAlertIcon } from "lucide-react";
+import { Fragment, useLayoutEffect, useMemo, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
 import { useTranslation } from "@simplix-react/i18n/react";
 import {
   Command,
@@ -14,7 +14,9 @@ import {
 } from "@simplix-react/ui";
 import { partAttributes, slotAttributes } from "@simplix-react/ui/design";
 
+import { summarizeSearch, useFederatedSearch, type FederatedSearchSource } from "./federated-search";
 import { PACKAGE_NAMESPACE } from "./locales";
+import type { ConsoleRecent } from "./palette-recents";
 import {
   barSearchLabelStyle,
   barSearchStyle,
@@ -24,14 +26,20 @@ import {
   paletteKeysStyle,
   paletteListStyle,
   paletteEscStyle,
+  paletteFieldStyle,
   paletteMatchStyle,
+  paletteMoreStyle,
+  paletteStatusStyle,
   paletteStyle,
   paletteSubStyle,
   shortcutKeysStyle,
   shortcutListStyle,
 } from "./command-palette.style";
 
-/** Which list a command is drawn in. Go-to and action entries come first, menu destinations last. */
+/**
+ * Which list a command is drawn in: go-to and menu destinations first, then the records the
+ * product's sources find, then the actions.
+ */
 export type ConsoleCommandGroup = "go" | "action" | "menu";
 
 /** One entry of the command palette. */
@@ -48,6 +56,11 @@ export interface ConsoleCommand {
   readonly keys?: readonly string[];
   /** What choosing it does. The palette closes first. */
   readonly run: () => void;
+  /**
+   * The address it opens, for a destination: ⌘ or Ctrl with Enter opens it in a new tab, and the
+   * palette keeps it among the recents.
+   */
+  readonly href?: string;
 }
 
 /** The initial consonants of the Hangul syllables, in code-point order. */
@@ -82,7 +95,8 @@ function score(command: ConsoleCommand, query: string): number {
 
 /** How many of each list are shown, so a broad query does not bury the actions under destinations. */
 const GROUP_LIMIT: Readonly<Record<ConsoleCommandGroup, number>> = { go: 6, action: 6, menu: 8 };
-const GROUP_ORDER: readonly ConsoleCommandGroup[] = ["go", "action", "menu"];
+/** The destinations first, the records the product's sources find next, the actions last. */
+const GROUP_ORDER: readonly ConsoleCommandGroup[] = ["go", "menu", "action"];
 
 /** The label with the part the query matched marked. */
 function Highlighted({ label, query }: { readonly label: string; readonly query: string }) {
@@ -159,19 +173,51 @@ export interface ConsoleCommandPaletteProps {
   readonly open: boolean;
   readonly onOpenChange: (open: boolean) => void;
   readonly commands: readonly ConsoleCommand[];
+  /**
+   * The places the palette looks for records once two or more characters are typed, each a group
+   * of its own between the destinations and the actions. Absent, the palette finds commands only.
+   */
+  readonly records?: readonly FederatedSearchSource[];
+  /** What the reader opened last, offered before anything is typed. */
+  readonly recents?: readonly ConsoleRecent[];
+  /** Opens an address inside the console: a record, a recent, a list searched for the text. */
+  readonly navigate?: (href: string) => void;
+  /** Told of every record and destination opened from the palette, for the recents. */
+  readonly onOpened?: (opened: ConsoleRecent) => void;
+}
+
+/** A Hangul-initials-only text matches commands locally; no server search can match it. */
+const asksRecords = (query: string) => !isChoseongQuery(query);
+
+/** The key a reader holds with Enter to open a row in a new tab, as their keyboard prints it. */
+function modifierKey(): string {
+  return typeof navigator !== "undefined" && /Mac|iP(hone|ad|od)/.test(navigator.platform) ? "⌘" : "Ctrl";
+}
+
+/** One row the palette can open, whatever kind it is: its value is cmdk's selection. */
+interface PaletteRow {
+  readonly run: () => void;
+  readonly href?: string;
 }
 
 /**
- * The command palette: one field that finds a screen, a menu destination or an action and runs it.
+ * The command palette: one field that finds a screen, a record, a menu destination or an action and
+ * opens it.
  *
  * <p>Built on the framework's `Command`, which moves the selection with the arrow keys and runs the
  * selected row on Enter; the ranking is the palette's own, because it groups and caps the results and
- * matches Hangul initial consonants, and `cmdk`'s fuzzy filter does neither.
+ * matches Hangul initial consonants, and `cmdk`'s fuzzy filter does neither. Records come from the
+ * product's sources through {@link useFederatedSearch}, one group per source, each with its own
+ * waiting and failure line, so a source that fails never empties the rest. ⌘ or Ctrl with Enter
+ * opens the selected record or destination in a new tab.
  */
-export function ConsoleCommandPalette({ open, onOpenChange, commands }: ConsoleCommandPaletteProps) {
+export function ConsoleCommandPalette({ open, onOpenChange, commands, records, recents, navigate, onOpened }: ConsoleCommandPaletteProps) {
   const { t } = useTranslation(`${PACKAGE_NAMESPACE}/chrome`);
   const [query, setQuery] = useState("");
+  const [selected, setSelected] = useState("");
   const trimmed = query.trim();
+  const searching = records !== undefined && records.length > 0;
+  const found = useFederatedSearch(records ?? [], trimmed, open && searching, { accepts: asksRecords });
 
   const shown = useMemo(
     () =>
@@ -186,10 +232,95 @@ export function ConsoleCommandPalette({ open, onOpenChange, commands }: ConsoleC
       })).filter((section) => section.rows.length > 0),
     [commands, trimmed],
   );
+  const before = shown.filter((section) => section.group !== "action");
+  const after = shown.filter((section) => section.group === "action");
+  const recentRows = trimmed === "" ? (recents ?? []) : [];
+  // The groups answering the current text: an older text's answer stays until the new one is asked.
+  const groups = found.groups.filter((group) => group.status !== "done" || group.results.length > 0);
+  const { looking: stillLooking, noRecords } = summarizeSearch(found, trimmed);
+  const tooShort = searching && trimmed.length === 1 && asksRecords(trimmed);
 
   const change = (next: boolean) => {
     if (!next) setQuery("");
     onOpenChange(next);
+  };
+
+  // The control that opened the palette, read before the dialog moves the focus into its field, so
+  // closing it puts the reader back where they were (the bar's field, the phone's glyph, a row).
+  const opener = useRef<HTMLElement | null>(null);
+  useLayoutEffect(() => {
+    if (!open) return;
+    const active = document.activeElement;
+    opener.current = active instanceof HTMLElement && active !== document.body ? active : null;
+  }, [open]);
+  const returnFocus = (event: Event) => {
+    const control = opener.current;
+    if (!control?.isConnected) return;
+    event.preventDefault();
+    control.focus();
+  };
+
+  const go = (href: string) => (navigate ? navigate(href) : window.location.assign(href));
+  const rows = new Map<string, PaletteRow>();
+  const row = (value: string, entry: PaletteRow) => {
+    rows.set(value, entry);
+    return {
+      value,
+      onSelect: () => {
+        change(false);
+        entry.run();
+      },
+    };
+  };
+
+  const commandRow = (command: ConsoleCommand) => (
+    <CommandItem
+      key={command.key}
+      {...row(command.key, {
+        href: command.href,
+        run: () => {
+          if (command.href) onOpened?.({ key: `page:${command.href}`, kind: "page", label: command.label, sub: command.sub, href: command.href });
+          command.run();
+        },
+      })}
+    >
+      {command.icon}
+      <span className="truncate">
+        <Highlighted label={command.label} query={trimmed} />
+      </span>
+      {command.sub && (
+        <span className="min-w-0 truncate" {...slotAttributes(paletteSubStyle, {})}>
+          {command.sub}
+        </span>
+      )}
+      {command.keys && command.keys.length > 0 && (
+        <span className="flex shrink-0 items-center" {...slotAttributes(paletteKeysStyle, {})}>
+          {command.keys.map((key) => (
+            <ConsoleKeyCap key={key}>{key}</ConsoleKeyCap>
+          ))}
+        </span>
+      )}
+    </CommandItem>
+  );
+
+  const commandGroups = (sections: typeof shown) =>
+    sections.map((section) => (
+      <CommandGroup key={section.group} heading={t(`palette.groups.${section.group}`)}>
+        {section.rows.map(commandRow)}
+      </CommandGroup>
+    ));
+
+  // Nothing at all answers the text: no command, no record, nothing still asked or failed to say so.
+  const nothing = trimmed !== "" && shown.length === 0 && groups.length === 0 && !stillLooking && !tooShort;
+
+  // ⌘ or Ctrl with Enter: the selected row in a new tab, where it has an address. The palette stays
+  // open, so several records can be opened one after another.
+  const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (event.key !== "Enter" || !(event.metaKey || event.ctrlKey)) return;
+    const href = rows.get(selected)?.href;
+    if (!href) return;
+    event.preventDefault();
+    window.open(href, "_blank", "noopener");
   };
 
   return (
@@ -197,53 +328,100 @@ export function ConsoleCommandPalette({ open, onOpenChange, commands }: ConsoleC
       <DialogContent
         flush
         showCloseButton={false}
+        onCloseAutoFocus={returnFocus}
         className="top-[12vh] w-[min(640px,92vw)] translate-y-0 sm:max-w-[640px]"
         {...partAttributes(paletteStyle, {})}
       >
         <DialogTitle className="sr-only">{t("palette.title")}</DialogTitle>
-        <Command shouldFilter={false} loop>
-          <div className="relative">
-            <CommandInput value={query} onValueChange={setQuery} placeholder={t("palette.placeholder")} aria-label={t("palette.placeholder")} />
+        <Command shouldFilter={false} loop value={selected} onValueChange={setSelected} onKeyDown={onKeyDown}>
+          <div className="relative" {...slotAttributes(paletteFieldStyle, {})}>
+            <CommandInput
+              value={query}
+              onValueChange={setQuery}
+              placeholder={t(searching ? "palette.placeholderRecords" : "palette.placeholder")}
+              aria-label={t(searching ? "palette.placeholderRecords" : "palette.placeholder")}
+            />
             <span aria-hidden className="pointer-events-none absolute flex items-center" {...slotAttributes(paletteEscStyle, {})}>
               <ConsoleKeyCap>Esc</ConsoleKeyCap>
             </span>
           </div>
           <CommandList className="max-h-[52vh]" {...partAttributes(paletteListStyle, {})}>
-            <CommandEmpty>{t("palette.empty", { query: trimmed })}</CommandEmpty>
-            {shown.map((section) => (
-              <CommandGroup key={section.group} heading={t(`palette.groups.${section.group}`)}>
-                {section.rows.map((command) => (
-                  <CommandItem
-                    key={command.key}
-                    value={command.key}
-                    onSelect={() => {
-                      change(false);
-                      command.run();
-                    }}
-                  >
-                    {command.icon}
-                    <span className="truncate">
-                      <Highlighted label={command.label} query={trimmed} />
-                    </span>
-                    {command.sub && (
+            {nothing && <CommandEmpty>{t("palette.empty", { query: trimmed })}</CommandEmpty>}
+            {recentRows.length > 0 && (
+              <CommandGroup heading={t("palette.groups.recent")}>
+                {recentRows.map((recent) => (
+                  <CommandItem key={recent.key} {...row(`recent:${recent.key}`, { href: recent.href, run: () => { onOpened?.(recent); go(recent.href); } })}>
+                    <HistoryIcon aria-hidden />
+                    <span className="truncate">{recent.label}</span>
+                    {recent.sub && (
                       <span className="min-w-0 truncate" {...slotAttributes(paletteSubStyle, {})}>
-                        {command.sub}
-                      </span>
-                    )}
-                    {command.keys && command.keys.length > 0 && (
-                      <span className="flex shrink-0 items-center" {...slotAttributes(paletteKeysStyle, {})}>
-                        {command.keys.map((key) => (
-                          <ConsoleKeyCap key={key}>{key}</ConsoleKeyCap>
-                        ))}
+                        {recent.sub}
                       </span>
                     )}
                   </CommandItem>
                 ))}
               </CommandGroup>
+            )}
+            {commandGroups(before)}
+            {tooShort && (
+              <CommandGroup heading={t("palette.records.heading")}>
+                <CommandItem disabled value="records:too-short">
+                  <span {...slotAttributes(paletteStatusStyle, {})}>{t("palette.records.tooShort")}</span>
+                </CommandItem>
+              </CommandGroup>
+            )}
+            {groups.map((group) => (
+              <CommandGroup key={`records:${group.key}`} heading={group.label}>
+                {group.status === "loading" && (
+                  <CommandItem disabled value={`records:${group.key}:loading`}>
+                    <span {...slotAttributes(paletteStatusStyle, {})}>{t("palette.records.loading", { name: group.label })}</span>
+                  </CommandItem>
+                )}
+                {group.status === "failed" && (
+                  <CommandItem disabled value={`records:${group.key}:failed`}>
+                    <TriangleAlertIcon aria-hidden />
+                    <span {...slotAttributes(paletteStatusStyle, { tone: "failed" })}>{t("palette.records.failed", { name: group.label })}</span>
+                  </CommandItem>
+                )}
+                {group.results.map((result) => {
+                  const recent: ConsoleRecent = { key: `record:${group.key}:${result.id}`, kind: "record", label: result.title, sub: group.label, href: result.href };
+                  return (
+                    <CommandItem key={result.id} {...row(recent.key, { href: result.href, run: () => { onOpened?.(recent); go(result.href); } })}>
+                      {group.icon}
+                      <span className="truncate">
+                        <Highlighted label={result.title} query={found.query} />
+                      </span>
+                      {result.sub && (
+                        <span className="min-w-0 truncate" {...slotAttributes(paletteSubStyle, {})}>
+                          {result.sub}
+                        </span>
+                      )}
+                    </CommandItem>
+                  );
+                })}
+                {group.status === "done" && group.listHref && (
+                  <CommandItem {...row(`records:${group.key}:all`, { href: group.listHref, run: () => go(group.listHref ?? "") })}>
+                    <ArrowRightIcon aria-hidden />
+                    <span className="truncate" {...slotAttributes(paletteMoreStyle, {})}>
+                      {t("palette.records.showAll", { name: group.label })}
+                    </span>
+                  </CommandItem>
+                )}
+              </CommandGroup>
             ))}
+            {/* The text found no record: said once under the destinations it did find, or, beside a
+                failed source, said for the sources that answered. */}
+            {noRecords && (shown.length > 0 || groups.length > 0) && (
+              <CommandGroup heading={t("palette.records.heading")}>
+                <CommandItem disabled value="records:none">
+                  <span {...slotAttributes(paletteStatusStyle, {})}>{t("palette.records.none", { query: found.query })}</span>
+                </CommandItem>
+              </CommandGroup>
+            )}
+            {commandGroups(after)}
           </CommandList>
         </Command>
-        <div className="flex items-center" {...slotAttributes(paletteFootStyle, {})}>
+        <div className="flex flex-wrap items-center" {...slotAttributes(paletteFootStyle, {})}>
           <span className="inline-flex items-center" {...slotAttributes(paletteHintStyle, {})}>
             <ConsoleKeyCap>↑</ConsoleKeyCap>
             <ConsoleKeyCap>↓</ConsoleKeyCap>
@@ -253,6 +431,13 @@ export function ConsoleCommandPalette({ open, onOpenChange, commands }: ConsoleC
             <ConsoleKeyCap>Enter</ConsoleKeyCap>
             {t("palette.run")}
           </span>
+          {searching && (
+            <span className="inline-flex items-center" {...slotAttributes(paletteHintStyle, {})}>
+              <ConsoleKeyCap>{modifierKey()}</ConsoleKeyCap>
+              <ConsoleKeyCap>Enter</ConsoleKeyCap>
+              {t("palette.newTab")}
+            </span>
+          )}
           <span>{t("palette.choseong")}</span>
         </div>
       </DialogContent>

@@ -10,4 +10,10 @@ describe("a console page's address", () => {
   it("leaves out a field that is not text", () => {
     expect(validateConsoleSearch({ help: 3 })).not.toHaveProperty("help");
   });
+
+  it("keeps the text its list opens searched for, and drops a blank one", () => {
+    expect(validateConsoleSearch({ q: "kim" })).toMatchObject({ q: "kim" });
+    expect(validateConsoleSearch({ q: "  " })).not.toHaveProperty("q");
+    expect(validateConsoleSearch({ q: 7 })).not.toHaveProperty("q");
+  });
 });

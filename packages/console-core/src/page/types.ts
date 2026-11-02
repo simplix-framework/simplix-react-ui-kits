@@ -65,6 +65,14 @@ export interface ConsoleSearch extends CrudSearch {
    */
   readonly gap?: string;
   readonly grant?: string;
+  /**
+   * The text typed into the list's search box when the page opens, as `?q=`.
+   *
+   * <p>How a link from somewhere else (the console's search, a notice) opens a list already
+   * searched for what the reader was looking for. The page types it into the list once, when the
+   * address carries it; what the reader types afterwards is the list's own and is not written back.
+   */
+  readonly q?: string;
 }
 
 /**

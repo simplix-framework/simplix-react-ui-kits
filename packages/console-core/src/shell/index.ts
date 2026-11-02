@@ -37,6 +37,22 @@ export {
   type ConsoleShortcutListProps,
 } from "./command-palette";
 export { useConsoleHotkeys, CHORD_WINDOW_MS, type ConsoleHotkeyActions } from "./console-hotkeys";
+export {
+  createFederatedSearch,
+  searchSource,
+  summarizeSearch,
+  useFederatedSearch,
+  type FederatedSearchController,
+  type FederatedSearchGroup,
+  type FederatedSearchOptions,
+  type FederatedSearchResult,
+  type FederatedSearchSource,
+  type FederatedSearchState,
+  type FederatedSearchStatus,
+  type FederatedSearchSummary,
+} from "./federated-search";
+export { RECENT_LIMIT, parseRecents, useConsoleRecents, withRecent, type ConsoleRecent, type ConsoleRecents } from "./palette-recents";
+export { useConsoleSearch, type ConsoleSearch, type ConsoleSearchDestination, type ConsoleSearchOptions } from "./console-search";
 export { CountedIconButton, type CountedIconButtonProps } from "./counted-icon-button";
 export { ConsoleWindow, type ConsoleWindowProps } from "./console-window";
 export {
@@ -95,6 +111,7 @@ export { ConsolePageHeader } from "./page-header";
 export {
   ConsolePhoneMenuSection,
   ConsolePhoneMenuSheet,
+  ConsolePhoneSearchButton,
   ConsolePhoneShell,
   PhoneActionBar,
   PhoneButton,

@@ -55,11 +55,14 @@
     "title": "コマンドパレット",
     "search": "検索",
     "placeholder": "画面・メニュー・操作を検索",
+    "placeholderRecords": "レコード・画面・操作を検索",
     "empty": "「{{query}}」に一致する項目はありません",
     "move": "移動",
     "run": "開く",
+    "newTab": "新しいタブで開く",
     "choseong": "ハングルの初声でも検索できます",
     "groups": {
+      "recent": "最近",
       "go": "移動",
       "action": "操作",
       "menu": "メニュー"
@@ -69,7 +72,18 @@
       "help": "ヘルプを開く",
       "shortcuts": "ショートカットを表示",
       "toLight": "ライトモードに切り替え",
-      "toDark": "ダークモードに切り替え"
+      "toDark": "ダークモードに切り替え",
+      "language": "{{language}}で表示",
+      "expand": "メニューを展開",
+      "collapse": "メニューを折りたたむ"
+    },
+    "records": {
+      "heading": "レコード",
+      "loading": "{{name}}を検索中…",
+      "failed": "{{name}}を検索できませんでした",
+      "showAll": "{{name}}ですべて表示",
+      "none": "「{{query}}」に一致するレコードはありません",
+      "tooShort": "2文字以上入力するとレコードも検索します"
     }
   },
   "shortcuts": {

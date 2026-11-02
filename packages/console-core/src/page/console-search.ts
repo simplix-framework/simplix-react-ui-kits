@@ -6,8 +6,8 @@ const text = (value: unknown): string | undefined => (typeof value === "string" 
 
 /**
  * Reads a console page's address from a router's search object: the crud fields, and the
- * explanation and overlays a console page opens (`?help=`, `?gap=`, `?grant=`), so a reload or a
- * shared link lands on what the reader was looking at.
+ * explanation and overlays a console page opens (`?help=`, `?gap=`, `?grant=`) and the text its list
+ * opens searched for (`?q=`), so a reload or a shared link lands on what the reader was looking at.
  *
  * @param search the router's raw search object
  * @returns the address, with every field the page does not take left out
@@ -16,10 +16,12 @@ export function validateConsoleSearch(search: Record<string, unknown>): ConsoleS
   const help = text(search.help);
   const gap = text(search.gap);
   const grant = text(search.grant);
+  const q = text(search.q);
   return {
     ...validateCrudSearch(search),
     ...(help !== undefined ? { help } : {}),
     ...(gap !== undefined ? { gap } : {}),
     ...(grant !== undefined ? { grant } : {}),
+    ...(q !== undefined && q.trim() !== "" ? { q } : {}),
   };
 }

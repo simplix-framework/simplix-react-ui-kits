@@ -39,6 +39,17 @@ export const paletteStyle = defineSlotStyle({
   defaultVariants: {},
 });
 
+/**
+ * The palette's field. The field is where the keys go for as long as the palette stands open, so it
+ * carries the focus ring, drawn inside its box because the panel clips at its edge.
+ */
+export const paletteFieldStyle = defineSlotStyle({
+  slot: "console-palette-field",
+  base: "[&_input]:focus-visible:outline-none [&_input]:focus-visible:shadow-[var(--focus-halo-inset)]",
+  variants: {},
+  defaultVariants: {},
+});
+
 /** The Esc keycap at the end of the palette's field, which says how to put it away. */
 export const paletteEscStyle = defineSlotStyle({
   slot: "console-palette-esc",
@@ -68,6 +79,25 @@ export const paletteSubStyle = defineSlotStyle({
 export const paletteKeysStyle = defineSlotStyle({
   slot: "console-palette-keys",
   base: "ml-auto gap-1",
+  variants: {},
+  defaultVariants: {},
+});
+
+/** A group's own line while its source is asked, when it failed, or when nothing matched. */
+export const paletteStatusStyle = defineSlotStyle({
+  slot: "console-palette-status",
+  base: "text-sm text-muted-foreground",
+  variants: {
+    /** The source failed: the line says so in the danger colour, beside the warning mark. */
+    tone: { quiet: "", failed: "text-destructive" },
+  },
+  defaultVariants: { tone: "quiet" },
+});
+
+/** The row at the end of a group that opens its list searched for the same text. */
+export const paletteMoreStyle = defineSlotStyle({
+  slot: "console-palette-more",
+  base: "text-sm font-medium text-primary",
   variants: {},
   defaultVariants: {},
 });

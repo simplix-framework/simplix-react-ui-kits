@@ -55,11 +55,14 @@
     "title": "Command palette",
     "search": "Search",
     "placeholder": "Find screens, menus and actions",
+    "placeholderRecords": "Search records, screens and actions",
     "empty": "Nothing matches “{{query}}”",
     "move": "Move",
     "run": "Open",
+    "newTab": "Open in a new tab",
     "choseong": "Korean initial consonants also match",
     "groups": {
+      "recent": "Recent",
       "go": "Go to",
       "action": "Actions",
       "menu": "Menu"
@@ -69,7 +72,18 @@
       "help": "Open help",
       "shortcuts": "Show shortcuts",
       "toLight": "Switch to light mode",
-      "toDark": "Switch to dark mode"
+      "toDark": "Switch to dark mode",
+      "language": "Show the console in {{language}}",
+      "expand": "Expand the menu",
+      "collapse": "Collapse the menu"
+    },
+    "records": {
+      "heading": "Records",
+      "loading": "Searching {{name}}…",
+      "failed": "Couldn't search {{name}}",
+      "showAll": "Show all in {{name}}",
+      "none": "No records match “{{query}}”",
+      "tooShort": "Type two or more characters to search records too"
     }
   },
   "shortcuts": {
