@@ -71,6 +71,10 @@ A verb that flips with the row's state is one action, not two: give `type` and `
 
 A function `type` returns a kit verb, because a framework type's glyph is the framework's and cannot follow the row. Declaring Enable and Disable as two actions, one always disabled, is the form to leave. A labelled strip (two actions sharing one framework type, which the region contract refuses) sizes its column by the widest label the rows hold.
 
+## Record detail
+
+`RecordDetail` draws its notices above the body, under the head, with or without tabs: a notice explains the fields beneath it, so it is read first. A head figure takes its name from the field it draws: `contract.headFigures(fields, row)` returns `{ key, label, value }` for each contract field, with the label the list's column and the page's tile use, so one value has one name in every language and a screen writes no catalogue key for it. A figure that is not a field of the record (a share over two fields, a meter) is written as a `RecordHeadFigure` with its own label. A section is named for what it adds to the head, not for the field it holds: a section called "Value" holding a field "Value", or "Cost" under a head figure "Cost", draws the same value twice.
+
 ## Using a kit in a product
 
 Add this repository as a git submodule and its packages to the product's pnpm workspace:

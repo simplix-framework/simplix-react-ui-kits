@@ -218,6 +218,13 @@ export function recordFilterOf<R>(
   }
 }
 
+/** One key figure of a record's head, drawn from a contract field: the shape `RecordDetail` takes as a `RecordHeadFigure`. */
+export interface ContractHeadFigure {
+  readonly key: string;
+  readonly label: string;
+  readonly value: RecordValue;
+}
+
 /** How many leading columns of a generated list draw at every pane width. */
 export const ALWAYS_DRAWN_COLUMNS = 4;
 
@@ -561,6 +568,14 @@ export function useRecordContract(entity: string, overrides: ContractOverrides =
     [fieldLabel, value],
   );
 
+  // A figure in a record's head is named by the field it draws, as the list's column and the page's
+  // tile are, so one value has one name in every language and a screen writes no catalogue key for it.
+  const headFigures = useCallback(
+    (fields: readonly ContractField[], row: Row | undefined): ContractHeadFigure[] =>
+      fields.map((field) => ({ key: field.name, label: fieldLabel(field.name), value: value(field, row) })),
+    [fieldLabel, value],
+  );
+
   // A record's name as one line of text: each name field drawn as its kind draws it (an enum by
   // its label, an instant in the installation's zone), the parts joined in order.
   const recordName = useCallback(
@@ -569,7 +584,7 @@ export function useRecordContract(entity: string, overrides: ContractOverrides =
   );
 
   // `enumLabel` is returned for a screen that draws an enum constant outside a column or a filter (a tab per group).
-  return useMemo(() => ({ value, formField, request, column, columns, filters, detailField, fieldLabel, enumLabel, recordName }), [value, formField, request, column, columns, filters, detailField, fieldLabel, enumLabel, recordName]);
+  return useMemo(() => ({ value, formField, request, column, columns, filters, detailField, headFigures, fieldLabel, enumLabel, recordName }), [value, formField, request, column, columns, filters, detailField, headFigures, fieldLabel, enumLabel, recordName]);
 }
 
 /** The text a drawn value reads as, or `""` where it draws nothing. */
