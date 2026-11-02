@@ -11,7 +11,7 @@ import { SiteCaption, SiteChip } from "@simplix-react-ui-kits/site-core/page";
 import { SiteBar, SiteFooter, SiteWindow } from "@simplix-react-ui-kits/site-core/shell";
 
 import copyFile from "./article-copy.json";
-import { glyph, shellCopy, type Locale } from "./shell-copy";
+import { glyph, languagePlace, type Locale, shellCopy } from "./shell-copy";
 
 /** What the article is drawn with. */
 export interface ArticleFixtureProps {
@@ -69,7 +69,7 @@ export function ArticleFixture({ locale = "en", doc = "article", tried = [], fee
           account={signedIn ? { label: shell.myAccount, name: "Taylor", href: "/account" } : undefined}
         />
       }
-      footer={<SiteFooter owner={shell.company} linksLabel={shell.legal} links={shell.footerLinks} language={box(30, { width: 122 })} />}
+      footer={<SiteFooter owner={shell.company} linksLabel={shell.legal} links={shell.footerLinks} language={languagePlace} />}
     >
       <DocLayout
         crumbs={t.crumbs.map((label, index) => ({ key: `c-${String(index)}`, label, ...(index < t.crumbs.length - 1 ? { href: "/help" } : {}) }))}

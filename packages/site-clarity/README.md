@@ -1,6 +1,6 @@
 # @simplix-react-ui-kits/site-clarity
 
-The web site kit in the clarity design: the site parts of `@simplix-react-ui-kits/site-core` drawn with hairline borders, one accent and hierarchy from type. It re-exports site-core segment by segment (`/action`, `/help`, `/install`, `/legal`, `/link`, `/marketing`, `/page`, `/pricing`, `/shell`) and adds the stylesheet, the variables it reads, the page region contract and the rendered checks.
+The web site kit in the clarity design: the site parts of `@simplix-react-ui-kits/site-core` drawn with hairline borders, one accent and hierarchy from type. It re-exports site-core segment by segment (`/action`, `/form`, `/help`, `/install`, `/legal`, `/link`, `/marketing`, `/page`, `/pricing`, `/shell`) and adds the stylesheet, the variables it reads, the page region contract and the rendered checks.
 
 ## Using it in an app
 
@@ -37,8 +37,9 @@ Every label is a prop: the kit ships no strings, and the product passes its own 
 | `--site-canvas` | the page's ground | `var(--background)` |
 | `--site-surface` | bar, footer, cards and the chosen switch option | `var(--card)` |
 | `--site-surface-sunken` | switch track, hovered quiet controls | `var(--muted)` |
+| `--site-surface-raised` | a dialog and an open select's list | `var(--site-surface)` |
 | `--site-line` | every hairline: bar, footer, cards, table rules | `var(--border)` |
-| `--site-control-line` | the border of a field the kit draws (the help search) | `var(--input)` |
+| `--site-control-line` | the border of every control the kit draws: fields, selects, checkboxes, switches, code cells | `var(--input)` |
 | `--site-ink` | body text and headings | `var(--foreground)` |
 | `--site-ink-muted` | ledes, notes, captions, table values | `var(--muted-foreground)` |
 | `--site-ink-disabled` | a disabled action's label | `var(--muted-foreground)` |
@@ -79,6 +80,11 @@ Every label is a prop: the kit ships no strings, and the product passes its own 
 | `--site-fs-heading` | a heading inside a page part | `16px` |
 | `--site-lh-heading` | its line height | `24px` |
 | `--site-lh-reading` | the line height of a sentence read along | `26px` |
+| `--site-fs-notes` | a text of several lines (`SiteTextarea`) | `13.5px` |
+| `--site-lh-notes` | its line height | `24px` |
+| `--site-fs-digits` | a code cell's digit (`CodeField`) | `20px` |
+| `--site-lh-digits` | its line height | `24px` |
+| `--site-fw-digits` | its weight | `600` |
 | `--site-fs-subheading` | offer names, section headings | `14px` |
 | `--site-lh-subheading` | their line height | `20px` |
 | `--site-fs-headline` | a display section heading (`SiteSection size="lg"`) | `23px` |
@@ -102,6 +108,7 @@ Every label is a prop: the kit ships no strings, and the product passes its own 
 | `--site-control` | an action's height | `34px` |
 | `--site-control-sm` | a small action's and a switch option's height | `28px` |
 | `--site-control-lg` | a hero action's height | `42px` |
+| `--site-code-cell` | a code cell's width, which shrinks evenly in a narrow column | `48px` |
 | `--site-radius-xs` | footer and breadcrumb link focus corners | `4px` |
 | `--site-radius-sm` | switch options, menu items | `6px` |
 | `--site-radius-md` | actions, bar links, the switch track, the more menu | `8px` |
@@ -113,6 +120,7 @@ Every label is a prop: the kit ships no strings, and the product passes its own 
 | `--site-faint` | a feature an offer leaves out, a disabled switch option | `0.4` |
 | `--site-dim` | a control that cannot be used now (the comparison while the previous version shows) | `0.45` |
 | `--site-duration-fast` | hover and press transitions | `120ms` |
+| `--site-duration-base` | a switch thumb's travel | `220ms` |
 | `--site-ease` | their easing | `cubic-bezier(0.2, 0.8, 0.2, 1)` |
 | `--site-focus-ring` | the keyboard focus ring | a 2px surface gap, then a 2px accent ring |
 | `--site-focus-ring-inset` | the focus ring inside a part that clips its edge (a row of a ruled list) | a 2px accent ring inside |
@@ -170,7 +178,7 @@ const reference = await other.evaluate(probe, { contract, type: "pricing", selec
 compare(reference, signature); // ["plans.card padding: reference 16px | build 12px", ...]
 ```
 
-`probe` reads, inside the page root, the regions in drawing order, the controls each holds and, for the frame, every region and every named part, the computed first font family, size, weight, line height, letter spacing, colour, background, borders, radius, shadow, padding, gap, opacity, an SVG shape's fill, maximum width, grid columns, and the layout height and width (offset sizes, so a reference painted inside a scaled frame reads at its layout size; an SVG element's painted box is divided by the scale the root is painted at). `selectors` stands CSS selectors in for the marks when the reference page carries none. `compare` requires colours, type, borders, radii, shadows, fills and spacing to be equal and a height, and a width the layout decides (`widthParts`: the frame and each region's `widths` in regions.json), to agree within 1px.
+`probe` reads, inside the page root, the regions in drawing order, the controls each holds and, for the frame, every region and every named part, the computed first font family, size, weight, line height, letter spacing, colour, background, borders, radius, shadow, padding, gap, opacity, an SVG shape's fill, maximum width, grid columns, and the layout height and width (offset sizes, so a reference painted inside a scaled frame reads at its layout size; an SVG element's painted box is divided by the scale the root is painted at). A mark names a slot or a part: a site part drawn over a framework part (a checkbox, a select) keeps the framework's `data-slot` and carries the site name as `data-part`, and a control is listed by its part mark first. `selectors` stands CSS selectors in for the marks when the reference page carries none. `compare` requires colours, type, borders, radii, shadows, fills and spacing to be equal and a height, and a width the layout decides (`widthParts`: the frame and each region's `widths` in regions.json), to agree within 1px.
 
 `scripts/site-demo.mjs` renders the kit's verification pages: each `tests/fixtures/<name>-page.tsx` is a page composed from the parts (pricing, marketing, ...), rendered on the server and drawn with the stylesheet compiled the way an app's Tailwind compiles it, with the product values of `tests/fixtures/theme.css`. The fixtures carry the reference's words in English and Korean (`props.locale`).
 

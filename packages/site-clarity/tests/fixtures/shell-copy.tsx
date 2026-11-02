@@ -91,3 +91,9 @@ export const glyph = {
     </svg>
   ),
 };
+
+/**
+ * The footer's language place as the reference draws it: the product's language picker, which the
+ * kit does not draw, stands in as a box of its measured size.
+ */
+export const languagePlace = <span style={{ display: "block", height: 30, width: 122 }} />;

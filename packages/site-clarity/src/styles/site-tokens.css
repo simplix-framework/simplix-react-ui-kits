@@ -16,6 +16,7 @@
   --site-canvas: var(--background);
   --site-surface: var(--card);
   --site-surface-sunken: var(--muted);
+  --site-surface-raised: var(--site-surface);
   --site-line: var(--border);
   --site-control-line: var(--input);
   --site-ink: var(--foreground);
@@ -60,6 +61,11 @@
   --site-fs-heading: 16px;
   --site-lh-heading: 24px;
   --site-lh-reading: 26px;
+  --site-fs-notes: 13.5px;
+  --site-lh-notes: 24px;
+  --site-fs-digits: 20px;
+  --site-lh-digits: 24px;
+  --site-fw-digits: 600;
   --site-fs-subheading: 14px;
   --site-lh-subheading: 20px;
   --site-fs-headline: 23px;
@@ -85,6 +91,7 @@
   --site-control: 34px;
   --site-control-sm: 28px;
   --site-control-lg: 42px;
+  --site-code-cell: 48px;
   --site-radius-xs: 4px;
   --site-radius-sm: 6px;
   --site-radius-md: 8px;
@@ -100,6 +107,7 @@
 
   /* Motion, focus and what floats. */
   --site-duration-fast: 120ms;
+  --site-duration-base: 220ms;
   --site-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
   --site-focus-ring: 0 0 0 2px var(--site-surface), 0 0 0 4px var(--site-accent);
   --site-focus-ring-inset: inset 0 0 0 2px var(--site-accent);

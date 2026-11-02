@@ -1,5 +1,8 @@
-export { AttachBox, ContactForm, ContactPanel, ContactSent, FieldRow, FormField, SuggestBox } from "./contact";
-export type { AttachBoxProps, ContactFormProps, ContactPanelProps, ContactSentProps, FieldRowProps, FormFieldProps, SuggestBoxProps } from "./contact";
+export { AttachBox, ContactForm, ContactPanel, ContactSent, SuggestBox } from "./contact";
+export type { AttachBoxProps, ContactFormProps, ContactPanelProps, ContactSentProps, SuggestBoxProps } from "./contact";
+// The contact form lays its controls in the form segment's fields, exported here for the help pages.
+export { FieldRow, FormField } from "../form/fields";
+export type { FieldRowProps, FormFieldProps } from "../form/fields";
 export { ArticleList, CategoryGrid, SiteColumns } from "./help-lists";
 export type { ArticleListProps, CategoryGridProps, SiteArticleLink, SiteArticleRow, SiteCategory, SiteColumnsProps } from "./help-lists";
 export { SearchHero, SiteSearch, searchKeyTarget, StatusLine } from "./search-hero";

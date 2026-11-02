@@ -606,14 +606,21 @@
         "attach": "site-attach",
         "attachTitle": "site-attach-title",
         "attachBadge": "site-chip[data-tone=accent]",
-        "attachAbout": "site-attach-about"
+        "attachAbout": "site-attach-about",
+        "select": "site-select",
+        "input": "site-input",
+        "textarea": "site-textarea",
+        "checkbox": "site-checkbox"
       },
       "widths": [
         "root",
         "actions",
         "fieldRow",
         "field",
-        "attach"
+        "attach",
+        "select",
+        "input",
+        "textarea"
       ],
       "carded": true
     },

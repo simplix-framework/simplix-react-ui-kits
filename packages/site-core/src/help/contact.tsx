@@ -17,8 +17,6 @@ import {
   siteContactRowStyle,
   siteContactStyle,
   siteContactTitleStyle,
-  siteFieldRowStyle,
-  siteFieldStyle,
   siteSuggestBoxStyle,
   siteSuggestLinkStyle,
 } from "./help.style";
@@ -128,40 +126,6 @@ export function ContactForm({ title, icon, onSubmit, children, submit, cancel, n
       </div>
     </form>
   );
-}
-
-/** Props for {@link FormField}. */
-export interface FormFieldProps {
-  /** The field's name over the control. */
-  readonly label: ReactNode;
-  /** The product's control. */
-  readonly children: ReactNode;
-  /**
-   * `label` wraps the control in a `<label>`, which names it; `group` draws a plain box for a
-   * control that names itself (a select whose trigger carries its own label).
-   */
-  readonly as?: "label" | "group";
-}
-
-/** A field: its name over the product's control. */
-export function FormField({ label, children, as = "label" }: FormFieldProps) {
-  const Tag = as === "label" ? "label" : "div";
-  return (
-    <Tag {...slotAttributes(siteFieldStyle, {})}>
-      {label}
-      {children}
-    </Tag>
-  );
-}
-
-/** Props for {@link FieldRow}. */
-export interface FieldRowProps {
-  readonly children: ReactNode;
-}
-
-/** Fields side by side, one below the narrow tier. */
-export function FieldRow({ children }: FieldRowProps) {
-  return <div {...slotAttributes(siteFieldRowStyle, {})}>{children}</div>;
 }
 
 /** Props for {@link SuggestBox}. */

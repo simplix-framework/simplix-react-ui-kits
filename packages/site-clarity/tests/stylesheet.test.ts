@@ -11,8 +11,11 @@ import { declaredSlots } from "../scripts/check-site-regions.mjs";
 const root = join(import.meta.dirname, "..");
 const read = (path: string) => readFileSync(join(root, path), "utf8");
 
-/** Slots a stylesheet draws: every `[data-slot="..."]` its rules name. */
-const drawnSlots = (css: string) => new Set([...css.matchAll(/\[data-slot="([^"]+)"\]/g)].map((m) => m[1] ?? ""));
+/**
+ * Slots a stylesheet draws: every `[data-slot="..."]` its rules name, and every `[data-part="..."]`,
+ * the mark a site part puts on a framework part it draws (a checkbox, a select).
+ */
+const drawnSlots = (css: string) => new Set([...css.matchAll(/\[data-(?:slot|part)="([^"]+)"\]/g)].map((m) => m[1] ?? ""));
 /** Site variables a text reads with `var(--site-...)` or Tailwind's `(--site-...)` shorthand. */
 const readVariables = (text: string) => new Set([...text.matchAll(/(?:var\(|\()(?:[a-z-]+:)?(--site-[a-z0-9-]+)/g)].map((m) => m[1] ?? ""));
 /** Site variables a stylesheet defines. */
@@ -54,6 +57,7 @@ describe("the readers the checks use", () => {
   it("find a slot a stylesheet leaves out and a variable nobody defines", () => {
     const css = '[data-slot="site-bar"][data-s-site-bar] { @apply bg-(--site-surface) text-(length:--site-fs-base); color: var(--site-ink); }';
     expect(without(new Set(["site-bar", "site-footer"]), drawnSlots(css))).toEqual(["site-footer"]);
+    expect([...drawnSlots(':where([data-part="site-checkbox"])[data-part][data-p-site-checkbox] { @apply size-4; }')]).toEqual(["site-checkbox"]);
     expect([...readVariables(css)].sort()).toEqual(["--site-fs-base", "--site-ink", "--site-surface"]);
     expect(without(readVariables(css), definedVariables(":root { --site-ink: #000; --site-surface: #fff; }"))).toEqual(["--site-fs-base"]);
   });

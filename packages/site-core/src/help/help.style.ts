@@ -385,22 +385,6 @@ export const siteContactActionStyle = defineSlotStyle({
   defaultVariants: {},
 });
 
-/** Fields side by side, one below the narrow tier. */
-export const siteFieldRowStyle = defineSlotStyle({
-  slot: "site-field-row",
-  base: "grid min-w-0 grid-cols-2 gap-2.5 @max-page-narrow/page:grid-cols-1",
-  variants: {},
-  defaultVariants: {},
-});
-
-/** A field: its name over the product's control. */
-export const siteFieldStyle = defineSlotStyle({
-  slot: "site-field",
-  base: "flex min-w-0 flex-col gap-1 text-(length:--site-fs-caption) leading-(--site-lh-caption) font-(--site-fw-caption)",
-  variants: {},
-  defaultVariants: {},
-});
-
 /** Articles a question's subject may already answer, on the accent's soft ground. */
 export const siteSuggestBoxStyle = defineSlotStyle({
   slot: "site-suggest-box",

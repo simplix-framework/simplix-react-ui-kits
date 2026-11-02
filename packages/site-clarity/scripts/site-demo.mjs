@@ -77,6 +77,9 @@ const loadRenderer = async () => {
     conditions: ["source"],
     loader: { ".css": "empty" },
     external: ["react", "react-dom", "react/*", "react-dom/*"],
+    // A framework part (a select, a dialog) brings CommonJS libraries that require React; the bundle
+    // is ESM, so it gives them a require that resolves beside this package, as its imports do.
+    banner: { js: 'import { createRequire as __siteDemoRequire } from "node:module";\nconst require = __siteDemoRequire(import.meta.url);' },
   });
   // Written beside this package's node_modules so the bundle resolves this package's React.
   const file = join(here, `node_modules/.cache/site-demo-${process.pid}.mjs`);
@@ -103,7 +106,9 @@ function compileStylesheet() {
 }
 async function compileOnce() {
   const { compile } = await import(pathToFileURL(find("@tailwindcss/node")).href);
-  const source = `@import "tailwindcss";\n@import ${JSON.stringify(join(here, "src/styles/app.css"))};\n`;
+  // As the README's app stylesheet: Tailwind, the framework theme (its base layer and the classic
+  // slot rules a framework part draws under a site part), then the site kit.
+  const source = `@import "tailwindcss";\n@import "@simplix-react/ui/theme.css";\n@import ${JSON.stringify(join(here, "src/styles/app.css"))};\n`;
   const compiler = await compile(source, { base: here, onDependency: () => {} });
   return compiler.build([]);
 }

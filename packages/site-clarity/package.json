@@ -15,6 +15,11 @@
       "types": "./src/action/index.ts",
       "import": "./dist/action/index.js"
     },
+    "./form": {
+      "source": "./src/form/index.ts",
+      "types": "./src/form/index.ts",
+      "import": "./dist/form/index.js"
+    },
     "./help": {
       "source": "./src/help/index.ts",
       "types": "./src/help/index.ts",

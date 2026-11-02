@@ -11,7 +11,7 @@ import { SiteBadge, SiteCaption, SiteChip } from "@simplix-react-ui-kits/site-co
 import { SiteBar, SiteFooter, SiteWindow } from "@simplix-react-ui-kits/site-core/shell";
 
 import copyFile from "./terms-copy.json";
-import { glyph, shellCopy, type Locale } from "./shell-copy";
+import { glyph, languagePlace, type Locale, shellCopy } from "./shell-copy";
 
 /** What the terms are drawn with. */
 export interface LegalFixtureProps {
@@ -76,7 +76,7 @@ export function LegalFixture({ locale = "en", version = "current", compare = fal
           account={signedIn ? { label: shell.myAccount, name: "Taylor", href: "/account" } : undefined}
         />
       }
-      footer={<SiteFooter owner={shell.company} linksLabel={shell.legal} links={shell.footerLinks.map((link) => (link.key === "terms" ? { ...link, current: true } : link))} language={box(30, { width: 122 })} />}
+      footer={<SiteFooter owner={shell.company} linksLabel={shell.legal} links={shell.footerLinks.map((link) => (link.key === "terms" ? { ...link, current: true } : link))} language={languagePlace} />}
     >
       <DocLayout
         crumbs={t.crumbs.map((label, index) => ({ key: `c-${String(index)}`, label, ...(index < t.crumbs.length - 1 ? { href: "/help" } : {}) }))}
@@ -182,7 +182,7 @@ function LegalWindow({ locale, signedIn, page, children }: { readonly locale: Lo
           account={signedIn ? { label: shell.myAccount, name: "Taylor", href: "/account" } : undefined}
         />
       }
-      footer={<SiteFooter owner={shell.company} linksLabel={shell.legal} links={shell.footerLinks.map((link) => (link.key === page ? { ...link, current: true } : link))} language={box(30, { width: 122 })} />}
+      footer={<SiteFooter owner={shell.company} linksLabel={shell.legal} links={shell.footerLinks.map((link) => (link.key === page ? { ...link, current: true } : link))} language={languagePlace} />}
     >
       {children}
     </SiteWindow>

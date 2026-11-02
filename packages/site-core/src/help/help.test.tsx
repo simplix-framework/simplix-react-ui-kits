@@ -3,8 +3,10 @@ import { describe, expect, it } from "vitest";
 
 import { SiteChip } from "../page/site-bits";
 import { bySlot, tabStops, unmarked } from "../testing/markup";
-import { AttachBox, ContactForm, ContactPanel, ContactSent, FieldRow, FormField, SuggestBox } from "./contact";
-import { siteCategoryGridStyle, siteColumnsStyle, siteFieldRowStyle, siteSearchHeroInnerStyle, siteSearchKeysStyle } from "./help.style";
+import { FieldRow, FormField } from "../form/fields";
+import { siteFieldRowStyle } from "../form/form.style";
+import { AttachBox, ContactForm, ContactPanel, ContactSent, SuggestBox } from "./contact";
+import { siteCategoryGridStyle, siteColumnsStyle, siteSearchHeroInnerStyle, siteSearchKeysStyle } from "./help.style";
 import { ArticleList, CategoryGrid, SiteColumns } from "./help-lists";
 import { SearchHero, SiteSearch, searchKeyTarget, StatusLine } from "./search-hero";
 

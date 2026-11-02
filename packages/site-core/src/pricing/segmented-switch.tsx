@@ -1,6 +1,7 @@
 import { useRef, type KeyboardEvent, type ReactNode } from "react";
 import { slotAttributes } from "@simplix-react/ui/design";
 
+import { radioKeyTarget } from "../form/radio-keys";
 import { siteSwitchOptionStyle, siteSwitchRowStyle, siteSwitchStyle } from "./pricing.style";
 
 /** One option of a {@link SegmentedSwitch}. */
@@ -28,21 +29,7 @@ export interface SegmentedSwitchProps<T extends string> {
  * at the ends; `null` for any other key or when no other option can be chosen.
  */
 export function switchKeyTarget<T extends string>(options: readonly SegmentedOption<T>[], value: T, key: string): T | null {
-  const open = options.filter((option) => option.disabled !== true);
-  if (open.length === 0) return null;
-  const at = open.findIndex((option) => option.value === value);
-  const next = (step: number) => open[(((at < 0 ? 0 : at) + step) % open.length + open.length) % open.length];
-  const target =
-    key === "ArrowRight" || key === "ArrowDown"
-      ? next(1)
-      : key === "ArrowLeft" || key === "ArrowUp"
-        ? next(-1)
-        : key === "Home"
-          ? open[0]
-          : key === "End"
-            ? open[open.length - 1]
-            : undefined;
-  return target === undefined || target.value === value ? null : target.value;
+  return radioKeyTarget(options, value, key);
 }
 
 /**

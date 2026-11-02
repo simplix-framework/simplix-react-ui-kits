@@ -9,6 +9,8 @@ import { defineSlotStyle } from "@simplix-react/ui/design";
  * <p>The variants are written in declaration order at one specificity. `pad` comes last: a quiet
  * action draws no ground, so it takes narrower side room than the size gives, and how much narrower
  * depends on the size (`quietSm`, `quietMd`); {@link actionPad} picks it from the tone and the size.
+ * `subtle` is a quiet action in the muted ink (a way out that should not draw the eye, such as
+ * cancelling a subscription); `danger` is outlined in the bad colour for an action that removes.
  */
 export const siteActionStyle = defineSlotStyle({
   slot: "site-action",
@@ -24,6 +26,8 @@ export const siteActionStyle = defineSlotStyle({
       primary: "bg-(--site-accent) text-(--site-on-accent) hover:bg-(--site-accent-strong)",
       secondary: "border-(--site-line) bg-(--site-surface) text-(--site-ink) hover:bg-(--site-surface-sunken)",
       quiet: "bg-transparent text-(--site-accent-strong) hover:bg-(--site-accent-soft)",
+      subtle: "bg-transparent text-(--site-ink-muted) hover:bg-(--site-accent-soft)",
+      danger: "border-(--site-bad) bg-transparent text-(--site-bad) hover:bg-(--site-bad-soft)",
     },
     block: {
       true: "w-full",
@@ -39,7 +43,7 @@ export const siteActionStyle = defineSlotStyle({
 });
 
 /** The side room an action takes: its size's, or a quiet action's narrower room for that size. */
-export function actionPad(tone: "primary" | "secondary" | "quiet" | undefined, size: "md" | "sm" | "lg" | undefined): "size" | "quietSm" | "quietMd" {
-  if (tone !== "quiet") return "size";
+export function actionPad(tone: "primary" | "secondary" | "quiet" | "subtle" | "danger" | undefined, size: "md" | "sm" | "lg" | undefined): "size" | "quietSm" | "quietMd" {
+  if (tone !== "quiet" && tone !== "subtle") return "size";
   return size === "sm" ? "quietSm" : "quietMd";
 }

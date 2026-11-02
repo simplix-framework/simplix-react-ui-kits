@@ -1,15 +1,15 @@
 // The help centre composed from the site parts, with the words of the reference the kit's
 // measurements were taken from (help-copy.json, read off the reference in English and Korean). It is
 // the page `scripts/site-demo.mjs` renders for the rendered checks. The words are the reference
-// product's own, kept as written because where a line wraps is part of what is measured. The contact form's controls are
-// the product's (the kit draws their layout, not them), so the page stands boxes of their size in.
-import type { CSSProperties, ReactNode } from "react";
+// product's own, kept as written because where a line wraps is part of what is measured. The contact
+// form's controls are the form segment's, so their looks are measured with the form.
 import { ArticleList, AttachBox, CategoryGrid, ContactForm, ContactPanel, ContactSent, FieldRow, FormField, SearchHero, SiteColumns, SiteSearch, StatusLine } from "@simplix-react-ui-kits/site-core/help";
+import { SiteCheckbox, SiteInput, SiteSelect, SiteTextarea } from "@simplix-react-ui-kits/site-core/form";
 import { SiteChip, SitePage } from "@simplix-react-ui-kits/site-core/page";
 import { SiteBar, SiteFooter, SiteWindow } from "@simplix-react-ui-kits/site-core/shell";
 
 import copyFile from "./help-copy.json";
-import { glyph, shellCopy, type Locale } from "./shell-copy";
+import { glyph, languagePlace, shellCopy, type Locale } from "./shell-copy";
 
 /** What the help centre is drawn with. */
 export interface HelpFixtureProps {
@@ -22,8 +22,6 @@ export interface HelpFixtureProps {
   readonly signedIn?: boolean;
 }
 
-/** A box the size of the product's control it stands for. */
-const control = (height: number, extra: CSSProperties = {}): ReactNode => <span style={{ display: "block", height, ...extra }} />;
 const send = (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} aria-hidden="true">
     <path d="M4 12 20 4l-4 16-4-6z" />
@@ -56,7 +54,7 @@ export function HelpFixture({ locale = "en", search = "none", contact = "closed"
           account={signedIn ? { label: shell.myAccount, name: "Taylor", href: "/account" } : undefined}
         />
       }
-      footer={<SiteFooter owner={shell.company} linksLabel={shell.legal} links={shell.footerLinks} />}
+      footer={<SiteFooter owner={shell.company} linksLabel={shell.legal} links={shell.footerLinks} language={languagePlace} />}
     >
       <SearchHero
         status={<StatusLine>{t.status}</StatusLine>}
@@ -104,19 +102,20 @@ export function HelpFixture({ locale = "en", search = "none", contact = "closed"
             <ContactForm title={f.title} icon={send} submit={{ id: "send", label: f.send, disabled: true }} cancel={{ id: "close", label: f.close }} note={f.needFields}>
               <FieldRow>
                 <FormField as="group" label={f.category}>
-                  {control(34)}
+                  <SiteSelect label={f.category} options={[{ value: "voice", label: f.categoryValue }]} value="voice" onValueChange={() => {}} block />
                 </FormField>
-                <FormField label={f.replyTo}>{control(34)}</FormField>
+                <FormField label={f.replyTo}>
+                  <SiteInput value={f.email} readOnly />
+                </FormField>
               </FieldRow>
-              <FormField label={f.subject}>{control(34)}</FormField>
-              <FormField label={f.body}>{control(114)}</FormField>
+              <FormField label={f.subject}>
+                <SiteInput value="" readOnly placeholder={f.subjectPlaceholder} />
+              </FormField>
+              <FormField label={f.body}>
+                <SiteTextarea value="" readOnly rows={4} placeholder={f.bodyPlaceholder} />
+              </FormField>
               <AttachBox
-                control={(label) => (
-                  <span style={{ display: "flex", gap: 8 }}>
-                    {control(16, { width: 16, flexShrink: 0 })}
-                    {label}
-                  </span>
-                )}
+                control={(label) => <SiteCheckbox checked={false} onCheckedChange={() => {}} label={label} />}
                 title={f.attach}
                 badge={
                   <SiteChip tone="accent" dot>

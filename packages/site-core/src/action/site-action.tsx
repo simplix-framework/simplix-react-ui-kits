@@ -4,8 +4,11 @@ import { slotAttributes } from "@simplix-react/ui/design";
 import { SiteLink } from "../link/site-link";
 import { actionPad, siteActionStyle } from "./site-action.style";
 
-/** How strongly an action asks to be pressed: one `primary` per region. */
-export type SiteActionTone = "primary" | "secondary" | "quiet";
+/**
+ * How strongly an action asks to be pressed: one `primary` per region; `subtle` is a quiet action in
+ * the muted ink, and `danger` an action that removes something.
+ */
+export type SiteActionTone = "primary" | "secondary" | "quiet" | "subtle" | "danger";
 
 /** What a site action does and says. A product builds these; a part draws them. */
 export interface SiteActionSpec {

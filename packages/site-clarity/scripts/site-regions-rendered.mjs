@@ -21,10 +21,13 @@ export const contract = JSON.parse(readFileSync(resolve(here, "regions.json"), "
 export function probe(input) {
   const { contract: c, type, selectors = {} } = input;
   // A mark is a slot name, optionally qualified by attributes or a pseudo-class (`site-action:disabled`).
+  // A site part drawn over a framework part (a checkbox, a select) keeps the framework's slot and
+  // carries the site name as its part mark (`data-part`), so a mark matches either.
   const css = (mark) => {
     const at = mark.search(/[[:]/);
     const slot = at < 0 ? mark : mark.slice(0, at);
-    return `[data-slot="${slot}"]${at < 0 ? "" : mark.slice(at)}`;
+    const rest = at < 0 ? "" : mark.slice(at);
+    return `[data-slot="${slot}"]${rest}, [data-part="${slot}"]${rest}`;
   };
   const rootSelector = selectors.root ?? c.types[type]?.root ?? "[data-page]";
   const root = document.querySelector(rootSelector);
@@ -110,7 +113,7 @@ export function probe(input) {
     const controls = [...el.querySelectorAll("a[href], button")];
     entry.perInstance = Math.max(entry.perInstance, controls.length);
     for (const control of controls) {
-      const kind = control.dataset.slot ?? (control.tagName === "A" ? "link" : "button");
+      const kind = control.dataset.part ?? control.dataset.slot ?? (control.tagName === "A" ? "link" : "button");
       if (!entry.controls.includes(kind)) entry.controls.push(kind);
     }
   }

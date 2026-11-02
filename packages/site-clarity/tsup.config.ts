@@ -4,6 +4,7 @@ import { defineConfig } from "tsup";
 export default defineConfig((options) => ({
   entry: {
     "action/index": "src/action/index.ts",
+    "form/index": "src/form/index.ts",
     "help/index": "src/help/index.ts",
     "install/index": "src/install/index.ts",
     "legal/index": "src/legal/index.ts",
