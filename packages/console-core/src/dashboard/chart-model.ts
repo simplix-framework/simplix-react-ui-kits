@@ -88,3 +88,43 @@ export function sparkPoints(values: readonly number[], width: number, height: nu
 export function sparkChange(values: readonly number[]): number {
   return values.length < 2 ? 0 : values[values.length - 1] - values[0];
 }
+
+/**
+ * One value per category, summed from rows that each name their category: the series a column or
+ * line chart draws from a read that returns rows rather than one figure per category (a day's rows
+ * per feature and provider, summed to the day). A category no row names is 0; a row whose category
+ * is not listed is left out.
+ *
+ * @param rows the rows read
+ * @param categoryOf the category a row belongs to, such as its day
+ * @param categories the categories in the order the chart draws them
+ * @param valueOf what a row adds to its category
+ */
+export function sumByCategory<R>(rows: readonly R[], categoryOf: (row: R) => string | null | undefined, categories: readonly string[], valueOf: (row: R) => number | null | undefined): number[] {
+  const at = new Map(categories.map((category, index) => [category, index]));
+  const sums = categories.map(() => 0);
+  for (const row of rows) {
+    const index = at.get(categoryOf(row) ?? "");
+    if (index !== undefined) sums[index] += valueOf(row) ?? 0;
+  }
+  return sums;
+}
+
+/**
+ * The rows summed by a key the read does not group by (the provider a cost came from), largest
+ * first and then by key, so a ranked list draws the same order on every read. A row with no key is
+ * left out; a key whose sum is 0 is kept.
+ *
+ * @param rows the rows read
+ * @param keyOf the key a row is summed under
+ * @param valueOf what a row adds to its key
+ */
+export function sumsByKey<R>(rows: readonly R[], keyOf: (row: R) => string | null | undefined, valueOf: (row: R) => number | null | undefined): { readonly key: string; readonly value: number }[] {
+  const sums = new Map<string, number>();
+  for (const row of rows) {
+    const key = keyOf(row);
+    if (!key) continue;
+    sums.set(key, (sums.get(key) ?? 0) + (valueOf(row) ?? 0));
+  }
+  return [...sums].map(([key, value]) => ({ key, value })).sort((a, b) => b.value - a.value || a.key.localeCompare(b.key));
+}

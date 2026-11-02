@@ -24,6 +24,8 @@ export {
 export { TodaySchedule, type ScheduleEntry, type TodayScheduleProps } from "./today-schedule";
 export { DashboardTaskList, type DashboardTaskListProps, type TaskEntry } from "./task-list";
 export { DashboardCaption, DashboardEmpty, DashboardFigure, DashboardSkeleton, type DashboardFigureProps } from "./dashboard-figure";
+export { DashboardReadState, dashboardReadStage, type DashboardReadStage, type DashboardReadStateProps } from "./dashboard-read-state";
+export { sumByCategory, sumsByKey } from "./chart-model";
 export { StageFlowBar, type FlowStageCount, type StageFlowBarProps } from "./stage-flow-bar";
 export { ProgressRing, type ProgressRingProps } from "./progress-ring";
 export { RiskRows, type RiskCell, type RiskColumn, type RiskRowEntry, type RiskRowsProps } from "./risk-rows";
