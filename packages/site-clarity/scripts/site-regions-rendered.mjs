@@ -281,11 +281,15 @@ if (isMain && process.argv.includes("--selftest")) {
     },
   }, "pricing");
   const vacuous = judge({ missing: "[data-page]" }, "pricing");
+  // An enabled offer action is a link or a button drawn by the action part: both read as the same
+  // control, so `fine` above holds either. A bare anchor the action part did not draw is refused.
+  const bareLink = judge({ ...base, regions: { ...base.regions, offers: { ...base.regions.offers, controls: ["link"] } } }, "pricing");
   const judgeOk =
     fine.length === 0 && planned.length === 1 && new RegExp(`^${plannedType ?? "pricing"}: the type is planned`).test(planned[0] ?? "") && vacuous.length === 1 &&
     says(broken, /^hero: not a region of pricing/) && says(broken, /^order: bar > plans > pageHead/) && says(broken, /^footer: required on pricing/) &&
-    says(broken, /^offers: site-switch-option not allowed/) && says(broken, /^offers: 2 controls in one OfferRow, at most 1/) && broken.length === 5;
+    says(broken, /^offers: site-switch-option not allowed/) && says(broken, /^offers: 2 controls in one OfferRow, at most 1/) && broken.length === 5 &&
+    bareLink.length === 1 && says(bareLink, /^offers: link not allowed/);
   const ok = compareOk && countOk && judgeOk && bordersOk;
-  console.log(ok ? "site-regions-rendered selftest: 12 compare cases and 8 judge cases hold" : `site-regions-rendered selftest FAILED\nsame: ${same.join(" | ")}\nunpainted border: ${unpainted.join(" | ")}\npainted border: ${painted.join(" | ")}\ntolerance: ${withinTolerance.join(" | ")}\nplanted (${planted.length}): ${planted.join("\n  ")}\ncounted: ${JSON.stringify(counted)}\nfine: ${fine.join(" | ")}\nplanned: ${planned.join(" | ")}\nbroken (${broken.length}): ${broken.join("\n  ")}`);
+  console.log(ok ? "site-regions-rendered selftest: 12 compare cases and 9 judge cases hold" : `site-regions-rendered selftest FAILED\nsame: ${same.join(" | ")}\nunpainted border: ${unpainted.join(" | ")}\npainted border: ${painted.join(" | ")}\ntolerance: ${withinTolerance.join(" | ")}\nplanted (${planted.length}): ${planted.join("\n  ")}\ncounted: ${JSON.stringify(counted)}\nfine: ${fine.join(" | ")}\nplanned: ${planned.join(" | ")}\nbroken (${broken.length}): ${broken.join("\n  ")}`);
   process.exit(ok ? 0 : 1);
 }

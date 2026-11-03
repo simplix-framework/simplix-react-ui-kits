@@ -191,7 +191,7 @@ Inside an element marked `data-band="dark"` (`SiteBand`, `HeroBand` with `tone="
 
 `tests/slot-styles.test.ts` refuses a slot style whose base, or one of whose variant values, sets one property twice (two border colours, two directions): the stylesheet's order, not the class order, would decide which one draws, so an override goes in a variant.
 
-`node scripts/check-site-regions.mjs` holds the contract to the slots site-core declares (`pnpm lint`, `design:check`), and `--selftest` proves it on a broken contract.
+`node scripts/check-site-regions.mjs` holds the contract to the slots site-core declares (`pnpm lint`, `design:check`), and `--selftest` proves it on a broken contract. A part that names an enabled action is `site-action:not(:disabled)`, never `:enabled`: the action is a link or a button, `:enabled` matches only a form control, and only a button is disabled; the check refuses the `:enabled` form.
 
 ## Rendered checks
 

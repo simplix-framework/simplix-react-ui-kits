@@ -37,7 +37,12 @@ export function problemsOf(contract, slots) {
     if (!Array.isArray(region.marks) || region.marks.length === 0) problems.push(`regions.${key}: has no marks, so a rendered page cannot place it`);
     for (const mark of region.marks ?? []) known(`regions.${key}.marks`, mark);
     if (region.within) known(`regions.${key}.within`, region.within);
-    for (const [part, mark] of Object.entries(region.parts ?? {})) known(`regions.${key}.parts.${part}`, mark);
+    for (const [part, mark] of Object.entries(region.parts ?? {})) {
+      known(`regions.${key}.parts.${part}`, mark);
+      // `:enabled` matches only a form control, so a part named by it never finds a link; an action
+      // may be either, and only a button can be disabled.
+      if (/:enabled\b/.test(mark)) problems.push(`regions.${key}.parts.${part}: "${mark}" never matches a link; an enabled action is "${slotOfMark(mark)}:not(:disabled)"`);
+    }
     for (const control of region.controls ?? []) if (!["link", "button", "*"].includes(control)) known(`regions.${key}.controls`, control);
     if (!Array.isArray(region.widths)) problems.push(`regions.${key}: lists no widths, so a compare cannot tell a layout width from a text width`);
     for (const part of region.widths ?? []) if (part !== "root" && !(part in (region.parts ?? {}))) problems.push(`regions.${key}.widths: names "${part}", which is neither root nor one of its parts`);
@@ -64,13 +69,13 @@ if (process.argv.includes("--selftest")) {
   const slots = new Set(["site-bar", "site-bar-link", "site-action", "site-page", "site-window", "site-main"]);
   const sound = {
     frame: { window: "site-window", main: "site-main", column: "site-page" },
-    regions: { bar: { part: "SiteBar", slot: "SiteWindow.bar", marks: ["site-bar"], controls: ["site-action", "link"], parts: { link: "site-bar-link[data-current=false]" }, widths: ["root", "link"], carded: false } },
+    regions: { bar: { part: "SiteBar", slot: "SiteWindow.bar", marks: ["site-bar"], controls: ["site-action", "link"], parts: { link: "site-bar-link[data-current=false]", action: "site-action:not(:disabled)", disabled: "site-action:disabled" }, widths: ["root", "link"], carded: false } },
     types: { pricing: { status: "ready", root: "[data-page]", regions: ["bar"], required: ["bar"] }, help: { status: "planned", reason: "next slice", plannedRegions: ["bar"] } },
   };
   const broken = {
     frame: { window: "site-window", main: "site-main", column: "site-column" },
     regions: {
-      bar: { part: "SiteBar", slot: "SiteWindow.bar", marks: ["site-topbar"], controls: ["site-chip"], parts: { link: "site-bar-anchor[data-current=false]" }, widths: ["root", "brand"], carded: "yes" },
+      bar: { part: "SiteBar", slot: "SiteWindow.bar", marks: ["site-topbar"], controls: ["site-chip"], parts: { link: "site-bar-anchor[data-current=false]", action: "site-action:enabled" }, widths: ["root", "brand"], carded: "yes" },
       loose: { marks: [] },
     },
     types: {
@@ -86,6 +91,7 @@ if (process.argv.includes("--selftest")) {
     /regions\.bar\.marks: names slot "site-topbar"/,
     /regions\.bar\.controls: names slot "site-chip"/,
     /regions\.bar\.parts\.link: names slot "site-bar-anchor"/,
+    /regions\.bar\.parts\.action: "site-action:enabled" never matches a link/,
     /regions\.loose: needs the part/,
     /regions\.loose: has no marks/,
     /regions\.loose: lists no widths/,

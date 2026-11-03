@@ -248,7 +248,7 @@
       "parts": {
         "title": "site-offer-row-title",
         "about": "site-offer-row-about",
-        "action": "site-action:enabled",
+        "action": "site-action:not(:disabled)",
         "note": "site-offer-row-note",
         "disabled": "site-action:disabled"
       },
