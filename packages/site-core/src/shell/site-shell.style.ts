@@ -122,7 +122,7 @@ export const siteBarAccountNameStyle = defineSlotStyle({
 export const siteAvatarStyle = defineSlotStyle({
   slot: "site-avatar",
   base:
-    "grid size-6 shrink-0 place-items-center overflow-clip rounded-(--site-radius-full) bg-(--site-accent-soft) text-(length:--site-fs-caption) leading-(--site-lh-caption) font-(--site-fw-strong) text-(--site-accent-strong)",
+    "grid size-6 shrink-0 place-items-center overflow-clip rounded-(--site-radius-full) bg-(--site-accent-soft) text-(length:--site-fs-caption) leading-(--site-lh-caption) font-(--site-fw-strong) text-(--site-accent-text)",
   variants: {},
   defaultVariants: {},
 });

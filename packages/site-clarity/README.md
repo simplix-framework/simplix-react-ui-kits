@@ -47,7 +47,8 @@ Every label is a prop: the kit ships no strings, and the product passes its own 
 | `--site-control-disabled` | a disabled action's ground | `var(--muted)` |
 | `--site-accent` | the one accent: primary action, highlighted offer, checks | `var(--primary)` |
 | `--site-on-accent` | text on the accent | `var(--primary-foreground)` |
-| `--site-accent-strong` | quiet action text, primary action under the pointer, avatar initial | `var(--primary)` |
+| `--site-accent-strong` | primary action under the pointer, a checked control's border and fill under the pointer | `var(--primary)` |
+| `--site-accent-text` | accent text: a quiet action, an avatar initial, a link or mark drawn in the accent | `var(--site-accent-strong)` |
 | `--site-accent-soft` | avatar ground, quiet action under the pointer | `var(--accent)` |
 | `--site-voice` | the voice colour: a hero's accent line, the play toggle, a playing sample | `var(--site-accent)` |
 | `--site-on-voice` | text and glyphs on the voice colour | `var(--site-on-accent)` |
@@ -150,6 +151,7 @@ Every label is a prop: the kit ships no strings, and the product passes its own 
 | `--site-dark-accent` | a dark band's accent | `var(--sidebar-primary)` |
 | `--site-dark-on-accent` | text on a dark band's accent | `var(--sidebar-primary-foreground)` |
 | `--site-dark-accent-strong` | a dark band's strong accent | `var(--sidebar-primary)` |
+| `--site-dark-accent-text` | a dark band's accent text | `var(--site-dark-accent-strong)` |
 | `--site-dark-accent-soft` | a dark band's soft accent | `var(--sidebar-accent)` |
 | `--site-dark-voice-soft` | a dark band's voice ground | `var(--site-dark-accent-soft)` |
 | `--site-dark-voice-text` | a dark band's word being read | `var(--site-dark-accent-strong)` |

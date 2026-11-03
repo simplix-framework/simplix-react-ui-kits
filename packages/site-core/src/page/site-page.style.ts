@@ -150,7 +150,7 @@ export const siteChipStyle = defineSlotStyle({
   variants: {
     tone: {
       neutral: "bg-(--site-surface-sunken) text-(--site-ink-muted)",
-      accent: "bg-(--site-accent-soft) text-(--site-accent-strong)",
+      accent: "bg-(--site-accent-soft) text-(--site-accent-text)",
       good: "bg-(--site-good-soft) text-(--site-good)",
       warn: "bg-(--site-warn-soft) text-(--site-warn)",
       bad: "bg-(--site-bad-soft) text-(--site-bad)",
@@ -218,8 +218,8 @@ export const siteTextActionStyle = defineSlotStyle({
     "cursor-pointer rounded-(--site-radius-xs) border-0 bg-transparent p-0 text-left font-(family-name:--site-font-sans) underline-offset-2 outline-none transition-colors duration-(--site-duration-fast) ease-(--site-ease) focus-visible:shadow-[var(--site-focus-ring)] disabled:cursor-not-allowed disabled:text-(--site-ink-muted) disabled:no-underline",
   variants: {
     kind: {
-      link: "font-(--site-fw-strong) text-(--site-accent-strong) no-underline hover:underline",
-      inline: "font-(--site-fw-strong) text-(--site-accent-strong) underline hover:bg-(--site-accent-soft)",
+      link: "font-(--site-fw-strong) text-(--site-accent-text) no-underline hover:underline",
+      inline: "font-(--site-fw-strong) text-(--site-accent-text) underline hover:bg-(--site-accent-soft)",
       muted: "text-(--site-ink-muted) underline hover:text-(--site-ink)",
     },
   },

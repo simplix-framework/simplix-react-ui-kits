@@ -411,7 +411,7 @@ export const siteSuggestBoxStyle = defineSlotStyle({
 export const siteSuggestLinkStyle = defineSlotStyle({
   slot: "site-suggest-link",
   base:
-    "flex cursor-pointer items-center gap-1 rounded-(--site-radius-xs) text-left font-(--site-fw-strong) text-(--site-accent-strong) no-underline outline-none hover:underline focus-visible:shadow-[var(--site-focus-ring)] [&_svg]:size-3",
+    "flex cursor-pointer items-center gap-1 rounded-(--site-radius-xs) text-left font-(--site-fw-strong) text-(--site-accent-text) no-underline outline-none hover:underline focus-visible:shadow-[var(--site-focus-ring)] [&_svg]:size-3",
   variants: {},
   defaultVariants: {},
 });

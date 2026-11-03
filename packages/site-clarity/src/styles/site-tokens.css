@@ -27,6 +27,7 @@
   --site-accent: var(--primary);
   --site-on-accent: var(--primary-foreground);
   --site-accent-strong: var(--primary);
+  --site-accent-text: var(--site-accent-strong);
   --site-accent-soft: var(--accent);
   --site-voice: var(--site-accent);
   --site-on-voice: var(--site-on-accent);
@@ -141,6 +142,7 @@
   --site-dark-accent: var(--sidebar-primary);
   --site-dark-on-accent: var(--sidebar-primary-foreground);
   --site-dark-accent-strong: var(--sidebar-primary);
+  --site-dark-accent-text: var(--site-dark-accent-strong);
   --site-dark-accent-soft: var(--sidebar-accent);
   --site-dark-voice-soft: var(--site-dark-accent-soft);
   --site-dark-voice-text: var(--site-dark-accent-strong);
@@ -171,6 +173,7 @@
   --site-accent: var(--site-dark-accent);
   --site-on-accent: var(--site-dark-on-accent);
   --site-accent-strong: var(--site-dark-accent-strong);
+  --site-accent-text: var(--site-dark-accent-text);
   --site-accent-soft: var(--site-dark-accent-soft);
   --site-voice-soft: var(--site-dark-voice-soft);
   --site-voice-text: var(--site-dark-voice-text);

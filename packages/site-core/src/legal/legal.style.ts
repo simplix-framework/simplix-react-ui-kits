@@ -85,7 +85,7 @@ export const siteTocButtonStyle = defineSlotStyle({
     "flex w-full min-w-0 cursor-pointer items-center gap-2 rounded-(--site-radius-md) border-0 bg-transparent px-2.5 py-1.5 text-left font-(family-name:--site-font-sans) text-(length:--site-fs-caption) leading-(--site-lh-caption) font-(--site-fw-caption) text-(--site-ink) outline-none focus-visible:shadow-[var(--site-focus-ring)]",
   variants: {
     current: {
-      true: "bg-(--site-accent-soft) font-(--site-fw-strong) text-(--site-accent-strong)",
+      true: "bg-(--site-accent-soft) font-(--site-fw-strong) text-(--site-accent-text)",
       false: "hover:bg-(--site-surface-sunken)",
     },
   },
@@ -223,7 +223,7 @@ export const siteBannerMarkStyle = defineSlotStyle({
   base: "mt-0.5 flex shrink-0 [&_svg]:size-4",
   variants: {
     tone: {
-      info: "text-(--site-accent-strong)",
+      info: "text-(--site-accent-text)",
       good: "text-(--site-good)",
       warn: "text-(--site-warn)",
       bad: "text-(--site-bad)",
@@ -386,7 +386,7 @@ export const siteLegalArticleHeadingStyle = defineSlotStyle({
 /** The article's number. */
 export const siteLegalArticleNoStyle = defineSlotStyle({
   slot: "site-legal-article-no",
-  base: "text-(--site-accent-strong)",
+  base: "text-(--site-accent-text)",
   variants: {},
   defaultVariants: {},
 });
@@ -411,7 +411,7 @@ export const sitePlainSummaryStyle = defineSlotStyle({
 export const sitePlainSummaryLabelStyle = defineSlotStyle({
   slot: "site-plain-summary-label",
   base:
-    "flex items-center gap-1 text-(length:--site-fs-label) leading-(--site-lh-label) font-(--site-fw-strong) tracking-(--site-tracking-label) text-(--site-accent-strong) [&_svg]:size-3",
+    "flex items-center gap-1 text-(length:--site-fs-label) leading-(--site-lh-label) font-(--site-fw-strong) tracking-(--site-tracking-label) text-(--site-accent-text) [&_svg]:size-3",
   variants: {},
   defaultVariants: {},
 });

@@ -33,7 +33,7 @@ export const siteRefundVerdictStyle = defineSlotStyle({
   variants: {
     kind: {
       full: "text-(--site-good)",
-      part: "text-(--site-accent-strong)",
+      part: "text-(--site-accent-text)",
       none: "text-(--site-ink-muted)",
     },
   },
@@ -323,7 +323,7 @@ export const siteWalkthroughNavItemStyle = defineSlotStyle({
   base: "rounded-(--site-radius-xs) px-1.5 py-0.5",
   variants: {
     current: {
-      true: "bg-(--site-accent-soft) font-(--site-fw-strong) text-(--site-accent-strong)",
+      true: "bg-(--site-accent-soft) font-(--site-fw-strong) text-(--site-accent-text)",
       false: "",
     },
   },

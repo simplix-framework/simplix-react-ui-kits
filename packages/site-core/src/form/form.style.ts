@@ -101,7 +101,7 @@ export const siteCheckLabelStyle = defineSlotStyle({
 /** The word before a consent the next step needs ("Required"), drawn for the eye only. */
 export const siteCheckBadgeStyle = defineSlotStyle({
   slot: "site-checkbox-badge",
-  base: "mr-1 text-(length:--site-fs-label) leading-(--site-lh-label) font-(--site-fw-strong) tracking-(--site-tracking-label) not-italic text-(--site-accent-strong)",
+  base: "mr-1 text-(length:--site-fs-label) leading-(--site-lh-label) font-(--site-fw-strong) tracking-(--site-tracking-label) not-italic text-(--site-accent-text)",
   variants: {},
   defaultVariants: {},
 });

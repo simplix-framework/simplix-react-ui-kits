@@ -43,7 +43,7 @@ export const siteStepDiscStyle = defineSlotStyle({
   variants: {
     state: {
       done: "border-(--site-accent) bg-(--site-accent) text-(--site-on-accent)",
-      current: "scale-110 border-(--site-accent) bg-(--site-surface) text-(--site-accent-strong)",
+      current: "scale-110 border-(--site-accent) bg-(--site-surface) text-(--site-accent-text)",
       next: "border-(--site-line) bg-(--site-surface)",
     },
   },

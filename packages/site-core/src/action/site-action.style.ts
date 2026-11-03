@@ -25,7 +25,7 @@ export const siteActionStyle = defineSlotStyle({
     tone: {
       primary: "bg-(--site-accent) text-(--site-on-accent) hover:bg-(--site-accent-strong)",
       secondary: "border-(--site-line) bg-(--site-surface) text-(--site-ink) hover:bg-(--site-surface-sunken)",
-      quiet: "bg-transparent text-(--site-accent-strong) hover:bg-(--site-accent-soft)",
+      quiet: "bg-transparent text-(--site-accent-text) hover:bg-(--site-accent-soft)",
       subtle: "bg-transparent text-(--site-ink-muted) hover:bg-(--site-accent-soft)",
       danger: "border-(--site-bad) bg-transparent text-(--site-bad) hover:bg-(--site-bad-soft)",
     },

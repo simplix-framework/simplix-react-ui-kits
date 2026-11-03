@@ -32,7 +32,7 @@ export const siteHeroCopyStyle = defineSlotStyle({
 export const siteHeroEyebrowStyle = defineSlotStyle({
   slot: "site-hero-eyebrow",
   base:
-    "font-(family-name:--site-font-mono) text-(length:--site-fs-caption) leading-(--site-lh-caption) font-(--site-fw-strong) tracking-(--site-tracking-wide) text-(--site-accent-strong)",
+    "font-(family-name:--site-font-mono) text-(length:--site-fs-caption) leading-(--site-lh-caption) font-(--site-fw-strong) tracking-(--site-tracking-wide) text-(--site-accent-text)",
   variants: {},
   defaultVariants: {},
 });

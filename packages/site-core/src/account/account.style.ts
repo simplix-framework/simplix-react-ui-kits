@@ -28,7 +28,7 @@ export const siteSectionNavItemStyle = defineSlotStyle({
     "cursor-pointer rounded-(--site-radius-md) px-3 py-2 text-left text-(length:--site-fs-body-pane) leading-(--site-lh-body-pane) no-underline outline-none transition-colors duration-(--site-duration-fast) ease-(--site-ease) focus-visible:shadow-[var(--site-focus-ring)]",
   variants: {
     state: {
-      current: "bg-(--site-accent-soft) font-(--site-fw-strong) text-(--site-accent-strong)",
+      current: "bg-(--site-accent-soft) font-(--site-fw-strong) text-(--site-accent-text)",
       plain: "font-(--site-fw-base) text-(--site-ink) hover:bg-(--site-surface-sunken)",
       danger: "font-(--site-fw-base) text-(--site-bad) hover:bg-(--site-surface-sunken)",
     },
@@ -154,7 +154,7 @@ export const siteIdentityMarkStyle = defineSlotStyle({
   base: "grid size-9.5 shrink-0 place-items-center overflow-clip rounded-(--site-radius-full) text-(length:--site-fs-body-pane) leading-(--site-lh-body-pane) font-(--site-fw-strong) [&_svg]:size-4.5",
   variants: {
     tone: {
-      accent: "bg-(--site-accent-soft) text-(--site-accent-strong)",
+      accent: "bg-(--site-accent-soft) text-(--site-accent-text)",
       voice: "bg-(--site-voice-soft) text-(--site-voice-text)",
     },
   },
