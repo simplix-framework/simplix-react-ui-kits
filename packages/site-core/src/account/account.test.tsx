@@ -158,4 +158,9 @@ describe("figures", () => {
     expect(tabStops(html)).toHaveLength(2);
     expect(unmarked(html)).toEqual([]);
   });
+  it("draws a row's state before its actions", () => {
+    const html = renderToStaticMarkup(<TableActions badge={<span data-slot="site-chip">Refund requested</span>} actions={[{ id: "pdf", label: "PDF" }]} />);
+    expect(html.indexOf('data-slot="site-chip"')).toBeGreaterThan(-1);
+    expect(html.indexOf('data-slot="site-chip"')).toBeLessThan(html.indexOf('data-slot="site-action"'));
+  });
 });

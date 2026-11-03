@@ -197,12 +197,15 @@ export function TableCard<K extends string>({ label, columns, rows, more }: Tabl
 /** Props for {@link TableActions}. */
 export interface TableActionsProps {
   readonly actions: readonly SiteActionSpec[];
+  /** Where the row stands, a `SiteChip`, drawn before the actions (a refund asked for a payment). */
+  readonly badge?: ReactNode;
 }
 
-/** A row's small actions in its end cell, wrapping toward the end. */
-export function TableActions({ actions }: TableActionsProps) {
+/** A row's small actions in its end cell, wrapping toward the end, after the row's state when it has one. */
+export function TableActions({ actions, badge }: TableActionsProps) {
   return (
     <span {...slotAttributes(siteTableCardActionsStyle, {})}>
+      {badge}
       {actions.map((action) => (
         <SiteAction key={action.id} {...action} size="sm" />
       ))}

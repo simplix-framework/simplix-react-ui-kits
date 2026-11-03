@@ -180,6 +180,18 @@ describe("ConfirmByTyping", () => {
     expect(bySlot(html, "site-confirm-point")).toHaveLength(2);
     expect(bySlot(html, "site-field")[0]?.attributes["data-muted"]).toBe("true");
   });
+
+  it("draws what else it asks between the points and the typed field", () => {
+    const html = renderToStaticMarkup(
+      <ConfirmByTyping tone="plain" title="Delete the account" points={[{ key: "a", text: "Voices go" }]} label="Type your email" word="t@example.com" value="" onValueChange={() => {}} {...actions}>
+        <p data-slot="site-caption">Deleted after a waiting period</p>
+        <span data-slot="site-field" data-reason="true" />
+      </ConfirmByTyping>,
+    );
+    const order = [...html.matchAll(/data-slot="(site-confirm-body|site-caption|site-field)"/g)].map((match) => match[1]);
+    expect(order).toEqual(["site-confirm-body", "site-caption", "site-field", "site-field"]);
+    expect(html.indexOf("data-reason")).toBeLessThan(html.lastIndexOf('data-slot="site-field"'));
+  });
 });
 
 describe("SiteDialogFrame", () => {

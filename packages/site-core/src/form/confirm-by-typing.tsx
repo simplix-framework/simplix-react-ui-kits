@@ -22,6 +22,11 @@ export interface ConfirmByTypingProps {
   /** What the deletion takes with it: a sentence, or points drawn as a list. */
   readonly body?: ReactNode;
   readonly points?: readonly { readonly key: string; readonly text: ReactNode }[];
+  /**
+   * What the question asks besides the typed word, drawn after the points and before the typed
+   * field: a note on what happens next, an optional reason.
+   */
+  readonly children?: ReactNode;
   /** The field's name ("Type DELETE to confirm"). */
   readonly label: ReactNode;
   /** The word that confirms (a fixed word, or the account's email). */
@@ -49,7 +54,7 @@ export interface ConfirmByTypingProps {
  * a voice, deleting the account). The confirming action stays disabled until {@link typedConfirms}.
  * On the danger ground it is an `alertdialog` named by its title.
  */
-export function ConfirmByTyping({ title, body, points, label, word, value, onValueChange, placeholder, confirm, cancel, tone = "danger" }: ConfirmByTypingProps) {
+export function ConfirmByTyping({ title, body, points, children, label, word, value, onValueChange, placeholder, confirm, cancel, tone = "danger" }: ConfirmByTypingProps) {
   const ok = typedConfirms(value, word);
   const danger = tone === "danger";
   const name = typeof title === "string" ? title : undefined;
@@ -66,6 +71,7 @@ export function ConfirmByTyping({ title, body, points, label, word, value, onVal
           ))}
         </ul>
       ) : null}
+      {children}
       <FormField label={label} muted={!danger}>
         <SiteInput value={value} onValueChange={onValueChange} placeholder={placeholder} autoComplete="off" />
       </FormField>
