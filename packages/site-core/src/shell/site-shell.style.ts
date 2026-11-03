@@ -153,11 +153,11 @@ export const siteBarMenuStyle = defineSlotStyle({
   defaultVariants: {},
 });
 
-/** One page in the more menu. */
+/** One page, or one visitor action, in the more menu. */
 export const siteBarMenuItemStyle = defineSlotStyle({
   slot: "site-bar-menu-item",
   base:
-    "block cursor-pointer rounded-(--site-radius-sm) px-3 py-2 text-(length:--site-fs-body-pane) leading-(--site-lh-body-pane) text-inherit no-underline outline-none hover:bg-(--site-surface-sunken) focus-visible:shadow-[var(--site-focus-ring)]",
+    "block w-full cursor-pointer rounded-(--site-radius-sm) border-0 bg-transparent px-3 py-2 text-start text-(length:--site-fs-body-pane) leading-(--site-lh-body-pane) text-inherit no-underline outline-none hover:bg-(--site-surface-sunken) focus-visible:shadow-[var(--site-focus-ring)]",
   variants: {
     current: {
       true: "font-(--site-fw-strong)",
@@ -217,6 +217,14 @@ export const siteFooterLinkStyle = defineSlotStyle({
     },
   },
   defaultVariants: { emphasis: false, pending: false },
+});
+
+/** The place the product's theme control stands, after the language picker at the footer's end. */
+export const siteFooterThemeStyle = defineSlotStyle({
+  slot: "site-footer-theme",
+  base: "flex shrink-0 items-center",
+  variants: {},
+  defaultVariants: {},
 });
 
 /** The place the product's language picker stands, at the footer's end. */

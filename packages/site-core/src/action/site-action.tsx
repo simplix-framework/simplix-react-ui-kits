@@ -70,6 +70,8 @@ export type SiteActionProps = SiteActionSpec & {
   readonly block?: boolean;
   /** Submits the form it stands in; drawn as a button even with an address. */
   readonly submit?: boolean;
+  /** Below the page's narrow tier: drawn (`shown`), or left out because its place there is elsewhere (`hidden`). */
+  readonly narrow?: "shown" | "hidden";
 };
 
 /** How a control that may be refused is described, and the reason it draws when nothing else says why. */
@@ -102,8 +104,8 @@ export function useRefusal(disabled: boolean, reason: SiteReason | undefined, de
  * action is always a disabled button: a link cannot be disabled, and one that only looks disabled
  * still navigates.
  */
-export function SiteAction({ id, label, href, onSelect, tone, disabled = false, reason, icon, pressed, name, describedBy, size, block, submit = false }: SiteActionProps) {
-  const marks = slotAttributes(siteActionStyle, { tone, size, block, pad: actionPad(tone, size) });
+export function SiteAction({ id, label, href, onSelect, tone, disabled = false, reason, icon, pressed, name, describedBy, size, block, submit = false, narrow }: SiteActionProps) {
+  const marks = slotAttributes(siteActionStyle, { tone, size, block, pad: actionPad(tone, size), narrow });
   const refusal = useRefusal(disabled, reason, describedBy);
   const content = (
     <>

@@ -16,7 +16,7 @@ import { FeatureList, SegmentedSwitch } from "@simplix-react-ui-kits/site-core/p
 import { SiteBar, SiteFooter, SiteWindow } from "@simplix-react-ui-kits/site-core/shell";
 
 import copyFile from "./checkout-copy.json";
-import { glyph, languagePlace, type Locale, shellCopy } from "./shell-copy";
+import { glyph, languagePlace, type Locale, shellCopy, themePlace, visitorActions } from "./shell-copy";
 
 /** What the checkout is drawn with: a reference story, in a language. */
 export interface CheckoutFixtureProps {
@@ -183,11 +183,11 @@ export function CheckoutFixture({ locale = "en", story = "interactive" }: Checko
             { key: "download", label: shell.download, href: "/download" },
             { key: "help", label: shell.help, href: "/help" },
           ]}
-          action={data.signedIn ? undefined : { id: "start", label: shell.startFree, href: "/signup" }}
+          actions={data.signedIn ? undefined : visitorActions(shell)}
           account={data.signedIn ? { label: shell.myAccount, name: "Taylor", href: "/account" } : undefined}
         />
       }
-      footer={<SiteFooter owner={shell.company} linksLabel={shell.legal} links={shell.footerLinks} language={data.language ? languagePlace : undefined} />}
+      footer={<SiteFooter owner={shell.company} linksLabel={shell.legal} links={shell.footerLinks} language={data.language ? languagePlace : undefined} theme={data.language ? themePlace(locale) : undefined} />}
     >
       {data.done !== undefined ? (
         <SitePage rhythm="done">

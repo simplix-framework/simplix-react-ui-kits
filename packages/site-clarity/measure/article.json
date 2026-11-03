@@ -1,6 +1,6 @@
 {
  "$comment": "The computed look of the reference help article and help guide, read with scripts/site-regions-rendered.mjs probe() at the page-root widths listed, in English and Korean, as a signed-in reader: at rest, with steps marked as tried, answered not helpful, and the export guide. The product content the fixture stands boxes in for (the figures, the cost table, the jump select, the language picker) is sized from each entry props, measured off the reference. scripts/site-demo.mjs --measure renders tests/fixtures/article-page.tsx with those props at that width and holds its signature to this one with compare().",
- "measuredOn": "2026-11-02",
+ "measuredOn": "2026-11-03",
  "pages": {
   "article-1440": {
    "type": "article",
@@ -192,6 +192,7 @@
         "width": 53
        },
        "action": null,
+       "quietAction": null,
        "account": {
         "family": "system-ui",
         "size": "13px",
@@ -338,7 +339,7 @@
        }
       },
       "controls": [
-       "link"
+       "site-breadcrumb-link"
       ],
       "perInstance": 2
      },
@@ -815,8 +816,9 @@
        }
       },
       "controls": [
-       "button",
-       "select-trigger"
+       "site-toc-button",
+       "select-trigger",
+       "site-action"
       ],
       "perInstance": 9
      },
@@ -1574,11 +1576,81 @@
        "value": null,
        "infoGrid": null,
        "infoCard": null,
-       "infoTitle": null
+       "infoTitle": null,
+       "legalSection": null,
+       "voiceSection": null,
+       "sectionHead": null,
+       "sectionChip": null,
+       "glanceGrid": null,
+       "glance": null,
+       "voiceGlance": null,
+       "glanceTitle": null,
+       "glanceText": null,
+       "rightsGrid": null,
+       "rightsCard": null,
+       "rightsTitle": null,
+       "rightsText": null,
+       "agencyGrid": null,
+       "agency": null,
+       "agencyName": null,
+       "agencyPhone": null,
+       "agencySite": null,
+       "banner": null,
+       "bannerMark": null,
+       "bannerTitle": null,
+       "bannerText": null,
+       "refundProduct": null,
+       "refundDetail": null,
+       "refundRule": null,
+       "verdictFull": null,
+       "verdictPart": null,
+       "verdictNone": null,
+       "dotFull": null,
+       "dotPart": null,
+       "dotNone": null,
+       "refundNote": null,
+       "calc": null,
+       "calcHead": null,
+       "calcTitle": null,
+       "switch": null,
+       "switchOption": null,
+       "switchChosen": null,
+       "calcRow": null,
+       "calcLabel": null,
+       "range": null,
+       "rangeTrack": null,
+       "rangeFill": null,
+       "rangeThumb": null,
+       "calcOutput": null,
+       "bar": null,
+       "barUsed": null,
+       "barBack": null,
+       "calcFoot": null,
+       "calcSum": null,
+       "formula": null,
+       "basis": null,
+       "amount": null,
+       "how": null,
+       "picker": null,
+       "pick": null,
+       "pickCurrent": null,
+       "pickDisc": null,
+       "pickBody": null,
+       "pickTitle": null,
+       "pickText": null,
+       "walkthrough": null,
+       "walkHead": null,
+       "walkStage": null,
+       "menu": null,
+       "menuEmail": null,
+       "menuItem": null,
+       "menuCurrent": null,
+       "walkFoot": null,
+       "walkNext": null
       },
       "controls": [
-       "button",
-       "link"
+       "site-action",
+       "site-related-link"
       ],
       "perInstance": 12
      },
@@ -1672,13 +1744,57 @@
         "columns": 0,
         "height": 16,
         "width": 82
+       },
+       "language": {
+        "family": "system-ui",
+        "size": "12px",
+        "weight": "500",
+        "lineHeight": "16px",
+        "letterSpacing": "normal",
+        "color": "rgb(86, 103, 101)",
+        "background": "rgba(0, 0, 0, 0)",
+        "borderTop": "0px rgb(86, 103, 101)",
+        "borderRight": "0px rgb(86, 103, 101)",
+        "borderBottom": "0px rgb(86, 103, 101)",
+        "borderLeft": "0px rgb(86, 103, 101)",
+        "radius": "0px",
+        "shadow": "none",
+        "padding": "0px",
+        "gap": "normal",
+        "opacity": "1",
+        "maxWidth": "none",
+        "columns": 0,
+        "height": 30,
+        "width": 122
+       },
+       "theme": {
+        "family": "system-ui",
+        "size": "12px",
+        "weight": "500",
+        "lineHeight": "16px",
+        "letterSpacing": "normal",
+        "color": "rgb(86, 103, 101)",
+        "background": "rgba(0, 0, 0, 0)",
+        "borderTop": "0px rgb(86, 103, 101)",
+        "borderRight": "0px rgb(86, 103, 101)",
+        "borderBottom": "0px rgb(86, 103, 101)",
+        "borderLeft": "0px rgb(86, 103, 101)",
+        "radius": "0px",
+        "shadow": "none",
+        "padding": "0px",
+        "gap": "normal",
+        "opacity": "1",
+        "maxWidth": "none",
+        "columns": 0,
+        "height": 30,
+        "width": 170
        }
       },
       "controls": [
        "site-footer-link",
        "button"
       ],
-      "perInstance": 5
+      "perInstance": 8
      }
     }
    }
@@ -1873,6 +1989,7 @@
         "width": 53
        },
        "action": null,
+       "quietAction": null,
        "account": {
         "family": "system-ui",
         "size": "13px",
@@ -2019,7 +2136,7 @@
        }
       },
       "controls": [
-       "link"
+       "site-breadcrumb-link"
       ],
       "perInstance": 2
      },
@@ -2496,8 +2613,9 @@
        }
       },
       "controls": [
-       "button",
-       "select-trigger"
+       "site-toc-button",
+       "select-trigger",
+       "site-action"
       ],
       "perInstance": 9
      },
@@ -3255,11 +3373,81 @@
        "value": null,
        "infoGrid": null,
        "infoCard": null,
-       "infoTitle": null
+       "infoTitle": null,
+       "legalSection": null,
+       "voiceSection": null,
+       "sectionHead": null,
+       "sectionChip": null,
+       "glanceGrid": null,
+       "glance": null,
+       "voiceGlance": null,
+       "glanceTitle": null,
+       "glanceText": null,
+       "rightsGrid": null,
+       "rightsCard": null,
+       "rightsTitle": null,
+       "rightsText": null,
+       "agencyGrid": null,
+       "agency": null,
+       "agencyName": null,
+       "agencyPhone": null,
+       "agencySite": null,
+       "banner": null,
+       "bannerMark": null,
+       "bannerTitle": null,
+       "bannerText": null,
+       "refundProduct": null,
+       "refundDetail": null,
+       "refundRule": null,
+       "verdictFull": null,
+       "verdictPart": null,
+       "verdictNone": null,
+       "dotFull": null,
+       "dotPart": null,
+       "dotNone": null,
+       "refundNote": null,
+       "calc": null,
+       "calcHead": null,
+       "calcTitle": null,
+       "switch": null,
+       "switchOption": null,
+       "switchChosen": null,
+       "calcRow": null,
+       "calcLabel": null,
+       "range": null,
+       "rangeTrack": null,
+       "rangeFill": null,
+       "rangeThumb": null,
+       "calcOutput": null,
+       "bar": null,
+       "barUsed": null,
+       "barBack": null,
+       "calcFoot": null,
+       "calcSum": null,
+       "formula": null,
+       "basis": null,
+       "amount": null,
+       "how": null,
+       "picker": null,
+       "pick": null,
+       "pickCurrent": null,
+       "pickDisc": null,
+       "pickBody": null,
+       "pickTitle": null,
+       "pickText": null,
+       "walkthrough": null,
+       "walkHead": null,
+       "walkStage": null,
+       "menu": null,
+       "menuEmail": null,
+       "menuItem": null,
+       "menuCurrent": null,
+       "walkFoot": null,
+       "walkNext": null
       },
       "controls": [
-       "button",
-       "link"
+       "site-action",
+       "site-related-link"
       ],
       "perInstance": 12
      },
@@ -3353,13 +3541,57 @@
         "columns": 0,
         "height": 16,
         "width": 82
+       },
+       "language": {
+        "family": "system-ui",
+        "size": "12px",
+        "weight": "500",
+        "lineHeight": "16px",
+        "letterSpacing": "normal",
+        "color": "rgb(86, 103, 101)",
+        "background": "rgba(0, 0, 0, 0)",
+        "borderTop": "0px rgb(86, 103, 101)",
+        "borderRight": "0px rgb(86, 103, 101)",
+        "borderBottom": "0px rgb(86, 103, 101)",
+        "borderLeft": "0px rgb(86, 103, 101)",
+        "radius": "0px",
+        "shadow": "none",
+        "padding": "0px",
+        "gap": "normal",
+        "opacity": "1",
+        "maxWidth": "none",
+        "columns": 0,
+        "height": 30,
+        "width": 122
+       },
+       "theme": {
+        "family": "system-ui",
+        "size": "12px",
+        "weight": "500",
+        "lineHeight": "16px",
+        "letterSpacing": "normal",
+        "color": "rgb(86, 103, 101)",
+        "background": "rgba(0, 0, 0, 0)",
+        "borderTop": "0px rgb(86, 103, 101)",
+        "borderRight": "0px rgb(86, 103, 101)",
+        "borderBottom": "0px rgb(86, 103, 101)",
+        "borderLeft": "0px rgb(86, 103, 101)",
+        "radius": "0px",
+        "shadow": "none",
+        "padding": "0px",
+        "gap": "normal",
+        "opacity": "1",
+        "maxWidth": "none",
+        "columns": 0,
+        "height": 30,
+        "width": 170
        }
       },
       "controls": [
        "site-footer-link",
        "button"
       ],
-      "perInstance": 5
+      "perInstance": 8
      }
     }
    }
@@ -3413,7 +3645,7 @@
       "opacity": "1",
       "maxWidth": "none",
       "columns": 0,
-      "height": 3386,
+      "height": 3420,
       "width": 789
      },
      "main": {
@@ -3554,6 +3786,7 @@
         "width": 53
        },
        "action": null,
+       "quietAction": null,
        "account": {
         "family": "system-ui",
         "size": "13px",
@@ -3700,7 +3933,7 @@
        }
       },
       "controls": [
-       "link"
+       "site-breadcrumb-link"
       ],
       "perInstance": 2
      },
@@ -4177,8 +4410,9 @@
        }
       },
       "controls": [
-       "button",
-       "select-trigger"
+       "site-toc-button",
+       "select-trigger",
+       "site-action"
       ],
       "perInstance": 9
      },
@@ -4936,11 +5170,81 @@
        "value": null,
        "infoGrid": null,
        "infoCard": null,
-       "infoTitle": null
+       "infoTitle": null,
+       "legalSection": null,
+       "voiceSection": null,
+       "sectionHead": null,
+       "sectionChip": null,
+       "glanceGrid": null,
+       "glance": null,
+       "voiceGlance": null,
+       "glanceTitle": null,
+       "glanceText": null,
+       "rightsGrid": null,
+       "rightsCard": null,
+       "rightsTitle": null,
+       "rightsText": null,
+       "agencyGrid": null,
+       "agency": null,
+       "agencyName": null,
+       "agencyPhone": null,
+       "agencySite": null,
+       "banner": null,
+       "bannerMark": null,
+       "bannerTitle": null,
+       "bannerText": null,
+       "refundProduct": null,
+       "refundDetail": null,
+       "refundRule": null,
+       "verdictFull": null,
+       "verdictPart": null,
+       "verdictNone": null,
+       "dotFull": null,
+       "dotPart": null,
+       "dotNone": null,
+       "refundNote": null,
+       "calc": null,
+       "calcHead": null,
+       "calcTitle": null,
+       "switch": null,
+       "switchOption": null,
+       "switchChosen": null,
+       "calcRow": null,
+       "calcLabel": null,
+       "range": null,
+       "rangeTrack": null,
+       "rangeFill": null,
+       "rangeThumb": null,
+       "calcOutput": null,
+       "bar": null,
+       "barUsed": null,
+       "barBack": null,
+       "calcFoot": null,
+       "calcSum": null,
+       "formula": null,
+       "basis": null,
+       "amount": null,
+       "how": null,
+       "picker": null,
+       "pick": null,
+       "pickCurrent": null,
+       "pickDisc": null,
+       "pickBody": null,
+       "pickTitle": null,
+       "pickText": null,
+       "walkthrough": null,
+       "walkHead": null,
+       "walkStage": null,
+       "menu": null,
+       "menuEmail": null,
+       "menuItem": null,
+       "menuCurrent": null,
+       "walkFoot": null,
+       "walkNext": null
       },
       "controls": [
-       "button",
-       "link"
+       "site-action",
+       "site-related-link"
       ],
       "perInstance": 12
      },
@@ -4965,7 +5269,7 @@
        "opacity": "1",
        "maxWidth": "none",
        "columns": 0,
-       "height": 63,
+       "height": 97,
        "width": 789
       },
       "parts": {
@@ -5034,13 +5338,57 @@
         "columns": 0,
         "height": 16,
         "width": 82
+       },
+       "language": {
+        "family": "system-ui",
+        "size": "12px",
+        "weight": "500",
+        "lineHeight": "16px",
+        "letterSpacing": "normal",
+        "color": "rgb(86, 103, 101)",
+        "background": "rgba(0, 0, 0, 0)",
+        "borderTop": "0px rgb(86, 103, 101)",
+        "borderRight": "0px rgb(86, 103, 101)",
+        "borderBottom": "0px rgb(86, 103, 101)",
+        "borderLeft": "0px rgb(86, 103, 101)",
+        "radius": "0px",
+        "shadow": "none",
+        "padding": "0px",
+        "gap": "normal",
+        "opacity": "1",
+        "maxWidth": "none",
+        "columns": 0,
+        "height": 30,
+        "width": 122
+       },
+       "theme": {
+        "family": "system-ui",
+        "size": "12px",
+        "weight": "500",
+        "lineHeight": "16px",
+        "letterSpacing": "normal",
+        "color": "rgb(86, 103, 101)",
+        "background": "rgba(0, 0, 0, 0)",
+        "borderTop": "0px rgb(86, 103, 101)",
+        "borderRight": "0px rgb(86, 103, 101)",
+        "borderBottom": "0px rgb(86, 103, 101)",
+        "borderLeft": "0px rgb(86, 103, 101)",
+        "radius": "0px",
+        "shadow": "none",
+        "padding": "0px",
+        "gap": "normal",
+        "opacity": "1",
+        "maxWidth": "none",
+        "columns": 0,
+        "height": 30,
+        "width": 170
        }
       },
       "controls": [
        "site-footer-link",
        "button"
       ],
-      "perInstance": 5
+      "perInstance": 8
      }
     }
    }
@@ -5094,7 +5442,7 @@
       "opacity": "1",
       "maxWidth": "none",
       "columns": 0,
-      "height": 4396,
+      "height": 4430,
       "width": 379
      },
      "main": {
@@ -5235,6 +5583,7 @@
         "width": 0
        },
        "action": null,
+       "quietAction": null,
        "account": {
         "family": "system-ui",
         "size": "13px",
@@ -5381,7 +5730,7 @@
        }
       },
       "controls": [
-       "link"
+       "site-breadcrumb-link"
       ],
       "perInstance": 2
      },
@@ -5858,8 +6207,9 @@
        }
       },
       "controls": [
-       "button",
-       "select-trigger"
+       "site-toc-button",
+       "select-trigger",
+       "site-action"
       ],
       "perInstance": 9
      },
@@ -6617,11 +6967,81 @@
        "value": null,
        "infoGrid": null,
        "infoCard": null,
-       "infoTitle": null
+       "infoTitle": null,
+       "legalSection": null,
+       "voiceSection": null,
+       "sectionHead": null,
+       "sectionChip": null,
+       "glanceGrid": null,
+       "glance": null,
+       "voiceGlance": null,
+       "glanceTitle": null,
+       "glanceText": null,
+       "rightsGrid": null,
+       "rightsCard": null,
+       "rightsTitle": null,
+       "rightsText": null,
+       "agencyGrid": null,
+       "agency": null,
+       "agencyName": null,
+       "agencyPhone": null,
+       "agencySite": null,
+       "banner": null,
+       "bannerMark": null,
+       "bannerTitle": null,
+       "bannerText": null,
+       "refundProduct": null,
+       "refundDetail": null,
+       "refundRule": null,
+       "verdictFull": null,
+       "verdictPart": null,
+       "verdictNone": null,
+       "dotFull": null,
+       "dotPart": null,
+       "dotNone": null,
+       "refundNote": null,
+       "calc": null,
+       "calcHead": null,
+       "calcTitle": null,
+       "switch": null,
+       "switchOption": null,
+       "switchChosen": null,
+       "calcRow": null,
+       "calcLabel": null,
+       "range": null,
+       "rangeTrack": null,
+       "rangeFill": null,
+       "rangeThumb": null,
+       "calcOutput": null,
+       "bar": null,
+       "barUsed": null,
+       "barBack": null,
+       "calcFoot": null,
+       "calcSum": null,
+       "formula": null,
+       "basis": null,
+       "amount": null,
+       "how": null,
+       "picker": null,
+       "pick": null,
+       "pickCurrent": null,
+       "pickDisc": null,
+       "pickBody": null,
+       "pickTitle": null,
+       "pickText": null,
+       "walkthrough": null,
+       "walkHead": null,
+       "walkStage": null,
+       "menu": null,
+       "menuEmail": null,
+       "menuItem": null,
+       "menuCurrent": null,
+       "walkFoot": null,
+       "walkNext": null
       },
       "controls": [
-       "button",
-       "link"
+       "site-action",
+       "site-related-link"
       ],
       "perInstance": 12
      },
@@ -6646,7 +7066,7 @@
        "opacity": "1",
        "maxWidth": "none",
        "columns": 0,
-       "height": 83,
+       "height": 117,
        "width": 379
       },
       "parts": {
@@ -6715,13 +7135,57 @@
         "columns": 0,
         "height": 16,
         "width": 82
+       },
+       "language": {
+        "family": "system-ui",
+        "size": "12px",
+        "weight": "500",
+        "lineHeight": "16px",
+        "letterSpacing": "normal",
+        "color": "rgb(86, 103, 101)",
+        "background": "rgba(0, 0, 0, 0)",
+        "borderTop": "0px rgb(86, 103, 101)",
+        "borderRight": "0px rgb(86, 103, 101)",
+        "borderBottom": "0px rgb(86, 103, 101)",
+        "borderLeft": "0px rgb(86, 103, 101)",
+        "radius": "0px",
+        "shadow": "none",
+        "padding": "0px",
+        "gap": "normal",
+        "opacity": "1",
+        "maxWidth": "none",
+        "columns": 0,
+        "height": 30,
+        "width": 122
+       },
+       "theme": {
+        "family": "system-ui",
+        "size": "12px",
+        "weight": "500",
+        "lineHeight": "16px",
+        "letterSpacing": "normal",
+        "color": "rgb(86, 103, 101)",
+        "background": "rgba(0, 0, 0, 0)",
+        "borderTop": "0px rgb(86, 103, 101)",
+        "borderRight": "0px rgb(86, 103, 101)",
+        "borderBottom": "0px rgb(86, 103, 101)",
+        "borderLeft": "0px rgb(86, 103, 101)",
+        "radius": "0px",
+        "shadow": "none",
+        "padding": "0px",
+        "gap": "normal",
+        "opacity": "1",
+        "maxWidth": "none",
+        "columns": 0,
+        "height": 30,
+        "width": 170
        }
       },
       "controls": [
        "site-footer-link",
        "button"
       ],
-      "perInstance": 5
+      "perInstance": 8
      }
     }
    }
@@ -6921,6 +7385,7 @@
         "width": 53
        },
        "action": null,
+       "quietAction": null,
        "account": {
         "family": "system-ui",
         "size": "13px",
@@ -7067,7 +7532,7 @@
        }
       },
       "controls": [
-       "link"
+       "site-breadcrumb-link"
       ],
       "perInstance": 2
      },
@@ -7565,8 +8030,9 @@
        }
       },
       "controls": [
-       "button",
-       "select-trigger"
+       "site-toc-button",
+       "select-trigger",
+       "site-action"
       ],
       "perInstance": 9
      },
@@ -8366,11 +8832,81 @@
        "value": null,
        "infoGrid": null,
        "infoCard": null,
-       "infoTitle": null
+       "infoTitle": null,
+       "legalSection": null,
+       "voiceSection": null,
+       "sectionHead": null,
+       "sectionChip": null,
+       "glanceGrid": null,
+       "glance": null,
+       "voiceGlance": null,
+       "glanceTitle": null,
+       "glanceText": null,
+       "rightsGrid": null,
+       "rightsCard": null,
+       "rightsTitle": null,
+       "rightsText": null,
+       "agencyGrid": null,
+       "agency": null,
+       "agencyName": null,
+       "agencyPhone": null,
+       "agencySite": null,
+       "banner": null,
+       "bannerMark": null,
+       "bannerTitle": null,
+       "bannerText": null,
+       "refundProduct": null,
+       "refundDetail": null,
+       "refundRule": null,
+       "verdictFull": null,
+       "verdictPart": null,
+       "verdictNone": null,
+       "dotFull": null,
+       "dotPart": null,
+       "dotNone": null,
+       "refundNote": null,
+       "calc": null,
+       "calcHead": null,
+       "calcTitle": null,
+       "switch": null,
+       "switchOption": null,
+       "switchChosen": null,
+       "calcRow": null,
+       "calcLabel": null,
+       "range": null,
+       "rangeTrack": null,
+       "rangeFill": null,
+       "rangeThumb": null,
+       "calcOutput": null,
+       "bar": null,
+       "barUsed": null,
+       "barBack": null,
+       "calcFoot": null,
+       "calcSum": null,
+       "formula": null,
+       "basis": null,
+       "amount": null,
+       "how": null,
+       "picker": null,
+       "pick": null,
+       "pickCurrent": null,
+       "pickDisc": null,
+       "pickBody": null,
+       "pickTitle": null,
+       "pickText": null,
+       "walkthrough": null,
+       "walkHead": null,
+       "walkStage": null,
+       "menu": null,
+       "menuEmail": null,
+       "menuItem": null,
+       "menuCurrent": null,
+       "walkFoot": null,
+       "walkNext": null
       },
       "controls": [
-       "button",
-       "link"
+       "site-action",
+       "site-related-link"
       ],
       "perInstance": 12
      },
@@ -8464,13 +9000,57 @@
         "columns": 0,
         "height": 16,
         "width": 82
+       },
+       "language": {
+        "family": "system-ui",
+        "size": "12px",
+        "weight": "500",
+        "lineHeight": "16px",
+        "letterSpacing": "normal",
+        "color": "rgb(86, 103, 101)",
+        "background": "rgba(0, 0, 0, 0)",
+        "borderTop": "0px rgb(86, 103, 101)",
+        "borderRight": "0px rgb(86, 103, 101)",
+        "borderBottom": "0px rgb(86, 103, 101)",
+        "borderLeft": "0px rgb(86, 103, 101)",
+        "radius": "0px",
+        "shadow": "none",
+        "padding": "0px",
+        "gap": "normal",
+        "opacity": "1",
+        "maxWidth": "none",
+        "columns": 0,
+        "height": 30,
+        "width": 122
+       },
+       "theme": {
+        "family": "system-ui",
+        "size": "12px",
+        "weight": "500",
+        "lineHeight": "16px",
+        "letterSpacing": "normal",
+        "color": "rgb(86, 103, 101)",
+        "background": "rgba(0, 0, 0, 0)",
+        "borderTop": "0px rgb(86, 103, 101)",
+        "borderRight": "0px rgb(86, 103, 101)",
+        "borderBottom": "0px rgb(86, 103, 101)",
+        "borderLeft": "0px rgb(86, 103, 101)",
+        "radius": "0px",
+        "shadow": "none",
+        "padding": "0px",
+        "gap": "normal",
+        "opacity": "1",
+        "maxWidth": "none",
+        "columns": 0,
+        "height": 30,
+        "width": 170
        }
       },
       "controls": [
        "site-footer-link",
        "button"
       ],
-      "perInstance": 5
+      "perInstance": 8
      }
     }
    }
@@ -8666,6 +9246,7 @@
         "width": 53
        },
        "action": null,
+       "quietAction": null,
        "account": {
         "family": "system-ui",
         "size": "13px",
@@ -8812,7 +9393,7 @@
        }
       },
       "controls": [
-       "link"
+       "site-breadcrumb-link"
       ],
       "perInstance": 2
      },
@@ -9289,8 +9870,9 @@
        }
       },
       "controls": [
-       "button",
-       "select-trigger"
+       "site-toc-button",
+       "select-trigger",
+       "site-action"
       ],
       "perInstance": 9
      },
@@ -10090,11 +10672,81 @@
        "value": null,
        "infoGrid": null,
        "infoCard": null,
-       "infoTitle": null
+       "infoTitle": null,
+       "legalSection": null,
+       "voiceSection": null,
+       "sectionHead": null,
+       "sectionChip": null,
+       "glanceGrid": null,
+       "glance": null,
+       "voiceGlance": null,
+       "glanceTitle": null,
+       "glanceText": null,
+       "rightsGrid": null,
+       "rightsCard": null,
+       "rightsTitle": null,
+       "rightsText": null,
+       "agencyGrid": null,
+       "agency": null,
+       "agencyName": null,
+       "agencyPhone": null,
+       "agencySite": null,
+       "banner": null,
+       "bannerMark": null,
+       "bannerTitle": null,
+       "bannerText": null,
+       "refundProduct": null,
+       "refundDetail": null,
+       "refundRule": null,
+       "verdictFull": null,
+       "verdictPart": null,
+       "verdictNone": null,
+       "dotFull": null,
+       "dotPart": null,
+       "dotNone": null,
+       "refundNote": null,
+       "calc": null,
+       "calcHead": null,
+       "calcTitle": null,
+       "switch": null,
+       "switchOption": null,
+       "switchChosen": null,
+       "calcRow": null,
+       "calcLabel": null,
+       "range": null,
+       "rangeTrack": null,
+       "rangeFill": null,
+       "rangeThumb": null,
+       "calcOutput": null,
+       "bar": null,
+       "barUsed": null,
+       "barBack": null,
+       "calcFoot": null,
+       "calcSum": null,
+       "formula": null,
+       "basis": null,
+       "amount": null,
+       "how": null,
+       "picker": null,
+       "pick": null,
+       "pickCurrent": null,
+       "pickDisc": null,
+       "pickBody": null,
+       "pickTitle": null,
+       "pickText": null,
+       "walkthrough": null,
+       "walkHead": null,
+       "walkStage": null,
+       "menu": null,
+       "menuEmail": null,
+       "menuItem": null,
+       "menuCurrent": null,
+       "walkFoot": null,
+       "walkNext": null
       },
       "controls": [
-       "button",
-       "link"
+       "site-action",
+       "site-related-link"
       ],
       "perInstance": 18
      },
@@ -10188,13 +10840,57 @@
         "columns": 0,
         "height": 16,
         "width": 82
+       },
+       "language": {
+        "family": "system-ui",
+        "size": "12px",
+        "weight": "500",
+        "lineHeight": "16px",
+        "letterSpacing": "normal",
+        "color": "rgb(86, 103, 101)",
+        "background": "rgba(0, 0, 0, 0)",
+        "borderTop": "0px rgb(86, 103, 101)",
+        "borderRight": "0px rgb(86, 103, 101)",
+        "borderBottom": "0px rgb(86, 103, 101)",
+        "borderLeft": "0px rgb(86, 103, 101)",
+        "radius": "0px",
+        "shadow": "none",
+        "padding": "0px",
+        "gap": "normal",
+        "opacity": "1",
+        "maxWidth": "none",
+        "columns": 0,
+        "height": 30,
+        "width": 122
+       },
+       "theme": {
+        "family": "system-ui",
+        "size": "12px",
+        "weight": "500",
+        "lineHeight": "16px",
+        "letterSpacing": "normal",
+        "color": "rgb(86, 103, 101)",
+        "background": "rgba(0, 0, 0, 0)",
+        "borderTop": "0px rgb(86, 103, 101)",
+        "borderRight": "0px rgb(86, 103, 101)",
+        "borderBottom": "0px rgb(86, 103, 101)",
+        "borderLeft": "0px rgb(86, 103, 101)",
+        "radius": "0px",
+        "shadow": "none",
+        "padding": "0px",
+        "gap": "normal",
+        "opacity": "1",
+        "maxWidth": "none",
+        "columns": 0,
+        "height": 30,
+        "width": 170
        }
       },
       "controls": [
        "site-footer-link",
        "button"
       ],
-      "perInstance": 5
+      "perInstance": 8
      }
     }
    }
@@ -10382,6 +11078,7 @@
         "width": 53
        },
        "action": null,
+       "quietAction": null,
        "account": {
         "family": "system-ui",
         "size": "13px",
@@ -10528,7 +11225,7 @@
        }
       },
       "controls": [
-       "link"
+       "site-breadcrumb-link"
       ],
       "perInstance": 2
      },
@@ -10942,8 +11639,9 @@
        }
       },
       "controls": [
-       "button",
-       "select-trigger"
+       "site-toc-button",
+       "select-trigger",
+       "site-action"
       ],
       "perInstance": 7
      },
@@ -11512,11 +12210,81 @@
        "value": null,
        "infoGrid": null,
        "infoCard": null,
-       "infoTitle": null
+       "infoTitle": null,
+       "legalSection": null,
+       "voiceSection": null,
+       "sectionHead": null,
+       "sectionChip": null,
+       "glanceGrid": null,
+       "glance": null,
+       "voiceGlance": null,
+       "glanceTitle": null,
+       "glanceText": null,
+       "rightsGrid": null,
+       "rightsCard": null,
+       "rightsTitle": null,
+       "rightsText": null,
+       "agencyGrid": null,
+       "agency": null,
+       "agencyName": null,
+       "agencyPhone": null,
+       "agencySite": null,
+       "banner": null,
+       "bannerMark": null,
+       "bannerTitle": null,
+       "bannerText": null,
+       "refundProduct": null,
+       "refundDetail": null,
+       "refundRule": null,
+       "verdictFull": null,
+       "verdictPart": null,
+       "verdictNone": null,
+       "dotFull": null,
+       "dotPart": null,
+       "dotNone": null,
+       "refundNote": null,
+       "calc": null,
+       "calcHead": null,
+       "calcTitle": null,
+       "switch": null,
+       "switchOption": null,
+       "switchChosen": null,
+       "calcRow": null,
+       "calcLabel": null,
+       "range": null,
+       "rangeTrack": null,
+       "rangeFill": null,
+       "rangeThumb": null,
+       "calcOutput": null,
+       "bar": null,
+       "barUsed": null,
+       "barBack": null,
+       "calcFoot": null,
+       "calcSum": null,
+       "formula": null,
+       "basis": null,
+       "amount": null,
+       "how": null,
+       "picker": null,
+       "pick": null,
+       "pickCurrent": null,
+       "pickDisc": null,
+       "pickBody": null,
+       "pickTitle": null,
+       "pickText": null,
+       "walkthrough": null,
+       "walkHead": null,
+       "walkStage": null,
+       "menu": null,
+       "menuEmail": null,
+       "menuItem": null,
+       "menuCurrent": null,
+       "walkFoot": null,
+       "walkNext": null
       },
       "controls": [
-       "button",
-       "link"
+       "site-action",
+       "site-related-link"
       ],
       "perInstance": 6
      },
@@ -11610,13 +12378,57 @@
         "columns": 0,
         "height": 16,
         "width": 82
+       },
+       "language": {
+        "family": "system-ui",
+        "size": "12px",
+        "weight": "500",
+        "lineHeight": "16px",
+        "letterSpacing": "normal",
+        "color": "rgb(86, 103, 101)",
+        "background": "rgba(0, 0, 0, 0)",
+        "borderTop": "0px rgb(86, 103, 101)",
+        "borderRight": "0px rgb(86, 103, 101)",
+        "borderBottom": "0px rgb(86, 103, 101)",
+        "borderLeft": "0px rgb(86, 103, 101)",
+        "radius": "0px",
+        "shadow": "none",
+        "padding": "0px",
+        "gap": "normal",
+        "opacity": "1",
+        "maxWidth": "none",
+        "columns": 0,
+        "height": 30,
+        "width": 122
+       },
+       "theme": {
+        "family": "system-ui",
+        "size": "12px",
+        "weight": "500",
+        "lineHeight": "16px",
+        "letterSpacing": "normal",
+        "color": "rgb(86, 103, 101)",
+        "background": "rgba(0, 0, 0, 0)",
+        "borderTop": "0px rgb(86, 103, 101)",
+        "borderRight": "0px rgb(86, 103, 101)",
+        "borderBottom": "0px rgb(86, 103, 101)",
+        "borderLeft": "0px rgb(86, 103, 101)",
+        "radius": "0px",
+        "shadow": "none",
+        "padding": "0px",
+        "gap": "normal",
+        "opacity": "1",
+        "maxWidth": "none",
+        "columns": 0,
+        "height": 30,
+        "width": 170
        }
       },
       "controls": [
        "site-footer-link",
        "button"
       ],
-      "perInstance": 5
+      "perInstance": 8
      }
     }
    }
@@ -11663,7 +12475,7 @@
       "opacity": "1",
       "maxWidth": "none",
       "columns": 0,
-      "height": 2365,
+      "height": 2399,
       "width": 379
      },
      "main": {
@@ -11804,6 +12616,7 @@
         "width": 0
        },
        "action": null,
+       "quietAction": null,
        "account": {
         "family": "system-ui",
         "size": "13px",
@@ -11950,7 +12763,7 @@
        }
       },
       "controls": [
-       "link"
+       "site-breadcrumb-link"
       ],
       "perInstance": 2
      },
@@ -12364,8 +13177,9 @@
        }
       },
       "controls": [
-       "button",
-       "select-trigger"
+       "site-toc-button",
+       "select-trigger",
+       "site-action"
       ],
       "perInstance": 7
      },
@@ -12934,11 +13748,81 @@
        "value": null,
        "infoGrid": null,
        "infoCard": null,
-       "infoTitle": null
+       "infoTitle": null,
+       "legalSection": null,
+       "voiceSection": null,
+       "sectionHead": null,
+       "sectionChip": null,
+       "glanceGrid": null,
+       "glance": null,
+       "voiceGlance": null,
+       "glanceTitle": null,
+       "glanceText": null,
+       "rightsGrid": null,
+       "rightsCard": null,
+       "rightsTitle": null,
+       "rightsText": null,
+       "agencyGrid": null,
+       "agency": null,
+       "agencyName": null,
+       "agencyPhone": null,
+       "agencySite": null,
+       "banner": null,
+       "bannerMark": null,
+       "bannerTitle": null,
+       "bannerText": null,
+       "refundProduct": null,
+       "refundDetail": null,
+       "refundRule": null,
+       "verdictFull": null,
+       "verdictPart": null,
+       "verdictNone": null,
+       "dotFull": null,
+       "dotPart": null,
+       "dotNone": null,
+       "refundNote": null,
+       "calc": null,
+       "calcHead": null,
+       "calcTitle": null,
+       "switch": null,
+       "switchOption": null,
+       "switchChosen": null,
+       "calcRow": null,
+       "calcLabel": null,
+       "range": null,
+       "rangeTrack": null,
+       "rangeFill": null,
+       "rangeThumb": null,
+       "calcOutput": null,
+       "bar": null,
+       "barUsed": null,
+       "barBack": null,
+       "calcFoot": null,
+       "calcSum": null,
+       "formula": null,
+       "basis": null,
+       "amount": null,
+       "how": null,
+       "picker": null,
+       "pick": null,
+       "pickCurrent": null,
+       "pickDisc": null,
+       "pickBody": null,
+       "pickTitle": null,
+       "pickText": null,
+       "walkthrough": null,
+       "walkHead": null,
+       "walkStage": null,
+       "menu": null,
+       "menuEmail": null,
+       "menuItem": null,
+       "menuCurrent": null,
+       "walkFoot": null,
+       "walkNext": null
       },
       "controls": [
-       "button",
-       "link"
+       "site-action",
+       "site-related-link"
       ],
       "perInstance": 6
      },
@@ -12963,7 +13847,7 @@
        "opacity": "1",
        "maxWidth": "none",
        "columns": 0,
-       "height": 83,
+       "height": 117,
        "width": 379
       },
       "parts": {
@@ -13032,13 +13916,57 @@
         "columns": 0,
         "height": 16,
         "width": 82
+       },
+       "language": {
+        "family": "system-ui",
+        "size": "12px",
+        "weight": "500",
+        "lineHeight": "16px",
+        "letterSpacing": "normal",
+        "color": "rgb(86, 103, 101)",
+        "background": "rgba(0, 0, 0, 0)",
+        "borderTop": "0px rgb(86, 103, 101)",
+        "borderRight": "0px rgb(86, 103, 101)",
+        "borderBottom": "0px rgb(86, 103, 101)",
+        "borderLeft": "0px rgb(86, 103, 101)",
+        "radius": "0px",
+        "shadow": "none",
+        "padding": "0px",
+        "gap": "normal",
+        "opacity": "1",
+        "maxWidth": "none",
+        "columns": 0,
+        "height": 30,
+        "width": 122
+       },
+       "theme": {
+        "family": "system-ui",
+        "size": "12px",
+        "weight": "500",
+        "lineHeight": "16px",
+        "letterSpacing": "normal",
+        "color": "rgb(86, 103, 101)",
+        "background": "rgba(0, 0, 0, 0)",
+        "borderTop": "0px rgb(86, 103, 101)",
+        "borderRight": "0px rgb(86, 103, 101)",
+        "borderBottom": "0px rgb(86, 103, 101)",
+        "borderLeft": "0px rgb(86, 103, 101)",
+        "radius": "0px",
+        "shadow": "none",
+        "padding": "0px",
+        "gap": "normal",
+        "opacity": "1",
+        "maxWidth": "none",
+        "columns": 0,
+        "height": 30,
+        "width": 170
        }
       },
       "controls": [
        "site-footer-link",
        "button"
       ],
-      "perInstance": 5
+      "perInstance": 8
      }
     }
    }
@@ -13238,6 +14166,7 @@
         "width": 58
        },
        "action": null,
+       "quietAction": null,
        "account": {
         "family": "system-ui",
         "size": "13px",
@@ -13384,7 +14313,7 @@
        }
       },
       "controls": [
-       "link"
+       "site-breadcrumb-link"
       ],
       "perInstance": 2
      },
@@ -13882,8 +14811,9 @@
        }
       },
       "controls": [
-       "button",
-       "select-trigger"
+       "site-toc-button",
+       "select-trigger",
+       "site-action"
       ],
       "perInstance": 9
      },
@@ -14460,7 +15390,7 @@
         "maxWidth": "none",
         "columns": 0,
         "height": 34,
-        "width": 177
+        "width": 188
        },
        "feedback": {
         "family": "system-ui",
@@ -14683,11 +15613,81 @@
        "value": null,
        "infoGrid": null,
        "infoCard": null,
-       "infoTitle": null
+       "infoTitle": null,
+       "legalSection": null,
+       "voiceSection": null,
+       "sectionHead": null,
+       "sectionChip": null,
+       "glanceGrid": null,
+       "glance": null,
+       "voiceGlance": null,
+       "glanceTitle": null,
+       "glanceText": null,
+       "rightsGrid": null,
+       "rightsCard": null,
+       "rightsTitle": null,
+       "rightsText": null,
+       "agencyGrid": null,
+       "agency": null,
+       "agencyName": null,
+       "agencyPhone": null,
+       "agencySite": null,
+       "banner": null,
+       "bannerMark": null,
+       "bannerTitle": null,
+       "bannerText": null,
+       "refundProduct": null,
+       "refundDetail": null,
+       "refundRule": null,
+       "verdictFull": null,
+       "verdictPart": null,
+       "verdictNone": null,
+       "dotFull": null,
+       "dotPart": null,
+       "dotNone": null,
+       "refundNote": null,
+       "calc": null,
+       "calcHead": null,
+       "calcTitle": null,
+       "switch": null,
+       "switchOption": null,
+       "switchChosen": null,
+       "calcRow": null,
+       "calcLabel": null,
+       "range": null,
+       "rangeTrack": null,
+       "rangeFill": null,
+       "rangeThumb": null,
+       "calcOutput": null,
+       "bar": null,
+       "barUsed": null,
+       "barBack": null,
+       "calcFoot": null,
+       "calcSum": null,
+       "formula": null,
+       "basis": null,
+       "amount": null,
+       "how": null,
+       "picker": null,
+       "pick": null,
+       "pickCurrent": null,
+       "pickDisc": null,
+       "pickBody": null,
+       "pickTitle": null,
+       "pickText": null,
+       "walkthrough": null,
+       "walkHead": null,
+       "walkStage": null,
+       "menu": null,
+       "menuEmail": null,
+       "menuItem": null,
+       "menuCurrent": null,
+       "walkFoot": null,
+       "walkNext": null
       },
       "controls": [
-       "button",
-       "link"
+       "site-action",
+       "site-related-link"
       ],
       "perInstance": 12
      },
@@ -14781,13 +15781,57 @@
         "columns": 0,
         "height": 16,
         "width": 86
+       },
+       "language": {
+        "family": "system-ui",
+        "size": "12px",
+        "weight": "500",
+        "lineHeight": "16px",
+        "letterSpacing": "normal",
+        "color": "rgb(86, 103, 101)",
+        "background": "rgba(0, 0, 0, 0)",
+        "borderTop": "0px rgb(86, 103, 101)",
+        "borderRight": "0px rgb(86, 103, 101)",
+        "borderBottom": "0px rgb(86, 103, 101)",
+        "borderLeft": "0px rgb(86, 103, 101)",
+        "radius": "0px",
+        "shadow": "none",
+        "padding": "0px",
+        "gap": "normal",
+        "opacity": "1",
+        "maxWidth": "none",
+        "columns": 0,
+        "height": 30,
+        "width": 121
+       },
+       "theme": {
+        "family": "system-ui",
+        "size": "12px",
+        "weight": "500",
+        "lineHeight": "16px",
+        "letterSpacing": "normal",
+        "color": "rgb(86, 103, 101)",
+        "background": "rgba(0, 0, 0, 0)",
+        "borderTop": "0px rgb(86, 103, 101)",
+        "borderRight": "0px rgb(86, 103, 101)",
+        "borderBottom": "0px rgb(86, 103, 101)",
+        "borderLeft": "0px rgb(86, 103, 101)",
+        "radius": "0px",
+        "shadow": "none",
+        "padding": "0px",
+        "gap": "normal",
+        "opacity": "1",
+        "maxWidth": "none",
+        "columns": 0,
+        "height": 30,
+        "width": 153
        }
       },
       "controls": [
        "site-footer-link",
        "button"
       ],
-      "perInstance": 5
+      "perInstance": 8
      }
     }
    }
@@ -14982,6 +16026,7 @@
         "width": 58
        },
        "action": null,
+       "quietAction": null,
        "account": {
         "family": "system-ui",
         "size": "13px",
@@ -15128,7 +16173,7 @@
        }
       },
       "controls": [
-       "link"
+       "site-breadcrumb-link"
       ],
       "perInstance": 2
      },
@@ -15605,8 +16650,9 @@
        }
       },
       "controls": [
-       "button",
-       "select-trigger"
+       "site-toc-button",
+       "select-trigger",
+       "site-action"
       ],
       "perInstance": 9
      },
@@ -16141,7 +17187,7 @@
         "maxWidth": "none",
         "columns": 0,
         "height": 34,
-        "width": 177
+        "width": 188
        },
        "feedback": {
         "family": "system-ui",
@@ -16364,11 +17410,81 @@
        "value": null,
        "infoGrid": null,
        "infoCard": null,
-       "infoTitle": null
+       "infoTitle": null,
+       "legalSection": null,
+       "voiceSection": null,
+       "sectionHead": null,
+       "sectionChip": null,
+       "glanceGrid": null,
+       "glance": null,
+       "voiceGlance": null,
+       "glanceTitle": null,
+       "glanceText": null,
+       "rightsGrid": null,
+       "rightsCard": null,
+       "rightsTitle": null,
+       "rightsText": null,
+       "agencyGrid": null,
+       "agency": null,
+       "agencyName": null,
+       "agencyPhone": null,
+       "agencySite": null,
+       "banner": null,
+       "bannerMark": null,
+       "bannerTitle": null,
+       "bannerText": null,
+       "refundProduct": null,
+       "refundDetail": null,
+       "refundRule": null,
+       "verdictFull": null,
+       "verdictPart": null,
+       "verdictNone": null,
+       "dotFull": null,
+       "dotPart": null,
+       "dotNone": null,
+       "refundNote": null,
+       "calc": null,
+       "calcHead": null,
+       "calcTitle": null,
+       "switch": null,
+       "switchOption": null,
+       "switchChosen": null,
+       "calcRow": null,
+       "calcLabel": null,
+       "range": null,
+       "rangeTrack": null,
+       "rangeFill": null,
+       "rangeThumb": null,
+       "calcOutput": null,
+       "bar": null,
+       "barUsed": null,
+       "barBack": null,
+       "calcFoot": null,
+       "calcSum": null,
+       "formula": null,
+       "basis": null,
+       "amount": null,
+       "how": null,
+       "picker": null,
+       "pick": null,
+       "pickCurrent": null,
+       "pickDisc": null,
+       "pickBody": null,
+       "pickTitle": null,
+       "pickText": null,
+       "walkthrough": null,
+       "walkHead": null,
+       "walkStage": null,
+       "menu": null,
+       "menuEmail": null,
+       "menuItem": null,
+       "menuCurrent": null,
+       "walkFoot": null,
+       "walkNext": null
       },
       "controls": [
-       "button",
-       "link"
+       "site-action",
+       "site-related-link"
       ],
       "perInstance": 12
      },
@@ -16462,13 +17578,57 @@
         "columns": 0,
         "height": 16,
         "width": 86
+       },
+       "language": {
+        "family": "system-ui",
+        "size": "12px",
+        "weight": "500",
+        "lineHeight": "16px",
+        "letterSpacing": "normal",
+        "color": "rgb(86, 103, 101)",
+        "background": "rgba(0, 0, 0, 0)",
+        "borderTop": "0px rgb(86, 103, 101)",
+        "borderRight": "0px rgb(86, 103, 101)",
+        "borderBottom": "0px rgb(86, 103, 101)",
+        "borderLeft": "0px rgb(86, 103, 101)",
+        "radius": "0px",
+        "shadow": "none",
+        "padding": "0px",
+        "gap": "normal",
+        "opacity": "1",
+        "maxWidth": "none",
+        "columns": 0,
+        "height": 30,
+        "width": 121
+       },
+       "theme": {
+        "family": "system-ui",
+        "size": "12px",
+        "weight": "500",
+        "lineHeight": "16px",
+        "letterSpacing": "normal",
+        "color": "rgb(86, 103, 101)",
+        "background": "rgba(0, 0, 0, 0)",
+        "borderTop": "0px rgb(86, 103, 101)",
+        "borderRight": "0px rgb(86, 103, 101)",
+        "borderBottom": "0px rgb(86, 103, 101)",
+        "borderLeft": "0px rgb(86, 103, 101)",
+        "radius": "0px",
+        "shadow": "none",
+        "padding": "0px",
+        "gap": "normal",
+        "opacity": "1",
+        "maxWidth": "none",
+        "columns": 0,
+        "height": 30,
+        "width": 153
        }
       },
       "controls": [
        "site-footer-link",
        "button"
       ],
-      "perInstance": 5
+      "perInstance": 8
      }
     }
    }
@@ -16522,7 +17682,7 @@
       "opacity": "1",
       "maxWidth": "none",
       "columns": 0,
-      "height": 4072,
+      "height": 4106,
       "width": 379
      },
      "main": {
@@ -16663,6 +17823,7 @@
         "width": 0
        },
        "action": null,
+       "quietAction": null,
        "account": {
         "family": "system-ui",
         "size": "13px",
@@ -18074,7 +19235,7 @@
        "opacity": "1",
        "maxWidth": "none",
        "columns": 0,
-       "height": 83,
+       "height": 117,
        "width": 379
       },
       "parts": {
@@ -18143,13 +19304,57 @@
         "columns": 0,
         "height": 16,
         "width": 86
+       },
+       "language": {
+        "family": "system-ui",
+        "size": "12px",
+        "weight": "500",
+        "lineHeight": "16px",
+        "letterSpacing": "normal",
+        "color": "rgb(86, 103, 101)",
+        "background": "rgba(0, 0, 0, 0)",
+        "borderTop": "0px rgb(86, 103, 101)",
+        "borderRight": "0px rgb(86, 103, 101)",
+        "borderBottom": "0px rgb(86, 103, 101)",
+        "borderLeft": "0px rgb(86, 103, 101)",
+        "radius": "0px",
+        "shadow": "none",
+        "padding": "0px",
+        "gap": "normal",
+        "opacity": "1",
+        "maxWidth": "none",
+        "columns": 0,
+        "height": 30,
+        "width": 121
+       },
+       "theme": {
+        "family": "system-ui",
+        "size": "12px",
+        "weight": "500",
+        "lineHeight": "16px",
+        "letterSpacing": "normal",
+        "color": "rgb(86, 103, 101)",
+        "background": "rgba(0, 0, 0, 0)",
+        "borderTop": "0px rgb(86, 103, 101)",
+        "borderRight": "0px rgb(86, 103, 101)",
+        "borderBottom": "0px rgb(86, 103, 101)",
+        "borderLeft": "0px rgb(86, 103, 101)",
+        "radius": "0px",
+        "shadow": "none",
+        "padding": "0px",
+        "gap": "normal",
+        "opacity": "1",
+        "maxWidth": "none",
+        "columns": 0,
+        "height": 30,
+        "width": 153
        }
       },
       "controls": [
        "site-footer-link",
        "button"
       ],
-      "perInstance": 5
+      "perInstance": 8
      }
     }
    }
@@ -18337,6 +19542,7 @@
         "width": 58
        },
        "action": null,
+       "quietAction": null,
        "account": {
         "family": "system-ui",
         "size": "13px",
@@ -18483,7 +19689,7 @@
        }
       },
       "controls": [
-       "link"
+       "site-breadcrumb-link"
       ],
       "perInstance": 2
      },
@@ -18897,8 +20103,9 @@
        }
       },
       "controls": [
-       "button",
-       "select-trigger"
+       "site-toc-button",
+       "select-trigger",
+       "site-action"
       ],
       "perInstance": 7
      },
@@ -19467,11 +20674,81 @@
        "value": null,
        "infoGrid": null,
        "infoCard": null,
-       "infoTitle": null
+       "infoTitle": null,
+       "legalSection": null,
+       "voiceSection": null,
+       "sectionHead": null,
+       "sectionChip": null,
+       "glanceGrid": null,
+       "glance": null,
+       "voiceGlance": null,
+       "glanceTitle": null,
+       "glanceText": null,
+       "rightsGrid": null,
+       "rightsCard": null,
+       "rightsTitle": null,
+       "rightsText": null,
+       "agencyGrid": null,
+       "agency": null,
+       "agencyName": null,
+       "agencyPhone": null,
+       "agencySite": null,
+       "banner": null,
+       "bannerMark": null,
+       "bannerTitle": null,
+       "bannerText": null,
+       "refundProduct": null,
+       "refundDetail": null,
+       "refundRule": null,
+       "verdictFull": null,
+       "verdictPart": null,
+       "verdictNone": null,
+       "dotFull": null,
+       "dotPart": null,
+       "dotNone": null,
+       "refundNote": null,
+       "calc": null,
+       "calcHead": null,
+       "calcTitle": null,
+       "switch": null,
+       "switchOption": null,
+       "switchChosen": null,
+       "calcRow": null,
+       "calcLabel": null,
+       "range": null,
+       "rangeTrack": null,
+       "rangeFill": null,
+       "rangeThumb": null,
+       "calcOutput": null,
+       "bar": null,
+       "barUsed": null,
+       "barBack": null,
+       "calcFoot": null,
+       "calcSum": null,
+       "formula": null,
+       "basis": null,
+       "amount": null,
+       "how": null,
+       "picker": null,
+       "pick": null,
+       "pickCurrent": null,
+       "pickDisc": null,
+       "pickBody": null,
+       "pickTitle": null,
+       "pickText": null,
+       "walkthrough": null,
+       "walkHead": null,
+       "walkStage": null,
+       "menu": null,
+       "menuEmail": null,
+       "menuItem": null,
+       "menuCurrent": null,
+       "walkFoot": null,
+       "walkNext": null
       },
       "controls": [
-       "button",
-       "link"
+       "site-action",
+       "site-related-link"
       ],
       "perInstance": 6
      },
@@ -19565,13 +20842,57 @@
         "columns": 0,
         "height": 16,
         "width": 86
+       },
+       "language": {
+        "family": "system-ui",
+        "size": "12px",
+        "weight": "500",
+        "lineHeight": "16px",
+        "letterSpacing": "normal",
+        "color": "rgb(86, 103, 101)",
+        "background": "rgba(0, 0, 0, 0)",
+        "borderTop": "0px rgb(86, 103, 101)",
+        "borderRight": "0px rgb(86, 103, 101)",
+        "borderBottom": "0px rgb(86, 103, 101)",
+        "borderLeft": "0px rgb(86, 103, 101)",
+        "radius": "0px",
+        "shadow": "none",
+        "padding": "0px",
+        "gap": "normal",
+        "opacity": "1",
+        "maxWidth": "none",
+        "columns": 0,
+        "height": 30,
+        "width": 121
+       },
+       "theme": {
+        "family": "system-ui",
+        "size": "12px",
+        "weight": "500",
+        "lineHeight": "16px",
+        "letterSpacing": "normal",
+        "color": "rgb(86, 103, 101)",
+        "background": "rgba(0, 0, 0, 0)",
+        "borderTop": "0px rgb(86, 103, 101)",
+        "borderRight": "0px rgb(86, 103, 101)",
+        "borderBottom": "0px rgb(86, 103, 101)",
+        "borderLeft": "0px rgb(86, 103, 101)",
+        "radius": "0px",
+        "shadow": "none",
+        "padding": "0px",
+        "gap": "normal",
+        "opacity": "1",
+        "maxWidth": "none",
+        "columns": 0,
+        "height": 30,
+        "width": 153
        }
       },
       "controls": [
        "site-footer-link",
        "button"
       ],
-      "perInstance": 5
+      "perInstance": 8
      }
     }
    }

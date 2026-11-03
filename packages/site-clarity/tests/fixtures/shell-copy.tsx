@@ -20,6 +20,7 @@ export const shellCopy = {
     download: "Download",
     help: "Help",
     startFree: "Start free",
+    signIn: "Sign in",
     myAccount: "My account",
     company: "© Example Inc.",
     legal: "Legal",
@@ -34,6 +35,7 @@ export const shellCopy = {
     download: "내려받기",
     help: "도움말",
     startFree: "무료로 시작",
+    signIn: "로그인",
     myAccount: "내 계정",
     company: "© Example Inc.",
     legal: "법적 고지",
@@ -97,3 +99,19 @@ export const glyph = {
  * kit does not draw, stands in as a box of its measured size.
  */
 export const languagePlace = <span style={{ display: "block", height: 30, width: 122 }} />;
+
+/**
+ * The visitor's actions as the reference bar draws them: sign in as a quiet action that moves into the
+ * more menu below the narrow tier, then start free as the primary one.
+ */
+export const visitorActions = (shell: (typeof shellCopy)[Locale]) =>
+  [
+    { id: "signIn", label: shell.signIn, href: "/signin", tone: "quiet", narrow: "menu" },
+    { id: "start", label: shell.startFree, href: "/signup" },
+  ] as const;
+
+/**
+ * The footer's theme place as the reference draws it: the product's theme control (system, light,
+ * dark), which the kit does not draw, stands in as a box of its measured size in each language.
+ */
+export const themePlace = (locale: Locale) => <span style={{ display: "block", height: 30, width: locale === "ko" ? 153.05 : 170.44 }} />;

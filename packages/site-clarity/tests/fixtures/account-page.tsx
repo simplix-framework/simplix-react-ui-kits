@@ -14,7 +14,7 @@ import { SiteCaption, SiteChip, type SiteChipTone, SitePage, SiteTextAction } fr
 import { SiteBar, SiteFooter, SiteWindow } from "@simplix-react-ui-kits/site-core/shell";
 
 import copyFile from "./account-copy.json";
-import { glyph, languagePlace, type Locale, shellCopy } from "./shell-copy";
+import { glyph, languagePlace, type Locale, shellCopy, themePlace, visitorActions } from "./shell-copy";
 
 /** What My account is drawn with: a reference story's section, in a language. */
 export interface AccountFixtureProps {
@@ -239,11 +239,11 @@ export function AccountFixture({ locale = "en", story = "subscription--desktop" 
             { key: "download", label: shell.download, href: "/download" },
             { key: "help", label: shell.help, href: "/help" },
           ]}
-          action={data.signedIn ? undefined : { id: "start", label: shell.startFree, href: "/signup" }}
+          actions={data.signedIn ? undefined : visitorActions(shell)}
           account={data.signedIn ? { label: shell.myAccount, name: "Taylor", href: "/account", current: true } : undefined}
         />
       }
-      footer={<SiteFooter owner={shell.company} linksLabel={shell.legal} links={shell.footerLinks} language={languagePlace} />}
+      footer={<SiteFooter owner={shell.company} linksLabel={shell.legal} links={shell.footerLinks} language={languagePlace} theme={themePlace(locale)} />}
     >
       <SitePage>
         <AccountLayout

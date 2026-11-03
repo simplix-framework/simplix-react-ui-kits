@@ -46,6 +46,16 @@ export interface SiteBarAccount {
   readonly onSelect?: (event: MouseEvent<HTMLElement>) => void;
 }
 
+/** One of the visitor's actions at the bar's end. */
+export type SiteBarAction = SiteActionSpec & {
+  /**
+   * Where the action stands below the narrow tier: in the bar (`bar`, the default, for the one the
+   * bar leads with) or in the more menu with the site's pages (`menu`). An action that moves into the
+   * menu is drawn there as a menu item, so it needs an address or a press.
+   */
+  readonly narrow?: "bar" | "menu";
+};
+
 /** Props for {@link SiteBar}. */
 export interface SiteBarProps {
   /** The product's mark, drawn inside the link home. */
@@ -58,14 +68,25 @@ export interface SiteBarProps {
   readonly links: readonly SiteBarLink[];
   /** The page links' landmark name. */
   readonly navLabel: string;
-  /** The visitor's action ("Start free"); drawn when no account is signed in. */
-  readonly action?: SiteActionSpec;
+  /**
+   * The visitor's actions in reading order ("Sign in", then "Start free"); drawn when no account is
+   * signed in. An action without a tone is the primary one.
+   */
+  readonly actions?: readonly SiteBarAction[];
   /** The signed-in account; drawn in place of the visitor's action. */
   readonly account?: SiteBarAccount;
   /** The more menu's accessible name; the menu holds the page links below the narrow tier. */
   readonly moreLabel: string;
   /** `dark` continues a dark band at the top of the page (a hero) into the bar. */
   readonly tone?: "light" | "dark";
+}
+
+/**
+ * The visitor's actions the more menu lists below the narrow tier: those marked `menu`, and none once
+ * an account is signed in, since the bar then draws the account in their place.
+ */
+export function barMenuActions(actions: readonly SiteBarAction[], signedIn: boolean): readonly SiteBarAction[] {
+  return signedIn ? [] : actions.filter((action) => action.narrow === "menu");
 }
 
 /** The first letter of a display name, as one grapheme in the reader's case. */
@@ -76,10 +97,12 @@ export function avatarInitial(name: string): string {
 
 /**
  * The site's bar: the brand linking home, the site's pages with the current one marked, then the
- * visitor's action or the signed-in account. Below the narrow tier the pages move into a more
- * menu at the bar's end and the account keeps only its avatar.
+ * visitor's actions or the signed-in account. Below the narrow tier the pages and the visitor's
+ * actions marked `menu` move into a more menu at the bar's end, and the account keeps only its
+ * avatar.
  */
-export function SiteBar({ brand, brandHref, brandLabel, onBrandSelect, links, navLabel, action, account, moreLabel, tone = "light" }: SiteBarProps) {
+export function SiteBar({ brand, brandHref, brandLabel, onBrandSelect, links, navLabel, actions = [], account, moreLabel, tone = "light" }: SiteBarProps) {
+  const visitor = account ? [] : actions;
   return (
     <header {...slotAttributes(siteBarStyle, { tone })} data-band={tone === "dark" ? "dark" : undefined}>
       <SiteLink {...slotAttributes(siteBarBrandStyle, {})} href={brandHref} aria-label={brandLabel} onClick={onBrandSelect}>
@@ -117,10 +140,10 @@ export function SiteBar({ brand, brandHref, brandLabel, onBrandSelect, links, na
             {avatarInitial(account.name)}
           </span>
         </SiteLink>
-      ) : action ? (
-        <SiteAction {...action} tone={action.tone ?? "primary"} />
-      ) : null}
-      <SiteBarMore label={moreLabel} links={links} />
+      ) : (
+        visitor.map(({ narrow, ...action }) => <SiteAction key={action.id} {...action} tone={action.tone ?? "primary"} narrow={narrow === "menu" ? "hidden" : "shown"} />)
+      )}
+      <SiteBarMore label={moreLabel} links={links} actions={barMenuActions(actions, account !== undefined)} />
     </header>
   );
 }
@@ -144,7 +167,7 @@ export function menuKeyTarget(key: string, index: number, count: number): number
  * closes it and returns the focus to its trigger, a press outside closes it, and the arrows walk
  * its items.
  */
-function SiteBarMore({ label, links }: { label: string; links: readonly SiteBarLink[] }) {
+function SiteBarMore({ label, links, actions }: { label: string; links: readonly SiteBarLink[]; actions: readonly SiteBarAction[] }) {
   const [open, setOpen] = useState(false);
   const id = useId();
   const trigger = useRef<HTMLButtonElement>(null);
@@ -160,7 +183,7 @@ function SiteBarMore({ label, links }: { label: string; links: readonly SiteBarL
     return () => document.removeEventListener("pointerdown", away);
   }, [open]);
 
-  const items = () => [...(menu.current?.querySelectorAll<HTMLElement>("a[data-slot=site-bar-menu-item]") ?? [])];
+  const items = () => [...(menu.current?.querySelectorAll<HTMLElement>("a[data-slot=site-bar-menu-item], button[data-slot=site-bar-menu-item]") ?? [])];
   const onKeyDown = (event: KeyboardEvent<HTMLElement>) => {
     const list = items();
     const index = list.indexOf(document.activeElement as HTMLElement);
@@ -196,29 +219,73 @@ function SiteBarMore({ label, links }: { label: string; links: readonly SiteBarL
       </button>
       {open ? (
         <div {...slotAttributes(siteBarMenuStyle, {})} ref={menu} id={id} onKeyDown={onKeyDown}>
-          {links.map((link) =>
-            link.href === undefined ? (
-              // Not a menu item: the arrows walk only the pages that open.
-              <span key={link.key} {...slotAttributes(siteBarMenuItemStyle, { current: link.current === true, pending: true })}>
-                {link.label}
-              </span>
-            ) : (
-              <SiteLink
-                key={link.key}
-                {...slotAttributes(siteBarMenuItemStyle, { current: link.current === true })}
-                href={link.href}
-                aria-current={link.current ? "page" : undefined}
-                onClick={(event) => {
-                  link.onSelect?.(event);
-                  setOpen(false);
-                }}
-              >
-                {link.label}
-              </SiteLink>
-            ),
-          )}
+          <SiteBarMenuItems links={links} actions={actions} onClose={() => setOpen(false)} />
         </div>
       ) : null}
+    </>
+  );
+}
+
+/**
+ * What the open more menu holds: the site's pages (one not open yet as plain text the arrows skip),
+ * then the visitor's actions that leave the bar below the narrow tier. A press closes the menu.
+ */
+export function SiteBarMenuItems({ links, actions, onClose }: { links: readonly SiteBarLink[]; actions: readonly SiteBarAction[]; onClose: () => void }) {
+  return (
+    <>
+      {links.map((link) =>
+        link.href === undefined ? (
+          // Not a menu item: the arrows walk only the pages that open.
+          <span key={link.key} {...slotAttributes(siteBarMenuItemStyle, { current: link.current === true, pending: true })}>
+            {link.label}
+          </span>
+        ) : (
+          <SiteLink
+            key={link.key}
+            {...slotAttributes(siteBarMenuItemStyle, { current: link.current === true })}
+            href={link.href}
+            aria-current={link.current ? "page" : undefined}
+            onClick={(event) => {
+              link.onSelect?.(event);
+              onClose();
+            }}
+          >
+            {link.label}
+          </SiteLink>
+        ),
+      )}
+      {actions.map((action) =>
+        action.href === undefined || action.disabled ? (
+          <button
+            key={action.id}
+            {...slotAttributes(siteBarMenuItemStyle, {})}
+            data-action={action.id}
+            type="button"
+            disabled={action.disabled}
+            aria-label={action.name}
+            onClick={(event) => {
+              action.onSelect?.(event);
+              onClose();
+            }}
+          >
+            {action.label}
+          </button>
+        ) : (
+          <SiteLink
+            key={action.id}
+            {...slotAttributes(siteBarMenuItemStyle, {})}
+            data-action={action.id}
+            href={action.href}
+            aria-label={action.name}
+            onClick={(event) => {
+              action.onSelect?.(event);
+              onClose();
+            }}
+          >
+            {action.label}
+          </SiteLink>
+        ),
+      )}
     </>
   );
 }

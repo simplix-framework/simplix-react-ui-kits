@@ -44,7 +44,7 @@ import { SiteBar, SiteFooter, SiteWindow } from "@simplix-react-ui-kits/site-cor
 
 import policyFile from "./policy-copy.json";
 import copyFile from "./terms-copy.json";
-import { glyph, languagePlace, type Locale, shellCopy } from "./shell-copy";
+import { glyph, languagePlace, type Locale, shellCopy, themePlace, visitorActions } from "./shell-copy";
 
 /** What the terms are drawn with. */
 export interface LegalFixtureProps {
@@ -103,11 +103,11 @@ export function LegalFixture({ locale = "en", version = "current", compare = fal
             { key: "download", label: shell.download, href: "/download" },
             { key: "help", label: shell.help, href: "/help" },
           ]}
-          action={signedIn ? undefined : { id: "start", label: shell.startFree, href: "/signup" }}
+          actions={signedIn ? undefined : visitorActions(shell)}
           account={signedIn ? { label: shell.myAccount, name: "Taylor", href: "/account" } : undefined}
         />
       }
-      footer={<SiteFooter owner={shell.company} linksLabel={shell.legal} links={shell.footerLinks.map((link) => (link.key === "terms" ? { ...link, current: true } : link))} language={languagePlace} />}
+      footer={<SiteFooter owner={shell.company} linksLabel={shell.legal} links={shell.footerLinks.map((link) => (link.key === "terms" ? { ...link, current: true } : link))} language={languagePlace} theme={themePlace(locale)} />}
     >
       <DocLayout
         crumbs={t.crumbs.map((label, index) => ({ key: `c-${String(index)}`, label, ...(index < t.crumbs.length - 1 ? { href: "/help" } : {}) }))}
@@ -209,11 +209,11 @@ function LegalWindow({ locale, signedIn, page, children }: { readonly locale: Lo
             { key: "download", label: shell.download, href: "/download" },
             { key: "help", label: shell.help, href: "/help" },
           ]}
-          action={signedIn ? undefined : { id: "start", label: shell.startFree, href: "/signup" }}
+          actions={signedIn ? undefined : visitorActions(shell)}
           account={signedIn ? { label: shell.myAccount, name: "Taylor", href: "/account" } : undefined}
         />
       }
-      footer={<SiteFooter owner={shell.company} linksLabel={shell.legal} links={shell.footerLinks.map((link) => (link.key === page ? { ...link, current: true } : link))} language={languagePlace} />}
+      footer={<SiteFooter owner={shell.company} linksLabel={shell.legal} links={shell.footerLinks.map((link) => (link.key === page ? { ...link, current: true } : link))} language={languagePlace} theme={themePlace(locale)} />}
     >
       {children}
     </SiteWindow>

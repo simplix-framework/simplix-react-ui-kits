@@ -1,8 +1,19 @@
 export { SiteBand, SiteWindow } from "./site-window";
 export type { SiteBandProps, SiteWindowProps } from "./site-window";
-export { avatarInitial, menuKeyTarget, SiteBar } from "./site-bar";
-export type { SiteBarAccount, SiteBarLink, SiteBarProps } from "./site-bar";
+export { avatarInitial, barMenuActions, menuKeyTarget, SiteBar, SiteBarMenuItems } from "./site-bar";
+export type { SiteBarAccount, SiteBarAction, SiteBarLink, SiteBarProps } from "./site-bar";
 export { SiteFooter } from "./site-footer";
 export type { SiteFooterLink, SiteFooterProps } from "./site-footer";
-export { followSystemScheme, SYSTEM_DARK_QUERY, useSystemScheme } from "./site-scheme";
-export type { SchemeQuery, SchemeTarget } from "./site-scheme";
+export {
+  applySiteScheme,
+  followSystemScheme,
+  parseSiteScheme,
+  readSiteScheme,
+  SITE_SCHEME_KEY,
+  SITE_SCHEMES,
+  siteSchemeBootstrap,
+  SYSTEM_DARK_QUERY,
+  useSiteScheme,
+  writeSiteScheme,
+} from "./site-scheme";
+export type { SchemeQuery, SchemeStorage, SchemeTarget, SiteScheme, SiteSchemeChoice } from "./site-scheme";

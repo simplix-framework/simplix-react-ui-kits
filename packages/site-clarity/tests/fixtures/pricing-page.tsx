@@ -4,6 +4,7 @@
 import { SitePage, SitePageHead, SiteSection } from "@simplix-react-ui-kits/site-core/page";
 import { OfferRow, PlanCard, PlanGrid, PriceTable, QuestionList, SegmentedSwitch, SwitchRow } from "@simplix-react-ui-kits/site-core/pricing";
 import { SiteBar, SiteFooter, SiteWindow } from "@simplix-react-ui-kits/site-core/shell";
+import { languagePlace, shellCopy, themePlace, visitorActions } from "./shell-copy";
 
 /** Which reader the page is drawn for. */
 export interface PricingFixtureProps {
@@ -34,7 +35,7 @@ export function PricingFixture({ signedIn = false, barTone = "light" }: PricingF
             { key: "download", label: "Download", href: "/download" },
             { key: "help", label: "Help", href: "/help" },
           ]}
-          action={signedIn ? undefined : { id: "start", label: "Start free", href: "/signup" }}
+          actions={signedIn ? undefined : visitorActions(shellCopy.en)}
           account={signedIn ? { label: "My account", name: "Taylor", href: "/account" } : undefined}
         />
       }
@@ -47,6 +48,8 @@ export function PricingFixture({ signedIn = false, barTone = "light" }: PricingF
             { key: "privacy", label: "Privacy policy", href: "/privacy", emphasis: true },
             { key: "business", label: "Business information and refunds", href: "/business" },
           ]}
+          language={languagePlace}
+          theme={themePlace("en")}
         />
       }
     >

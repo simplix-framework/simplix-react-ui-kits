@@ -3,11 +3,22 @@ import { describe, expect, it } from "vitest";
 
 import type { SiteLinkProps } from "../link/site-link";
 import { bySlot, tabStops, unmarked } from "../testing/markup";
-import { avatarInitial, menuKeyTarget, SiteBar, type SiteBarProps } from "./site-bar";
+import { avatarInitial, barMenuActions, menuKeyTarget, SiteBar, SiteBarMenuItems, type SiteBarProps } from "./site-bar";
+import { siteActionStyle } from "../action/site-action.style";
 import { siteBarAccountNameStyle, siteBarMenuStyle, siteBarMoreStyle, siteBarNavStyle, siteBarStyle, siteFooterStyle, siteWindowStyle } from "./site-shell.style";
 import { SiteFooter } from "./site-footer";
 import { SiteBand, SiteWindow } from "./site-window";
-import { followSystemScheme, type SchemeQuery } from "./site-scheme";
+import {
+  applySiteScheme,
+  followSystemScheme,
+  parseSiteScheme,
+  readSiteScheme,
+  SITE_SCHEME_KEY,
+  siteSchemeBootstrap,
+  writeSiteScheme,
+  type SchemeQuery,
+  type SchemeStorage,
+} from "./site-scheme";
 
 const links: SiteBarProps["links"] = [
   { key: "intro", label: "Product", href: "/" },
@@ -24,7 +35,7 @@ const bar = (props: Partial<SiteBarProps> = {}) => (
     links={links}
     navLabel="Site"
     moreLabel="More pages"
-    action={{ id: "start", label: "Start free", href: "/signup" }}
+    actions={[{ id: "start", label: "Start free", href: "/signup" }]}
     {...props}
   />
 );
@@ -95,6 +106,71 @@ describe("SiteBar", () => {
     expect(action?.attributes["data-tone"]).toBe("primary");
     expect(bySlot(html, "site-bar-account")).toEqual([]);
     expect(unmarked(html)).toEqual([]);
+  });
+
+  it("draws the visitor's actions in reading order, each in its own tone, the first without one as the primary", () => {
+    const html = renderToStaticMarkup(
+      bar({
+        actions: [
+          { id: "signIn", label: "Sign in", href: "/login", tone: "quiet", narrow: "menu" },
+          { id: "start", label: "Start free", href: "/signup" },
+        ],
+      }),
+    );
+    const actions = bySlot(html, "site-action");
+    expect(actions.map((action) => [action.attributes["data-action"], action.attributes["data-tone"], action.attributes.href])).toEqual([
+      ["signIn", "quiet", "/login"],
+      ["start", "primary", "/signup"],
+    ]);
+    expect(actions.map((action) => action.attributes["data-narrow"])).toEqual(["hidden", "shown"]);
+    expect(siteActionStyle.variants.narrow.hidden).toContain("@max-page-narrow/page:hidden");
+    expect(siteActionStyle.variants.narrow.shown).not.toContain("hidden");
+    const stops = tabStops(html).map((tag) => tag.attributes["data-action"] ?? tag.attributes["data-slot"]);
+    expect(stops.slice(-3)).toEqual(["signIn", "start", "site-bar-more"]);
+    expect(unmarked(html)).toEqual([]);
+  });
+
+  it("lists the pages and then only the actions that leave the bar in the open more menu", () => {
+    const html = renderToStaticMarkup(
+      <SiteBarMenuItems
+        links={links}
+        actions={[
+          { id: "signIn", label: "Sign in", href: "/login", narrow: "menu" },
+          { id: "notify", label: "Tell me", narrow: "menu" },
+        ]}
+        onClose={() => {}}
+      />,
+    );
+    const items = bySlot(html, "site-bar-menu-item");
+    expect(items.map((item) => [item.name, item.attributes.href ?? "", item.attributes["data-action"] ?? ""])).toEqual([
+      ["a", "/", ""],
+      ["a", "/pricing", ""],
+      ["a", "/download", ""],
+      ["a", "/help", ""],
+      ["a", "/login", "signIn"],
+      ["button", "", "notify"],
+    ]);
+    expect(html).toContain(">Sign in</a>");
+  });
+
+  it("moves only the actions marked for the menu into it, and none once an account is signed in", () => {
+    const actions = [
+      { id: "signIn", label: "Sign in", href: "/login", narrow: "menu" as const },
+      { id: "start", label: "Start free", href: "/signup" },
+      { id: "demo", label: "Book a demo", href: "/demo", narrow: "bar" as const },
+    ];
+    expect(barMenuActions(actions, false).map((action) => action.id)).toEqual(["signIn"]);
+    expect(barMenuActions(actions, true)).toEqual([]);
+  });
+
+  it("draws no visitor action once an account is signed in", () => {
+    const html = renderToStaticMarkup(
+      bar({
+        actions: [{ id: "signIn", label: "Sign in", href: "/login", tone: "quiet", narrow: "menu" }],
+        account: { label: "My account", name: "Taylor", href: "/account" },
+      }),
+    );
+    expect(bySlot(html, "site-action")).toEqual([]);
   });
 
   it("draws the signed-in account with its initial in place of the visitor's action", () => {
@@ -213,6 +289,18 @@ describe("SiteFooter", () => {
     const html = renderToStaticMarkup(<SiteFooter owner="©" links={[]} linksLabel="Legal" />);
     expect(bySlot(html, "site-footer-language")).toEqual([]);
   });
+
+  it("draws the theme control in its own place after the language picker, and no place without one", () => {
+    const html = renderToStaticMarkup(
+      <SiteFooter owner="©" links={[]} linksLabel="Legal" language={<span data-slot="language-picker" />} theme={<span data-slot="theme-control" />} />,
+    );
+    const language = html.indexOf('data-slot="site-footer-language"');
+    const theme = html.indexOf('data-slot="site-footer-theme"');
+    expect(language).toBeGreaterThan(-1);
+    expect(theme).toBeGreaterThan(language);
+    expect(html.indexOf('data-slot="theme-control"')).toBeGreaterThan(theme);
+    expect(bySlot(renderToStaticMarkup(footer), "site-footer-theme")).toEqual([]);
+  });
 });
 
 describe("followSystemScheme", () => {
@@ -248,5 +336,105 @@ describe("followSystemScheme", () => {
     expect(scheme.listeners.size).toBe(0);
     scheme.change(true);
     expect(scheme.classes.has("dark")).toBe(false);
+  });
+});
+
+describe("the reader's scheme choice", () => {
+  function target() {
+    const classes = new Set<string>();
+    return { classes, classList: { toggle: (token: string, force: boolean) => (force ? classes.add(token) : classes.delete(token), force) } };
+  }
+  function query(matches: boolean): SchemeQuery & { readonly count: () => number } {
+    const listeners = new Set<unknown>();
+    return {
+      matches,
+      addEventListener: (_type, listener) => listeners.add(listener),
+      removeEventListener: (_type, listener) => listeners.delete(listener),
+      count: () => listeners.size,
+    };
+  }
+  function memory(initial: Record<string, string> = {}): SchemeStorage & { readonly values: Map<string, string> } {
+    const values = new Map(Object.entries(initial));
+    return {
+      values,
+      getItem: (key) => values.get(key) ?? null,
+      setItem: (key, value) => void values.set(key, value),
+      removeItem: (key) => void values.delete(key),
+    };
+  }
+
+  it("reads only light and dark as a fixed choice; nothing stored, or anything else, is the system's", () => {
+    expect([parseSiteScheme("light"), parseSiteScheme("dark"), parseSiteScheme(null), parseSiteScheme("true"), parseSiteScheme("")]).toEqual(["light", "dark", "system", "system", "system"]);
+  });
+
+  it("keeps a fixed choice under its own key and the system's as no value at all", () => {
+    const storage = memory();
+    writeSiteScheme(storage, "dark");
+    expect(storage.values.get(SITE_SCHEME_KEY)).toBe("dark");
+    expect(readSiteScheme(storage)).toBe("dark");
+    writeSiteScheme(storage, "system");
+    expect(storage.values.has(SITE_SCHEME_KEY)).toBe(false);
+    expect(readSiteScheme(storage)).toBe("system");
+    expect(SITE_SCHEME_KEY).not.toMatch(/:$/);
+  });
+
+  it("answers the system's when the store refuses to be read or written", () => {
+    const refusing: SchemeStorage = {
+      getItem: () => {
+        throw new Error("blocked");
+      },
+      setItem: () => {
+        throw new Error("blocked");
+      },
+      removeItem: () => {
+        throw new Error("blocked");
+      },
+    };
+    expect(readSiteScheme(refusing)).toBe("system");
+    expect(() => writeSiteScheme(refusing, "dark")).not.toThrow();
+  });
+
+  it("draws a fixed choice whatever the system says, and follows the system only for the system's", () => {
+    const darkSystem = query(true);
+    const light = target();
+    applySiteScheme("light", darkSystem, light);
+    expect(light.classes.has("dark")).toBe(false);
+    expect(darkSystem.count()).toBe(0);
+    const lightSystem = query(false);
+    const dark = target();
+    applySiteScheme("dark", lightSystem, dark);
+    expect(dark.classes.has("dark")).toBe(true);
+    const followed = target();
+    const stop = applySiteScheme("system", darkSystem, followed);
+    expect(followed.classes.has("dark")).toBe(true);
+    expect(darkSystem.count()).toBe(1);
+    stop();
+    expect(darkSystem.count()).toBe(0);
+  });
+
+  it("opens the page before the first paint exactly as the choice draws it, from the same key", () => {
+    // The bootstrap is the text a page puts in its head; it runs here against fakes of what it reads.
+    const run = (stored: string | null, systemDark: boolean, key?: string) => {
+      const html = target();
+      const storage = memory(stored === null ? {} : { [key ?? SITE_SCHEME_KEY]: stored });
+      new Function("localStorage", "window", "document", siteSchemeBootstrap(key))(storage, { matchMedia: () => ({ matches: systemDark }) }, { documentElement: html });
+      return html.classes.has("dark");
+    };
+    for (const stored of ["light", "dark", null, "stale"]) {
+      for (const systemDark of [true, false]) {
+        const drawn = target();
+        applySiteScheme(parseSiteScheme(stored), query(systemDark), drawn);
+        expect(run(stored, systemDark)).toBe(drawn.classes.has("dark"));
+      }
+    }
+    expect(siteSchemeBootstrap()).toContain(JSON.stringify(SITE_SCHEME_KEY));
+    expect(run("dark", false, "other.prefs:scheme")).toBe(true);
+    const unreadable = target();
+    new Function("localStorage", "window", "document", siteSchemeBootstrap())(
+      { getItem: () => { throw new Error("blocked"); } },
+      { matchMedia: () => ({ matches: true }) },
+      { documentElement: unreadable },
+    );
+    expect(unreadable.classes.has("dark")).toBe(true);
   });
 });

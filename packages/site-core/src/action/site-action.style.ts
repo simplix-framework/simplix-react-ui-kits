@@ -38,8 +38,13 @@ export const siteActionStyle = defineSlotStyle({
       quietSm: "px-1.5",
       quietMd: "px-2",
     },
+    // Below the page's narrow tier an action whose place there is elsewhere (a bar's more menu) leaves the row.
+    narrow: {
+      shown: "",
+      hidden: "@max-page-narrow/page:hidden",
+    },
   },
-  defaultVariants: { tone: "secondary", size: "md", block: false, pad: "size" },
+  defaultVariants: { tone: "secondary", size: "md", block: false, pad: "size", narrow: "shown" },
 });
 
 /** The side room an action takes: its size's, or a quiet action's narrower room for that size. */

@@ -11,7 +11,7 @@ import { SiteCaption, SiteChip } from "@simplix-react-ui-kits/site-core/page";
 import { SiteBar, SiteFooter, SiteWindow } from "@simplix-react-ui-kits/site-core/shell";
 
 import copyFile from "./article-copy.json";
-import { glyph, languagePlace, type Locale, shellCopy } from "./shell-copy";
+import { glyph, languagePlace, type Locale, shellCopy, themePlace, visitorActions } from "./shell-copy";
 
 /** What the article is drawn with. */
 export interface ArticleFixtureProps {
@@ -65,11 +65,11 @@ export function ArticleFixture({ locale = "en", doc = "article", tried = [], fee
             { key: "download", label: shell.download, href: "/download" },
             { key: "help", label: shell.help, href: "/help", current: true },
           ]}
-          action={signedIn ? undefined : { id: "start", label: shell.startFree, href: "/signup" }}
+          actions={signedIn ? undefined : visitorActions(shell)}
           account={signedIn ? { label: shell.myAccount, name: "Taylor", href: "/account" } : undefined}
         />
       }
-      footer={<SiteFooter owner={shell.company} linksLabel={shell.legal} links={shell.footerLinks} language={languagePlace} />}
+      footer={<SiteFooter owner={shell.company} linksLabel={shell.legal} links={shell.footerLinks} language={languagePlace} theme={themePlace(locale)} />}
     >
       <DocLayout
         crumbs={t.crumbs.map((label, index) => ({ key: `c-${String(index)}`, label, ...(index < t.crumbs.length - 1 ? { href: "/help" } : {}) }))}

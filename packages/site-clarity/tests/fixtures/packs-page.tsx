@@ -8,7 +8,7 @@ import { SitePage } from "@simplix-react-ui-kits/site-core/page";
 import { SiteBar, SiteFooter, SiteWindow } from "@simplix-react-ui-kits/site-core/shell";
 
 import copyFile from "./packs-copy.json";
-import { glyph, languagePlace, type Locale, shellCopy } from "./shell-copy";
+import { glyph, languagePlace, type Locale, shellCopy, themePlace, visitorActions } from "./shell-copy";
 
 /** What the packs view is drawn with: a reference story, in a language. */
 export interface PacksFixtureProps {
@@ -59,11 +59,11 @@ export function PacksFixture({ locale = "en", story = "visitor" }: PacksFixtureP
             { key: "download", label: shell.download, href: "/download" },
             { key: "help", label: shell.help, href: "/help" },
           ]}
-          action={data.signedIn ? undefined : { id: "start", label: shell.startFree, href: "/signup" }}
+          actions={data.signedIn ? undefined : visitorActions(shell)}
           account={data.signedIn ? { label: shell.myAccount, name: "Taylor", href: "/account" } : undefined}
         />
       }
-      footer={<SiteFooter owner={shell.company} linksLabel={shell.legal} links={shell.footerLinks} language={data.language ? languagePlace : undefined} />}
+      footer={<SiteFooter owner={shell.company} linksLabel={shell.legal} links={shell.footerLinks} language={data.language ? languagePlace : undefined} theme={data.language ? themePlace(locale) : undefined} />}
     >
       <SitePage>
         <PackSection heading={data.title} lede={data.lede} note={data.note}>

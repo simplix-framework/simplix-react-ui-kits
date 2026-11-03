@@ -2,36 +2,39 @@
  * @simplix-generated page/site-app-shell
  *
  * The site's window, laid down once from the site-clarity kit's `app-shell.hbs` and owned by the app
- * from then on: the bar with the site's pages and the visitor's or the account's action, the routed
+ * from then on: the bar with the site's pages and the visitor's actions or the account, the routed
  * page, and the footer with the owner and the legal links. The brand, the pages, the actions, the
- * legal links, the language picker and what wraps the routed pages are this file's own, in
+ * legal links, the language picker, the theme control and what wraps the routed pages are this file's own, in
  * `useShellParts` below, and are customised here. A page whose route does not exist yet is listed
  * without an address and is drawn as plain text, so no link leads nowhere. The strings come from the
  * `{{namespace}}` catalog (English and Korean in the same change): `shell.title`, `shell.home`,
  * `shell.navLabel`, `shell.menu`, `shell.legal`, `shell.owner` and the label of each link.
  *
- * <p>The colour scheme follows the reader's system: the site draws no control of its own for it.
+ * <p>The colour scheme is the reader's choice, kept by `useSiteScheme`: the system's until the reader
+ * picks light or dark in a theme control the parts hand to the footer. The page's head runs the kit's
+ * `siteSchemeBootstrap()` so the first paint is already in that choice.
  */
 import { Outlet, useRouter, useRouterState } from "@tanstack/react-router";
 import type { MouseEvent, ReactNode } from "react";
 import { useTranslation } from "@simplix-react/i18n/react";
-import type { SiteActionSpec } from "@simplix-react-ui-kits/site-clarity/action";
 import type { SiteLinkProps } from "@simplix-react-ui-kits/site-clarity/link";
-import { SiteBar, SiteFooter, SiteWindow, useSystemScheme, type SiteBarAccount, type SiteBarLink, type SiteFooterLink } from "@simplix-react-ui-kits/site-clarity/shell";
+import { SiteBar, SiteFooter, SiteWindow, useSiteScheme, type SiteBarAccount, type SiteBarAction, type SiteBarLink, type SiteFooterLink } from "@simplix-react-ui-kits/site-clarity/shell";
 
 export interface ShellParts {
   /** The product's mark at the bar's start, inside the link home. */
   readonly brand: ReactNode;
   /** The site's pages in reading order; one without an address is a page not open yet. */
   readonly links: readonly SiteBarLink[];
-  /** The visitor's action at the bar's end, such as starting for free. */
-  readonly action?: SiteActionSpec;
-  /** The signed-in account at the bar's end, drawn in place of the visitor's action. */
+  /** The visitor's actions at the bar's end in reading order, such as signing in and starting for free. */
+  readonly actions?: readonly SiteBarAction[];
+  /** The signed-in account at the bar's end, drawn in place of the visitor's actions. */
   readonly account?: SiteBarAccount;
   /** The legal pages in the footer; one without an address is a page not open yet. */
   readonly legal: readonly SiteFooterLink[];
   /** The language picker at the footer's end. */
   readonly language?: ReactNode;
+  /** The theme control (system, light, dark) after the language picker. */
+  readonly theme?: ReactNode;
   /** The routes drawn without the window (signing in and the pages around it). */
   readonly isOutsideTheShell: (route: string) => boolean;
   /** Providers the routed page needs inside the window. */
@@ -77,7 +80,7 @@ function RouterLink({ href, onClick, ...anchor }: SiteLinkProps) {
 
 /** Picks the shell a page wears: none for the routes drawn outside it, the site window otherwise. */
 export function RootLayout() {
-  useSystemScheme();
+  useSiteScheme({ apply: true });
   const { t } = useTranslation("{{namespace}}");
   // What the outlet renders, not where the router is heading: the previous route stays on screen
   // until the next one loads.
@@ -96,11 +99,11 @@ export function RootLayout() {
           links={parts.links}
           navLabel={t("shell.navLabel")}
           moreLabel={t("shell.menu")}
-          action={parts.action}
+          actions={parts.actions}
           account={parts.account}
         />
       }
-      footer={<SiteFooter owner={t("shell.owner")} links={parts.legal} linksLabel={t("shell.legal")} language={parts.language} />}
+      footer={<SiteFooter owner={t("shell.owner")} links={parts.legal} linksLabel={t("shell.legal")} language={parts.language} theme={parts.theme} />}
     >
       {parts.wrap(<Outlet />)}
     </SiteWindow>

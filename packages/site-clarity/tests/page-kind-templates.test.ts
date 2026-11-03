@@ -29,9 +29,10 @@ describe("the generated site shell", () => {
     expect(source).not.toMatch(/console-(clarity|core)/);
   });
 
-  it("follows the reader's system colour scheme and draws no control for it", () => {
-    expect(source).toContain("useSystemScheme();");
-    expect(source).not.toMatch(/DarkModeToggle|useTheme\(/);
+  it("draws the page in the reader's stored scheme choice, with the site's own store and none of the console's", () => {
+    expect(source).toContain("useSiteScheme({ apply: true });");
+    expect(source).toContain("theme={parts.theme}");
+    expect(source).not.toMatch(/DarkModeToggle|useTheme\(|useSystemScheme/);
   });
 
   it("hands every site part a link that moves the router on a plain press and keeps the real address", () => {
@@ -40,13 +41,15 @@ describe("the generated site shell", () => {
     expect(source).toContain("href={href}");
   });
 
-  it("compiles once a page that is not open yet, an account and a language picker are written into its parts", () => {
+  it("compiles once a page that is not open yet, the visitor's actions, an account, a language picker and a theme control are written into its parts", () => {
     const customised = source.replace(
       '    links: [{ key: "home", label: t("shell.home"), href: "/", current: route === "/" }],\n    legal: [],\n',
       '    links: [{ key: "home", label: t("shell.home"), href: "/", current: route === "/" }, { key: "help", label: "Help" }],\n' +
+        '    actions: [{ id: "signIn", label: "Sign in", href: "/login", tone: "quiet", narrow: "menu" }, { id: "start", label: "Start free", href: "/signup" }],\n' +
         '    account: { label: "My account", name: "Taylor", href: "/account" },\n' +
         '    legal: [{ key: "terms", label: "Terms of use" }],\n' +
-        "    language: null,\n",
+        "    language: null,\n" +
+        "    theme: null,\n",
     );
     expect(customised).toContain('{ key: "help", label: "Help" }');
     expect(typecheck({ [layout]: customised }, [layout])).toEqual([]);

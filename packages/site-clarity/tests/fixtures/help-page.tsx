@@ -9,7 +9,7 @@ import { SiteChip, SitePage } from "@simplix-react-ui-kits/site-core/page";
 import { SiteBar, SiteFooter, SiteWindow } from "@simplix-react-ui-kits/site-core/shell";
 
 import copyFile from "./help-copy.json";
-import { glyph, languagePlace, shellCopy, type Locale } from "./shell-copy";
+import { glyph, languagePlace, shellCopy, type Locale, themePlace, visitorActions } from "./shell-copy";
 
 /** What the help centre is drawn with. */
 export interface HelpFixtureProps {
@@ -50,11 +50,11 @@ export function HelpFixture({ locale = "en", search = "none", contact = "closed"
             { key: "download", label: shell.download, href: "/download" },
             { key: "help", label: shell.help, href: "/help", current: true },
           ]}
-          action={signedIn ? undefined : { id: "start", label: shell.startFree, href: "/signup" }}
+          actions={signedIn ? undefined : visitorActions(shell)}
           account={signedIn ? { label: shell.myAccount, name: "Taylor", href: "/account" } : undefined}
         />
       }
-      footer={<SiteFooter owner={shell.company} linksLabel={shell.legal} links={shell.footerLinks} language={languagePlace} />}
+      footer={<SiteFooter owner={shell.company} linksLabel={shell.legal} links={shell.footerLinks} language={languagePlace} theme={themePlace(locale)} />}
     >
       <SearchHero
         status={<StatusLine>{t.status}</StatusLine>}

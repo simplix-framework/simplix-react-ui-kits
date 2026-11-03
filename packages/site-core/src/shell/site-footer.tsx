@@ -9,6 +9,7 @@ import {
   siteFooterLinksStyle,
   siteFooterOwnerStyle,
   siteFooterStyle,
+  siteFooterThemeStyle,
 } from "./site-shell.style";
 
 /** One legal link in the footer. */
@@ -36,10 +37,12 @@ export interface SiteFooterProps {
   readonly linksLabel: string;
   /** The product's language picker, drawn at the footer's end. */
   readonly language?: ReactNode;
+  /** The product's theme control (system, light, dark), drawn after the language picker. */
+  readonly theme?: ReactNode;
 }
 
-/** The site's footer: the owner at its start, then the legal links and the language picker. */
-export function SiteFooter({ owner, links, linksLabel, language }: SiteFooterProps) {
+/** The site's footer: the owner at its start, then the legal links, the language picker and the theme control. */
+export function SiteFooter({ owner, links, linksLabel, language, theme }: SiteFooterProps) {
   return (
     <footer {...slotAttributes(siteFooterStyle, {})}>
       <span {...slotAttributes(siteFooterOwnerStyle, {})}>{owner}</span>
@@ -64,6 +67,7 @@ export function SiteFooter({ owner, links, linksLabel, language }: SiteFooterPro
         )}
       </nav>
       {language !== undefined ? <div {...slotAttributes(siteFooterLanguageStyle, {})}>{language}</div> : null}
+      {theme !== undefined ? <div {...slotAttributes(siteFooterThemeStyle, {})}>{theme}</div> : null}
     </footer>
   );
 }

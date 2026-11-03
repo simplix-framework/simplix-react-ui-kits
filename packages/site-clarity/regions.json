@@ -26,7 +26,8 @@
         "brand": "site-bar-brand",
         "link": "site-bar-link[data-current=false]",
         "current": "site-bar-link[data-current=true]",
-        "action": "site-action",
+        "action": "site-action[data-tone=primary]",
+        "quietAction": "site-action[data-tone=quiet]",
         "account": "site-bar-account",
         "avatar": "site-avatar"
       },
@@ -950,11 +951,13 @@
         "site-footer-link",
         "*"
       ],
-      "$comment": "`*` admits the product's language picker, which stands in the footer's language place and is the product's own control.",
+      "$comment": "`*` admits the product's language picker and theme control, which stand in the footer's language and theme places and are the product's own controls.",
       "parts": {
         "owner": "site-footer-owner",
         "link": "site-footer-link[data-emphasis=false]",
-        "emphasis": "site-footer-link[data-emphasis=true]"
+        "emphasis": "site-footer-link[data-emphasis=true]",
+        "language": "site-footer-language",
+        "theme": "site-footer-theme"
       },
       "widths": [
         "root"
