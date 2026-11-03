@@ -112,6 +112,7 @@ export const visitorActions = (shell: (typeof shellCopy)[Locale]) =>
 
 /**
  * The footer's theme place as the reference draws it: the product's theme control (system, light,
- * dark), which the kit does not draw, stands in as a box of its measured size in each language.
+ * dark, each beside its drawing), which the kit does not draw, stands in as a box of its measured
+ * size in each language.
  */
-export const themePlace = (locale: Locale) => <span style={{ display: "block", height: 30, width: locale === "ko" ? 153.05 : 170.44 }} />;
+export const themePlace = (locale: Locale) => <span style={{ display: "block", height: 30, width: locale === "ko" ? 213.05 : 230.44 }} />;
