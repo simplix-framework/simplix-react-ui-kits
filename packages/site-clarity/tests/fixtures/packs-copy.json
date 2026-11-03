@@ -1,0 +1,406 @@
+{
+ "web-billing-presentation-packs--visitor|en": {
+  "signedIn": false,
+  "language": true,
+  "title": "Packs and extra credits",
+  "lede": "Pay once instead of subscribing. Nothing renews on its own.",
+  "cards": [
+   {
+    "name": "Presentation pack",
+    "price": "₩14,900",
+    "unit": " once",
+    "about": "For getting one presentation ready",
+    "meterLabel": "50,000 characters",
+    "share": 0.416667,
+    "amount": "50,000 characters",
+    "talk": "about 50 min of English · 2 twenty-minute talks",
+    "terms": "Usable for 12 months · No automatic payment",
+    "action": {
+     "label": "Buy the pack",
+     "href": "/checkout?kind=pack&credits=50000",
+     "disabled": false
+    }
+   },
+   {
+    "name": "Extra credits",
+    "price": "₩14,900",
+    "unit": " once",
+    "about": "For Pro and up · added to this month's credits · used after your monthly credits",
+    "meterLabel": "60,000 characters",
+    "share": 0.5,
+    "amount": "60,000 characters",
+    "talk": "about 60 min of English · 3 twenty-minute talks",
+    "terms": "Usable for 12 months · No automatic payment",
+    "action": {
+     "label": "Top up credits",
+     "disabled": true
+    },
+    "reason": "Extra credits need Pro or Pro+. Pick a plan first."
+   }
+  ],
+  "note": "Presenting every month? Pro is ₩14,900 a month."
+ },
+ "web-billing-presentation-packs--visitor|ko": {
+  "signedIn": false,
+  "language": true,
+  "title": "발표 팩과 추가 크레딧",
+  "lede": "구독 대신 한 번 결제합니다. 자동으로 다시 결제되지 않습니다.",
+  "cards": [
+   {
+    "name": "발표 팩",
+    "price": "₩14,900",
+    "unit": " 1회",
+    "about": "이번 발표 한 번만 준비하는 분",
+    "meterLabel": "50,000자",
+    "share": 0.416667,
+    "amount": "50,000자",
+    "talk": "한국어 약 125분 · 20분 발표 6번",
+    "terms": "12개월 동안 씀 · 자동 결제 없음",
+    "action": {
+     "label": "발표 팩 사기",
+     "href": "/checkout?kind=pack&credits=50000",
+     "disabled": false
+    }
+   },
+   {
+    "name": "추가 크레딧",
+    "price": "₩14,900",
+    "unit": " 1회",
+    "about": "Pro 이상 · 이번 달 크레딧에 더함 · 매달 받는 크레딧보다 나중에 씀",
+    "meterLabel": "60,000자",
+    "share": 0.5,
+    "amount": "60,000자",
+    "talk": "한국어 약 150분 · 20분 발표 7번",
+    "terms": "12개월 동안 씀 · 자동 결제 없음",
+    "action": {
+     "label": "크레딧 충전",
+     "disabled": true
+    },
+    "reason": "추가 크레딧은 Pro나 Pro+에서 살 수 있습니다. 먼저 플랜을 고르세요."
+   }
+  ],
+  "note": "매달 발표하나요? Pro는 월 ₩14,900입니다."
+ },
+ "web-billing-presentation-packs--visitor-phone|en": {
+  "signedIn": false,
+  "language": true,
+  "title": "Packs and extra credits",
+  "lede": "Pay once instead of subscribing. Nothing renews on its own.",
+  "cards": [
+   {
+    "name": "Presentation pack",
+    "price": "₩14,900",
+    "unit": " once",
+    "about": "For getting one presentation ready",
+    "meterLabel": "50,000 characters",
+    "share": 0.416667,
+    "amount": "50,000 characters",
+    "talk": "about 50 min of English · 2 twenty-minute talks",
+    "terms": "Usable for 12 months · No automatic payment",
+    "action": {
+     "label": "Buy the pack",
+     "href": "/checkout?kind=pack&credits=50000",
+     "disabled": false
+    }
+   },
+   {
+    "name": "Extra credits",
+    "price": "₩14,900",
+    "unit": " once",
+    "about": "For Pro and up · added to this month's credits · used after your monthly credits",
+    "meterLabel": "60,000 characters",
+    "share": 0.5,
+    "amount": "60,000 characters",
+    "talk": "about 60 min of English · 3 twenty-minute talks",
+    "terms": "Usable for 12 months · No automatic payment",
+    "action": {
+     "label": "Top up credits",
+     "disabled": true
+    },
+    "reason": "Extra credits need Pro or Pro+. Pick a plan first."
+   }
+  ],
+  "note": "Presenting every month? Pro is ₩14,900 a month."
+ },
+ "web-billing-presentation-packs--visitor-phone|ko": {
+  "signedIn": false,
+  "language": true,
+  "title": "발표 팩과 추가 크레딧",
+  "lede": "구독 대신 한 번 결제합니다. 자동으로 다시 결제되지 않습니다.",
+  "cards": [
+   {
+    "name": "발표 팩",
+    "price": "₩14,900",
+    "unit": " 1회",
+    "about": "이번 발표 한 번만 준비하는 분",
+    "meterLabel": "50,000자",
+    "share": 0.416667,
+    "amount": "50,000자",
+    "talk": "한국어 약 125분 · 20분 발표 6번",
+    "terms": "12개월 동안 씀 · 자동 결제 없음",
+    "action": {
+     "label": "발표 팩 사기",
+     "href": "/checkout?kind=pack&credits=50000",
+     "disabled": false
+    }
+   },
+   {
+    "name": "추가 크레딧",
+    "price": "₩14,900",
+    "unit": " 1회",
+    "about": "Pro 이상 · 이번 달 크레딧에 더함 · 매달 받는 크레딧보다 나중에 씀",
+    "meterLabel": "60,000자",
+    "share": 0.5,
+    "amount": "60,000자",
+    "talk": "한국어 약 150분 · 20분 발표 7번",
+    "terms": "12개월 동안 씀 · 자동 결제 없음",
+    "action": {
+     "label": "크레딧 충전",
+     "disabled": true
+    },
+    "reason": "추가 크레딧은 Pro나 Pro+에서 살 수 있습니다. 먼저 플랜을 고르세요."
+   }
+  ],
+  "note": "매달 발표하나요? Pro는 월 ₩14,900입니다."
+ },
+ "web-billing-presentation-packs--on-pro|en": {
+  "signedIn": true,
+  "language": true,
+  "title": "Packs and extra credits",
+  "lede": "Pay once instead of subscribing. Nothing renews on its own.",
+  "cards": [
+   {
+    "name": "Presentation pack",
+    "price": "₩14,900",
+    "unit": " once",
+    "about": "For getting one presentation ready",
+    "meterLabel": "50,000 characters",
+    "share": 0.416667,
+    "amount": "50,000 characters",
+    "talk": "about 50 min of English · 2 twenty-minute talks",
+    "terms": "Usable for 12 months · No automatic payment",
+    "action": {
+     "label": "Buy the pack",
+     "href": "/checkout?kind=pack&credits=50000",
+     "disabled": false
+    }
+   },
+   {
+    "name": "Extra credits",
+    "price": "₩14,900",
+    "unit": " once",
+    "about": "For Pro and up · added to this month's credits · used after your monthly credits",
+    "meterLabel": "60,000 characters",
+    "share": 0.5,
+    "amount": "60,000 characters",
+    "talk": "about 60 min of English · 3 twenty-minute talks",
+    "terms": "Usable for 12 months · No automatic payment",
+    "action": {
+     "label": "Top up credits",
+     "href": "/checkout?kind=topUp&credits=60000",
+     "disabled": false
+    }
+   }
+  ]
+ },
+ "web-billing-presentation-packs--on-pro|ko": {
+  "signedIn": true,
+  "language": true,
+  "title": "발표 팩과 추가 크레딧",
+  "lede": "구독 대신 한 번 결제합니다. 자동으로 다시 결제되지 않습니다.",
+  "cards": [
+   {
+    "name": "발표 팩",
+    "price": "₩14,900",
+    "unit": " 1회",
+    "about": "이번 발표 한 번만 준비하는 분",
+    "meterLabel": "50,000자",
+    "share": 0.416667,
+    "amount": "50,000자",
+    "talk": "한국어 약 125분 · 20분 발표 6번",
+    "terms": "12개월 동안 씀 · 자동 결제 없음",
+    "action": {
+     "label": "발표 팩 사기",
+     "href": "/checkout?kind=pack&credits=50000",
+     "disabled": false
+    }
+   },
+   {
+    "name": "추가 크레딧",
+    "price": "₩14,900",
+    "unit": " 1회",
+    "about": "Pro 이상 · 이번 달 크레딧에 더함 · 매달 받는 크레딧보다 나중에 씀",
+    "meterLabel": "60,000자",
+    "share": 0.5,
+    "amount": "60,000자",
+    "talk": "한국어 약 150분 · 20분 발표 7번",
+    "terms": "12개월 동안 씀 · 자동 결제 없음",
+    "action": {
+     "label": "크레딧 충전",
+     "href": "/checkout?kind=topUp&credits=60000",
+     "disabled": false
+    }
+   }
+  ]
+ },
+ "web-billing-presentation-packs--on-pro-dollars|en": {
+  "signedIn": true,
+  "language": true,
+  "title": "Packs and extra credits",
+  "lede": "Pay once instead of subscribing. Nothing renews on its own.",
+  "cards": [
+   {
+    "name": "Presentation pack",
+    "price": "$11",
+    "unit": " once",
+    "about": "For getting one presentation ready",
+    "meterLabel": "50,000 characters",
+    "share": 0.416667,
+    "amount": "50,000 characters",
+    "talk": "about 50 min of English · 2 twenty-minute talks",
+    "terms": "Usable for 12 months · No automatic payment",
+    "action": {
+     "label": "Buy the pack",
+     "href": "/checkout?kind=pack&credits=50000",
+     "disabled": false
+    }
+   },
+   {
+    "name": "Extra credits",
+    "price": "$11",
+    "unit": " once",
+    "about": "For Pro and up · added to this month's credits · used after your monthly credits",
+    "meterLabel": "60,000 characters",
+    "share": 0.5,
+    "amount": "60,000 characters",
+    "talk": "about 60 min of English · 3 twenty-minute talks",
+    "terms": "Usable for 12 months · No automatic payment",
+    "action": {
+     "label": "Top up credits",
+     "href": "/checkout?kind=topUp&credits=60000",
+     "disabled": false
+    }
+   }
+  ]
+ },
+ "web-billing-presentation-packs--on-pro-dollars|ko": {
+  "signedIn": true,
+  "language": true,
+  "title": "발표 팩과 추가 크레딧",
+  "lede": "구독 대신 한 번 결제합니다. 자동으로 다시 결제되지 않습니다.",
+  "cards": [
+   {
+    "name": "발표 팩",
+    "price": "$11",
+    "unit": " 1회",
+    "about": "이번 발표 한 번만 준비하는 분",
+    "meterLabel": "50,000자",
+    "share": 0.416667,
+    "amount": "50,000자",
+    "talk": "한국어 약 125분 · 20분 발표 6번",
+    "terms": "12개월 동안 씀 · 자동 결제 없음",
+    "action": {
+     "label": "발표 팩 사기",
+     "href": "/checkout?kind=pack&credits=50000",
+     "disabled": false
+    }
+   },
+   {
+    "name": "추가 크레딧",
+    "price": "$11",
+    "unit": " 1회",
+    "about": "Pro 이상 · 이번 달 크레딧에 더함 · 매달 받는 크레딧보다 나중에 씀",
+    "meterLabel": "60,000자",
+    "share": 0.5,
+    "amount": "60,000자",
+    "talk": "한국어 약 150분 · 20분 발표 7번",
+    "terms": "12개월 동안 씀 · 자동 결제 없음",
+    "action": {
+     "label": "크레딧 충전",
+     "href": "/checkout?kind=topUp&credits=60000",
+     "disabled": false
+    }
+   }
+  ]
+ },
+ "web-billing-presentation-packs--on-pro-phone|en": {
+  "signedIn": true,
+  "language": true,
+  "title": "Packs and extra credits",
+  "lede": "Pay once instead of subscribing. Nothing renews on its own.",
+  "cards": [
+   {
+    "name": "Presentation pack",
+    "price": "₩14,900",
+    "unit": " once",
+    "about": "For getting one presentation ready",
+    "meterLabel": "50,000 characters",
+    "share": 0.416667,
+    "amount": "50,000 characters",
+    "talk": "about 50 min of English · 2 twenty-minute talks",
+    "terms": "Usable for 12 months · No automatic payment",
+    "action": {
+     "label": "Buy the pack",
+     "href": "/checkout?kind=pack&credits=50000",
+     "disabled": false
+    }
+   },
+   {
+    "name": "Extra credits",
+    "price": "₩14,900",
+    "unit": " once",
+    "about": "For Pro and up · added to this month's credits · used after your monthly credits",
+    "meterLabel": "60,000 characters",
+    "share": 0.5,
+    "amount": "60,000 characters",
+    "talk": "about 60 min of English · 3 twenty-minute talks",
+    "terms": "Usable for 12 months · No automatic payment",
+    "action": {
+     "label": "Top up credits",
+     "href": "/checkout?kind=topUp&credits=60000",
+     "disabled": false
+    }
+   }
+  ]
+ },
+ "web-billing-presentation-packs--on-pro-phone|ko": {
+  "signedIn": true,
+  "language": true,
+  "title": "발표 팩과 추가 크레딧",
+  "lede": "구독 대신 한 번 결제합니다. 자동으로 다시 결제되지 않습니다.",
+  "cards": [
+   {
+    "name": "발표 팩",
+    "price": "₩14,900",
+    "unit": " 1회",
+    "about": "이번 발표 한 번만 준비하는 분",
+    "meterLabel": "50,000자",
+    "share": 0.416667,
+    "amount": "50,000자",
+    "talk": "한국어 약 125분 · 20분 발표 6번",
+    "terms": "12개월 동안 씀 · 자동 결제 없음",
+    "action": {
+     "label": "발표 팩 사기",
+     "href": "/checkout?kind=pack&credits=50000",
+     "disabled": false
+    }
+   },
+   {
+    "name": "추가 크레딧",
+    "price": "₩14,900",
+    "unit": " 1회",
+    "about": "Pro 이상 · 이번 달 크레딧에 더함 · 매달 받는 크레딧보다 나중에 씀",
+    "meterLabel": "60,000자",
+    "share": 0.5,
+    "amount": "60,000자",
+    "talk": "한국어 약 150분 · 20분 발표 7번",
+    "terms": "12개월 동안 씀 · 자동 결제 없음",
+    "action": {
+     "label": "크레딧 충전",
+     "href": "/checkout?kind=topUp&credits=60000",
+     "disabled": false
+    }
+   }
+  ]
+ }
+}

@@ -256,6 +256,53 @@
       ],
       "carded": true
     },
+    "packs": {
+      "part": "PackSection",
+      "slot": "SitePage children",
+      "marks": [
+        "site-pack-section"
+      ],
+      "controls": [
+        "site-action"
+      ],
+      "parts": {
+        "head": "site-pack-head",
+        "heading": "site-section-heading",
+        "lede": "site-section-lede",
+        "grid": "site-pack-grid",
+        "card": "site-pack-card",
+        "cardHead": "site-pack-card-head",
+        "name": "site-pack-card-name",
+        "price": "site-pack-card-price",
+        "unit": "site-pack-card-unit",
+        "about": "site-pack-card-about",
+        "meter": "site-quota-meter",
+        "track": "site-quota-track",
+        "fill": "site-quota-fill",
+        "labels": "site-quota-labels",
+        "amount": "site-pack-card-amount",
+        "talk": "site-figure-label:last-child",
+        "terms": "site-pack-card-terms",
+        "action": "site-action:not(:disabled)",
+        "disabled": "site-action:disabled",
+        "reason": "site-pack-card-reason",
+        "note": "site-pack-note"
+      },
+      "widths": [
+        "root",
+        "head",
+        "grid",
+        "card",
+        "cardHead",
+        "about",
+        "meter",
+        "track",
+        "fill",
+        "labels",
+        "terms"
+      ],
+      "carded": true
+    },
     "priceTable": {
       "part": "PriceTable",
       "slot": "SitePage children",
@@ -1377,6 +1424,21 @@
         "footer"
       ],
       "$comment": "A help article or guide on DocLayout: the trail, the head (title, the article meta, where it applies, the lead), then the contents rail (with progress or the way to ask) beside the document (quick checks, numbered steps with figures, tables, tips and the tried toggle, a closing section, feedback and related articles)."
+    },
+    "packs": {
+      "status": "ready",
+      "root": "[data-page]",
+      "regions": [
+        "bar",
+        "packs",
+        "footer"
+      ],
+      "required": [
+        "bar",
+        "packs",
+        "footer"
+      ],
+      "$comment": "One-off packs beside the plans (a pack for one presentation, extra credits on a paid plan), a page of its own: the heading and lede, the packs side by side, each with its price, who it is for, what it gives on a meter, its terms and its action (a disabled one with the reason under it), then a closing line."
     }
   }
 }
