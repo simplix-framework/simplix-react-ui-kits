@@ -118,19 +118,6 @@
   --site-shadow-accent: 0 2px 8px color-mix(in srgb, var(--site-accent) 28%, transparent);
   --site-shadow-window: 0 14px 40px rgb(0 20 20 / 32%), 0 0 0 1px rgb(0 0 0 / 12%);
 
-  /* A slider (SiteSlider): the line it takes presses on, the track, the fill and the thumb. */
-  --site-slider-size: 20px;
-  --site-slider-track-size: 4px;
-  --site-slider-thumb-size: 16px;
-  --site-slider-thumb-ring: 2px;
-  --site-slider-press: 1.12;
-  --site-slider-track: var(--site-surface-sunken);
-  --site-slider-track-line: var(--site-line);
-  --site-slider-fill: var(--site-accent);
-  --site-slider-thumb: var(--site-surface);
-  --site-slider-thumb-line: var(--site-accent);
-  --site-slider-thumb-hover: var(--site-accent-soft);
-
   /* The dark band's own values (a hero and the bar over it). */
   --site-dark-canvas: var(--sidebar);
   --site-dark-surface: var(--sidebar);
@@ -187,10 +174,4 @@
   --site-bad: var(--site-dark-bad);
   --site-bad-soft: var(--site-dark-bad-soft);
   --site-shadow-float: var(--site-dark-shadow-float);
-  --site-slider-track: var(--site-dark-surface-sunken);
-  --site-slider-track-line: var(--site-dark-line);
-  --site-slider-fill: var(--site-dark-accent);
-  --site-slider-thumb: var(--site-dark-surface);
-  --site-slider-thumb-line: var(--site-dark-accent);
-  --site-slider-thumb-hover: var(--site-dark-accent-soft);
 }
