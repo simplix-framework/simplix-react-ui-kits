@@ -58,11 +58,15 @@ export const fixtureNames = () =>
     .map((file) => file.slice(0, -"-page.tsx".length))
     .sort();
 
-/** Every fixture page's server renderer, bundled once per process. */
-let renderer;
-const loadRenderer = async () => {
+/**
+ * A fixture page's server renderer, bundled once per process and per fixture, so a fixture that does not
+ * build stops only the pages that draw it.
+ */
+const renderers = new Map();
+const loadRenderer = async (fixture) => {
   const esbuild = createRequire(import.meta.url)(find("esbuild"));
-  const names = fixtureNames();
+  const names = fixtureNames().filter((name) => name === fixture);
+  if (names.length === 0) throw new Error(`no fixture page ${fixture}; the fixtures are ${fixtureNames().join(", ")}`);
   const imports = names.map((name, index) => `import Page${index} from ${JSON.stringify(join(here, `tests/fixtures/${name}-page.tsx`))};`).join("\n");
   const table = names.map((name, index) => `${JSON.stringify(name)}: Page${index}`).join(", ");
   const entry = `import { createElement } from "react";\nimport { renderToStaticMarkup } from "react-dom/server";\n${imports}\nconst pages = { ${table} };\nexport const render = (fixture, props) => {\n  const Page = pages[fixture];\n  if (!Page) throw new Error("no fixture page " + fixture + "; the fixtures are " + Object.keys(pages).join(", "));\n  return renderToStaticMarkup(createElement(Page, props));\n};\n`;
@@ -82,7 +86,7 @@ const loadRenderer = async () => {
     banner: { js: 'import { createRequire as __siteDemoRequire } from "node:module";\nconst require = __siteDemoRequire(import.meta.url);' },
   });
   // Written beside this package's node_modules so the bundle resolves this package's React.
-  const file = join(here, `node_modules/.cache/site-demo-${process.pid}.mjs`);
+  const file = join(here, `node_modules/.cache/site-demo-${process.pid}-${fixture}.mjs`);
   mkdirSync(dirname(file), { recursive: true });
   writeFileSync(file, outputFiles[0].text);
   try {
@@ -94,8 +98,8 @@ const loadRenderer = async () => {
 
 /** A fixture page's markup, rendered on the server. */
 async function renderMarkup(fixture, props) {
-  renderer ??= loadRenderer();
-  return (await renderer)(fixture, props);
+  if (!renderers.has(fixture)) renderers.set(fixture, loadRenderer(fixture));
+  return (await renderers.get(fixture))(fixture, props);
 }
 
 /** The site stylesheet compiled with Tailwind, as an app's build compiles `styles/app.css`. */
