@@ -1,6 +1,6 @@
 {
  "$comment": "The computed look of the reference product introduction, read with scripts/site-regions-rendered.mjs probe() at the page-root widths listed, in English and Korean, at rest and with a sample playing. scripts/site-demo.mjs --measure renders tests/fixtures/marketing-page.tsx with each entry props at that width and holds its signature to this one with compare().",
- "measuredOn": "2026-11-02",
+ "measuredOn": "2026-11-03",
  "pages": {
   "marketing-1440": {
    "type": "marketing",
@@ -40,7 +40,7 @@
       "opacity": "1",
       "maxWidth": "none",
       "columns": 0,
-      "height": 1034,
+      "height": 1048,
       "width": 1429
      },
      "main": {
@@ -684,8 +684,9 @@
        }
       },
       "controls": [
-       "link",
-       "button"
+       "site-action",
+       "button",
+       "site-play-toggle"
       ],
       "perInstance": 6
      },
@@ -1281,7 +1282,7 @@
        "opacity": "1",
        "maxWidth": "none",
        "columns": 0,
-       "height": 49,
+       "height": 63,
        "width": 1429
       },
       "parts": {
@@ -1353,9 +1354,10 @@
        }
       },
       "controls": [
-       "site-footer-link"
+       "site-footer-link",
+       "button"
       ],
-      "perInstance": 3
+      "perInstance": 5
      }
     }
    }
@@ -1398,7 +1400,7 @@
       "opacity": "1",
       "maxWidth": "none",
       "columns": 0,
-      "height": 1074,
+      "height": 1088,
       "width": 1013
      },
      "main": {
@@ -2042,8 +2044,9 @@
        }
       },
       "controls": [
-       "link",
-       "button"
+       "site-action",
+       "button",
+       "site-play-toggle"
       ],
       "perInstance": 6
      },
@@ -2639,7 +2642,7 @@
        "opacity": "1",
        "maxWidth": "none",
        "columns": 0,
-       "height": 49,
+       "height": 63,
        "width": 1013
       },
       "parts": {
@@ -2711,9 +2714,10 @@
        }
       },
       "controls": [
-       "site-footer-link"
+       "site-footer-link",
+       "button"
       ],
-      "perInstance": 3
+      "perInstance": 5
      }
     }
    }
@@ -2756,7 +2760,7 @@
       "opacity": "1",
       "maxWidth": "none",
       "columns": 0,
-      "height": 1720,
+      "height": 1734,
       "width": 789
      },
      "main": {
@@ -3400,8 +3404,9 @@
        }
       },
       "controls": [
-       "link",
-       "button"
+       "site-action",
+       "button",
+       "site-play-toggle"
       ],
       "perInstance": 6
      },
@@ -3997,7 +4002,7 @@
        "opacity": "1",
        "maxWidth": "none",
        "columns": 0,
-       "height": 49,
+       "height": 63,
        "width": 789
       },
       "parts": {
@@ -4069,9 +4074,10 @@
        }
       },
       "controls": [
-       "site-footer-link"
+       "site-footer-link",
+       "button"
       ],
-      "perInstance": 3
+      "perInstance": 5
      }
     }
    }
@@ -4114,7 +4120,7 @@
       "opacity": "1",
       "maxWidth": "none",
       "columns": 0,
-      "height": 1952,
+      "height": 1966,
       "width": 379
      },
      "main": {
@@ -4758,8 +4764,9 @@
        }
       },
       "controls": [
-       "link",
-       "button"
+       "site-action",
+       "button",
+       "site-play-toggle"
       ],
       "perInstance": 6
      },
@@ -5355,7 +5362,7 @@
        "opacity": "1",
        "maxWidth": "none",
        "columns": 0,
-       "height": 69,
+       "height": 83,
        "width": 379
       },
       "parts": {
@@ -5427,9 +5434,10 @@
        }
       },
       "controls": [
-       "site-footer-link"
+       "site-footer-link",
+       "button"
       ],
-      "perInstance": 3
+      "perInstance": 5
      }
     }
    }
@@ -5473,7 +5481,7 @@
       "opacity": "1",
       "maxWidth": "none",
       "columns": 0,
-      "height": 1034,
+      "height": 1048,
       "width": 1429
      },
      "main": {
@@ -6181,8 +6189,9 @@
        }
       },
       "controls": [
-       "link",
-       "button"
+       "site-action",
+       "button",
+       "site-play-toggle"
       ],
       "perInstance": 6
      },
@@ -6778,7 +6787,7 @@
        "opacity": "1",
        "maxWidth": "none",
        "columns": 0,
-       "height": 49,
+       "height": 63,
        "width": 1429
       },
       "parts": {
@@ -6850,9 +6859,10 @@
        }
       },
       "controls": [
-       "site-footer-link"
+       "site-footer-link",
+       "button"
       ],
-      "perInstance": 3
+      "perInstance": 5
      }
     }
    }
@@ -6899,7 +6909,7 @@
       "opacity": "1",
       "maxWidth": "none",
       "columns": 0,
-      "height": 1952,
+      "height": 1966,
       "width": 379
      },
      "main": {
@@ -7543,8 +7553,9 @@
        }
       },
       "controls": [
-       "link",
-       "button"
+       "site-action",
+       "button",
+       "site-play-toggle"
       ],
       "perInstance": 6
      },
@@ -8247,7 +8258,7 @@
        "opacity": "1",
        "maxWidth": "none",
        "columns": 0,
-       "height": 69,
+       "height": 83,
        "width": 379
       },
       "parts": {
@@ -8319,9 +8330,10 @@
        }
       },
       "controls": [
-       "site-footer-link"
+       "site-footer-link",
+       "button"
       ],
-      "perInstance": 3
+      "perInstance": 5
      }
     }
    }
@@ -8364,7 +8376,7 @@
       "opacity": "1",
       "maxWidth": "none",
       "columns": 0,
-      "height": 1012,
+      "height": 1026,
       "width": 1429
      },
      "main": {
@@ -9008,8 +9020,9 @@
        }
       },
       "controls": [
-       "link",
-       "button"
+       "site-action",
+       "button",
+       "site-play-toggle"
       ],
       "perInstance": 6
      },
@@ -9605,7 +9618,7 @@
        "opacity": "1",
        "maxWidth": "none",
        "columns": 0,
-       "height": 49,
+       "height": 63,
        "width": 1429
       },
       "parts": {
@@ -9677,9 +9690,10 @@
        }
       },
       "controls": [
-       "site-footer-link"
+       "site-footer-link",
+       "button"
       ],
-      "perInstance": 3
+      "perInstance": 5
      }
     }
    }
@@ -9722,7 +9736,7 @@
       "opacity": "1",
       "maxWidth": "none",
       "columns": 0,
-      "height": 1012,
+      "height": 1026,
       "width": 1013
      },
      "main": {
@@ -10366,8 +10380,9 @@
        }
       },
       "controls": [
-       "link",
-       "button"
+       "site-action",
+       "button",
+       "site-play-toggle"
       ],
       "perInstance": 6
      },
@@ -10963,7 +10978,7 @@
        "opacity": "1",
        "maxWidth": "none",
        "columns": 0,
-       "height": 49,
+       "height": 63,
        "width": 1013
       },
       "parts": {
@@ -11035,9 +11050,10 @@
        }
       },
       "controls": [
-       "site-footer-link"
+       "site-footer-link",
+       "button"
       ],
-      "perInstance": 3
+      "perInstance": 5
      }
     }
    }
@@ -11080,7 +11096,7 @@
       "opacity": "1",
       "maxWidth": "none",
       "columns": 0,
-      "height": 1796,
+      "height": 1810,
       "width": 379
      },
      "main": {
@@ -11724,8 +11740,9 @@
        }
       },
       "controls": [
-       "link",
-       "button"
+       "site-action",
+       "button",
+       "site-play-toggle"
       ],
       "perInstance": 6
      },
@@ -12321,7 +12338,7 @@
        "opacity": "1",
        "maxWidth": "none",
        "columns": 0,
-       "height": 69,
+       "height": 83,
        "width": 379
       },
       "parts": {
@@ -12393,9 +12410,10 @@
        }
       },
       "controls": [
-       "site-footer-link"
+       "site-footer-link",
+       "button"
       ],
-      "perInstance": 3
+      "perInstance": 5
      }
     }
    }

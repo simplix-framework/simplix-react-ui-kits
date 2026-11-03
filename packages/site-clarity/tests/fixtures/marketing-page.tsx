@@ -3,12 +3,12 @@
 // `scripts/site-demo.mjs` renders for the rendered checks, and it plays no audio. The words are the
 // reference product's own, kept as written because where a line wraps is part of what is measured;
 // the brand and the owner are placeholders (shell-copy.tsx).
-import { HeroBand, NumberedSteps, PlayerCard, ReadAlong, readWordAt, SampleList, SampleRow, SiteBars, SiteWave, SplitSection } from "@simplix-react-ui-kits/site-core/marketing";
+import { HeroBand, NumberedSteps, PlayerCard, ReadAlong, readWordAt, SampleList, SampleRow, seededLevels, SiteBars, SiteWave, SplitSection } from "@simplix-react-ui-kits/site-core/marketing";
 import { SitePage } from "@simplix-react-ui-kits/site-core/page";
 import { SegmentedSwitch } from "@simplix-react-ui-kits/site-core/pricing";
 import { SiteBar, SiteFooter, SiteWindow } from "@simplix-react-ui-kits/site-core/shell";
 
-import { glyph, shellCopy, type Locale } from "./shell-copy";
+import { glyph, languagePlace, shellCopy, type Locale } from "./shell-copy";
 
 type Voice = "free" | "premium" | "mine";
 
@@ -92,30 +92,6 @@ const copy = {
   },
 } as const;
 
-/** The reference's stand-in wave shape: a seeded speech-like envelope, so a seed always draws the same wave. */
-export function seededLevels(seed: string, count: number): number[] {
-  let state = 0;
-  for (let i = 0; i < seed.length; i++) state = (state * 31 + seed.charCodeAt(i)) >>> 0;
-  state = state || 1;
-  const random = () => {
-    state ^= state << 13;
-    state >>>= 0;
-    state ^= state >>> 17;
-    state ^= state << 5;
-    state >>>= 0;
-    return state / 4294967296;
-  };
-  const out: number[] = [];
-  let envelope = 0.3;
-  for (let i = 0; i < count; i++) {
-    const syllable = 0.5 + 0.5 * Math.sin(i * 1.25 + random() * 1.4);
-    const gap = random() < 0.07 ? 0.1 : 1;
-    envelope = envelope * 0.5 + syllable * gap * 0.5;
-    out.push(Math.min(1, Math.max(0.07, envelope * (0.45 + 0.65 * random()))));
-  }
-  return out;
-}
-
 /** The reference's waves are 320 units wide: 80 bars. */
 const BARS = 80;
 const NOTE_BARS = [8, 12, 16, 8, 12, 16, 8, 12, 16, 8, 12, 16, 8, 12];
@@ -146,7 +122,7 @@ export function MarketingFixture({ locale = "en", voice = "free", heroAt = null,
           action={{ id: "start", label: shell.startFree, href: "/signup" }}
         />
       }
-      footer={<SiteFooter owner={shell.company} linksLabel={shell.legal} links={shell.footerLinks} />}
+      footer={<SiteFooter owner={shell.company} linksLabel={shell.legal} links={shell.footerLinks} language={languagePlace} />}
     >
       <HeroBand
         tone="dark"

@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest";
 import { bySlot, tabStops, unmarked } from "../testing/markup";
 import { HeroBand } from "./hero-band";
 import { siteHeroInnerStyle, siteHeroTitleStyle, siteSplitStyle, siteStepsListStyle } from "./marketing.style";
+import { seededLevels } from "./levels";
 import { NumberedSteps, stepNumber } from "./numbered-steps";
 import { PlayerCard, PlayToggle, ReadAlong, readWordAt, readWordState, SiteBars, SiteWave } from "./player";
 import { SampleList, SampleRow, SplitSection } from "./sample-row";
@@ -102,6 +103,19 @@ describe("PlayerCard and its parts", () => {
     expect(svg?.attributes.viewBox).toBe("0 0 16 40");
     expect(bySlot(html, "site-wave-bar").map((bar) => bar.attributes["data-played"])).toEqual(["true", "true", "false", "false"]);
     expect(unmarked(html)).toEqual([]);
+  });
+
+  it("draws the same stand-in shape for a seed every time, as the reference design's waveform does", () => {
+    const shape = seededLevels("site-step-voice", 80);
+    expect(shape).toHaveLength(80);
+    // The reference design's generator gives these first levels for this seed; a changed hash, step
+    // or envelope draws a different picture than the design.
+    expect(shape.slice(0, 4).map((level) => level.toFixed(6))).toEqual(["0.572904", "0.425043", "0.702697", "0.234714"]);
+    expect(seededLevels("", 3).map((level) => level.toFixed(6))).toEqual(["0.148868", "0.327252", "0.486888"]);
+    expect(seededLevels("site-step-voice", 80)).toEqual(shape);
+    expect(seededLevels("site-hero-free", 80)).not.toEqual(shape);
+    expect(Math.min(...shape)).toBeGreaterThanOrEqual(0.07);
+    expect(Math.max(...shape)).toBeLessThanOrEqual(1);
   });
 
   it("draws a picture of bars hidden from screen readers, each with its height or its share of the width", () => {
