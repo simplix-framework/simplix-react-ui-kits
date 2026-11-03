@@ -10,6 +10,7 @@ import { SiteDialogFrame } from "./dialog";
 import { FieldNote, FormField, SiteInput, SiteTextarea } from "./fields";
 import { radioKeyTarget, radioTabStop } from "./radio-keys";
 import { SiteSelect } from "./select";
+import { siteCheckboxStyle } from "./form.style";
 import { SiteToastList } from "./toasts";
 
 const byPart = (html: string, part: string) => tagsOf(html).filter((tag) => tag.attributes["data-part"] === part);
@@ -69,6 +70,11 @@ describe("choices", () => {
     const html = renderToStaticMarkup(<SiteCheckbox checked={false} onCheckedChange={() => {}} label="Attach the record" disabled describedBy="why" />);
     expect(byPart(html, "site-checkbox")[0]?.attributes["aria-describedby"]).toBe("why");
     expect(byPart(renderToStaticMarkup(<SiteCheckbox checked={false} onCheckedChange={() => {}} label="Attach" />), "site-checkbox")[0]?.attributes["aria-describedby"]).toBeUndefined();
+  });
+
+  it("draws a checked or partly checked box's mark in the site's ink on the accent, over the framework checkbox's own ink", () => {
+    expect(siteCheckboxStyle.base).toContain("data-[state=checked]:text-(--site-on-accent)");
+    expect(siteCheckboxStyle.base).toContain("data-[state=indeterminate]:text-(--site-on-accent)");
   });
 
   it("draws the framework switch as a site part", () => {

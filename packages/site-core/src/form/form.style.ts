@@ -115,7 +115,7 @@ export const siteCheckboxStyle = defineSlotStyle({
   slot: "site-checkbox",
   as: "part",
   base:
-    "inline-grid size-4 shrink-0 cursor-pointer place-items-center rounded-(--site-radius-xs) border border-(--site-control-line) bg-(--site-surface) p-0 text-(--site-on-accent) shadow-none outline-none transition-colors duration-(--site-duration-fast) ease-(--site-ease) hover:border-(--site-accent) focus-visible:shadow-[var(--site-focus-ring)] data-[state=checked]:border-(--site-accent) data-[state=checked]:bg-(--site-accent) data-[state=checked]:hover:border-(--site-accent-strong) data-[state=checked]:hover:bg-(--site-accent-strong) data-[state=indeterminate]:border-(--site-accent) data-[state=indeterminate]:bg-(--site-accent) disabled:cursor-not-allowed disabled:opacity-(--site-dim) [&_svg]:size-3",
+    "inline-grid size-4 shrink-0 cursor-pointer place-items-center rounded-(--site-radius-xs) border border-(--site-control-line) bg-(--site-surface) p-0 text-(--site-on-accent) shadow-none outline-none transition-colors duration-(--site-duration-fast) ease-(--site-ease) hover:border-(--site-accent) focus-visible:shadow-[var(--site-focus-ring)] data-[state=checked]:border-(--site-accent) data-[state=checked]:bg-(--site-accent) data-[state=checked]:text-(--site-on-accent) data-[state=indeterminate]:text-(--site-on-accent) data-[state=checked]:hover:border-(--site-accent-strong) data-[state=checked]:hover:bg-(--site-accent-strong) data-[state=indeterminate]:border-(--site-accent) data-[state=indeterminate]:bg-(--site-accent) disabled:cursor-not-allowed disabled:opacity-(--site-dim) [&_svg]:size-3",
   variants: {},
   defaultVariants: {},
 });

@@ -18,3 +18,14 @@
     font-family: inherit;
   }
 }
+
+/* Scrollbars as the site design draws them: thin, with no track, and a thumb in the faint ink, on the
+   document and on every scrolling part of the site window and the sign-in ground, so a site page keeps
+   the width the design measures whatever else the product loads. */
+@layer base {
+  :root,
+  :where([data-slot="site-window"], [data-slot="site-auth"]) * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--site-ink-faint) transparent;
+  }
+}

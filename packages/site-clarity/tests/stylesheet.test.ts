@@ -24,6 +24,13 @@ const definedVariables = (css: string) => new Set([...css.matchAll(/(--site-[a-z
 const documentedVariables = (markdown: string) => new Set([...markdown.matchAll(/^\|\s*`(--site-[a-z0-9-]+)`/gm)].map((m) => m[1] ?? ""));
 const without = (a: Set<string>, b: Set<string>) => [...a].filter((x) => !b.has(x)).sort();
 
+describe("the site app stylesheet", () => {
+  it("draws thin scrollbars without a track on the document and inside the site, as the design does", () => {
+    const app = read("src/styles/app.css");
+    expect(app).toMatch(/:root,\s*:where\(\[data-slot="site-window"\], \[data-slot="site-auth"\]\) \* \{\s*scrollbar-width: thin;\s*scrollbar-color: var\(--site-ink-faint\) transparent;/);
+  });
+});
+
 describe("the site stylesheet", () => {
   const css = read("src/styles/designs/clarity.css");
   const tokens = read("src/styles/site-tokens.css");
