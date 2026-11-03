@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 import { DocLayout } from "../legal/doc-layout";
 import { LegalTable } from "../legal/legal-table";
 import { siteDocBodyStyle, siteDocRailStyle, siteLegalTableHeadStyle, siteLegalTableRowStyle, siteTocJumpStyle } from "../legal/legal.style";
-import { bySlot, tabStops, unmarked } from "../testing/markup";
+import { bySlot, silentRefusals, tabStops, unmarked } from "../testing/markup";
 import { ArticleFigure, ArticleIntro, ArticleStep, DocProgress, DocSection, FeedbackPanel, QuickBox, RelatedLinks, TipNote } from "./article";
 import { siteRelatedGridStyle } from "./help.style";
 
@@ -138,6 +138,21 @@ describe("the article parts", () => {
     const thanked = renderToStaticMarkup(<FeedbackPanel label="Was this helpful?" status="Thanks" thanks={{ title: "Thanks.", text: "We read every answer." }} />);
     expect(bySlot(thanked, "site-feedback-thanks")).toHaveLength(1);
     expect(bySlot(thanked, "site-feedback-row")).toEqual([]);
+  });
+
+  it("describes a disabled send after a no by the note under the actions", () => {
+    const panel = (note?: string) =>
+      renderToStaticMarkup(
+        <FeedbackPanel
+          label="Was this helpful?"
+          ask={{ question: "Was this helpful?", answers: [{ id: "no", label: "No", pressed: true }] }}
+          more={{ label: "What was missing?", reasons: [{ id: "a", label: "Hard to follow" }], actions: [{ id: "send", label: "Send", tone: "primary", disabled: true }], ...(note === undefined ? {} : { note }) }}
+        />,
+      );
+    const noted = panel("Answers are not recorded yet");
+    expect(silentRefusals(noted)).toEqual([]);
+    expect(bySlot(noted, "site-action").find((action) => action.attributes["data-action"] === "send")?.attributes["aria-describedby"]).toBeDefined();
+    expect(silentRefusals(panel())).toEqual(["send"]);
   });
 
   it("links the related articles two to a row, one below the narrow tier", () => {

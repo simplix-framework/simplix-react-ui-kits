@@ -215,9 +215,16 @@ export const siteOfferRowNoteStyle = defineSlotStyle({
 /** A table of prices or terms on a card. */
 export const sitePriceTableStyle = defineSlotStyle({
   slot: "site-price-table",
-  base: "min-w-0 rounded-(--site-radius-xl) border border-(--site-line) bg-(--site-surface) p-4",
-  variants: {},
-  defaultVariants: {},
+  base: "min-w-0",
+  variants: {
+    // On its own the table is a card; set inside another part (a help article's quick checks) it is
+    // the bare table on that part's ground.
+    framed: {
+      true: "rounded-(--site-radius-xl) border border-(--site-line) bg-(--site-surface) p-4",
+      false: "",
+    },
+  },
+  defaultVariants: { framed: true },
 });
 
 /** The table itself, across the card. */

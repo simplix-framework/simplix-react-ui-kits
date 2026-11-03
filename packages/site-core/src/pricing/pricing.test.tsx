@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 import { bySlot, silentRefusals, tabStops, unmarked } from "../testing/markup";
 import { OfferRow, PriceTable, QuestionList } from "./offer-parts";
 import { FeatureList, PlanCard, PlanGrid } from "./plan-card";
-import { sitePlanGridStyle, siteQuestionListStyle, siteFeatureListStyle, siteSwitchOptionStyle } from "./pricing.style";
+import { sitePriceTableStyle, sitePlanGridStyle, siteQuestionListStyle, siteFeatureListStyle, siteSwitchOptionStyle } from "./pricing.style";
 import { SegmentedSwitch, SwitchRow, switchKeyTarget, type SegmentedOption } from "./segmented-switch";
 
 type Cycle = "monthly" | "yearly";
@@ -221,6 +221,15 @@ describe("PriceTable", () => {
     expect(bySlot(html, "site-price-table-cell")).toHaveLength(4);
     expect(html.indexOf("site-price-table-caption")).toBeLessThan(html.indexOf("site-price-table-head"));
     expect(unmarked(html)).toEqual([]);
+  });
+
+  it("stands as its own card unless it is set bare inside another part", () => {
+    const table = (framed?: boolean) =>
+      bySlot(renderToStaticMarkup(<PriceTable caption="What each voice costs" columns={["Where"]} rows={[]} {...(framed === undefined ? {} : { framed })} />), "site-price-table")[0]?.attributes["data-framed"];
+    expect(table()).toBe("true");
+    expect(table(false)).toBe("false");
+    expect(sitePriceTableStyle.variants.framed.true).toContain("border");
+    expect(sitePriceTableStyle.base).not.toContain("border");
   });
 });
 

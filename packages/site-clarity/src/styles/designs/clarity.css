@@ -1036,6 +1036,108 @@
   [data-slot="site-tip"][data-slot][data-s-site-tip] {
     @apply m-0 flex min-w-0 items-start gap-2 rounded-(--site-radius-lg) bg-(--site-warn-soft) px-3 py-2 text-(length:--site-fs-caption) leading-(--site-lh-caption) font-(--site-fw-caption);
   }
+  [data-slot="site-screen-body"][data-slot][data-s-site-screen-body] {
+    @apply flex flex-col gap-0.5 py-1.5;
+  }
+  [data-slot="site-screen-close"][data-slot][data-s-site-screen-close] {
+    @apply flex shrink-0 text-(--site-ink-muted);
+  }
+  [data-slot="site-screen-disc"][data-slot][data-s-site-screen-disc] {
+    @apply grid size-4 shrink-0 place-items-center rounded-(--site-radius-full) text-(length:--site-fs-label) leading-(--site-lh-label) font-(--site-fw-strong) tracking-(--site-tracking-label);
+  }
+  [data-slot="site-screen-disc"][data-state="ok"][data-s-site-screen-disc] {
+    @apply bg-(--site-good) text-(--site-on-accent);
+  }
+  [data-slot="site-screen-disc"][data-state="bad"][data-s-site-screen-disc] {
+    @apply bg-(--site-bad) text-(--site-on-accent);
+  }
+  [data-slot="site-screen-disc"][data-state="wait"][data-s-site-screen-disc] {
+    @apply border border-(--site-line);
+  }
+  [data-slot="site-screen-fill"][data-slot][data-s-site-screen-fill] {
+    @apply block h-full;
+  }
+  [data-slot="site-screen-fill"][data-tone="accent"][data-s-site-screen-fill] {
+    @apply bg-(--site-accent);
+  }
+  [data-slot="site-screen-fill"][data-tone="warn"][data-s-site-screen-fill] {
+    @apply bg-(--site-warn);
+  }
+  [data-slot="site-screen-foot"][data-slot][data-s-site-screen-foot] {
+    @apply flex items-center justify-between gap-2 border-t border-(--site-line) px-2.5 py-1.5;
+  }
+  [data-slot="site-screen-head"][data-slot][data-s-site-screen-head] {
+    @apply flex items-center justify-between border-b border-(--site-line) bg-(--site-surface-sunken) px-2.5 py-1.5;
+  }
+  [data-slot="site-screen-line-bar"][data-slot][data-s-site-screen-line-bar] {
+    @apply block h-1.5 rounded-(--site-radius-xs) bg-(--site-line);
+  }
+  [data-slot="site-screen-line-bar"][data-length="long"][data-s-site-screen-line-bar] {
+    @apply w-11/12;
+  }
+  [data-slot="site-screen-line-bar"][data-length="middle"][data-s-site-screen-line-bar] {
+    @apply w-4/5;
+  }
+  [data-slot="site-screen-line-bar"][data-length="short"][data-s-site-screen-line-bar] {
+    @apply w-2/3;
+  }
+  [data-slot="site-screen-line"][data-slot][data-s-site-screen-line] {
+    @apply flex min-w-0 items-center gap-2;
+  }
+  [data-slot="site-screen-lines"][data-slot][data-s-site-screen-lines] {
+    @apply flex flex-col gap-1 px-2.5 pt-1;
+  }
+  [data-slot="site-screen-meta"][data-slot][data-s-site-screen-meta] {
+    @apply shrink-0 font-(family-name:--site-font-mono) text-(--site-ink-muted);
+  }
+  [data-slot="site-screen-meter-head"][data-slot][data-s-site-screen-meter-head] {
+    @apply flex justify-between;
+  }
+  [data-slot="site-screen-meter"][data-slot][data-s-site-screen-meter] {
+    @apply flex flex-col gap-1 px-2.5;
+  }
+  [data-slot="site-screen-notice"][data-slot][data-s-site-screen-notice] {
+    @apply mx-2 flex items-center gap-2 rounded-(--site-radius-md) bg-(--site-warn-soft) px-2 py-1.5;
+  }
+  [data-slot="site-screen-notice-text"][data-slot][data-s-site-screen-notice-text] {
+    @apply flex min-w-0 flex-1 flex-col;
+  }
+  [data-slot="site-screen-pill"][data-slot][data-s-site-screen-pill] {
+    @apply rounded-(--site-radius-md) px-2 py-0.5;
+  }
+  [data-slot="site-screen-pill"][data-tone="plain"][data-s-site-screen-pill] {
+    @apply border border-(--site-line);
+  }
+  [data-slot="site-screen-pill"][data-tone="accent"][data-s-site-screen-pill] {
+    @apply bg-(--site-accent) text-(--site-on-accent);
+  }
+  [data-slot="site-screen-pill"][data-tone="voice"][data-s-site-screen-pill] {
+    @apply bg-(--site-voice) text-(--site-on-voice);
+  }
+  [data-slot="site-screen-pills"][data-slot][data-s-site-screen-pills] {
+    @apply flex gap-1.5;
+  }
+  [data-slot="site-screen-row"][data-slot][data-s-site-screen-row] {
+    @apply flex min-w-0 flex-col gap-1 px-2.5 py-1.5;
+  }
+  [data-slot="site-screen-row"][data-state="bad"][data-s-site-screen-row] {
+    @apply rounded-(--site-radius-md) bg-(--site-bad-soft);
+  }
+  [data-slot="site-screen"][data-slot][data-s-site-screen] {
+    @apply mx-auto flex w-full max-w-sm min-w-0 flex-col overflow-hidden rounded-(--site-radius-lg) border border-(--site-line) bg-(--site-surface) text-(--site-ink) shadow-[var(--site-shadow-float)] text-(length:--site-fs-label) leading-(--site-lh-label) font-(--site-fw-strong) tracking-(--site-tracking-label);
+  }
+  [data-slot="site-screen-text"][data-slot][data-s-site-screen-text] {
+    @apply min-w-0 flex-1 truncate;
+  }
+  [data-slot="site-screen-track"][data-slot][data-s-site-screen-track] {
+    @apply block h-1.5 overflow-hidden rounded-(--site-radius-full) bg-(--site-surface-sunken);
+  }
+  [data-slot="site-screen-words"][data-tone="muted"][data-s-site-screen-words] {
+    @apply text-(--site-ink-muted);
+  }
+  [data-slot="site-screen-words"][data-tone="bad"][data-s-site-screen-words] {
+    @apply text-(--site-bad);
+  }
   [data-slot="site-action-line"][data-slot][data-s-site-action-line] {
     @apply m-0 flex min-w-0 flex-wrap items-center gap-2 text-(length:--site-fs-caption) leading-(--site-lh-caption) font-(--site-fw-caption) text-(--site-ink-muted);
   }
@@ -2057,7 +2159,10 @@
     @apply border-b border-(--site-line);
   }
   [data-slot="site-price-table"][data-slot][data-s-site-price-table] {
-    @apply min-w-0 rounded-(--site-radius-xl) border border-(--site-line) bg-(--site-surface) p-4;
+    @apply min-w-0;
+  }
+  [data-slot="site-price-table"][data-framed="true"][data-s-site-price-table] {
+    @apply rounded-(--site-radius-xl) border border-(--site-line) bg-(--site-surface) p-4;
   }
   [data-slot="site-question-answer"][data-slot][data-s-site-question-answer] {
     @apply m-0 text-(--site-ink-muted);
@@ -2384,6 +2489,12 @@
   }
   :where([data-slot="site-tip-mark"])[data-s-site-tip-mark] {
     @apply [&_svg]:size-3.5;
+  }
+  :where([data-slot="site-screen-close"])[data-s-site-screen-close] {
+    @apply [&_svg]:size-3;
+  }
+  :where([data-slot="site-screen-disc"])[data-s-site-screen-disc] {
+    @apply [&_svg]:size-2.5;
   }
   :where([data-slot="site-disclosure-button"])[data-s-site-disclosure-button] {
     @apply hover:bg-(--site-surface-sunken) focus-visible:shadow-[var(--site-focus-ring-inset)];

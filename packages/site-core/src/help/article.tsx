@@ -1,4 +1,4 @@
-import type { MouseEvent, ReactNode } from "react";
+import { type MouseEvent, type ReactNode, useId } from "react";
 import { slotAttributes } from "@simplix-react/ui/design";
 
 import { SiteAction, type SiteActionSpec } from "../action/site-action";
@@ -217,14 +217,20 @@ export interface FeedbackPanelProps {
   readonly status?: ReactNode;
   /** The question and its answers, before the feedback is sent. */
   readonly ask?: { readonly question: ReactNode; readonly answers: readonly SiteActionSpec[] };
-  /** What was missing, after a no: the reasons as toggles, then the actions. */
-  readonly more?: { readonly label: ReactNode; readonly reasons: readonly SiteActionSpec[]; readonly actions: readonly SiteActionSpec[] };
+  /**
+   * What was missing, after a no: the reasons as toggles, then the actions, then `note`, the line
+   * that says why an action cannot run (feedback that is not recorded yet); a disabled action is
+   * described by it.
+   */
+  readonly more?: { readonly label: ReactNode; readonly reasons: readonly SiteActionSpec[]; readonly actions: readonly SiteActionSpec[]; readonly note?: ReactNode };
   /** The thanks once it is sent, with an action to go on. */
   readonly thanks?: { readonly mark?: ReactNode; readonly title: ReactNode; readonly text: ReactNode; readonly action?: SiteActionSpec };
 }
 
 /** Whether an article helped: the question with its answers, what was missing after a no, then the thanks. */
 export function FeedbackPanel({ label, status, ask, more, thanks }: FeedbackPanelProps) {
+  const noteId = useId();
+  const described = (action: SiteActionSpec) => action.describedBy ?? (action.disabled === true && more?.note !== undefined ? noteId : undefined);
   return (
     <section {...slotAttributes(siteFeedbackStyle, {})} aria-label={label}>
       <SiteLive>{status}</SiteLive>
@@ -261,9 +267,14 @@ export function FeedbackPanel({ label, status, ask, more, thanks }: FeedbackPane
               </div>
               <div {...slotAttributes(siteFeedbackChoicesStyle, {})}>
                 {more.actions.map((action) => (
-                  <SiteAction key={action.id} {...action} size="sm" />
+                  <SiteAction key={action.id} {...action} describedBy={described(action)} size="sm" />
                 ))}
               </div>
+              {more.note !== undefined ? (
+                <span {...slotAttributes(siteCardTextStyle, {})} id={noteId}>
+                  {more.note}
+                </span>
+              ) : null}
             </div>
           ) : null}
         </>

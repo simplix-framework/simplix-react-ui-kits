@@ -70,12 +70,14 @@ export interface PriceTableProps {
   /** Every column's name, the row names' column first. */
   readonly columns: readonly ReactNode[];
   readonly rows: readonly PriceTableRow[];
+  /** Whether the table stands as its own card (the default) or bare inside another part. */
+  readonly framed?: boolean;
 }
 
 /** A table of prices or terms on a card: a named column of row names, then a value per column. */
-export function PriceTable({ caption, columns, rows }: PriceTableProps) {
+export function PriceTable({ caption, columns, rows, framed = true }: PriceTableProps) {
   return (
-    <section {...slotAttributes(sitePriceTableStyle, {})}>
+    <section {...slotAttributes(sitePriceTableStyle, { framed })}>
       <table {...slotAttributes(sitePriceTableGridStyle, {})}>
         <caption {...slotAttributes(sitePriceTableCaptionStyle, {})}>{caption}</caption>
         <thead>
