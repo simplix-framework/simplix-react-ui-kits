@@ -72,6 +72,10 @@ export type SiteActionProps = SiteActionSpec & {
   readonly submit?: boolean;
   /** Below the page's narrow tier: drawn (`shown`), or left out because its place there is elsewhere (`hidden`). */
   readonly narrow?: "shown" | "hidden";
+  /** The element's `id`, where a server page's script finds the control by it (a passkey button). */
+  readonly elementId?: string;
+  /** What a submit sends as its own field when it is the one pressed, where a form has two submits. */
+  readonly field?: { readonly name: string; readonly value: string };
 };
 
 /** How a control that may be refused is described, and the reason it draws when nothing else says why. */
@@ -104,7 +108,7 @@ export function useRefusal(disabled: boolean, reason: SiteReason | undefined, de
  * action is always a disabled button: a link cannot be disabled, and one that only looks disabled
  * still navigates.
  */
-export function SiteAction({ id, label, href, onSelect, tone, disabled = false, reason, icon, pressed, name, describedBy, size, block, submit = false, narrow }: SiteActionProps) {
+export function SiteAction({ id, label, href, onSelect, tone, disabled = false, reason, icon, pressed, name, describedBy, size, block, submit = false, narrow, elementId, field }: SiteActionProps) {
   const marks = slotAttributes(siteActionStyle, { tone, size, block, pad: actionPad(tone, size), narrow });
   const refusal = useRefusal(disabled, reason, describedBy);
   const content = (
@@ -115,14 +119,26 @@ export function SiteAction({ id, label, href, onSelect, tone, disabled = false, 
   );
   if (href !== undefined && !disabled && !submit && pressed === undefined) {
     return (
-      <SiteLink {...marks} data-action={id} href={href} onClick={onSelect} aria-label={name} aria-describedby={describedBy}>
+      <SiteLink {...marks} id={elementId} data-action={id} href={href} onClick={onSelect} aria-label={name} aria-describedby={describedBy}>
         {content}
       </SiteLink>
     );
   }
   return (
     <>
-      <button {...marks} data-action={id} type={submit ? "submit" : "button"} disabled={disabled} aria-pressed={pressed} aria-label={name} aria-describedby={refusal.describedBy} onClick={onSelect}>
+      <button
+        {...marks}
+        id={elementId}
+        data-action={id}
+        type={submit ? "submit" : "button"}
+        name={submit ? field?.name : undefined}
+        value={submit ? field?.value : undefined}
+        disabled={disabled}
+        aria-pressed={pressed}
+        aria-label={name}
+        aria-describedby={refusal.describedBy}
+        onClick={onSelect}
+      >
         {content}
       </button>
       {refusal.hidden}

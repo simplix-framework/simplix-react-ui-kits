@@ -80,6 +80,16 @@ describe("SiteAction", () => {
     expect(spec({ id: "a", label: "A", disabled: false })).toBeDefined();
   });
 
+  it("carries the element id a server script finds it by, and a pressed submit's own field", () => {
+    const passkey = bySlot(renderToStaticMarkup(<SiteAction id="passkey" elementId="authenticateWebAuthnButton" label="Passkey" />), "site-action")[0];
+    expect(passkey?.attributes.id).toBe("authenticateWebAuthnButton");
+    const cancel = bySlot(renderToStaticMarkup(<SiteAction id="cancel" submit field={{ name: "cancel-aia", value: "true" }} label="Cancel" />), "site-action")[0];
+    expect([cancel?.attributes.type, cancel?.attributes.name, cancel?.attributes.value]).toEqual(["submit", "cancel-aia", "true"]);
+    const plain = bySlot(renderToStaticMarkup(<SiteAction id="cancel" field={{ name: "cancel-aia", value: "true" }} label="Cancel" />), "site-action")[0];
+    expect(plain?.attributes.name).toBeUndefined();
+    expect(bySlot(renderToStaticMarkup(<SiteAction id="go" label="Go" />), "site-action")[0]?.attributes.id).toBeUndefined();
+  });
+
   it("draws its icon before its label", () => {
     const html = renderToStaticMarkup(<SiteAction id="a" label="Download" icon={<svg data-slot="glyph" />} />);
     expect(html.indexOf("glyph")).toBeLessThan(html.indexOf("Download"));
