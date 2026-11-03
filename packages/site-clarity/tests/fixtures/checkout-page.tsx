@@ -56,7 +56,8 @@ interface Story {
 
 const noop = () => {};
 const box = (height: number, extra: CSSProperties = {}): ReactNode => <span style={{ display: "block", height, flexShrink: 0, ...extra }} />;
-const spec = (action: Action, index: number): SiteActionSpec => ({ id: `${index}-${action.label}`, label: action.label, tone: action.tone as SiteActionTone, href: action.href, disabled: action.disabled, icon: action.icon ? glyph.check : undefined });
+// A disabled action carries a reason; the reference's copy names none, so its words stand in (read by a screen reader only).
+const spec = (action: Action, index: number): SiteActionSpec => ({ id: `${index}-${action.label}`, label: action.label, tone: action.tone as SiteActionTone, href: action.href, disabled: action.disabled, reason: action.label, icon: action.icon ? glyph.check : undefined });
 
 function MainBlock({ block }: { block: Block }): ReactNode {
   const b = block as Record<string, unknown>;

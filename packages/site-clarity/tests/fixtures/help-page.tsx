@@ -99,7 +99,7 @@ export function HelpFixture({ locale = "en", search = "none", contact = "closed"
           ) : contact === "sent" ? (
             <ContactSent title={t.sent.title} ticket={<SiteChip>{t.sent.ticket}</SiteChip>} body={t.sent.body} mark={glyph.check} action={{ id: "another", label: t.sent.another }} />
           ) : (
-            <ContactForm title={f.title} icon={send} submit={{ id: "send", label: f.send, disabled: true }} cancel={{ id: "close", label: f.close }} note={f.needFields}>
+            <ContactForm title={f.title} icon={send} submit={{ id: "send", label: f.send, disabled: true, reason: f.needFields }} cancel={{ id: "close", label: f.close }} note={f.needFields}>
               <FieldRow>
                 <FormField as="group" label={f.category}>
                   <SiteSelect label={f.category} options={[{ value: "voice", label: f.categoryValue }]} value="voice" onValueChange={() => {}} block />

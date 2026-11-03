@@ -119,7 +119,7 @@ export function PricingFixture({ signedIn = false, barTone = "light" }: PricingF
             pitch="For people who present often on their own"
             detail="Every month · about 10 five-minute talks a month"
             highlight="Most chosen"
-            current={signedIn ? "Your plan" : undefined}
+            current={signedIn ? { label: "Your plan", reason: "This is the plan you are on" } : undefined}
             features={[
               { key: "chars", label: "50,000 premium characters a month · about 50 min of English" },
               { key: "voice", label: "1 own voice" },
@@ -157,7 +157,7 @@ export function PricingFixture({ signedIn = false, barTone = "light" }: PricingF
         <OfferRow
           title="Extra credits"
           about="For Pro and up · added to this month's credits · used after your monthly credits · 60,000 characters $11 · Usable for 12 months"
-          action={{ id: "top-up", label: "Top up credits", href: "/checkout?offer=top-up", disabled: !signedIn }}
+          action={signedIn ? { id: "top-up", label: "Top up credits", href: "/checkout?offer=top-up" } : { id: "top-up", label: "Top up credits", disabled: true, reason: "Extra credits need Pro or Pro+" }}
           note={signedIn ? undefined : "Extra credits need Pro or Pro+"}
         />
         <PriceTable

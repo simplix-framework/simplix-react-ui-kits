@@ -93,7 +93,7 @@
   "scripts": {
     "build": "tsup",
     "dev": "tsup --no-clean --no-dts",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit && tsc -p tsconfig.tests.json",
     "lint": "node scripts/check-site-regions.mjs && oxlint src scripts && simplix-design-literals src",
     "test": "node scripts/check-site-regions.mjs --selftest && node scripts/site-regions-rendered.mjs --selftest && node scripts/site-demo.mjs --selftest && vitest run",
     "design:css": "simplix-design-css --root ../site-core --out ../site-clarity/src/styles/designs/clarity.css",

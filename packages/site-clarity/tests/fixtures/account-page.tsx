@@ -54,12 +54,15 @@ interface Story {
 const SECTION_KEYS = ["sub", "credits", "receipts", "security", "voice", "data", "leave"];
 const noop = () => {};
 
-const spec = (action: Action, index: number): SiteActionSpec => ({
+// The reference's copy names no reason for a disabled action, so the action's own words stand in for
+// it: the reason is read by a screen reader only and draws nothing a reading measures.
+const spec = (action: Action, index: number): SiteActionSpec & { readonly reason: string } => ({
   id: `${index}-${action.label}`,
   label: action.label,
   tone: action.tone as SiteActionTone,
   href: action.href,
   disabled: action.disabled,
+  reason: action.label,
   name: action.name,
   icon: action.icon ? glyph.chevron : undefined,
 });
@@ -163,7 +166,7 @@ function BlockView({ block }: { block: Block }): ReactNode {
             value={input?.value as string}
             placeholder={input?.placeholder as string}
             onValueChange={noop}
-            confirm={confirm as SiteActionSpec}
+            confirm={confirm as SiteActionSpec & { readonly reason: string }}
             cancel={cancel as SiteActionSpec}
           >
             {asked.map((child, index) => (
@@ -193,7 +196,7 @@ function BlockView({ block }: { block: Block }): ReactNode {
           value={b.value as string}
           placeholder={(b.placeholder as string) || undefined}
           onValueChange={noop}
-          confirm={confirm as SiteActionSpec}
+          confirm={confirm as SiteActionSpec & { readonly reason: string }}
           cancel={cancel as SiteActionSpec}
         />
       );

@@ -42,7 +42,7 @@ interface Story {
 
 const noop = () => {};
 const mark = (size: number) => <svg width={size} height={size} viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="currentColor" opacity="0.15" /></svg>;
-const linkOf = (item: { link: string; disabled: boolean; button: boolean }) => (item.button || item.disabled ? <SiteTextAction disabled={item.disabled} onSelect={noop}>{item.link}</SiteTextAction> : <SiteTextAction href="#">{item.link}</SiteTextAction>);
+const linkOf = (item: { link: string; disabled: boolean; button: boolean }) => (item.button || item.disabled ? <SiteTextAction disabled={item.disabled} reason={item.link} onSelect={noop}>{item.link}</SiteTextAction> : <SiteTextAction href="#">{item.link}</SiteTextAction>);
 
 function AuthBlock({ block }: { block: Block }): ReactNode {
   const b = block as Record<string, unknown>;
@@ -131,7 +131,7 @@ function AuthBlock({ block }: { block: Block }): ReactNode {
       return <AuthDoneMark>{glyph.check}</AuthDoneMark>;
     case "action": {
       const action = b.action as Action;
-      return <SiteAction id={action.label} label={action.label} tone={action.tone as SiteActionTone} size={action.size as "md" | "lg"} block={action.block} disabled={action.disabled} submit={action.submit} icon={action.icon ? glyph.check : undefined} />;
+      return <SiteAction id={action.label} label={action.label} tone={action.tone as SiteActionTone} size={action.size as "md" | "lg"} block={action.block} disabled={action.disabled} reason={action.label} submit={action.submit} icon={action.icon ? glyph.check : undefined} />;
     }
     default:
       throw new Error(`auth fixture: no part draws a ${block.kind} block`);
