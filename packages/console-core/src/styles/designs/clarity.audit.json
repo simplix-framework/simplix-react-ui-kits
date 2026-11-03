@@ -1,9 +1,10 @@
 {
-  "$comment": "Options for audit-rendered.mjs under the clarity design. Clarity draws every action button filled; navigation entries (menu rows, rail buttons, phone tabs, a tab strip's scroll arrows) mark the current place by their ground and a table head's sort control is part of the head, a dashboard card's rows (the task and attention rows) are list rows drawn like the menu rows, and a chart legend's entries are the legend's keys whose mark says whether the series is shown, so those stand bare by design. A dashboard's cards stand side by side in a grid, each a panel with its own heading, so the grid is a collection of panels and never a row of figures (recordCollectionSelector).",
+  "$comment": "Options for audit-rendered.mjs under the clarity design. Clarity draws every action button filled; navigation entries (menu rows, rail buttons, phone tabs, a tab strip's scroll arrows) mark the current place by their ground and a table head's sort control is part of the head, a dashboard card's rows (the task and attention rows) are list rows drawn like the menu rows, and a chart legend's entries are the legend's keys whose mark says whether the series is shown, so those stand bare by design. A dashboard's cards stand side by side in a grid, each a panel with its own heading, so the grid is a collection of panels and never a row of figures (recordCollectionSelector). The fill rule applies only to a page that draws a console shell slot (buttonFillScope), because another kit may share the design name.",
   "requireButtonFill": true,
   "buttonFillDesigns": [
     "clarity"
   ],
+  "buttonFillScope": "[data-slot^=console-]",
   "buttonFillExemptSelector": "[data-slot=console-menu-row], [data-part=console-menu-rail-button], [data-slot=console-phone-tab], [data-slot=tabs-scroll-arrow], [data-slot=crud-list-sort-button], [data-slot=crud-filter-bar-view-button], [data-slot=schedule-row], [data-slot=attention-row], [data-slot=legend-toggle-item]",
   "recordCollectionSelector": "[data-slot=\"console-record-list\"], [data-slot=\"crud-card\"], [data-slot=\"dashboard-card\"]"
 }
