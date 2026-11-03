@@ -81,10 +81,12 @@ export interface SiteSwitchProps {
   readonly label?: ReactNode;
   readonly name?: string;
   readonly disabled?: boolean;
+  /** The id of the line that describes the switch, such as the reason it is disabled. */
+  readonly describedBy?: string;
 }
 
 /** On and off for something that takes effect at once (marketing mail). The framework switch in the site design. */
-export function SiteSwitch({ checked, onCheckedChange, label, name, disabled = false }: SiteSwitchProps) {
+export function SiteSwitch({ checked, onCheckedChange, label, name, disabled = false, describedBy }: SiteSwitchProps) {
   const control = (
     <Switch
       {...partAttributes(siteToggleStyle, {})}
@@ -92,6 +94,7 @@ export function SiteSwitch({ checked, onCheckedChange, label, name, disabled = f
       onCheckedChange={onCheckedChange}
       disabled={disabled}
       aria-label={label === undefined ? name : undefined}
+      aria-describedby={describedBy}
     />
   );
   if (label === undefined) return control;

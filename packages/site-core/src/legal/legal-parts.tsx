@@ -1,7 +1,7 @@
 import { Fragment, type MouseEvent, type ReactNode, useId } from "react";
 import { slotAttributes } from "@simplix-react/ui/design";
 
-import { SiteAction, type SiteActionSpec } from "../action/site-action";
+import { SiteAction, type SiteActionSpec, type SiteReason, useRefusal } from "../action/site-action";
 import { siteDocActionStyle } from "../help/help.style";
 import { siteCaptionStyle } from "../page/site-page.style";
 import {
@@ -165,29 +165,48 @@ export function NoticeBanner({ tone = "info", mark, title, children, actions = [
   );
 }
 
+/** The comparison switch of {@link VersionPicker}: its words, the product's switch, and whether it can be used now. */
+export type VersionCompare = {
+  readonly label: ReactNode;
+  /**
+   * The product's switch, handed the id of the line that describes it: the reason it cannot be used
+   * while it is disabled, read by a screen reader with the switch (`aria-describedby`).
+   */
+  readonly control: (describedBy: string | undefined) => ReactNode;
+} & ({ readonly disabled?: false } | { readonly disabled: true; readonly reason: SiteReason });
+
 /** Props for {@link VersionPicker}. */
 export interface VersionPickerProps {
   /** The product's select over the versions. */
   readonly select: ReactNode;
-  /** The comparison with the previous version: its words, the product's switch, and whether it can be used now. */
-  readonly compare?: { readonly label: ReactNode; readonly control: ReactNode; readonly disabled?: boolean; readonly hint?: string };
+  /** The comparison with the previous version; a disabled one carries the reason it cannot be used. */
+  readonly compare?: VersionCompare;
 }
 
 /**
  * The version a legal text is read in, and the switch that marks its changes against the previous
- * one; the switch is dimmed while the previous version is shown, where there is nothing to compare.
+ * one; the switch is dimmed while the previous version is shown, where there is nothing to compare,
+ * and says why to a screen reader and, on hover, to the pointer.
  */
 export function VersionPicker({ select, compare }: VersionPickerProps) {
   return (
     <>
       {select}
-      {compare !== undefined ? (
-        <label {...slotAttributes(siteToggleFieldStyle, { disabled: compare.disabled === true })} title={compare.disabled === true ? compare.hint : undefined}>
-          {compare.control}
-          {compare.label}
-        </label>
-      ) : null}
+      {compare !== undefined ? <CompareToggle compare={compare} /> : null}
     </>
+  );
+}
+
+function CompareToggle({ compare }: { readonly compare: VersionCompare }) {
+  const disabled = compare.disabled === true;
+  const reason = compare.disabled === true ? compare.reason : undefined;
+  const refusal = useRefusal(disabled, reason, undefined);
+  return (
+    <label {...slotAttributes(siteToggleFieldStyle, { disabled })} title={typeof reason === "string" ? reason : undefined}>
+      {compare.control(refusal.describedBy)}
+      {compare.label}
+      {refusal.hidden}
+    </label>
   );
 }
 

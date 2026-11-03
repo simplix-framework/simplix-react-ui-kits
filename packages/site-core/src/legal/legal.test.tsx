@@ -2,7 +2,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 
 import { SiteBadge } from "../page/site-bits";
-import { bySlot, tabStops, unmarked } from "../testing/markup";
+import { bySlot, silentRefusals, tabStops, unmarked } from "../testing/markup";
 import { ChangeList, ClauseList, DiffText, diffChanged, diffVisible, FilledText, InfoCard, InfoGrid, KeyValues, LegalArticle, NoticeBanner, PlainSummary, PrintButton, VersionPicker } from "./legal-parts";
 import { siteInfoGridStyle, siteKeyValuesStyle, siteValueStyle } from "./legal.style";
 
@@ -49,13 +49,21 @@ describe("the legal head parts", () => {
     expect(unmarked(info)).toEqual([]);
   });
 
-  it("dims the comparison switch while it cannot be used, with the reason on hover", () => {
-    const off = renderToStaticMarkup(<VersionPicker select={<span data-slot="product-select" />} compare={{ label: "Show changes", control: <span data-slot="product-switch" />, disabled: true, hint: "Only the current version" }} />);
+  it("dims the comparison switch while it cannot be used, and describes it by the reason for a screen reader and on hover", () => {
+    const off = renderToStaticMarkup(
+      <VersionPicker select={<span data-slot="product-select" />} compare={{ label: "Show changes", control: (describedBy) => <span data-slot="product-switch" aria-describedby={describedBy} />, disabled: true, reason: "Only the current version" }} />,
+    );
     const field = bySlot(off, "site-toggle-field")[0];
     expect(field?.name).toBe("label");
     expect(field?.attributes["data-disabled"]).toBe("true");
     expect(field?.attributes.title).toBe("Only the current version");
-    expect(bySlot(renderToStaticMarkup(<VersionPicker select={<span />} compare={{ label: "Show changes", control: <span /> }} />), "site-toggle-field")[0]?.attributes.title).toBeUndefined();
+    const described = bySlot(off, "product-switch")[0]?.attributes["aria-describedby"];
+    expect(described).toBeTruthy();
+    expect(off).toContain(`id="${described}">Only the current version</span>`);
+    expect(silentRefusals(off)).toEqual([]);
+    const on = renderToStaticMarkup(<VersionPicker select={<span />} compare={{ label: "Show changes", control: (describedBy) => <span data-slot="product-switch" aria-describedby={describedBy} /> }} />);
+    expect(bySlot(on, "site-toggle-field")[0]?.attributes.title).toBeUndefined();
+    expect(bySlot(on, "product-switch")[0]?.attributes["aria-describedby"]).toBeUndefined();
   });
 
   it("prints the page from a small action, and marks a draft with a warning badge", () => {

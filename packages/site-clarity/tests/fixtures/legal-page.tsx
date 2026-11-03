@@ -123,7 +123,7 @@ export function LegalFixture({ locale = "en", version = "current", compare = fal
           <>
             <VersionPicker
               select={box(34, { width: selectWidth })}
-              compare={{ label: t.compare, control: box(18, { width: 30 }), disabled: version === "previous" }}
+              compare={version === "previous" ? { label: t.compare, control: () => box(18, { width: 30 }), disabled: true, reason: t.compare } : { label: t.compare, control: () => box(18, { width: 30 }) }}
             />
             <PrintButton label={t.pdf} onPrint={() => {}} icon={glyph.download} />
           </>
