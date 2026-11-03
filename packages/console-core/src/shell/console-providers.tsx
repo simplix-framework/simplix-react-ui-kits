@@ -45,6 +45,14 @@ export interface ConsoleProvidersProps {
    * preference still wins over a density named here.
    */
   readonly defaults?: UIDefaults;
+  /**
+   * Whether the stack mounts the console's toast surface (the framework's `ToastContainer`).
+   *
+   * <p>A product that draws the framework's toast store with a surface of its own, such as a
+   * customer site's toast list, passes `false`: with both mounted every toast is drawn twice, once
+   * in each look. The console apps leave it at its default and keep the surface.
+   */
+  readonly drawToasts?: boolean;
   /** Whatever the app mounts inside its own providers — a router, a shell. */
   readonly children: ReactNode;
 }
@@ -84,6 +92,7 @@ export function ConsoleProviders({
   product,
   design = CLASSIC_DESIGN,
   defaults: installationDefaults,
+  drawToasts = true,
   children,
 }: ConsoleProvidersProps) {
   const { prefs } = useDisplayPreferences();
@@ -109,7 +118,7 @@ export function ConsoleProviders({
                   </ConsoleProductProvider>
                 </TilesCollapseProvider>
                 <ErrorDialog />
-                <ToastContainer />
+                {drawToasts ? <ToastContainer /> : null}
               </UIProvider>
             </TooltipProvider>
           </QueryClientProvider>
