@@ -1,2 +1,2 @@
-export { AuthAlert, AuthCard, AuthDoneMark, AuthFieldHead, AuthForm, AuthLink, AuthLinks, AuthOr, AuthPage, AuthProviders, AuthText, PasswordRules, PasswordStrength } from "./auth";
+export { AuthAlert, AuthCard, AuthDoneMark, AuthFieldHead, AuthForm, AuthLink, AuthLinks, AuthOr, AuthPage, AuthProviders, AuthText, PasswordRules, PasswordStrength, submitAuthForm } from "./auth";
 export type { AuthAlertProps, AuthCardProps, AuthDoneMarkProps, AuthFieldHeadProps, AuthFormProps, AuthLinkProps, AuthLinksProps, AuthOrProps, AuthPageProps, AuthProvidersProps, AuthTextProps, PasswordRule, PasswordRulesProps, PasswordStrengthProps } from "./auth";

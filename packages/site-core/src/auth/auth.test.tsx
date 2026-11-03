@@ -2,7 +2,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 
 import { bySlot, tagsOf, unmarked } from "../testing/markup";
-import { AuthAlert, AuthCard, AuthDoneMark, AuthFieldHead, AuthForm, AuthLink, AuthLinks, AuthOr, AuthPage, AuthProviders, AuthText, PasswordRules, PasswordStrength } from "./auth";
+import { AuthAlert, AuthCard, AuthDoneMark, AuthFieldHead, AuthForm, AuthLink, AuthLinks, AuthOr, AuthPage, AuthProviders, AuthText, PasswordRules, PasswordStrength, submitAuthForm } from "./auth";
 
 describe("AuthPage and AuthCard", () => {
   it("draws the step as the page, its card headed by the mark and the one h1", () => {
@@ -37,6 +37,28 @@ describe("the card's parts", () => {
     const passkey = bySlot(renderToStaticMarkup(<AuthForm gap="none">x</AuthForm>), "site-auth-form")[0];
     expect(passkey?.attributes["data-gap"]).toBe("none");
     expect(passkey?.attributes.novalidate ?? passkey?.attributes.noValidate).toBeDefined();
+  });
+
+  it("hands a step's values to the step, and lets the browser post a server page's form", () => {
+    let prevented = 0;
+    let handed = 0;
+    const event = { preventDefault: () => (prevented += 1) };
+    submitAuthForm(event, undefined, () => (handed += 1));
+    expect([prevented, handed]).toEqual([1, 1]);
+    submitAuthForm(event, "https://id.example/login-actions/authenticate", () => (handed += 1));
+    expect([prevented, handed]).toEqual([1, 2]);
+    submitAuthForm(event, "https://id.example/login-actions/authenticate", undefined);
+    expect(prevented).toBe(1);
+  });
+
+  it("names the address, the method and the id of a posted form, and none on a step's own form", () => {
+    const posted = bySlot(renderToStaticMarkup(<AuthForm action="/act" id="kc-form-login">x</AuthForm>), "site-auth-form")[0];
+    expect(posted?.attributes.action).toBe("/act");
+    expect(posted?.attributes.method).toBe("post");
+    expect(posted?.attributes.id).toBe("kc-form-login");
+    const own = bySlot(renderToStaticMarkup(<AuthForm>x</AuthForm>), "site-auth-form")[0];
+    expect(own?.attributes.action).toBeUndefined();
+    expect(own?.attributes.method).toBeUndefined();
   });
 
   it("speaks a wrong value at once and a status only on request", () => {

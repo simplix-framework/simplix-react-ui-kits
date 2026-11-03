@@ -16,3 +16,6 @@ export { radioKeyTarget, radioTabStop } from "./radio-keys";
 export type { RadioKeyOption } from "./radio-keys";
 export { SiteSlider, SLIDER_PAGE_STEPS, sliderKeyTarget, sliderShare, sliderSnap, sliderValueAt } from "./slider";
 export type { SiteSliderName, SiteSliderProps, SiteSliderRange } from "./slider";
+// The code row and cell looks, for a product whose code field posts its own form field (a sign-in
+// server page) and spreads them on its own cells with `partAttributes`.
+export { siteCodeCellStyle, siteCodeStyle } from "./form.style";

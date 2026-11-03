@@ -71,24 +71,45 @@ export function AuthCard({ title, mark, children }: AuthCardProps) {
 
 /** Props for {@link AuthForm}. */
 export interface AuthFormProps {
-  /** Called when the form is sent; the part stops the page from reloading. */
+  /**
+   * Called when the form is sent. Without `action` the part stops the page from reloading and the
+   * step handles the values; with `action` it is called and the browser then posts the form.
+   */
   readonly onSubmit?: () => void;
+  /**
+   * The address a sign-in server's page posts its fields to: the form is sent by the browser, as the
+   * server's own page sends it, and the server answers with the next page.
+   */
+  readonly action?: string;
+  /** How a posted form is sent; `post` unless a server page says otherwise. */
+  readonly method?: "post" | "get";
+  /** The form's id, where a server's script finds the form by it. */
+  readonly id?: string;
   /** The fields in reading order, then the submit. */
   readonly children: ReactNode;
   /** `none` for a form that is only its submit (signing in with a passkey). */
   readonly gap?: "fields" | "none";
 }
 
+/**
+ * What sending an {@link AuthForm} does: a form without an `action` stays on the page and hands the
+ * values to the step; a form with one is posted by the browser after `onSubmit` has run.
+ */
+export function submitAuthForm(event: Pick<FormEvent, "preventDefault">, action: string | undefined, onSubmit: (() => void) | undefined): void {
+  if (action === undefined) event.preventDefault();
+  onSubmit?.();
+}
+
 /** A step's form, validated by the step rather than the browser. */
-export function AuthForm({ onSubmit, children, gap }: AuthFormProps) {
+export function AuthForm({ onSubmit, action, method = "post", id, children, gap }: AuthFormProps) {
   return (
     <form
       {...slotAttributes(siteAuthFormStyle, { gap })}
+      id={id}
+      action={action}
+      method={action === undefined ? undefined : method}
       noValidate
-      onSubmit={(event: FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        onSubmit?.();
-      }}
+      onSubmit={(event: FormEvent<HTMLFormElement>) => submitAuthForm(event, action, onSubmit)}
     >
       {children}
     </form>
