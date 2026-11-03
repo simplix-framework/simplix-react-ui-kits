@@ -6,7 +6,7 @@ import { bySlot, silentRefusals, tabStops, unmarked } from "../testing/markup";
 import { CheckCard, checkPassed } from "./check-card";
 import { ActionLine, CopyBlock, DisclosureList, NumberedList } from "./disclosure-list";
 import { DownloadCard, DownloadGrid, NoticeCard } from "./download-card";
-import { siteDownloadGridStyle, siteInstallStepStyle } from "./install.style";
+import { siteDownloadFileStyle, siteDownloadGridStyle, siteInstallStepStyle } from "./install.style";
 import { InstallSteps, ScreenSketch } from "./install-steps";
 import { SiteProgress, VideoCard } from "./video-card";
 
@@ -55,6 +55,10 @@ describe("DownloadCard and NoticeCard", () => {
     expect(bySlot(html, "site-action").map((action) => action.attributes["data-tone"])).toEqual(["primary", "secondary"]);
     expect(siteDownloadGridStyle.base).toContain("@max-page-narrow/page:grid-cols-1");
     expect(unmarked(html)).toEqual([]);
+  });
+
+  it("breaks a file line that has no break points, such as a checksum, at the card's edge", () => {
+    expect(siteDownloadFileStyle.base).toContain("break-words");
   });
 
   it("describes a disabled download by its file line, which says there is no file yet", () => {

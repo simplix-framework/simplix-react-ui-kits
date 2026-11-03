@@ -539,7 +539,7 @@
     @apply flex self-start;
   }
   [data-slot="site-download-file"][data-slot][data-s-site-download-file] {
-    @apply font-(family-name:--site-font-mono) text-(length:--site-fs-label) leading-(--site-lh-label) font-(--site-fw-strong) tracking-(--site-tracking-label) text-(--site-ink-muted);
+    @apply font-(family-name:--site-font-mono) text-(length:--site-fs-label) leading-(--site-lh-label) font-(--site-fw-strong) tracking-(--site-tracking-label) text-(--site-ink-muted) break-words;
   }
   [data-slot="site-download-grid"][data-slot][data-s-site-download-grid] {
     @apply grid min-w-0 grid-cols-2 gap-3;

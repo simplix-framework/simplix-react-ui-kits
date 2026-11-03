@@ -73,11 +73,11 @@ export const siteCardTextStyle = defineSlotStyle({
   defaultVariants: {},
 });
 
-/** The file a download gives, in the mono family. */
+/** The file a download gives, in the mono family; a checksum or a long file name has no break points, so it breaks at the card's edge. */
 export const siteDownloadFileStyle = defineSlotStyle({
   slot: "site-download-file",
   base:
-    "font-(family-name:--site-font-mono) text-(length:--site-fs-label) leading-(--site-lh-label) font-(--site-fw-strong) tracking-(--site-tracking-label) text-(--site-ink-muted)",
+    "font-(family-name:--site-font-mono) text-(length:--site-fs-label) leading-(--site-lh-label) font-(--site-fw-strong) tracking-(--site-tracking-label) text-(--site-ink-muted) break-words",
   variants: {},
   defaultVariants: {},
 });

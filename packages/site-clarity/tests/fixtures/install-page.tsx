@@ -6,7 +6,7 @@ import { ActionLine, CheckCard, CopyBlock, DisclosureList, DownloadCard, Downloa
 import { SiteCaption, SiteChip, SitePage, SitePageHead } from "@simplix-react-ui-kits/site-core/page";
 import { SiteBar, SiteFooter, SiteWindow } from "@simplix-react-ui-kits/site-core/shell";
 
-import { glyph, shellCopy, type Locale } from "./shell-copy";
+import { glyph, languagePlace, shellCopy, type Locale } from "./shell-copy";
 
 /** What the guide is drawn with. */
 export interface InstallFixtureProps {
@@ -195,7 +195,7 @@ export function InstallFixture({ locale = "en", view = "guide", phone = false, c
           action={{ id: "start", label: shell.startFree, href: "/signup" }}
         />
       }
-      footer={<SiteFooter owner={shell.company} linksLabel={shell.legal} links={shell.footerLinks} />}
+      footer={<SiteFooter owner={shell.company} linksLabel={shell.legal} links={shell.footerLinks} language={languagePlace} />}
     >
       {view === "help" ? (
         <SitePage>
