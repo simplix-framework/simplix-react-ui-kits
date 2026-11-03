@@ -4,3 +4,7 @@ export { ChangeList, CLAUSE_MARKS, ClauseList, DiffText, diffChanged, diffVisibl
 export type { ChangeListProps, ClauseListProps, DiffTextProps, InfoCardProps, InfoGridProps, KeyValuesProps, LegalArticleProps, NoticeBannerProps, PlainSummaryProps, PrintButtonProps, SiteDiffMode, SitePlaceholders, VersionPickerProps } from "./legal-parts";
 export { LegalTable } from "./legal-table";
 export type { LegalTableProps } from "./legal-table";
+export { AgencyGrid, GlanceGrid, LegalSection, RightsGrid } from "./policy-parts";
+export type { AgencyGridProps, GlanceGridProps, LegalSectionProps, RightsGridProps, SiteAgency, SiteGlance, SiteRight } from "./policy-parts";
+export { rangeShare, RefundCalculator, RefundHow, RefundProduct, RefundRule, SiteRange, Walkthrough, WalkthroughMenu, WalkthroughPages } from "./refund-parts";
+export type { RefundCalculatorProps, RefundHowProps, RefundProductProps, RefundRuleProps, SiteRangeProps, SiteRefundKind, SiteStepPick, SiteWalkthroughEntry, WalkthroughMenuProps, WalkthroughPagesProps, WalkthroughProps } from "./refund-parts";

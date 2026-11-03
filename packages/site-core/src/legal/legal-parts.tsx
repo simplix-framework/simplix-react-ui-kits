@@ -1,8 +1,9 @@
-import { Fragment, type MouseEvent, type ReactNode } from "react";
+import { Fragment, type MouseEvent, type ReactNode, useId } from "react";
 import { slotAttributes } from "@simplix-react/ui/design";
 
 import { SiteAction, type SiteActionSpec } from "../action/site-action";
 import { siteDocActionStyle } from "../help/help.style";
+import { siteCaptionStyle } from "../page/site-page.style";
 import {
   siteBannerActionsStyle,
   siteBannerBodyStyle,
@@ -337,22 +338,32 @@ export function KeyValues({ rows }: KeyValuesProps) {
 
 /** Props for {@link InfoCard}. */
 export interface InfoCardProps {
-  readonly title: ReactNode;
+  /** The card's heading; a card that only holds a contact's values (a privacy officer) has none. */
+  readonly title?: ReactNode;
   /** The card's facts, a {@link KeyValues}. */
   readonly children: ReactNode;
   readonly action?: SiteActionSpec;
+  /** Why the action cannot run yet, a line under it that a disabled action is described by. */
+  readonly reason?: ReactNode;
 }
 
 /** A card of facts (business details, support): its heading, its labelled values and an action. */
-export function InfoCard({ title, children, action }: InfoCardProps) {
+export function InfoCard({ title, children, action, reason }: InfoCardProps) {
+  const reasonId = useId();
+  const hasReason = reason !== undefined && action?.disabled === true;
   return (
     <section {...slotAttributes(siteInfoCardStyle, {})}>
-      <h2 {...slotAttributes(siteInfoCardTitleStyle, {})}>{title}</h2>
+      {title !== undefined ? <h2 {...slotAttributes(siteInfoCardTitleStyle, {})}>{title}</h2> : null}
       {children}
       {action !== undefined ? (
         <span {...slotAttributes(siteDocActionStyle, {})}>
-          <SiteAction {...action} size="sm" />
+          <SiteAction {...action} describedBy={action.describedBy ?? (hasReason ? reasonId : undefined)} size="sm" />
         </span>
+      ) : null}
+      {hasReason ? (
+        <p {...slotAttributes(siteCaptionStyle, {})} id={reasonId}>
+          {reason}
+        </p>
       ) : null}
     </section>
   );
