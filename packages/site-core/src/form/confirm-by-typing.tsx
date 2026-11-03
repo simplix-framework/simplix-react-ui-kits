@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { slotAttributes } from "@simplix-react/ui/design";
 
-import { SiteAction, type SiteActionSpec } from "../action/site-action";
+import { SiteAction, type SiteActionBase, type SiteActionSpec, type SiteReason } from "../action/site-action";
 import { FormField, SiteInput } from "./fields";
 import {
   siteConfirmActionsStyle,
@@ -29,8 +29,12 @@ export interface ConfirmByTypingProps {
   readonly value: string;
   readonly onValueChange: (value: string) => void;
   readonly placeholder?: string;
-  /** The deletion; enabled only once the word is typed. */
-  readonly confirm: SiteActionSpec;
+  /**
+   * The deletion; enabled only once the word is typed, and held disabled while `disabled` (a deletion
+   * under way). Its `reason` says why it cannot run yet ("Type DELETE to delete the voice"), drawn for
+   * a screen reader beside it while it is disabled.
+   */
+  readonly confirm: SiteActionBase & { readonly disabled?: boolean; readonly reason: SiteReason };
   /** The way back. */
   readonly cancel: SiteActionSpec;
   /**

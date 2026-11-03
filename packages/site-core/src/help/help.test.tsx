@@ -1,5 +1,6 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
+import type { SiteActionSpec } from "../action/site-action";
 
 import { SiteChip } from "../page/site-bits";
 import { bySlot, silentRefusals, tabStops, unmarked } from "../testing/markup";
@@ -121,7 +122,7 @@ describe("the contact parts", () => {
 
   it("lays the form out, outlined, with a submit button, the cancel action and what is missing", () => {
     const html = renderToStaticMarkup(
-      <ContactForm title="Contact us" submit={{ id: "send", label: "Send", disabled: true }} cancel={{ id: "close", label: "Close" }} note="Write a subject">
+      <ContactForm title="Contact us" submit={{ id: "send", label: "Send", disabled: true, reason: "Write a subject" }} cancel={{ id: "close", label: "Close" }} note="Write a subject">
         <FieldRow>
           <FormField as="group" label="Category">
             <span data-slot="product-control" />
@@ -149,16 +150,19 @@ describe("the contact parts", () => {
   });
 
   it("describes a disabled send by the note beside it, and leaves an enabled one undescribed", () => {
-    const form = (submit: { id: string; label: string; disabled?: boolean }, note?: string) =>
+    const form = (submit: SiteActionSpec, note?: string) =>
       renderToStaticMarkup(
         <ContactForm title="Contact us" submit={submit} cancel={{ id: "close", label: "Close" }} {...(note === undefined ? {} : { note })}>
           <span data-slot="product-control" />
         </ContactForm>,
       );
-    const refused = form({ id: "send", label: "Send", disabled: true }, "Questions cannot be sent from here yet");
+    const refused = form({ id: "send", label: "Send", disabled: true, reason: "Write a subject first" }, "Questions cannot be sent from here yet");
     expect(silentRefusals(refused)).toEqual([]);
     expect(bySlot(refused, "site-action")[0]?.attributes["aria-describedby"]).toBe(bySlot(refused, "site-contact-note")[0]?.attributes.id);
-    expect(silentRefusals(form({ id: "send", label: "Send", disabled: true }))).toEqual(["send"]);
+    // Without the note the send is described by its own reason, drawn for a screen reader only.
+    const unnoted = form({ id: "send", label: "Send", disabled: true, reason: "Write a subject first" });
+    expect(bySlot(unnoted, "site-action")[0]?.attributes["aria-describedby"]).toBe(bySlot(unnoted, "site-action-reason")[0]?.attributes.id);
+    expect(silentRefusals(unnoted)).toEqual([]);
     expect(bySlot(form({ id: "send", label: "Send" }, "Write a subject"), "site-action")[0]?.attributes["aria-describedby"]).toBeUndefined();
   });
 

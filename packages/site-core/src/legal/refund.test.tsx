@@ -143,7 +143,7 @@ describe("Walkthrough", () => {
   it("leaves the address out for a reader who is not signed in, and describes a next step that cannot be shown", () => {
     const html = renderToStaticMarkup(
       <>
-        <Walkthrough head="My account" foot={{ text: "Next: Request the refund", action: { id: "next", label: "Next", disabled: true, describedBy: "why" } }}>
+        <Walkthrough head="My account" foot={{ text: "Next: Request the refund", action: { id: "next", label: "Next", disabled: true, reason: "Pick a step first", describedBy: "why" } }}>
           <WalkthroughPages items={[{ key: "receipts", label: "Receipts", current: true }]} />
         </Walkthrough>
         <p id="why">Opens with the receipts.</p>

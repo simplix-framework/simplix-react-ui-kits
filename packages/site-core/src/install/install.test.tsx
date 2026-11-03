@@ -62,10 +62,10 @@ describe("DownloadCard and NoticeCard", () => {
   });
 
   it("describes a disabled download by its file line, which says there is no file yet", () => {
-    const html = renderToStaticMarkup(<DownloadCard title="Windows" body="Windows 10 or later." file="Not available yet" action={{ id: "win", label: "Download for Windows", disabled: true }} />);
+    const html = renderToStaticMarkup(<DownloadCard title="Windows" body="Windows 10 or later." file="Not available yet" action={{ id: "win", label: "Download for Windows", disabled: true, reason: "No installer yet" }} />);
     expect(bySlot(html, "site-action")[0]?.attributes["aria-describedby"]).toBe(bySlot(html, "site-download-file")[0]?.attributes.id);
     expect(silentRefusals(html)).toEqual([]);
-    expect(silentRefusals(renderToStaticMarkup(<DownloadCard title="Windows" body="Windows 10 or later." action={{ id: "win", label: "Download for Windows", disabled: true }} />))).toEqual(["win"]);
+    expect(silentRefusals(renderToStaticMarkup(<DownloadCard title="Windows" body="Windows 10 or later." action={{ id: "win", label: "Download for Windows", disabled: true, reason: "No installer yet" }} />))).toEqual([]);
     const open = renderToStaticMarkup(<DownloadCard title="Windows" body="Windows 10 or later." file="Setup.exe · 64 MB" action={{ id: "win", label: "Download for Windows" }} />);
     expect(bySlot(open, "site-action")[0]?.attributes["aria-describedby"]).toBeUndefined();
   });

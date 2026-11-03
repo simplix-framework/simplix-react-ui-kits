@@ -1,6 +1,7 @@
 import type { MouseEvent, ReactNode } from "react";
 import { slotAttributes } from "@simplix-react/ui/design";
 
+import { type SiteActionState, useRefusal } from "../action/site-action";
 import { SiteLink } from "../link/site-link";
 import { siteBadgeStyle, siteCaptionStyle, siteChipDotStyle, siteChipStyle, siteLiveStyle, siteSpinnerStyle, siteTextActionStyle } from "./site-page.style";
 
@@ -76,30 +77,35 @@ export function SiteBadge({ tone, icon, title, children }: SiteBadgeProps) {
 }
 
 /** Props for {@link SiteTextAction}. */
-export interface SiteTextActionProps {
+export type SiteTextActionProps = SiteActionState & {
   readonly children: ReactNode;
   /** The address it opens; drawn as a link. Without it, or when disabled, it is a button. */
   readonly href?: string;
   readonly onSelect?: (event: MouseEvent<HTMLElement>) => void;
-  readonly disabled?: boolean;
   /** The accessible name, where the words alone repeat elsewhere on the page. */
   readonly name?: string;
   readonly kind?: "link" | "inline" | "muted";
-}
+  /** The id of a line on the page that says more, such as why the action cannot run now. */
+  readonly describedBy?: string;
+};
 
 /** An action written as a link inside text: a link when it opens an address, a button otherwise. */
-export function SiteTextAction({ children, href, onSelect, disabled = false, name, kind }: SiteTextActionProps) {
+export function SiteTextAction({ children, href, onSelect, disabled = false, reason, name, kind, describedBy }: SiteTextActionProps) {
   const marks = slotAttributes(siteTextActionStyle, { kind });
+  const refusal = useRefusal(disabled, reason, describedBy);
   if (href !== undefined && !disabled) {
     return (
-      <SiteLink {...marks} href={href} onClick={onSelect} aria-label={name}>
+      <SiteLink {...marks} href={href} onClick={onSelect} aria-label={name} aria-describedby={describedBy}>
         {children}
       </SiteLink>
     );
   }
   return (
-    <button {...marks} type="button" disabled={disabled} aria-label={name} onClick={onSelect}>
-      {children}
-    </button>
+    <>
+      <button {...marks} type="button" disabled={disabled} aria-label={name} aria-describedby={refusal.describedBy} onClick={onSelect}>
+        {children}
+      </button>
+      {refusal.hidden}
+    </>
   );
 }

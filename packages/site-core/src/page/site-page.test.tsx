@@ -1,7 +1,8 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 
-import { bySlot, tabStops, unmarked } from "../testing/markup";
+import { bySlot, silentRefusals, tabStops, unmarked } from "../testing/markup";
+import { SiteTextAction } from "./site-bits";
 import { SiteBreadcrumb, SitePage, SitePageHead, SiteSection } from "./site-page";
 import { sitePageStyle } from "./site-page.style";
 
@@ -75,5 +76,34 @@ describe("SiteBreadcrumb", () => {
     const html = renderToStaticMarkup(<SiteBreadcrumb steps={[{ key: "home", label: "Home", href: "/" }]} label="Trail" />);
     expect(bySlot(html, "site-breadcrumb-link")).toEqual([]);
     expect(bySlot(html, "site-breadcrumb-separator")).toEqual([]);
+  });
+});
+
+describe("SiteTextAction", () => {
+  it("draws a link with an address and, disabled, a button described by its reason for a screen reader", () => {
+    expect(bySlot(renderToStaticMarkup(<SiteTextAction href="/a">Resend</SiteTextAction>), "site-text-action")[0]?.name).toBe("a");
+    const html = renderToStaticMarkup(
+      <SiteTextAction href="/a" disabled reason="Wait a minute before sending again">
+        Resend
+      </SiteTextAction>,
+    );
+    const action = bySlot(html, "site-text-action")[0];
+    expect(action?.name).toBe("button");
+    expect(action?.attributes["aria-describedby"]).toBe(bySlot(html, "site-action-reason")[0]?.attributes.id);
+    expect(tabStops(html)).toEqual([]);
+    expect(unmarked(html)).toEqual([]);
+    // @ts-expect-error a disabled text action carries the reason it cannot run
+    expect(<SiteTextAction disabled>Resend</SiteTextAction>).toBeDefined();
+  });
+
+  it("is described by the line it names instead of its hidden reason", () => {
+    const html = renderToStaticMarkup(
+      <SiteTextAction disabled reason="Wait a minute" describedBy="why">
+        Resend
+      </SiteTextAction>,
+    );
+    expect(bySlot(html, "site-action-reason")).toEqual([]);
+    expect(bySlot(html, "site-text-action")[0]?.attributes["aria-describedby"]).toBe("why");
+    expect(silentRefusals(html)).toEqual([]);
   });
 });

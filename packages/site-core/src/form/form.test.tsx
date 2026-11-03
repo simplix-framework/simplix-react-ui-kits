@@ -2,7 +2,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { Dialog } from "@simplix-react/ui";
 import { describe, expect, it } from "vitest";
 
-import { bySlot, tabStops, tagsOf, unmarked } from "../testing/markup";
+import { bySlot, silentRefusals, tabStops, tagsOf, unmarked } from "../testing/markup";
 import { RadioCards, SiteCheckbox, SiteSwitch } from "./choices";
 import { CodeField } from "./code-field";
 import { ConfirmByTyping, typedConfirms } from "./confirm-by-typing";
@@ -139,7 +139,7 @@ describe("CodeField", () => {
 });
 
 describe("ConfirmByTyping", () => {
-  const actions = { confirm: { id: "delete", label: "Delete" }, cancel: { id: "cancel", label: "Cancel" } };
+  const actions = { confirm: { id: "delete", label: "Delete", reason: "Type DELETE to delete" }, cancel: { id: "cancel", label: "Cancel" } };
 
   it("confirms only on the word, ignoring the space around it", () => {
     expect(typedConfirms(" DELETE ", "DELETE")).toBe(true);
@@ -158,6 +158,18 @@ describe("ConfirmByTyping", () => {
     const ready = renderToStaticMarkup(<ConfirmByTyping title="Delete my voice" label="Type DELETE" word="DELETE" value="DELETE" onValueChange={() => {}} {...actions} />);
     expect(bySlot(ready, "site-action").find((tag) => tag.attributes["data-action"] === "delete")?.attributes.disabled).toBeUndefined();
     expect(ownUnmarked(waiting)).toEqual([]);
+  });
+
+  it("describes the waiting deletion by its reason, and drops the reason once the word is typed", () => {
+    const waiting = renderToStaticMarkup(<ConfirmByTyping title="Delete my voice" label="Type DELETE" word="DELETE" value="" onValueChange={() => {}} {...actions} />);
+    const confirm = bySlot(waiting, "site-action").find((tag) => tag.attributes["data-action"] === "delete");
+    expect(confirm?.attributes["aria-describedby"]).toBe(bySlot(waiting, "site-action-reason")[0]?.attributes.id);
+    expect(waiting).toContain(">Type DELETE to delete</span>");
+    expect(silentRefusals(waiting)).toEqual([]);
+    const ready = renderToStaticMarkup(<ConfirmByTyping title="Delete my voice" label="Type DELETE" word="DELETE" value="DELETE" onValueChange={() => {}} {...actions} />);
+    expect(bySlot(ready, "site-action-reason")).toEqual([]);
+    // @ts-expect-error the deletion carries the reason it waits for
+    expect(<ConfirmByTyping title="T" label="L" word="W" value="" onValueChange={() => {}} confirm={{ id: "delete", label: "Delete" }} cancel={{ id: "cancel", label: "Cancel" }} />).toBeDefined();
   });
 
   it("draws a plain card with its points as a list and the field's name muted", () => {

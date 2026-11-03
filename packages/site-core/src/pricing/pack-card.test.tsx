@@ -62,7 +62,7 @@ describe("PackCard", () => {
   });
 
   it("describes a disabled action by the reason drawn under it", () => {
-    const html = pack({ action: { id: "top-up", label: "Top up credits", disabled: true }, reason: "Extra credits need Pro or Pro+. Pick a plan first." });
+    const html = pack({ action: { id: "top-up", label: "Top up credits", disabled: true, reason: "Extra credits need Pro or Pro+." }, reason: "Extra credits need Pro or Pro+. Pick a plan first." });
     const action = bySlot(html, "site-action")[0];
     const reason = bySlot(html, "site-pack-card-reason")[0];
     expect(action?.name).toBe("button");

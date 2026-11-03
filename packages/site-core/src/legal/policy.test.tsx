@@ -59,7 +59,7 @@ describe("RightsGrid", () => {
       <RightsGrid
         reason="Opens with the account pages."
         items={[
-          { key: "data", title: "See my data", text: "We bundle your records.", action: { id: "data", label: "My data", disabled: true } },
+          { key: "data", title: "See my data", text: "We bundle your records.", action: { id: "data", label: "My data", disabled: true, reason: "Opens once accounts are live" } },
           { key: "fix", title: "Correct", text: "Change your email.", action: { id: "fix", label: "Sign-in", href: "/me" } },
         ]}
       />,
@@ -73,13 +73,15 @@ describe("RightsGrid", () => {
   it("describes a right that cannot be used yet by the line that says why", () => {
     const described = renderToStaticMarkup(
       <>
-        <RightsGrid items={[{ key: "data", title: "See my data", text: "We bundle your records.", action: { id: "data", label: "My account › My data", disabled: true, describedBy: "why" } }]} />
+        <RightsGrid items={[{ key: "data", title: "See my data", text: "We bundle your records.", action: { id: "data", label: "My account › My data", disabled: true, reason: "Opens once accounts are live", describedBy: "why" } }]} />
         <p id="why">Opens with the account pages.</p>
       </>,
     );
     expect(silentRefusals(described)).toEqual([]);
-    const silent = renderToStaticMarkup(<RightsGrid items={[{ key: "data", title: "See my data", text: "We bundle your records.", action: { id: "data", label: "My account › My data", disabled: true } }]} />);
-    expect(silentRefusals(silent)).toEqual(["data"]);
+    const silent = renderToStaticMarkup(<RightsGrid items={[{ key: "data", title: "See my data", text: "We bundle your records.", action: { id: "data", label: "My account › My data", disabled: true, reason: "Opens once accounts are live" } }]} />);
+    // Without a line on the page the action is described by its own reason, drawn for a screen reader only.
+    expect(silentRefusals(silent)).toEqual([]);
+    expect(bySlot(silent, "site-action")[0]?.attributes["aria-describedby"]).toBe(bySlot(silent, "site-action-reason")[0]?.attributes.id);
   });
 
   it("draws each right as a card with its title, words and a small action", () => {
@@ -111,18 +113,20 @@ describe("InfoCard", () => {
 
   it("describes a disabled action by its reason line, and draws no line for an action that runs", () => {
     const off = renderToStaticMarkup(
-      <InfoCard title="Business information" action={{ id: "verify", label: "Check business details", tone: "quiet", disabled: true }} reason="Checked once registration is done.">
+      <InfoCard title="Business information" action={{ id: "verify", label: "Check business details", tone: "quiet", disabled: true, reason: "Checked once registration is done." }} reason="Checked once registration is done.">
         {rows}
       </InfoCard>,
     );
     expect(silentRefusals(off)).toEqual([]);
     expect(bySlot(off, "site-caption")).toHaveLength(1);
     const silent = renderToStaticMarkup(
-      <InfoCard title="Business information" action={{ id: "verify", label: "Check business details", tone: "quiet", disabled: true }}>
+      <InfoCard title="Business information" action={{ id: "verify", label: "Check business details", tone: "quiet", disabled: true, reason: "Checked once registration is done." }}>
         {rows}
       </InfoCard>,
     );
-    expect(silentRefusals(silent)).toEqual(["verify"]);
+    // Without a line on the page the action is described by its own reason, drawn for a screen reader only.
+    expect(silentRefusals(silent)).toEqual([]);
+    expect(bySlot(silent, "site-action")[0]?.attributes["aria-describedby"]).toBe(bySlot(silent, "site-action-reason")[0]?.attributes.id);
     const on = renderToStaticMarkup(
       <InfoCard title="Support" action={{ id: "contact", label: "Contact us", tone: "primary", href: "/help" }} reason="Never shown">
         {rows}

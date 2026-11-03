@@ -47,3 +47,14 @@ export function actionPad(tone: "primary" | "secondary" | "quiet" | "subtle" | "
   if (tone !== "quiet" && tone !== "subtle") return "size";
   return size === "sm" ? "quietSm" : "quietMd";
 }
+
+/**
+ * Why a disabled action cannot run, for a screen reader only, where the page draws no line that says
+ * so; the action is described by it. It is taken out of the layout, so it moves nothing beside it.
+ */
+export const siteActionReasonStyle = defineSlotStyle({
+  slot: "site-action-reason",
+  base: "sr-only",
+  variants: {},
+  defaultVariants: {},
+});

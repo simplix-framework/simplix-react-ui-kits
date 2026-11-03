@@ -1,7 +1,7 @@
 import { useId, type ReactNode } from "react";
 import { slotAttributes } from "@simplix-react/ui/design";
 
-import { SiteAction, type SiteActionSpec } from "../action/site-action";
+import { SiteAction, type SiteActionSpec, type SiteReason } from "../action/site-action";
 import { siteSpacerStyle } from "../shell/site-shell.style";
 import {
   siteFeatureLabelStyle,
@@ -83,10 +83,11 @@ export interface PlanCardProps {
   /** The mark on the offer most people choose ("Most chosen"); the card is drawn in the accent. */
   readonly highlight?: ReactNode;
   /**
-   * The signed-in account's offer: what the card says in place of its actions ("Your plan"), drawn
-   * as a disabled action across the card.
+   * The signed-in account's offer: what the card says in place of its actions (`label`, "Your plan"),
+   * drawn as a disabled action across the card, and why it cannot be chosen (`reason`, "This is the
+   * plan you are on"), read after it.
    */
-  readonly current?: ReactNode;
+  readonly current?: { readonly label: ReactNode; readonly reason: SiteReason };
   /** The card's actions, the strongest first; ignored on the current offer. */
   readonly actions?: readonly SiteActionSpec[];
   /**
@@ -123,7 +124,7 @@ export function PlanCard({ name, price, unit, note, pitch, detail, features, hig
       <span {...slotAttributes(siteSpacerStyle, {})} aria-hidden="true" />
       <div {...slotAttributes(sitePlanCardActionsStyle, {})}>
         {isCurrent ? (
-          <SiteAction id="current" label={current} disabled block />
+          <SiteAction id="current" label={current.label} disabled reason={current.reason} block />
         ) : (
           actions.map((action) => <SiteAction key={action.id} {...action} describedBy={action.describedBy ?? (action.disabled === true && hasReason ? reasonId : undefined)} block />)
         )}

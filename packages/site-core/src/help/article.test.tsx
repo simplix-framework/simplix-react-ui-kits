@@ -146,13 +146,16 @@ describe("the article parts", () => {
         <FeedbackPanel
           label="Was this helpful?"
           ask={{ question: "Was this helpful?", answers: [{ id: "no", label: "No", pressed: true }] }}
-          more={{ label: "What was missing?", reasons: [{ id: "a", label: "Hard to follow" }], actions: [{ id: "send", label: "Send", tone: "primary", disabled: true }], ...(note === undefined ? {} : { note }) }}
+          more={{ label: "What was missing?", reasons: [{ id: "a", label: "Hard to follow" }], actions: [{ id: "send", label: "Send", tone: "primary", disabled: true, reason: "Pick what was missing first" }], ...(note === undefined ? {} : { note }) }}
         />,
       );
     const noted = panel("Answers are not recorded yet");
     expect(silentRefusals(noted)).toEqual([]);
     expect(bySlot(noted, "site-action").find((action) => action.attributes["data-action"] === "send")?.attributes["aria-describedby"]).toBeDefined();
-    expect(silentRefusals(panel())).toEqual(["send"]);
+    const unnoted = panel();
+    // Without the note the send is described by its own reason, drawn for a screen reader only.
+    expect(silentRefusals(unnoted)).toEqual([]);
+    expect(bySlot(unnoted, "site-action").find((action) => action.attributes["data-action"] === "send")?.attributes["aria-describedby"]).toBe(bySlot(unnoted, "site-action-reason")[0]?.attributes.id);
   });
 
   it("links the related articles two to a row, one below the narrow tier", () => {

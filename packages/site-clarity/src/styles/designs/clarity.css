@@ -166,6 +166,9 @@
   [data-slot="site-table-card-th"][data-end="true"][data-s-site-table-card-th] {
     @apply text-right;
   }
+  [data-slot="site-action-reason"][data-slot][data-s-site-action-reason] {
+    @apply sr-only;
+  }
   [data-slot="site-action"][data-slot][data-s-site-action] {
     @apply inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-(--site-radius-md) border border-transparent font-(family-name:--site-font-sans) font-(--site-fw-strong) no-underline outline-none transition-colors duration-(--site-duration-fast) ease-(--site-ease);
   }
