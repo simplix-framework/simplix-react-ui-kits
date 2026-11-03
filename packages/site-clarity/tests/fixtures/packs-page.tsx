@@ -8,7 +8,7 @@ import { SitePage } from "@simplix-react-ui-kits/site-core/page";
 import { SiteBar, SiteFooter, SiteWindow } from "@simplix-react-ui-kits/site-core/shell";
 
 import copyFile from "./packs-copy.json";
-import { glyph, languagePlace, type Locale, shellCopy, themePlace, visitorActions } from "./shell-copy";
+import { glyph, languagePlace, type Locale, shellCopy } from "./shell-copy";
 
 /** What the packs view is drawn with: a reference story, in a language. */
 export interface PacksFixtureProps {
@@ -59,11 +59,11 @@ export function PacksFixture({ locale = "en", story = "visitor" }: PacksFixtureP
             { key: "download", label: shell.download, href: "/download" },
             { key: "help", label: shell.help, href: "/help" },
           ]}
-          actions={data.signedIn ? undefined : visitorActions(shell)}
+          action={data.signedIn ? undefined : { id: "start", label: shell.startFree, href: "/signup" }}
           account={data.signedIn ? { label: shell.myAccount, name: "Taylor", href: "/account" } : undefined}
         />
       }
-      footer={<SiteFooter owner={shell.company} linksLabel={shell.legal} links={shell.footerLinks} language={data.language ? languagePlace : undefined} theme={data.language ? themePlace(locale) : undefined} />}
+      footer={<SiteFooter owner={shell.company} linksLabel={shell.legal} links={shell.footerLinks} language={data.language ? languagePlace : undefined} />}
     >
       <SitePage>
         <PackSection heading={data.title} lede={data.lede} note={data.note}>
@@ -76,7 +76,7 @@ export function PacksFixture({ locale = "en", story = "visitor" }: PacksFixtureP
               about={pack.about}
               meter={{ share: pack.share, label: pack.meterLabel, amount: pack.amount, talk: pack.talk }}
               terms={pack.terms}
-              action={{ id: `pack-${String(index)}`, label: pack.action.label, href: pack.action.href, disabled: pack.action.disabled }}
+              action={pack.action.disabled ? { id: `pack-${String(index)}`, label: pack.action.label, disabled: true, reason: pack.reason ?? pack.action.label } : { id: `pack-${String(index)}`, label: pack.action.label, href: pack.action.href }}
               reason={pack.reason}
             />
           ))}
