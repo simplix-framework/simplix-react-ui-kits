@@ -53,6 +53,15 @@ export interface ConsoleProvidersProps {
    * in each look. The console apps leave it at its default and keep the surface.
    */
   readonly drawToasts?: boolean;
+  /**
+   * Whether the stack mounts the console's error dialog, which draws the framework's error store
+   * (`dispatchError`, fed by the console query client).
+   *
+   * <p>A product that draws the error store with a dialog of its own, such as a customer site's,
+   * passes `false`: with both mounted every failure is told twice, once in each look. The console
+   * apps leave it at its default and keep the dialog.
+   */
+  readonly drawErrors?: boolean;
   /** Whatever the app mounts inside its own providers — a router, a shell. */
   readonly children: ReactNode;
 }
@@ -93,6 +102,7 @@ export function ConsoleProviders({
   design = CLASSIC_DESIGN,
   defaults: installationDefaults,
   drawToasts = true,
+  drawErrors = true,
   children,
 }: ConsoleProvidersProps) {
   const { prefs } = useDisplayPreferences();
@@ -117,7 +127,7 @@ export function ConsoleProviders({
                     <ConsoleDesignContext.Provider value={design}>{children}</ConsoleDesignContext.Provider>
                   </ConsoleProductProvider>
                 </TilesCollapseProvider>
-                <ErrorDialog />
+                {drawErrors ? <ErrorDialog /> : null}
                 {drawToasts ? <ToastContainer /> : null}
               </UIProvider>
             </TooltipProvider>

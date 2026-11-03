@@ -14,7 +14,7 @@ vi.mock("@simplix-react/ui", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@simplix-react/ui")>()),
   ToastContainer: () => <i data-toast-surface="" />,
 }));
-vi.mock("../error", () => ({ ErrorDialog: () => null }));
+vi.mock("../error", () => ({ ErrorDialog: () => <i data-error-surface="" /> }));
 vi.mock("./display-preferences", () => ({
   useDisplayPreferences: () => ({ prefs: {} }),
   useAppliedFill: () => undefined,
@@ -25,7 +25,7 @@ vi.mock("../layout/tiles-collapse", () => ({ TilesCollapseProvider: passThrough 
 const { ConsoleProviders } = await import("./console-providers");
 
 
-function draw(drawToasts?: boolean): string {
+function draw(drawToasts?: boolean, drawErrors?: boolean): string {
   const props = {
     namespace: "test",
     i18nAdapter: {},
@@ -34,6 +34,7 @@ function draw(drawToasts?: boolean): string {
     queryClient: {},
     product: { subjects: {}, brand: null },
     ...(drawToasts === undefined ? {} : { drawToasts }),
+    ...(drawErrors === undefined ? {} : { drawErrors }),
   } as unknown as Parameters<typeof ConsoleProviders>[0];
   return renderToStaticMarkup(<ConsoleProviders {...props}>page</ConsoleProviders>);
 }
@@ -51,5 +52,18 @@ describe("ConsoleProviders toast surface", () => {
     const markup = draw(false);
     expect(markup).not.toContain("data-toast-surface");
     expect(markup).toContain("page");
+  });
+});
+
+describe("ConsoleProviders error dialog", () => {
+  it("mounts the console's error dialog by default and when asked to", () => {
+    expect(draw()).toContain("data-error-surface");
+    expect(draw(undefined, true)).toContain("data-error-surface");
+  });
+
+  it("mounts no error dialog when the product draws the error store itself, so no failure is told twice", () => {
+    const markup = draw(undefined, false);
+    expect(markup).not.toContain("data-error-surface");
+    expect(markup).toContain("data-toast-surface");
   });
 });
