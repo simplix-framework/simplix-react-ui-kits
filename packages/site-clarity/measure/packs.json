@@ -1,5 +1,5 @@
 {
- "$comment": "The presentation packs view (the packs region only) as the reference draws it, per story, language and width: read through stand-in selectors from Web/Billing/Presentation packs; the bar and footer are left out because the reference shell draws a sign-in action and a theme picker the kit shell does not yet have.",
+ "$comment": "The presentation packs view (the packs region only) as the reference draws it, per story, language and width: read through stand-in selectors from Web/Billing/Presentation packs. It is recorded without the bar and footer, because the reference shell now draws a sign-in action and a theme picker the kit shell does not have yet; once the kit shell draws them, these pages are recorded again whole.",
  "measuredOn": "2026-11-03",
  "pages": {
   "visitor-1440-en": {
