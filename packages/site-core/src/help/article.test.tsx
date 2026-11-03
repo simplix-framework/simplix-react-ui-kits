@@ -138,6 +138,8 @@ describe("the article parts", () => {
     const thanked = renderToStaticMarkup(<FeedbackPanel label="Was this helpful?" status="Thanks" thanks={{ title: "Thanks.", text: "We read every answer." }} />);
     expect(bySlot(thanked, "site-feedback-thanks")).toHaveLength(1);
     expect(bySlot(thanked, "site-feedback-row")).toEqual([]);
+    // The answers are gone with their row, so the thanks can take the focus in their place.
+    expect(bySlot(thanked, "site-feedback-more")[0]?.attributes.tabindex).toBe("-1");
   });
 
   it("describes a disabled send after a no by the note under the actions", () => {

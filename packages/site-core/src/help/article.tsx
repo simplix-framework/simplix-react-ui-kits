@@ -1,4 +1,4 @@
-import { type MouseEvent, type ReactNode, useId } from "react";
+import { type MouseEvent, type ReactNode, useEffect, useId, useRef } from "react";
 import { slotAttributes } from "@simplix-react/ui/design";
 
 import { SiteAction, type SiteActionSpec } from "../action/site-action";
@@ -235,18 +235,7 @@ export function FeedbackPanel({ label, status, ask, more, thanks }: FeedbackPane
     <section {...slotAttributes(siteFeedbackStyle, {})} aria-label={label}>
       <SiteLive>{status}</SiteLive>
       {thanks !== undefined ? (
-        <div {...slotAttributes(siteFeedbackMoreStyle, {})}>
-          <p {...slotAttributes(siteFeedbackThanksStyle, {})}>
-            {thanks.mark}
-            <b {...slotAttributes(siteFeedbackAskStyle, {})}>{thanks.title}</b>
-            {thanks.text}
-          </p>
-          {thanks.action !== undefined ? (
-            <span {...slotAttributes(siteDocActionStyle, {})}>
-              <SiteAction {...thanks.action} size="sm" />
-            </span>
-          ) : null}
-        </div>
+        <FeedbackThanks thanks={thanks} />
       ) : (
         <>
           {ask !== undefined ? (
@@ -280,6 +269,31 @@ export function FeedbackPanel({ label, status, ask, more, thanks }: FeedbackPane
         </>
       )}
     </section>
+  );
+}
+
+/**
+ * The thanks in place of the answers just pressed. The pressed answer is gone with the row it sat in,
+ * so the thanks takes the focus as it appears and the reader is not left on the page's body.
+ */
+function FeedbackThanks({ thanks }: { readonly thanks: NonNullable<FeedbackPanelProps["thanks"]> }) {
+  const self = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    self.current?.focus();
+  }, []);
+  return (
+    <div ref={self} {...slotAttributes(siteFeedbackMoreStyle, {})} tabIndex={-1}>
+      <p {...slotAttributes(siteFeedbackThanksStyle, {})}>
+        {thanks.mark}
+        <b {...slotAttributes(siteFeedbackAskStyle, {})}>{thanks.title}</b>
+        {thanks.text}
+      </p>
+      {thanks.action !== undefined ? (
+        <span {...slotAttributes(siteDocActionStyle, {})}>
+          <SiteAction {...thanks.action} size="sm" />
+        </span>
+      ) : null}
+    </div>
   );
 }
 

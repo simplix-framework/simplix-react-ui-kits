@@ -649,7 +649,8 @@ export const siteFeedbackAskStyle = defineSlotStyle({
 /** What was missing, after a no: the reasons to pick and the actions. */
 export const siteFeedbackMoreStyle = defineSlotStyle({
   slot: "site-feedback-more",
-  base: "flex min-w-0 flex-col gap-2",
+  // The thanks takes the focus as it replaces the answers; the focus is the reader's place, not a control.
+  base: "flex min-w-0 flex-col gap-2 outline-none",
   variants: {},
   defaultVariants: {},
 });
