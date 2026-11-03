@@ -6,5 +6,5 @@ export { LegalTable } from "./legal-table";
 export type { LegalTableProps } from "./legal-table";
 export { AgencyGrid, GlanceGrid, LegalSection, RightsGrid } from "./policy-parts";
 export type { AgencyGridProps, GlanceGridProps, LegalSectionProps, RightsGridProps, SiteAgency, SiteGlance, SiteRight } from "./policy-parts";
-export { rangeShare, RefundCalculator, RefundHow, RefundProduct, RefundRule, SiteRange, Walkthrough, WalkthroughMenu, WalkthroughPages } from "./refund-parts";
-export type { RefundCalculatorProps, RefundHowProps, RefundProductProps, RefundRuleProps, SiteRangeProps, SiteRefundKind, SiteStepPick, SiteWalkthroughEntry, WalkthroughMenuProps, WalkthroughPagesProps, WalkthroughProps } from "./refund-parts";
+export { RefundCalculator, RefundHow, RefundProduct, RefundRule, Walkthrough, WalkthroughMenu, WalkthroughPages } from "./refund-parts";
+export type { RefundCalculatorProps, RefundHowProps, RefundProductProps, RefundRuleProps, SiteRefundKind, SiteStepPick, SiteWalkthroughEntry, WalkthroughMenuProps, WalkthroughPagesProps, WalkthroughProps } from "./refund-parts";

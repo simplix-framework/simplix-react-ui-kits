@@ -174,47 +174,6 @@ export const siteRefundCalcAmountStyle = defineSlotStyle({
   defaultVariants: {},
 });
 
-/** A value on a track: the track and its filled share drawn as parts, the browser's range over them. */
-export const siteRangeStyle = defineSlotStyle({
-  slot: "site-range",
-  base: "relative flex h-5 w-full min-w-0 flex-1 items-center",
-  variants: {
-    disabled: {
-      true: "opacity-(--site-dim)",
-      false: "",
-    },
-  },
-  defaultVariants: { disabled: false },
-});
-
-/** The range's track, sunken with a hairline. */
-export const siteRangeTrackStyle = defineSlotStyle({
-  slot: "site-range-track",
-  base: "relative block h-1 w-full overflow-hidden rounded-(--site-radius-full) bg-(--site-surface-sunken) ring-1 ring-(--site-line) ring-inset",
-  variants: {},
-  defaultVariants: {},
-});
-
-/** The share of the track up to the value, in the accent. */
-export const siteRangeFillStyle = defineSlotStyle({
-  slot: "site-range-fill",
-  base: "absolute inset-y-0 left-0 block rounded-(--site-radius-full) bg-(--site-accent)",
-  variants: {},
-  defaultVariants: {},
-});
-
-/**
- * The browser's range laid over the track: its own track is clear, so only its thumb shows, a ringed
- * disc that grows a little while it is held. It takes the keyboard and shows the focus ring.
- */
-export const siteRangeInputStyle = defineSlotStyle({
-  slot: "site-range-input",
-  base:
-    "absolute inset-0 m-0 h-full w-full cursor-pointer appearance-none rounded-(--site-radius-full) bg-transparent outline-none focus-visible:shadow-[var(--site-focus-ring)] disabled:cursor-not-allowed [&::-webkit-slider-runnable-track]:bg-transparent [&::-webkit-slider-thumb]:size-4 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-(--site-radius-full) [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-solid [&::-webkit-slider-thumb]:border-(--site-accent) [&::-webkit-slider-thumb]:bg-(--site-surface) [&::-webkit-slider-thumb]:transition-transform [&::-webkit-slider-thumb]:duration-(--site-duration-fast) active:[&::-webkit-slider-thumb]:scale-110 [&::-moz-range-track]:bg-transparent [&::-moz-range-thumb]:size-3 [&::-moz-range-thumb]:rounded-(--site-radius-full) [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-solid [&::-moz-range-thumb]:border-(--site-accent) [&::-moz-range-thumb]:bg-(--site-surface)",
-  variants: {},
-  defaultVariants: {},
-});
-
 /** How to ask for a refund: the steps beside the screen that shows them; one under the other below the medium tier. */
 export const siteRefundHowStyle = defineSlotStyle({
   slot: "site-refund-how",

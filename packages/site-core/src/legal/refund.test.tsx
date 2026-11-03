@@ -2,7 +2,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 
 import { bySlot, silentRefusals, tabStops, unmarked } from "../testing/markup";
-import { rangeShare, RefundCalculator, RefundHow, RefundProduct, RefundRule, SiteRange, Walkthrough, WalkthroughMenu, WalkthroughPages } from "./refund-parts";
+import { RefundCalculator, RefundHow, RefundProduct, RefundRule, Walkthrough, WalkthroughMenu, WalkthroughPages } from "./refund-parts";
 
 const noop = () => {};
 
@@ -20,26 +20,6 @@ describe("the refund table's cells", () => {
     expect(bySlot(html, "site-refund-note")).toHaveLength(1);
     expect(bySlot(renderToStaticMarkup(<RefundRule kind="full" label="Full refund" />), "site-refund-note")).toHaveLength(0);
     expect(unmarked(html)).toEqual([]);
-  });
-});
-
-describe("SiteRange", () => {
-  it("fills the track up to the value and reads it out in words", () => {
-    const html = renderToStaticMarkup(<SiteRange label="Months used" valueText={(n) => `${String(n)} months`} min={1} max={12} value={4} onValueChange={noop} />);
-    const input = bySlot(html, "site-range-input")[0];
-    expect(input?.attributes.type).toBe("range");
-    expect(input?.attributes["aria-label"]).toBe("Months used");
-    expect(input?.attributes["aria-valuetext"]).toBe("4 months");
-    expect(bySlot(html, "site-range-fill")[0]?.attributes.style).toBe(`width:${String((3 / 11) * 100)}%`);
-    expect(unmarked(html)).toEqual([]);
-  });
-
-  it("keeps the share between the ends whatever the value", () => {
-    expect(rangeShare(1, 1, 12)).toBe(0);
-    expect(rangeShare(12, 1, 12)).toBe(1);
-    expect(rangeShare(40, 1, 12)).toBe(1);
-    expect(rangeShare(-3, 1, 12)).toBe(0);
-    expect(rangeShare(5, 5, 5)).toBe(0);
   });
 });
 
@@ -65,6 +45,17 @@ describe("RefundCalculator", () => {
     expect(bySlot(html, "site-refund-bar-used")[0]?.attributes.style).toBe("flex-basis:25%");
     expect(bySlot(html, "site-refund-bar")[0]?.attributes["aria-hidden"]).toBe("true");
     expect(unmarked(html)).toEqual([]);
+  });
+
+  it("draws the months used on the site slider between the row's words and the months chosen", () => {
+    const html = renderToStaticMarkup(<RefundCalculator {...props} announce={null} />);
+    const order = ["site-refund-calc-label", "site-slider", "site-refund-calc-output"].map((slot) => html.indexOf(`data-slot="${slot}"`));
+    expect(order.every((at, i) => at > -1 && (i === 0 || at > (order[i - 1] ?? 0)))).toBe(true);
+    const thumb = bySlot(html, "site-slider-thumb")[0];
+    expect(thumb?.attributes.role).toBe("slider");
+    expect(thumb?.attributes["aria-label"]).toBe("Months used");
+    expect(thumb?.attributes["aria-valuenow"]).toBe("3");
+    expect(html).not.toContain('type="range"');
   });
 
   it("speaks the amount only once the reader moved something", () => {

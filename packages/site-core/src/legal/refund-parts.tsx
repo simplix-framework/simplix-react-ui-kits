@@ -2,13 +2,10 @@ import type { MouseEvent, ReactNode } from "react";
 import { slotAttributes } from "@simplix-react/ui/design";
 
 import { SiteAction, type SiteActionSpec } from "../action/site-action";
+import { SiteSlider, type SiteSliderProps } from "../form/slider";
 import { SiteLive } from "../page/site-bits";
 import { siteCaptionStyle } from "../page/site-page.style";
 import {
-  siteRangeFillStyle,
-  siteRangeInputStyle,
-  siteRangeStyle,
-  siteRangeTrackStyle,
   siteRefundBarBackStyle,
   siteRefundBarStyle,
   siteRefundBarUsedStyle,
@@ -92,52 +89,6 @@ export function RefundRule({ kind, label, note }: RefundRuleProps) {
   );
 }
 
-/** Props for {@link SiteRange}. */
-export interface SiteRangeProps {
-  /** The range's name for a screen reader. */
-  readonly label: string;
-  /** How a screen reader reads a value ("3 months"). */
-  readonly valueText?: (value: number) => string;
-  readonly min: number;
-  readonly max: number;
-  readonly step?: number;
-  readonly value: number;
-  readonly onValueChange: (value: number) => void;
-  readonly disabled?: boolean;
-}
-
-/** The share of the track a value fills, from 0 to 1. */
-export function rangeShare(value: number, min: number, max: number): number {
-  if (max <= min) return 0;
-  return Math.min(1, Math.max(0, (value - min) / (max - min)));
-}
-
-/**
- * A value on a track: a sunken track filled in the accent up to the value, and the browser's range over
- * it, which draws the thumb, takes the arrow keys and shows the focus ring.
- */
-export function SiteRange({ label, valueText, min, max, step = 1, value, onValueChange, disabled = false }: SiteRangeProps) {
-  return (
-    <span {...slotAttributes(siteRangeStyle, { disabled })}>
-      <span {...slotAttributes(siteRangeTrackStyle, {})}>
-        <i {...slotAttributes(siteRangeFillStyle, {})} style={{ width: `${String(rangeShare(value, min, max) * 100)}%` }} />
-      </span>
-      <input
-        {...slotAttributes(siteRangeInputStyle, {})}
-        type="range"
-        aria-label={label}
-        aria-valuetext={valueText?.(value)}
-        min={min}
-        max={max}
-        step={step}
-        value={value}
-        disabled={disabled}
-        onChange={(event) => onValueChange(Number(event.currentTarget.value))}
-      />
-    </span>
-  );
-}
-
 /** Props for {@link RefundCalculator}. */
 export interface RefundCalculatorProps {
   /** The question the card answers; it also names the card. */
@@ -146,7 +97,8 @@ export interface RefundCalculatorProps {
   readonly choice: ReactNode;
   /** The time used's words. */
   readonly usedLabel: ReactNode;
-  readonly range: SiteRangeProps;
+  /** The months used, on a slider. */
+  readonly range: SiteSliderProps;
   /** The months chosen, in words. */
   readonly output: ReactNode;
   /** The share of the year used, from 0 to 1, which the bar splits at. */
@@ -174,7 +126,7 @@ export function RefundCalculator({ title, choice, usedLabel, range, output, used
       </div>
       <div {...slotAttributes(siteRefundCalcRowStyle, {})}>
         <span {...slotAttributes(siteRefundCalcLabelStyle, {})}>{usedLabel}</span>
-        <SiteRange {...range} />
+        <SiteSlider {...range} />
         <output {...slotAttributes(siteRefundCalcOutputStyle, {})}>{output}</output>
       </div>
       <div {...slotAttributes(siteRefundBarStyle, {})} aria-hidden="true">

@@ -1618,21 +1618,6 @@
   [data-slot="site-rights-title"][data-slot][data-s-site-rights-title] {
     @apply font-(--site-fw-strong);
   }
-  [data-slot="site-range-fill"][data-slot][data-s-site-range-fill] {
-    @apply absolute inset-y-0 left-0 block rounded-(--site-radius-full) bg-(--site-accent);
-  }
-  [data-slot="site-range-input"][data-slot][data-s-site-range-input] {
-    @apply absolute inset-0 m-0 h-full w-full cursor-pointer appearance-none rounded-(--site-radius-full) bg-transparent outline-none;
-  }
-  [data-slot="site-range"][data-slot][data-s-site-range] {
-    @apply relative flex h-5 w-full min-w-0 flex-1 items-center;
-  }
-  [data-slot="site-range"][data-disabled="true"][data-s-site-range] {
-    @apply opacity-(--site-dim);
-  }
-  [data-slot="site-range-track"][data-slot][data-s-site-range-track] {
-    @apply relative block h-1 w-full overflow-hidden rounded-(--site-radius-full) bg-(--site-surface-sunken) ring-1 ring-(--site-line) ring-inset;
-  }
   [data-slot="site-refund-bar-back"][data-slot][data-s-site-refund-bar-back] {
     @apply grid flex-1 place-items-center bg-(--site-good-soft) font-(--site-fw-strong) not-italic text-(--site-good);
   }
@@ -2651,9 +2636,6 @@
   }
   :where([data-slot="site-rights-grid"])[data-s-site-rights-grid] {
     @apply @max-page-narrow/page:grid-cols-1;
-  }
-  :where([data-slot="site-range-input"])[data-s-site-range-input] {
-    @apply focus-visible:shadow-[var(--site-focus-ring)] disabled:cursor-not-allowed [&::-webkit-slider-runnable-track]:bg-transparent [&::-webkit-slider-thumb]:size-4 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-(--site-radius-full) [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-solid [&::-webkit-slider-thumb]:border-(--site-accent) [&::-webkit-slider-thumb]:bg-(--site-surface) [&::-webkit-slider-thumb]:transition-transform [&::-webkit-slider-thumb]:duration-(--site-duration-fast) active:[&::-webkit-slider-thumb]:scale-110 [&::-moz-range-track]:bg-transparent [&::-moz-range-thumb]:size-3 [&::-moz-range-thumb]:rounded-(--site-radius-full) [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-solid [&::-moz-range-thumb]:border-(--site-accent) [&::-moz-range-thumb]:bg-(--site-surface);
   }
   :where([data-slot="site-refund-how"])[data-s-site-refund-how] {
     @apply @max-page-medium/page:grid-cols-1;
