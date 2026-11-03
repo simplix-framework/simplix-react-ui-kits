@@ -410,6 +410,30 @@ export const siteProviderBodyStyle = defineSlotStyle({
   defaultVariants: {},
 });
 
+/** What our page says in the provider's place before the provider draws there: centred, with room above and below. */
+export const siteProviderWaitingStyle = defineSlotStyle({
+  slot: "site-provider-waiting",
+  base: "flex flex-col items-center gap-3 py-10 text-center",
+  variants: {},
+  defaultVariants: {},
+});
+
+/** The element a provider's script draws its frame into: the body's whole width, no look of its own. */
+export const siteProviderTargetStyle = defineSlotStyle({
+  slot: "site-provider-target",
+  base: "min-w-0 w-full",
+  variants: {},
+  defaultVariants: {},
+});
+
+/** The waiting place's sentence, muted and kept to a narrow measure. */
+export const siteProviderWaitingTextStyle = defineSlotStyle({
+  slot: "site-provider-waiting-text",
+  base: "m-0 max-w-xs text-(length:--site-fs-caption) leading-(--site-lh-caption) font-(--site-fw-caption) text-(--site-ink-muted)",
+  variants: {},
+  defaultVariants: {},
+});
+
 /** Ways to pay in two columns; the first or a lone one may span both. */
 export const siteMethodGridStyle = defineSlotStyle({
   slot: "site-method-grid",

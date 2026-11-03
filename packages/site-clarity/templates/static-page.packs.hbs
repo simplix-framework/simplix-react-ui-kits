@@ -1,0 +1,36 @@
+/**
+ * @simplix-generated page/site-packs-page
+ *
+ * One-off packs offered beside the plans, laid down from the site-clarity kit's `static-page.packs.hbs`
+ * as the whole page: the page column, the packs' heading and lede, the packs side by side and the
+ * closing line under them. What the page says and holds is written here, in this file; a later
+ * template change is merged into it three ways. The strings come from the `{{namespace}}` catalog:
+ * `{{nameCamel}}.title` and `{{nameCamel}}.lede`.
+ */
+import type { ReactNode } from "react";
+import { useTranslation } from "@simplix-react/i18n/react";
+import { SitePage } from "@simplix-react-ui-kits/site-clarity/page";
+import { PackSection } from "@simplix-react-ui-kits/site-clarity/pricing";
+
+/** Props for {@link {{NamePascal}}Page}. */
+export interface {{NamePascal}}PageProps {
+  /** The packs, each a `PackCard`. */
+  readonly children?: ReactNode;
+  /** The line under the packs, such as how a plan compares for someone who buys often. */
+  readonly note?: ReactNode;
+}
+
+/** {{NamePascal}}: the packs bought once, beside the plans. */
+export function {{NamePascal}}Page({ children, note }: {{NamePascal}}PageProps = {}) {
+  const { t } = useTranslation("{{namespace}}");
+  // A key the catalog holds empty comes back as the key itself, and draws no line either.
+  const line = t("{{nameCamel}}.lede");
+  const lede = line && line !== "{{nameCamel}}.lede" ? line : undefined;
+  return (
+    <SitePage>
+      <PackSection heading={t("{{nameCamel}}.title")} lede={lede} note={note}>
+        {children}
+      </PackSection>
+    </SitePage>
+  );
+}

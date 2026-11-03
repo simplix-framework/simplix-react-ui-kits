@@ -1,6 +1,6 @@
 export { ChoiceCards } from "./choice-cards";
 export type { ChoiceCardOption, ChoiceCardsProps } from "./choice-cards";
-export { CheckoutHead, CheckoutLayout, CheckoutRow, ConsentAgain, ConsentChecklist, DonePanel, MethodGrid, OrderSummary, ProgressChain, ProviderFrame, SavingTag, Stepper } from "./checkout";
+export { CheckoutHead, CheckoutLayout, CheckoutRow, ConsentAgain, ConsentChecklist, DonePanel, MethodGrid, OrderSummary, ProgressChain, ProviderFrame, ProviderTarget, ProviderWaiting, SavingTag, Stepper } from "./checkout";
 export type {
   ChainStep,
   CheckoutHeadProps,
@@ -16,6 +16,8 @@ export type {
   PaymentMethod,
   ProgressChainProps,
   ProviderFrameProps,
+  ProviderTargetProps,
+  ProviderWaitingProps,
   SavingTagProps,
   StepperProps,
 } from "./checkout";

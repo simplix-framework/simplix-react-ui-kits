@@ -50,6 +50,9 @@ import {
   siteProviderMarkStyle,
   siteProviderNameStyle,
   siteProviderOwnerStyle,
+  siteProviderTargetStyle,
+  siteProviderWaitingStyle,
+  siteProviderWaitingTextStyle,
   siteSavingStyle,
   siteStepCaptionStyle,
   siteStepDiscStyle,
@@ -285,6 +288,38 @@ export function ProviderFrame({ label, owner, children }: ProviderFrameProps) {
       <div {...slotAttributes(siteProviderBodyStyle, {})}>{children}</div>
     </section>
   );
+}
+
+/** Props for {@link ProviderWaiting}. */
+export interface ProviderWaitingProps {
+  /** A glyph over the sentence, which the product draws. */
+  readonly mark?: ReactNode;
+  /** What happens in this place, or why nothing can yet. */
+  readonly children: ReactNode;
+}
+
+/** What our page says in the provider's frame before the provider draws there. */
+export function ProviderWaiting({ mark, children }: ProviderWaitingProps) {
+  return (
+    <div {...slotAttributes(siteProviderWaitingStyle, {})}>
+      {mark}
+      <p {...slotAttributes(siteProviderWaitingTextStyle, {})}>{children}</p>
+    </div>
+  );
+}
+
+/** Props for {@link ProviderTarget}. */
+export interface ProviderTargetProps {
+  /** The class name the provider's script finds the element by and draws its frame into. */
+  readonly targetClass: string;
+}
+
+/**
+ * The element a provider's script draws its own frame into, found by a class name the provider is
+ * told. It carries no look of its own: what is drawn in it is the provider's.
+ */
+export function ProviderTarget({ targetClass }: ProviderTargetProps) {
+  return <div {...slotAttributes(siteProviderTargetStyle, {})} className={targetClass} />;
 }
 
 /** One way to pay of {@link MethodGrid}. */

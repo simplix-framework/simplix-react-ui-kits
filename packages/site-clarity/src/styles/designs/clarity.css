@@ -556,6 +556,15 @@
   [data-slot="site-provider-owner"][data-slot][data-s-site-provider-owner] {
     @apply shrink-0;
   }
+  [data-slot="site-provider-target"][data-slot][data-s-site-provider-target] {
+    @apply min-w-0 w-full;
+  }
+  [data-slot="site-provider-waiting"][data-slot][data-s-site-provider-waiting] {
+    @apply flex flex-col items-center gap-3 py-10 text-center;
+  }
+  [data-slot="site-provider-waiting-text"][data-slot][data-s-site-provider-waiting-text] {
+    @apply m-0 max-w-xs text-(length:--site-fs-caption) leading-(--site-lh-caption) font-(--site-fw-caption) text-(--site-ink-muted);
+  }
   [data-slot="site-saving"][data-slot][data-s-site-saving] {
     @apply rounded-(--site-radius-full) bg-(--site-good-soft) px-2.5 py-0.5 text-(length:--site-fs-caption) leading-(--site-lh-caption) font-(--site-fw-strong) text-(--site-good);
   }

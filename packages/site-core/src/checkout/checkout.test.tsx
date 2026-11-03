@@ -2,7 +2,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 
 import { bySlot, tabStops, tagsOf, unmarked } from "../testing/markup";
-import { CheckoutHead, CheckoutLayout, ConsentAgain, ConsentChecklist, DonePanel, MethodGrid, OrderSummary, ProgressChain, ProviderFrame, Stepper } from "./checkout";
+import { CheckoutHead, CheckoutLayout, ConsentAgain, ConsentChecklist, DonePanel, MethodGrid, OrderSummary, ProgressChain, ProviderFrame, ProviderTarget, ProviderWaiting, Stepper } from "./checkout";
 import { ChoiceCards } from "./choice-cards";
 
 const byPart = (html: string, part: string) => tagsOf(html).filter((tag) => tag.attributes["data-part"] === part);
@@ -146,6 +146,21 @@ describe("payment and after", () => {
     expect(bySlot(html, "site-action")[0]?.attributes["data-size"]).toBe("lg");
     expect(bySlot(html, "site-checkout-actions")[0]?.attributes["data-align"]).toBe("center");
     expect(tagsOf(html)[0]?.attributes["data-slot"]).toBe("site-done-mark");
+    expect(unmarked(html)).toEqual([]);
+  });
+
+  it("says in the provider's place what happens there, with its glyph above the sentence", () => {
+    const html = renderToStaticMarkup(<ProviderWaiting mark={<svg data-slot="glyph" />}>Agree and the payment window opens here</ProviderWaiting>);
+    expect(tagsOf(html)[0]?.attributes["data-slot"]).toBe("site-provider-waiting");
+    expect(bySlot(html, "site-provider-waiting-text")[0]?.name).toBe("p");
+    expect(html.indexOf('data-slot="glyph"')).toBeLessThan(html.indexOf("site-provider-waiting-text"));
+    expect(unmarked(html)).toEqual([]);
+  });
+
+  it("gives the provider's script the element it draws into, found by the class it is told", () => {
+    const html = renderToStaticMarkup(<ProviderTarget targetClass="provider-frame" />);
+    const [target] = bySlot(html, "site-provider-target");
+    expect(target?.attributes.class).toBe("provider-frame");
     expect(unmarked(html)).toEqual([]);
   });
 });

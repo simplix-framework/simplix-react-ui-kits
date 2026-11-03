@@ -1155,6 +1155,8 @@
         "frame": "site-provider-frame",
         "frameLabel": "site-provider-label",
         "frameBody": "site-provider-body",
+        "waiting": "site-provider-waiting",
+        "waitingText": "site-provider-waiting-text",
         "methods": "site-method-grid",
         "method": "site-method[data-pressed=false]",
         "chosenMethod": "site-method[data-pressed=true]",

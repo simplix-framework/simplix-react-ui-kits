@@ -115,3 +115,66 @@ describe("the generated account section", () => {
     expect(source).not.toMatch(/console-(clarity|core)/);
   });
 });
+
+describe("the generated checkout page", () => {
+  const source = render("static-page.checkout.hbs", { namespace: "common", nameKebab: "checkout", NamePascal: "Checkout", nameCamel: "checkout" });
+  const checkoutFile = join(virtualRoot, "apps", "app", "src", "pages", "checkout", "page.tsx");
+
+  it("compiles alone", () => {
+    expect(typecheck({ [checkoutFile]: source }, [checkoutFile])).toEqual([]);
+  });
+
+  it("draws the steps from the catalog over our side beside the provider's frame, on the steps rhythm, and nothing of the console", () => {
+    expect(source).toContain("export function CheckoutPage(");
+    expect(source).toContain('<SitePage rhythm="steps">');
+    expect(source).toContain('label={t("checkout.stepsLabel")}');
+    expect(source).toContain("label: t(`checkout.steps.${key}`)");
+    expect(source).toContain("current={STEPS.indexOf(step)}");
+    expect(source).toContain("<CheckoutLayout");
+    expect(source).toContain("<ProviderFrame label={frame.label} owner={frame.owner}>");
+    expect(source).not.toMatch(/console-(clarity|core)/);
+  });
+
+  it("refuses a step the purchase does not have", () => {
+    const misuse = `${source}\nexport const wrong = <CheckoutPage step="refund" main={null} frame={{ label: "Provider", body: null }} />;\n`;
+    expect(typecheck({ [checkoutFile]: misuse }, [checkoutFile]).join("\n")).toMatch(/refund/);
+  });
+});
+
+describe("the generated page after a purchase", () => {
+  const source = render("static-page.checkout-done.hbs", { namespace: "common", nameKebab: "checkout-done", NamePascal: "CheckoutDone", nameCamel: "checkoutDone" });
+  const doneFile = join(virtualRoot, "apps", "app", "src", "pages", "checkout-done", "page.tsx");
+
+  it("compiles alone", () => {
+    expect(typecheck({ [doneFile]: source }, [doneFile])).toEqual([]);
+  });
+
+  it("draws the done panel in the centred column, and nothing of the console", () => {
+    expect(source).toContain("export function CheckoutDonePage(");
+    expect(source).toContain('<SitePage rhythm="done">');
+    expect(source).toContain("<DonePanel mark={mark} title={title} body={body} actions={actions} notice={notice} />");
+    expect(source).not.toMatch(/console-(clarity|core)/);
+  });
+
+  it("refuses an action that is not a site action", () => {
+    const misuse = `${source}\nexport const wrong = <CheckoutDonePage mark={null} title="Done" actions={[{ label: "Back" }]} />;\n`;
+    expect(typecheck({ [doneFile]: misuse }, [doneFile]).join("\n")).toMatch(/id/);
+  });
+});
+
+describe("the generated packs page", () => {
+  const source = render("static-page.packs.hbs", { namespace: "common", nameKebab: "packs", NamePascal: "Packs", nameCamel: "packs" });
+  const packsFile = join(virtualRoot, "apps", "app", "src", "pages", "packs", "page.tsx");
+
+  it("compiles alone", () => {
+    expect(typecheck({ [packsFile]: source }, [packsFile])).toEqual([]);
+  });
+
+  it("draws the packs' heading and lede from the page's catalog keys on the page column, and nothing of the console", () => {
+    expect(source).toContain("export function PacksPage(");
+    expect(source).toContain("<SitePage>");
+    expect(source).toContain('<PackSection heading={t("packs.title")} lede={lede} note={note}>');
+    expect(source).toContain('line !== "packs.lede"');
+    expect(source).not.toMatch(/console-(clarity|core)/);
+  });
+});
