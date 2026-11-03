@@ -14,3 +14,5 @@ export { SiteToastList, SiteToasts } from "./toasts";
 export type { SiteToastListProps } from "./toasts";
 export { radioKeyTarget, radioTabStop } from "./radio-keys";
 export type { RadioKeyOption } from "./radio-keys";
+export { SiteSlider, SLIDER_PAGE_STEPS, sliderKeyTarget, sliderShare, sliderSnap, sliderValueAt } from "./slider";
+export type { SiteSliderName, SiteSliderProps, SiteSliderRange } from "./slider";

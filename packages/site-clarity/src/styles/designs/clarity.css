@@ -721,6 +721,24 @@
   [data-slot="site-select-value"][data-placeholder="true"][data-s-site-select-value] {
     @apply text-(--site-ink-muted);
   }
+  [data-slot="site-slider-fill"][data-slot][data-s-site-slider-fill] {
+    @apply block h-full rounded-(--site-radius-full) bg-(--site-slider-fill);
+  }
+  [data-slot="site-slider"][data-slot][data-s-site-slider] {
+    @apply flex h-(--site-slider-size) w-full min-w-0 flex-1 cursor-pointer touch-none items-center select-none;
+  }
+  [data-slot="site-slider"][data-disabled="true"][data-s-site-slider] {
+    @apply cursor-not-allowed opacity-(--site-dim);
+  }
+  [data-slot="site-slider-thumb"][data-slot][data-s-site-slider-thumb] {
+    @apply absolute top-1/2 block size-(--site-slider-thumb-size) -translate-1/2 rounded-(--site-radius-full) border-(length:--site-slider-thumb-ring) border-solid border-(--site-slider-thumb-line) bg-(--site-slider-thumb) outline-none transition-transform duration-(--site-duration-fast) ease-(--site-ease);
+  }
+  [data-slot="site-slider-thumb"][data-dragging="true"][data-s-site-slider-thumb] {
+    @apply scale-(--site-slider-press);
+  }
+  [data-slot="site-slider-track"][data-slot][data-s-site-slider-track] {
+    @apply relative block h-(--site-slider-track-size) w-full rounded-(--site-radius-full) bg-(--site-slider-track) shadow-[inset_0_0_0_1px_var(--site-slider-track-line)];
+  }
   [data-slot="site-textarea"][data-slot][data-s-site-textarea] {
     @apply block w-full min-w-0 rounded-(--site-radius-md) border border-(--site-control-line) bg-(--site-surface) font-(family-name:--site-font-sans) text-(--site-ink) outline-none transition-colors duration-(--site-duration-fast) ease-(--site-ease) min-h-16 resize-none px-2.5 py-2 text-(length:--site-fs-notes) leading-(--site-lh-notes) font-(--site-fw-base);
   }
@@ -2423,6 +2441,9 @@
   }
   :where([data-slot="site-radio-card"][data-checked="false"])[data-s-site-radio-card] {
     @apply hover:border-(--site-control-line);
+  }
+  :where([data-slot="site-slider-thumb"])[data-s-site-slider-thumb] {
+    @apply hover:bg-(--site-slider-thumb-hover) focus-visible:shadow-[var(--site-focus-ring)] active:scale-(--site-slider-press);
   }
   :where([data-slot="site-textarea"])[data-s-site-textarea] {
     @apply placeholder:text-(--site-ink-muted) hover:border-(--site-ink-muted) focus-visible:border-(--site-accent) focus-visible:shadow-[var(--site-focus-ring)] disabled:cursor-not-allowed disabled:opacity-(--site-dim) aria-invalid:border-(--site-bad);

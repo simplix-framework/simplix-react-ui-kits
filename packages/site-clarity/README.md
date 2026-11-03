@@ -130,6 +130,17 @@ Every label is a prop: the kit ships no strings, and the product passes its own 
 | `--site-shadow-float` | the more menu | `0 10px 30px` at 22% |
 | `--site-shadow-accent` | the highlighted offer | `0 2px 8px` of the accent at 28% |
 | `--site-shadow-window` | a raised player card | `0 14px 40px` at 32% and a 1px line |
+| `--site-slider-size` | the line a slider takes presses on, as tall as the thumb's reach | `20px` |
+| `--site-slider-track-size` | a slider track's thickness | `4px` |
+| `--site-slider-thumb-size` | a slider thumb's diameter | `16px` |
+| `--site-slider-thumb-ring` | the width of the thumb's ring | `2px` |
+| `--site-slider-press` | the scale of a thumb while it is pressed or dragged | `1.12` |
+| `--site-slider-track` | a slider track's ground | `var(--site-surface-sunken)` |
+| `--site-slider-track-line` | the hairline inside the track's edge | `var(--site-line)` |
+| `--site-slider-fill` | the track up to the value | `var(--site-accent)` |
+| `--site-slider-thumb` | the thumb's ground | `var(--site-surface)` |
+| `--site-slider-thumb-line` | the thumb's ring | `var(--site-accent)` |
+| `--site-slider-thumb-hover` | the thumb's ground under the pointer | `var(--site-accent-soft)` |
 | `--site-dark-canvas` | a dark band's ground (`data-band="dark"`) | `var(--sidebar)` |
 | `--site-dark-surface` | a dark band's cards and chosen options | `var(--sidebar)` |
 | `--site-dark-surface-sunken` | a dark band's sunken ground | `var(--sidebar-accent)` |
@@ -157,7 +168,7 @@ Every label is a prop: the kit ships no strings, and the product passes its own 
 | `--site-dark-bad-soft` | its soft ground | `var(--site-bad-soft)` |
 | `--site-dark-shadow-float` | a dark ground's raised card and menu | `var(--site-shadow-float)` |
 
-Inside an element marked `data-band="dark"` (`SiteBand`, `HeroBand` with `tone="dark"`, `SiteBar` with `tone="dark"`, and `AuthPage` with `scheme="dark"`), the ground, surface, ink, line, accent, voice, wave, raised-card, control, disabled, state-tone and float variables take the `--site-dark-*` values, so the same rules draw on the dark ground. The bar over a dark band draws its text in `--site-dark-bar-ink`.
+Inside an element marked `data-band="dark"` (`SiteBand`, `HeroBand` with `tone="dark"`, `SiteBar` with `tone="dark"`, and `AuthPage` with `scheme="dark"`), the ground, surface, ink, line, accent, voice, wave, raised-card, control, disabled, state-tone, float and slider colour variables take the `--site-dark-*` values, so the same rules draw on the dark ground. The bar over a dark band draws its text in `--site-dark-bar-ink`.
 
 ## Page region contract
 
