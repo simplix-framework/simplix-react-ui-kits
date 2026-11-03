@@ -1,4 +1,4 @@
-import { type FormEvent, type MouseEvent, type ReactNode, useId } from "react";
+import { type FormEvent, type MouseEvent, type ReactNode, useEffect, useId, useRef } from "react";
 import { slotAttributes } from "@simplix-react/ui/design";
 
 import { SiteAction, type SiteActionSpec } from "../action/site-action";
@@ -64,15 +64,26 @@ export interface ContactSentProps {
   readonly action?: SiteActionSpec;
 }
 
-/** A question that arrived: the round mark, the title with its ticket, when the answer comes, and the way to ask again. */
+/**
+ * A question that arrived: the round mark, the title with its ticket, when the answer comes, and the way
+ * to ask again. It takes the place of the form the reader just sent from, so it takes the focus as it
+ * appears, named by its title: the reader is not left on a control that is gone.
+ */
 export function ContactSent({ title, ticket, body, mark, action }: ContactSentProps) {
+  const titleId = useId();
+  const self = useRef<HTMLElement>(null);
+  useEffect(() => {
+    self.current?.focus();
+  }, []);
   return (
-    <section {...slotAttributes(siteContactStyle, { state: "sent" })}>
+    <section ref={self} {...slotAttributes(siteContactStyle, { state: "sent" })} tabIndex={-1} aria-labelledby={titleId}>
       <span {...slotAttributes(siteContactMarkStyle, {})} aria-hidden="true">
         {mark}
       </span>
       <div {...slotAttributes(siteContactRowStyle, {})}>
-        <b {...slotAttributes(siteContactTitleStyle, {})}>{title}</b>
+        <b {...slotAttributes(siteContactTitleStyle, {})} id={titleId}>
+          {title}
+        </b>
         {ticket}
       </div>
       <p {...slotAttributes(siteCardTextStyle, {})}>{body}</p>

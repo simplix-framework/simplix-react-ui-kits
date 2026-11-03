@@ -7,7 +7,7 @@ import { bySlot, silentRefusals, tabStops, unmarked } from "../testing/markup";
 import { FieldRow, FormField } from "../form/fields";
 import { siteFieldRowStyle } from "../form/form.style";
 import { AttachBox, ContactForm, ContactPanel, ContactSent, SuggestBox } from "./contact";
-import { siteCategoryGridStyle, siteColumnsStyle, siteSearchHeroInnerStyle, siteSearchKeysStyle } from "./help.style";
+import { siteCategoryGridStyle, siteColumnsStyle, siteContactStyle, siteSearchHeroInnerStyle, siteSearchKeysStyle } from "./help.style";
 import { ArticleList, CategoryGrid, SiteColumns } from "./help-lists";
 import { SearchHero, SiteSearch, searchKeyTarget, StatusLine } from "./search-hero";
 
@@ -192,5 +192,13 @@ describe("the contact parts", () => {
     expect(bySlot(html, "site-contact-mark")[0]?.attributes["aria-hidden"]).toBe("true");
     expect(bySlot(html, "site-action")[0]?.attributes["data-size"]).toBe("sm");
     expect(unmarked(html)).toEqual([]);
+  });
+
+  it("can take the focus as it replaces the form, named by its title", () => {
+    const html = renderToStaticMarkup(<ContactSent title="We got your question" body="We answer by mail." />);
+    const section = bySlot(html, "site-contact")[0];
+    expect(section?.attributes.tabindex).toBe("-1");
+    expect(bySlot(html, "site-contact-title")[0]?.attributes.id).toBe(section?.attributes["aria-labelledby"]);
+    expect(siteContactStyle.variants.state.sent).toContain("outline-none");
   });
 });

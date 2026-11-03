@@ -332,7 +332,8 @@ export const siteContactStyle = defineSlotStyle({
     state: {
       closed: "",
       open: "border-(--site-accent)",
-      sent: "",
+      // Takes the focus as it replaces the form; the focus is the reader's place, not a control to press.
+      sent: "outline-none",
     },
   },
   defaultVariants: { state: "closed" },

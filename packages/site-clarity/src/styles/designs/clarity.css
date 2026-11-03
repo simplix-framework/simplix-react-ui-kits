@@ -916,6 +916,9 @@
   [data-slot="site-contact"][data-state="open"][data-s-site-contact] {
     @apply border-(--site-accent);
   }
+  [data-slot="site-contact"][data-state="sent"][data-s-site-contact] {
+    @apply outline-none;
+  }
   [data-slot="site-contact-title"][data-slot][data-s-site-contact-title] {
     @apply font-(--site-fw-strong);
   }
