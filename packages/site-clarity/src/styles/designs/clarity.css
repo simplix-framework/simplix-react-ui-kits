@@ -88,6 +88,9 @@
   [data-slot="site-section-nav-item"][data-state="danger"][data-s-site-section-nav-item] {
     @apply font-(--site-fw-base) text-(--site-bad);
   }
+  [data-slot="site-section-nav-item"][data-pending="true"][data-s-site-section-nav-item] {
+    @apply cursor-default;
+  }
   [data-slot="site-section-nav"][data-slot][data-s-site-section-nav] {
     @apply flex w-1/5 shrink-0 flex-col gap-0.5;
   }
@@ -2387,6 +2390,9 @@
   }
   :where([data-slot="site-section-nav-item"][data-state="danger"])[data-s-site-section-nav-item] {
     @apply hover:bg-(--site-surface-sunken);
+  }
+  :where([data-slot="site-section-nav-item"][data-pending="true"])[data-s-site-section-nav-item] {
+    @apply hover:bg-transparent;
   }
   :where([data-slot="site-section-nav"])[data-s-site-section-nav] {
     @apply @max-page-medium/page:w-full @max-page-medium/page:flex-row @max-page-medium/page:flex-wrap;

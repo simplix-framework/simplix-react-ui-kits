@@ -35,6 +35,19 @@ describe("AccountLayout", () => {
     expect(leaving[2]?.attributes["data-state"]).toBe("current");
   });
 
+  it("draws a section without an address as its words in its place, with no press and the look of its state", () => {
+    const html = renderToStaticMarkup(<SectionNav label="My account" items={[...sections.slice(0, 2), { key: "receipts", label: "Receipts" }, { key: "leave", label: "Delete account", danger: true }]} />);
+    const items = bySlot(html, "site-section-nav-item");
+    expect(items.map((item) => [item.name, item.attributes["data-state"], item.attributes["data-pending"]])).toEqual([
+      ["a", "current", "false"],
+      ["a", "plain", "false"],
+      ["span", "plain", "true"],
+      ["span", "danger", "true"],
+    ]);
+    expect(items.slice(2).some((item) => "href" in item.attributes || "aria-current" in item.attributes)).toBe(false);
+    expect(tabStops(html)).toHaveLength(2);
+  });
+
   it("draws a section title as h2 and a part title as h3", () => {
     expect(bySlot(renderToStaticMarkup(<SectionHead>Credits</SectionHead>), "site-section-head")[0]?.name).toBe("h2");
     const sub = bySlot(renderToStaticMarkup(<SectionHead level={3}>Credit history</SectionHead>), "site-section-head")[0];

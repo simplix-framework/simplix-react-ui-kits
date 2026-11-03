@@ -72,3 +72,46 @@ describe("the generated site page", () => {
     expect(source).not.toMatch(/console-(clarity|core)/);
   });
 });
+
+describe("the generated account page", () => {
+  const source = render("static-page.account.hbs", { namespace: "account", nameKebab: "account", NamePascal: "Account", nameCamel: "account" });
+  const accountFile = join(virtualRoot, "apps", "app", "src", "pages", "account", "page.tsx");
+
+  it("compiles alone", () => {
+    expect(typecheck({ [accountFile]: source }, [accountFile])).toEqual([]);
+  });
+
+  it("draws the section list beside the routed section on the page column, the standing state handed through, and nothing of the console", () => {
+    expect(source).toContain("export function AccountPage(");
+    expect(source).toContain("<SitePage>");
+    expect(source).toContain('<AccountLayout nav={<SectionNav label={t("account.title")} items={items} />} standing={standing}>');
+    expect(source).toContain("label: t(`account.section.${section.key}`),");
+    expect(source).toContain("current: section.href !== undefined && within(route, section.href),");
+    expect(source).not.toMatch(/console-(clarity|core)/);
+  });
+
+  it("compiles once the sections are written in, one of them not open yet and one that removes something", () => {
+    const customised = source.replace(
+      '[{ key: "overview", href: "/account/overview" }]',
+      '[{ key: "sub", href: "/account/sub" }, { key: "receipts" }, { key: "leave", danger: true }]',
+    );
+    expect(customised).toContain('{ key: "receipts" }');
+    expect(typecheck({ [accountFile]: customised }, [accountFile])).toEqual([]);
+  });
+});
+
+describe("the generated account section", () => {
+  const source = render("static-page.account-section.hbs", { namespace: "account", nameKebab: "account-credits", NamePascal: "AccountCredits", nameCamel: "accountCredits" });
+  const sectionFile = join(virtualRoot, "apps", "app", "src", "pages", "account-credits", "page.tsx");
+
+  it("compiles alone", () => {
+    expect(typecheck({ [sectionFile]: source }, [sectionFile])).toEqual([]);
+  });
+
+  it("draws the section's heading from its catalog key and its parts under it, with no page column of its own", () => {
+    expect(source).toContain("export function AccountCreditsPage(");
+    expect(source).toContain('<SectionHead>{t("accountCredits.title")}</SectionHead>');
+    expect(source).not.toContain("<SitePage");
+    expect(source).not.toMatch(/console-(clarity|core)/);
+  });
+});

@@ -8,8 +8,11 @@ import { siteAccountSectionStyle, siteAccountStyle, siteSectionHeadStyle, siteSe
 export interface SectionNavItem {
   readonly key: string;
   readonly label: ReactNode;
-  /** The section's own address (`/account/credits`), so a section can be opened and shared. */
-  readonly href: string;
+  /**
+   * The section's own address (`/account/credits`), so a section can be opened and shared. A section
+   * that is not open yet has none and is drawn as its words in the list's place, offering no press.
+   */
+  readonly href?: string;
   readonly current?: boolean;
   /** A section that removes something (deleting the account), in the bad colour while not current. */
   readonly danger?: boolean;
@@ -23,12 +26,22 @@ export interface SectionNavProps {
   readonly items: readonly SectionNavItem[];
 }
 
-/** The sections of My account as links, the current one marked as the page. */
+/**
+ * The sections of My account as links, the current one marked as the page. A section without an
+ * address (not open yet) keeps its place and its look as plain words, as the bar's pages do.
+ */
 export function SectionNav({ label, items }: SectionNavProps) {
   return (
     <nav {...slotAttributes(siteSectionNavStyle, {})} aria-label={label}>
       {items.map((item) => {
         const state = item.current === true ? "current" : item.danger === true ? "danger" : "plain";
+        if (item.href === undefined) {
+          return (
+            <span key={item.key} {...slotAttributes(siteSectionNavItemStyle, { state, pending: true })}>
+              {item.label}
+            </span>
+          );
+        }
         return (
           <SiteLink key={item.key} {...slotAttributes(siteSectionNavItemStyle, { state })} href={item.href} aria-current={item.current === true ? "page" : undefined} onClick={item.onSelect}>
             {item.label}

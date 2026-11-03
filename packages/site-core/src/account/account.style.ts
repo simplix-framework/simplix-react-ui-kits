@@ -20,7 +20,8 @@ export const siteSectionNavStyle = defineSlotStyle({
 
 /**
  * One section of the list: the current one on the accent's soft ground; `danger` (deleting the
- * account) in the bad colour while it is not the current one.
+ * account) in the bad colour while it is not the current one. A section that is not open yet
+ * (`pending`) is the same words as plain text: no ground under the pointer and no press.
  */
 export const siteSectionNavItemStyle = defineSlotStyle({
   slot: "site-section-nav-item",
@@ -32,8 +33,12 @@ export const siteSectionNavItemStyle = defineSlotStyle({
       plain: "font-(--site-fw-base) text-(--site-ink) hover:bg-(--site-surface-sunken)",
       danger: "font-(--site-fw-base) text-(--site-bad) hover:bg-(--site-surface-sunken)",
     },
+    pending: {
+      true: "cursor-default hover:bg-transparent",
+      false: "",
+    },
   },
-  defaultVariants: { state: "plain" },
+  defaultVariants: { state: "plain", pending: false },
 });
 
 /** The section beside the list: the standing notice, the heading and the section's parts, one gap apart. */
