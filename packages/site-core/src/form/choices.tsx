@@ -28,6 +28,8 @@ export interface SiteCheckboxProps {
   /** The box's accessible name where it has no words beside it. */
   readonly name?: string;
   readonly disabled?: boolean;
+  /** The id of the line that says why the box cannot be changed now; give it with `disabled`. */
+  readonly describedBy?: string;
   /**
    * The step cannot go ahead without it: the box reports `aria-required`, and `badge` is drawn
    * before the words for the eye only ("Required"), so a screen reader never hears it glued to the
@@ -41,7 +43,7 @@ export interface SiteCheckboxProps {
  * A box that is checked, unchecked or mixed, with its words beside it. The box is the framework's
  * checkbox (its keyboard and state), drawn in the site design.
  */
-export function SiteCheckbox({ checked, onCheckedChange, label, name, disabled = false, required = false, badge }: SiteCheckboxProps) {
+export function SiteCheckbox({ checked, onCheckedChange, label, name, disabled = false, describedBy, required = false, badge }: SiteCheckboxProps) {
   const box = (
     <Checkbox
       {...partAttributes(siteCheckboxStyle, {})}
@@ -51,6 +53,7 @@ export function SiteCheckbox({ checked, onCheckedChange, label, name, disabled =
       required={required}
       aria-required={required || undefined}
       aria-label={label === undefined ? name : undefined}
+      aria-describedby={describedBy}
     />
   );
   if (label === undefined) return box;

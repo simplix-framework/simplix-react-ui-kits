@@ -1,4 +1,4 @@
-import type { FormEvent, MouseEvent, ReactNode } from "react";
+import { type FormEvent, type MouseEvent, type ReactNode, useId } from "react";
 import { slotAttributes } from "@simplix-react/ui/design";
 
 import { SiteAction, type SiteActionSpec } from "../action/site-action";
@@ -7,6 +7,7 @@ import { siteCardTextStyle } from "../install/install.style";
 import {
   siteAttachAboutStyle,
   siteAttachLabelStyle,
+  siteAttachReasonStyle,
   siteAttachStyle,
   siteAttachTitleStyle,
   siteCardHeadingStyle,
@@ -96,7 +97,10 @@ export interface ContactFormProps {
   readonly submit: SiteActionSpec;
   /** Closes the form without sending. */
   readonly cancel?: SiteActionSpec;
-  /** What is still missing, beside the actions. */
+  /**
+   * What is still missing, or why the question cannot be sent from here, beside the actions. A
+   * disabled send or close is described by it, so no action is refused in silence.
+   */
   readonly note?: ReactNode;
 }
 
@@ -105,6 +109,8 @@ export interface ContactFormProps {
  * lays in, then send and close with what is still missing. The fields' controls are the product's.
  */
 export function ContactForm({ title, icon, onSubmit, children, submit, cancel, note }: ContactFormProps) {
+  const noteId = useId();
+  const described = (action: SiteActionSpec) => action.describedBy ?? (action.disabled === true && note !== undefined ? noteId : undefined);
   return (
     <form
       {...slotAttributes(siteContactStyle, { state: "open" })}
@@ -120,9 +126,13 @@ export function ContactForm({ title, icon, onSubmit, children, submit, cancel, n
       </h2>
       {children}
       <div {...slotAttributes(siteContactActionsStyle, {})}>
-        <SiteAction {...submit} tone={submit.tone ?? "primary"} submit />
-        {cancel !== undefined ? <SiteAction {...cancel} /> : null}
-        {note !== undefined ? <span {...slotAttributes(siteContactNoteStyle, {})}>{note}</span> : null}
+        <SiteAction {...submit} tone={submit.tone ?? "primary"} describedBy={described(submit)} submit />
+        {cancel !== undefined ? <SiteAction {...cancel} describedBy={described(cancel)} /> : null}
+        {note !== undefined ? (
+          <span {...slotAttributes(siteContactNoteStyle, {})} id={noteId}>
+            {note}
+          </span>
+        ) : null}
       </div>
     </form>
   );
@@ -154,8 +164,11 @@ export function SuggestBox({ label, articles, mark }: SuggestBoxProps) {
 
 /** Props for {@link AttachBox}. */
 export interface AttachBoxProps {
-  /** The product's checkbox that turns the attachment on. */
-  readonly control: (label: ReactNode) => ReactNode;
+  /**
+   * The product's checkbox that turns the attachment on, labelled with `label`. With a `reason`,
+   * `describedBy` is the id of the reason's line, which the checkbox names as its description.
+   */
+  readonly control: (label: ReactNode, describedBy?: string) => ReactNode;
   /** The attachment's name. */
   readonly title: ReactNode;
   /** A badge beside the name ("Recommended"), such as a `SiteChip`. */
@@ -164,13 +177,19 @@ export interface AttachBoxProps {
   readonly about?: ReactNode;
   /** What the attachment is doing now: loading, missing, or what it holds. */
   readonly children?: ReactNode;
+  /**
+   * Why the attachment cannot be added now, drawn under the checkbox; give it with a disabled
+   * checkbox, so the box is not refused in silence.
+   */
+  readonly reason?: ReactNode;
 }
 
 /**
  * Something to attach to a question (the app's diagnostic record): the product's checkbox labelled
  * with the attachment's name, badge and what it holds, then its state.
  */
-export function AttachBox({ control, title, badge, about, children }: AttachBoxProps) {
+export function AttachBox({ control, title, badge, about, children, reason }: AttachBoxProps) {
+  const reasonId = useId();
   return (
     <div {...slotAttributes(siteAttachStyle, {})}>
       {control(
@@ -181,8 +200,14 @@ export function AttachBox({ control, title, badge, about, children }: AttachBoxP
           </b>
           {about !== undefined ? <span {...slotAttributes(siteAttachAboutStyle, {})}>{about}</span> : null}
         </span>,
+        reason !== undefined ? reasonId : undefined,
       )}
       {children}
+      {reason !== undefined ? (
+        <p {...slotAttributes(siteAttachReasonStyle, {})} id={reasonId}>
+          {reason}
+        </p>
+      ) : null}
     </div>
   );
 }

@@ -65,6 +65,12 @@ describe("choices", () => {
     expect(bySlot(html, "site-checkbox-row")).toHaveLength(0);
   });
 
+  it("names the line that says why a disabled checkbox cannot be changed", () => {
+    const html = renderToStaticMarkup(<SiteCheckbox checked={false} onCheckedChange={() => {}} label="Attach the record" disabled describedBy="why" />);
+    expect(byPart(html, "site-checkbox")[0]?.attributes["aria-describedby"]).toBe("why");
+    expect(byPart(renderToStaticMarkup(<SiteCheckbox checked={false} onCheckedChange={() => {}} label="Attach" />), "site-checkbox")[0]?.attributes["aria-describedby"]).toBeUndefined();
+  });
+
   it("draws the framework switch as a site part", () => {
     const html = renderToStaticMarkup(<SiteSwitch checked onCheckedChange={() => {}} label="Marketing mail" />);
     const control = byPart(html, "site-toggle")[0];

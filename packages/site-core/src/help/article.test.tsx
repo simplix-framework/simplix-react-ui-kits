@@ -147,6 +147,16 @@ describe("the article parts", () => {
     expect(unmarked(html)).toEqual([]);
   });
 
+  it("draws a related article with no address as its card in place, pending and out of the tab order", () => {
+    const html = renderToStaticMarkup(<RelatedLinks title="See also" items={[{ key: "a", title: "No sound", href: "/help/a" }, { key: "b", title: "Dictionary" }]} />);
+    expect(tabStops(html).map((stop) => stop.attributes.href)).toEqual(["/help/a"]);
+    expect(bySlot(html, "site-related-link").map((link) => [link.name, link.attributes["data-pending"]])).toEqual([
+      ["a", "false"],
+      ["span", "true"],
+    ]);
+    expect(unmarked(html)).toEqual([]);
+  });
+
   it("draws progress only with a share, and the way to ask on its own", () => {
     expect(bySlot(renderToStaticMarkup(<DocProgress text="1 of 2" share={0.5} />), "site-progress")).toHaveLength(1);
     const ask = renderToStaticMarkup(<DocProgress action={{ id: "ask", label: "Contact us" }} />);

@@ -229,8 +229,11 @@ export const siteCategoryItemStyle = defineSlotStyle({
 export const siteCategoryLinkStyle = defineSlotStyle({
   slot: "site-category-link",
   base: "cursor-pointer rounded-(--site-radius-xs) text-left text-inherit no-underline outline-none hover:underline focus-visible:shadow-[var(--site-focus-ring)]",
-  variants: {},
-  defaultVariants: {},
+  variants: {
+    // An article not written yet: the same words with no press and no underline under the pointer.
+    pending: { true: "cursor-default hover:no-underline", false: "" },
+  },
+  defaultVariants: { pending: false },
 });
 
 /** A list of articles on a card: a heading with a badge, then numbered links. */
@@ -286,8 +289,11 @@ export const siteArticleLinkStyle = defineSlotStyle({
   slot: "site-article-link",
   base:
     "flex w-full min-w-0 cursor-pointer items-center gap-3 rounded-(--site-radius-md) px-1 py-2 text-left text-inherit no-underline outline-none hover:bg-(--site-surface-sunken) focus-visible:shadow-[var(--site-focus-ring)]",
-  variants: {},
-  defaultVariants: {},
+  variants: {
+    // An article not written yet: the same row with no press and no ground under the pointer.
+    pending: { true: "cursor-default hover:bg-transparent", false: "" },
+  },
+  defaultVariants: { pending: false },
 });
 
 /** A row's number in the mono family. */
@@ -372,6 +378,14 @@ export const siteContactActionsStyle = defineSlotStyle({
 /** A muted note beside actions (opening hours, what is still missing). */
 export const siteContactNoteStyle = defineSlotStyle({
   slot: "site-contact-note",
+  base: "text-(length:--site-fs-caption) leading-(--site-lh-caption) font-(--site-fw-caption) text-(--site-ink-muted)",
+  variants: {},
+  defaultVariants: {},
+});
+
+/** Why an attachment cannot be added now, under its checkbox, in the caption's muted words. */
+export const siteAttachReasonStyle = defineSlotStyle({
+  slot: "site-attach-reason",
   base: "text-(length:--site-fs-caption) leading-(--site-lh-caption) font-(--site-fw-caption) text-(--site-ink-muted)",
   variants: {},
   defaultVariants: {},
@@ -681,8 +695,11 @@ export const siteRelatedLinkStyle = defineSlotStyle({
   slot: "site-related-link",
   base:
     "flex min-w-0 cursor-pointer flex-col rounded-(--site-radius-lg) border border-(--site-line) bg-(--site-surface) px-3 py-2.5 text-left text-inherit no-underline outline-none hover:border-(--site-control-line) focus-visible:shadow-[var(--site-focus-ring)]",
-  variants: {},
-  defaultVariants: {},
+  variants: {
+    // An article not written yet: the same card with no press and its line kept under the pointer.
+    pending: { true: "cursor-default hover:border-(--site-line)", false: "" },
+  },
+  defaultVariants: { pending: false },
 });
 
 /** How far the reader got: the count, the bar and an action, under the contents. */

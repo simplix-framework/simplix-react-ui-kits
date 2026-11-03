@@ -1,5 +1,5 @@
 import type { MouseEvent, ReactNode } from "react";
-import { slotAttributes } from "@simplix-react/ui/design";
+import { slotAttributes, type SlotStyle } from "@simplix-react/ui/design";
 
 import { SiteLink } from "../link/site-link";
 import {
@@ -28,8 +28,29 @@ import {
 export interface SiteArticleLink {
   readonly key: string;
   readonly title: ReactNode;
-  readonly href: string;
+  /**
+   * The address the article opens at. Left out for an article that is not written yet: its title is
+   * drawn in the same place as plain text (`data-pending`), so the list keeps its look and no link
+   * leads nowhere.
+   */
+  readonly href?: string;
   readonly onSelect?: (event: MouseEvent<HTMLElement>) => void;
+}
+
+/** A slot style with the `pending` variant every article link carries. */
+type ArticleLinkStyle = SlotStyle<{ pending: Record<"true" | "false", string> }>;
+
+/**
+ * An article's link, or its words as plain text in the link's place when it has no address yet.
+ * Shared by the lists that name articles (categories, most read, related).
+ */
+export function ArticleAnchor({ style, href, onSelect, children }: { readonly style: ArticleLinkStyle; readonly href?: string; readonly onSelect?: (event: MouseEvent<HTMLElement>) => void; readonly children: ReactNode }) {
+  if (href === undefined) return <span {...slotAttributes(style, { pending: true })}>{children}</span>;
+  return (
+    <SiteLink {...slotAttributes(style, { pending: false })} href={href} onClick={onSelect}>
+      {children}
+    </SiteLink>
+  );
 }
 
 /** One category of a {@link CategoryGrid}. */
@@ -58,9 +79,9 @@ export function CategoryGrid({ categories }: CategoryGridProps) {
           <ul {...slotAttributes(siteCategoryListStyle, {})}>
             {category.articles.map((article) => (
               <li key={article.key} {...slotAttributes(siteCategoryItemStyle, {})}>
-                <SiteLink {...slotAttributes(siteCategoryLinkStyle, {})} href={article.href} onClick={article.onSelect}>
+                <ArticleAnchor style={siteCategoryLinkStyle} href={article.href} onSelect={article.onSelect}>
                   {article.title}
-                </SiteLink>
+                </ArticleAnchor>
               </li>
             ))}
           </ul>
@@ -98,7 +119,7 @@ export function ArticleList({ title, badge, items, mark }: ArticleListProps) {
       <ol {...slotAttributes(siteArticleRowsStyle, {})}>
         {items.map((item, index) => (
           <li key={item.key} {...slotAttributes(siteArticleRowStyle, {})}>
-            <SiteLink {...slotAttributes(siteArticleLinkStyle, {})} href={item.href} onClick={item.onSelect}>
+            <ArticleAnchor style={siteArticleLinkStyle} href={item.href} onSelect={item.onSelect}>
               <span {...slotAttributes(siteArticleNumberStyle, {})}>{String(index + 1).padStart(2, "0")}</span>
               <span {...slotAttributes(siteLinkTextStyle, {})}>
                 <b {...slotAttributes(siteArticleNameStyle, {})}>{item.title}</b>
@@ -109,7 +130,7 @@ export function ArticleList({ title, badge, items, mark }: ArticleListProps) {
                   {mark}
                 </span>
               ) : null}
-            </SiteLink>
+            </ArticleAnchor>
           </li>
         ))}
       </ol>

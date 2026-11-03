@@ -2,7 +2,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 
 import { SiteChip } from "../page/site-bits";
-import { bySlot, tabStops, unmarked } from "../testing/markup";
+import { bySlot, silentRefusals, tabStops, unmarked } from "../testing/markup";
 import { FieldRow, FormField } from "../form/fields";
 import { siteFieldRowStyle } from "../form/form.style";
 import { AttachBox, ContactForm, ContactPanel, ContactSent, SuggestBox } from "./contact";
@@ -87,6 +87,23 @@ describe("CategoryGrid and ArticleList", () => {
     expect(unmarked(html)).toEqual([]);
   });
 
+  it("draws an article with no address as its words in the link's place, pending and out of the tab order", () => {
+    const grid = renderToStaticMarkup(<CategoryGrid categories={[{ key: "start", title: "Getting started", articles: [{ key: "a", title: "Installing", href: "/help/a" }, { key: "b", title: "First deck" }] }]} />);
+    expect(tabStops(grid).map((stop) => stop.attributes.href)).toEqual(["/help/a"]);
+    expect(bySlot(grid, "site-category-link").map((link) => [link.name, link.attributes["data-pending"]])).toEqual([
+      ["a", "false"],
+      ["span", "true"],
+    ]);
+    const list = renderToStaticMarkup(<ArticleList title="Most read" items={[{ key: "a", title: "Refunds", href: "/help/a" }, { key: "b", title: "Tone" }]} />);
+    expect(bySlot(list, "site-article-link").map((link) => [link.name, link.attributes["data-pending"]])).toEqual([
+      ["a", "false"],
+      ["span", "true"],
+    ]);
+    expect(bySlot(list, "site-article-number")).toHaveLength(2);
+    expect(unmarked(grid)).toEqual([]);
+    expect(unmarked(list)).toEqual([]);
+  });
+
   it("stands two parts side by side, one under the other below the medium tier", () => {
     expect(bySlot(renderToStaticMarkup(<SiteColumns>x</SiteColumns>), "site-columns")).toHaveLength(1);
     expect(siteColumnsStyle.base).toContain("@max-page-medium/page:grid-cols-1");
@@ -129,6 +146,40 @@ describe("the contact parts", () => {
     expect(bySlot(html, "site-attach-title")).toHaveLength(1);
     expect(siteFieldRowStyle.base).toContain("@max-page-narrow/page:grid-cols-1");
     expect(unmarked(html.replaceAll('<span data-slot="product-control"></span>', ""))).toEqual([]);
+  });
+
+  it("describes a disabled send by the note beside it, and leaves an enabled one undescribed", () => {
+    const form = (submit: { id: string; label: string; disabled?: boolean }, note?: string) =>
+      renderToStaticMarkup(
+        <ContactForm title="Contact us" submit={submit} cancel={{ id: "close", label: "Close" }} {...(note === undefined ? {} : { note })}>
+          <span data-slot="product-control" />
+        </ContactForm>,
+      );
+    const refused = form({ id: "send", label: "Send", disabled: true }, "Questions cannot be sent from here yet");
+    expect(silentRefusals(refused)).toEqual([]);
+    expect(bySlot(refused, "site-action")[0]?.attributes["aria-describedby"]).toBe(bySlot(refused, "site-contact-note")[0]?.attributes.id);
+    expect(silentRefusals(form({ id: "send", label: "Send", disabled: true }))).toEqual(["send"]);
+    expect(bySlot(form({ id: "send", label: "Send" }, "Write a subject"), "site-action")[0]?.attributes["aria-describedby"]).toBeUndefined();
+  });
+
+  it("hands the checkbox the id of the line saying why the attachment cannot be added", () => {
+    const seen: (string | undefined)[] = [];
+    const box = (reason?: string) =>
+      renderToStaticMarkup(
+        <AttachBox
+          control={(label, describedBy) => {
+            seen.push(describedBy);
+            return <label data-slot="product-checkbox">{label}</label>;
+          }}
+          title="Attach the record"
+          {...(reason === undefined ? {} : { reason })}
+        />,
+      );
+    const html = box("The app on this computer cannot be reached from here yet");
+    expect(seen[0]).toBeDefined();
+    expect(bySlot(html, "site-attach-reason")[0]?.attributes.id).toBe(seen[0]);
+    expect(bySlot(box(), "site-attach-reason")).toEqual([]);
+    expect(seen[1]).toBeUndefined();
   });
 
   it("says the question arrived, with its ticket and the way to ask again", () => {

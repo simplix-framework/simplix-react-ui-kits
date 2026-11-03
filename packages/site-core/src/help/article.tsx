@@ -4,8 +4,8 @@ import { slotAttributes } from "@simplix-react/ui/design";
 import { SiteAction, type SiteActionSpec } from "../action/site-action";
 import { SiteProgress } from "../install/video-card";
 import { siteCardTextStyle, siteStepDiscStyle } from "../install/install.style";
-import { SiteLink } from "../link/site-link";
 import { SiteLive } from "../page/site-bits";
+import { ArticleAnchor } from "./help-lists";
 import {
   siteArticleFactsStyle,
   siteArticleFactStyle,
@@ -275,7 +275,8 @@ export function FeedbackPanel({ label, status, ask, more, thanks }: FeedbackPane
 /** Props for {@link RelatedLinks}. */
 export interface RelatedLinksProps {
   readonly title: ReactNode;
-  readonly items: readonly { readonly key: string; readonly title: ReactNode; readonly meta?: ReactNode; readonly href: string; readonly onSelect?: (event: MouseEvent<HTMLElement>) => void }[];
+  /** The articles; one with no `href` is not written yet and is drawn as plain text in its place. */
+  readonly items: readonly { readonly key: string; readonly title: ReactNode; readonly meta?: ReactNode; readonly href?: string; readonly onSelect?: (event: MouseEvent<HTMLElement>) => void }[];
 }
 
 /** Articles that continue this one, as small card links two to a row (one below the narrow tier). */
@@ -285,10 +286,10 @@ export function RelatedLinks({ title, items }: RelatedLinksProps) {
       <h2 {...slotAttributes(siteArticleListTitleStyle, {})}>{title}</h2>
       <div {...slotAttributes(siteRelatedGridStyle, {})}>
         {items.map((item) => (
-          <SiteLink key={item.key} {...slotAttributes(siteRelatedLinkStyle, {})} href={item.href} onClick={item.onSelect}>
+          <ArticleAnchor key={item.key} style={siteRelatedLinkStyle} href={item.href} onSelect={item.onSelect}>
             <b {...slotAttributes(siteArticleNameStyle, {})}>{item.title}</b>
             {item.meta !== undefined ? <span {...slotAttributes(siteArticleMetaStyle, {})}>{item.meta}</span> : null}
-          </SiteLink>
+          </ArticleAnchor>
         ))}
       </div>
     </section>
