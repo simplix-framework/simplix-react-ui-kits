@@ -2406,6 +2406,9 @@
   :where([data-slot="site-section-nav"])[data-s-site-section-nav] {
     @apply @max-page-medium/page:w-full @max-page-medium/page:flex-row @max-page-medium/page:flex-wrap;
   }
+  :where([data-slot="site-table-card"])[data-s-site-table-card] {
+    @apply @max-page-narrow/page:table-auto;
+  }
   :where([data-slot="site-action"])[data-s-site-action] {
     @apply focus-visible:shadow-[var(--site-focus-ring)] disabled:cursor-not-allowed disabled:border-transparent disabled:bg-(--site-control-disabled) disabled:text-(--site-ink-disabled) [&_svg]:size-4 [&_svg]:shrink-0;
   }

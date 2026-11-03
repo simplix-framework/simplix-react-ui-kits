@@ -286,10 +286,14 @@ export const siteDayAxisStyle = defineSlotStyle({
   defaultVariants: {},
 });
 
-/** A table on a card: equal columns, the first bold, the middle muted, the last at the end. */
+/**
+ * A table on a card: equal columns, the first bold, the middle muted, the last at the end. Below the
+ * narrow page tier the columns take their content's width, so the last column holds its widest
+ * action (a receipt's refund request) instead of cutting it at the card's edge.
+ */
 export const siteTableCardStyle = defineSlotStyle({
   slot: "site-table-card",
-  base: "w-full min-w-0 table-fixed overflow-hidden rounded-(--site-radius-xl) border border-(--site-line) bg-(--site-surface) text-(length:--site-fs-body-pane) leading-(--site-lh-body-pane)",
+  base: "w-full min-w-0 table-fixed overflow-hidden rounded-(--site-radius-xl) border border-(--site-line) bg-(--site-surface) text-(length:--site-fs-body-pane) leading-(--site-lh-body-pane) @max-page-narrow/page:table-auto",
   variants: {},
   defaultVariants: {},
 });

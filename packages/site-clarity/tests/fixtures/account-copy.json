@@ -2126,6 +2126,11 @@
     ]
    },
    {
+    "kind": "text",
+    "style": "caption",
+    "text": "A required consent ends with what it covers: deleting your voice ends the consent to process it."
+   },
+   {
     "kind": "rows",
     "rows": [
      {
@@ -2343,6 +2348,11 @@
       }
      ]
     ]
+   },
+   {
+    "kind": "text",
+    "style": "caption",
+    "text": "필수 동의는 해당 기능과 함께 끝납니다. 내 목소리를 지우면 목소리 처리 동의도 끝납니다."
    },
    {
     "kind": "rows",
@@ -2564,6 +2574,11 @@
     ]
    },
    {
+    "kind": "text",
+    "style": "caption",
+    "text": "A required consent ends with what it covers: deleting your voice ends the consent to process it."
+   },
+   {
     "kind": "rows",
     "rows": [
      {
@@ -2783,6 +2798,11 @@
     ]
    },
    {
+    "kind": "text",
+    "style": "caption",
+    "text": "필수 동의는 해당 기능과 함께 끝납니다. 내 목소리를 지우면 목소리 처리 동의도 끝납니다."
+   },
+   {
     "kind": "rows",
     "rows": [
      {
@@ -2987,6 +3007,11 @@
       }
      ]
     ]
+   },
+   {
+    "kind": "text",
+    "style": "caption",
+    "text": "A required consent ends with what it covers: deleting your voice ends the consent to process it."
    },
    {
     "kind": "rows",
@@ -3195,6 +3220,11 @@
     ]
    },
    {
+    "kind": "text",
+    "style": "caption",
+    "text": "필수 동의는 해당 기능과 함께 끝납니다. 내 목소리를 지우면 목소리 처리 동의도 끝납니다."
+   },
+   {
     "kind": "rows",
     "rows": [
      {
@@ -3399,6 +3429,11 @@
       }
      ]
     ]
+   },
+   {
+    "kind": "text",
+    "style": "caption",
+    "text": "A required consent ends with what it covers: deleting your voice ends the consent to process it."
    },
    {
     "kind": "rows",
@@ -3607,6 +3642,11 @@
     ]
    },
    {
+    "kind": "text",
+    "style": "caption",
+    "text": "필수 동의는 해당 기능과 함께 끝납니다. 내 목소리를 지우면 목소리 처리 동의도 끝납니다."
+   },
+   {
     "kind": "rows",
     "rows": [
      {
@@ -3767,6 +3807,11 @@
     ]
    },
    {
+    "kind": "text",
+    "style": "caption",
+    "text": "A required consent ends with what it covers: deleting your voice ends the consent to process it."
+   },
+   {
     "kind": "rows",
     "rows": [
      {
@@ -3925,6 +3970,11 @@
       }
      ]
     ]
+   },
+   {
+    "kind": "text",
+    "style": "caption",
+    "text": "필수 동의는 해당 기능과 함께 끝납니다. 내 목소리를 지우면 목소리 처리 동의도 끝납니다."
    },
    {
     "kind": "rows",
@@ -4133,6 +4183,11 @@
     ]
    },
    {
+    "kind": "text",
+    "style": "caption",
+    "text": "A required consent ends with what it covers: deleting your voice ends the consent to process it."
+   },
+   {
     "kind": "rows",
     "rows": [
      {
@@ -4339,6 +4394,11 @@
     ]
    },
    {
+    "kind": "text",
+    "style": "caption",
+    "text": "필수 동의는 해당 기능과 함께 끝납니다. 내 목소리를 지우면 목소리 처리 동의도 끝납니다."
+   },
+   {
     "kind": "rows",
     "rows": [
      {
@@ -4499,6 +4559,11 @@
     ]
    },
    {
+    "kind": "text",
+    "style": "caption",
+    "text": "A required consent ends with what it covers: deleting your voice ends the consent to process it."
+   },
+   {
     "kind": "rows",
     "rows": [
      {
@@ -4657,6 +4722,11 @@
       }
      ]
     ]
+   },
+   {
+    "kind": "text",
+    "style": "caption",
+    "text": "필수 동의는 해당 기능과 함께 끝납니다. 내 목소리를 지우면 목소리 처리 동의도 끝납니다."
    },
    {
     "kind": "rows",
@@ -4918,7 +4988,16 @@
        "dot": false
       },
       "meta": "StageVoice app · in use now",
-      "actions": []
+      "actions": [
+       {
+        "label": "Sign out",
+        "tone": "secondary",
+        "size": "sm",
+        "disabled": false,
+        "icon": false,
+        "name": "Sign out of this device"
+       }
+      ]
      },
      {
       "title": "PowerPoint task pane · work PC",
@@ -5054,7 +5133,16 @@
        "dot": false
       },
       "meta": "StageVoice 앱 · 지금 사용 중",
-      "actions": []
+      "actions": [
+       {
+        "label": "로그아웃",
+        "tone": "secondary",
+        "size": "sm",
+        "disabled": false,
+        "icon": false,
+        "name": "이 기기에서 로그아웃"
+       }
+      ]
      },
      {
       "title": "PowerPoint 작업창 · 회사 PC",
@@ -5276,6 +5364,19 @@
       ]
      },
      {
+      "kind": "text",
+      "style": "caption",
+      "text": "The account is deleted after a waiting period. Until then you can sign in and keep it."
+     },
+     {
+      "kind": "textarea",
+      "label": "Why are you leaving? (optional)",
+      "value": "",
+      "placeholder": "",
+      "rows": 2,
+      "muted": true
+     },
+     {
       "kind": "input",
       "label": "Type your email to confirm",
       "value": "",
@@ -5368,6 +5469,19 @@
        "영수증과 동의 기록처럼 법으로 보관하는 것은 기간이 끝난 뒤 지웁니다.",
        "무료 음성과 앱은 로그인 없이 계속 쓸 수 있습니다."
       ]
+     },
+     {
+      "kind": "text",
+      "style": "caption",
+      "text": "탈퇴를 요청하면 유예 기간이 지난 뒤 계정을 삭제합니다. 그 전에는 로그인해서 탈퇴를 취소할 수 있습니다."
+     },
+     {
+      "kind": "textarea",
+      "label": "탈퇴하는 이유(선택)",
+      "value": "",
+      "placeholder": "",
+      "rows": 2,
+      "muted": true
      },
      {
       "kind": "input",
@@ -5464,6 +5578,19 @@
       ]
      },
      {
+      "kind": "text",
+      "style": "caption",
+      "text": "The account is deleted after a waiting period. Until then you can sign in and keep it."
+     },
+     {
+      "kind": "textarea",
+      "label": "Why are you leaving? (optional)",
+      "value": "",
+      "placeholder": "",
+      "rows": 2,
+      "muted": true
+     },
+     {
       "kind": "input",
       "label": "Type your email to confirm",
       "value": "",
@@ -5556,6 +5683,19 @@
        "영수증과 동의 기록처럼 법으로 보관하는 것은 기간이 끝난 뒤 지웁니다.",
        "무료 음성과 앱은 로그인 없이 계속 쓸 수 있습니다."
       ]
+     },
+     {
+      "kind": "text",
+      "style": "caption",
+      "text": "탈퇴를 요청하면 유예 기간이 지난 뒤 계정을 삭제합니다. 그 전에는 로그인해서 탈퇴를 취소할 수 있습니다."
+     },
+     {
+      "kind": "textarea",
+      "label": "탈퇴하는 이유(선택)",
+      "value": "",
+      "placeholder": "",
+      "rows": 2,
+      "muted": true
      },
      {
       "kind": "input",
@@ -5698,7 +5838,16 @@
        "dot": false
       },
       "meta": "StageVoice app · in use now",
-      "actions": []
+      "actions": [
+       {
+        "label": "Sign out",
+        "tone": "secondary",
+        "size": "sm",
+        "disabled": false,
+        "icon": false,
+        "name": "Sign out of this device"
+       }
+      ]
      },
      {
       "title": "PowerPoint task pane · work PC",
@@ -5848,7 +5997,16 @@
        "dot": false
       },
       "meta": "StageVoice 앱 · 지금 사용 중",
-      "actions": []
+      "actions": [
+       {
+        "label": "로그아웃",
+        "tone": "secondary",
+        "size": "sm",
+        "disabled": false,
+        "icon": false,
+        "name": "이 기기에서 로그아웃"
+       }
+      ]
      },
      {
       "title": "PowerPoint 작업창 · 회사 PC",
@@ -5950,8 +6108,8 @@
       ]
      },
      {
-      "title": "Delete voices left on the server",
-      "meta": "Deletes the copies of voices made in the cloud. Voices inside your presentation files stay.",
+      "title": "Delete my voices on the server",
+      "meta": "Deletes every voice of your own the voice server keeps, with its recordings. Voices inside your presentation files stay.",
       "actions": [
        {
         "label": "Delete",
@@ -6022,7 +6180,7 @@
     "rows": [
      {
       "title": "내 데이터 내려받기",
-      "meta": "계정, 구독, 사용 기록, 동의 기록을 묶어 메일로 보냅니다. 보통 24시간 안에 옵니다.",
+      "meta": "계정, 구독, 사용 기록, 동의 기록을 묶어 보통 24시간 안에 메일로 보냅니다.",
       "actions": [
        {
         "label": "요청",
@@ -6034,8 +6192,8 @@
       ]
      },
      {
-      "title": "서버에 남은 음성 지우기",
-      "meta": "클라우드로 만든 음성의 사본을 지웁니다. 발표 파일 안의 음성은 그대로입니다.",
+      "title": "서버에 있는 내 목소리 지우기",
+      "meta": "음성 서버에 보관한 내 목소리를 녹음과 함께 모두 지웁니다. 발표 파일 안의 음성은 그대로입니다.",
       "actions": [
        {
         "label": "지우기",
@@ -6118,8 +6276,8 @@
       ]
      },
      {
-      "title": "Delete voices left on the server",
-      "meta": "Deletes the copies of voices made in the cloud. Voices inside your presentation files stay. Deleted Oct 14",
+      "title": "Delete my voices on the server",
+      "meta": "Deletes every voice of your own the voice server keeps, with its recordings. Voices inside your presentation files stay. Deleted Oct 14",
       "actions": [
        {
         "label": "Delete",
@@ -6190,7 +6348,7 @@
     "rows": [
      {
       "title": "내 데이터 내려받기",
-      "meta": "계정, 구독, 사용 기록, 동의 기록을 묶어 메일로 보냅니다. 보통 24시간 안에 옵니다. 10월 14일 요청함",
+      "meta": "계정, 구독, 사용 기록, 동의 기록을 묶어 보통 24시간 안에 메일로 보냅니다. 10월 14일 요청함",
       "actions": [
        {
         "label": "요청",
@@ -6202,8 +6360,8 @@
       ]
      },
      {
-      "title": "서버에 남은 음성 지우기",
-      "meta": "클라우드로 만든 음성의 사본을 지웁니다. 발표 파일 안의 음성은 그대로입니다. 10월 14일 지움",
+      "title": "서버에 있는 내 목소리 지우기",
+      "meta": "음성 서버에 보관한 내 목소리를 녹음과 함께 모두 지웁니다. 발표 파일 안의 음성은 그대로입니다. 10월 14일 지움",
       "actions": [
        {
         "label": "지우기",
@@ -6334,7 +6492,16 @@
        "dot": false
       },
       "meta": "StageVoice app · in use now",
-      "actions": []
+      "actions": [
+       {
+        "label": "Sign out",
+        "tone": "secondary",
+        "size": "sm",
+        "disabled": false,
+        "icon": false,
+        "name": "Sign out of this device"
+       }
+      ]
      },
      {
       "title": "PowerPoint task pane · work PC",
@@ -6484,7 +6651,16 @@
        "dot": false
       },
       "meta": "StageVoice 앱 · 지금 사용 중",
-      "actions": []
+      "actions": [
+       {
+        "label": "로그아웃",
+        "tone": "secondary",
+        "size": "sm",
+        "disabled": false,
+        "icon": false,
+        "name": "이 기기에서 로그아웃"
+       }
+      ]
      },
      {
       "title": "PowerPoint 작업창 · 회사 PC",
@@ -10549,7 +10725,6 @@
          "label": "Request a refund",
          "tone": "quiet",
          "size": "sm",
-         "href": "/business#b-refund",
          "disabled": false,
          "icon": false,
          "name": "Request a refund for Oct 14 · Pro monthly"
@@ -10573,15 +10748,6 @@
          "disabled": false,
          "icon": true,
          "name": "Receipt PDF for Sep 14 · Pro monthly"
-        },
-        {
-         "label": "Request a refund",
-         "tone": "quiet",
-         "size": "sm",
-         "href": "/business#b-refund",
-         "disabled": false,
-         "icon": false,
-         "name": "Request a refund for Sep 14 · Pro monthly"
         }
        ]
       }
@@ -10602,15 +10768,6 @@
          "disabled": false,
          "icon": true,
          "name": "Receipt PDF for Sep 2 · Extra credits 60,000 characters"
-        },
-        {
-         "label": "Request a refund",
-         "tone": "quiet",
-         "size": "sm",
-         "href": "/business#b-refund",
-         "disabled": false,
-         "icon": false,
-         "name": "Request a refund for Sep 2 · Extra credits 60,000 characters"
         }
        ]
       }
@@ -10705,7 +10862,6 @@
          "label": "환불 요청",
          "tone": "quiet",
          "size": "sm",
-         "href": "/business#b-refund",
          "disabled": false,
          "icon": false,
          "name": "10월 14일 · Pro 매달 환불 요청"
@@ -10729,15 +10885,6 @@
          "disabled": false,
          "icon": true,
          "name": "9월 14일 · Pro 매달 영수증 PDF"
-        },
-        {
-         "label": "환불 요청",
-         "tone": "quiet",
-         "size": "sm",
-         "href": "/business#b-refund",
-         "disabled": false,
-         "icon": false,
-         "name": "9월 14일 · Pro 매달 환불 요청"
         }
        ]
       }
@@ -10758,15 +10905,6 @@
          "disabled": false,
          "icon": true,
          "name": "9월 2일 · 추가 크레딧 60,000자 영수증 PDF"
-        },
-        {
-         "label": "환불 요청",
-         "tone": "quiet",
-         "size": "sm",
-         "href": "/business#b-refund",
-         "disabled": false,
-         "icon": false,
-         "name": "9월 2일 · 추가 크레딧 60,000자 환불 요청"
         }
        ]
       }
@@ -10861,7 +10999,6 @@
          "label": "Request a refund",
          "tone": "quiet",
          "size": "sm",
-         "href": "/business#b-refund",
          "disabled": false,
          "icon": false,
          "name": "Request a refund for Oct 14 · Pro monthly"
@@ -10885,15 +11022,6 @@
          "disabled": false,
          "icon": true,
          "name": "Receipt PDF for Sep 14 · Pro monthly"
-        },
-        {
-         "label": "Request a refund",
-         "tone": "quiet",
-         "size": "sm",
-         "href": "/business#b-refund",
-         "disabled": false,
-         "icon": false,
-         "name": "Request a refund for Sep 14 · Pro monthly"
         }
        ]
       }
@@ -10914,15 +11042,6 @@
          "disabled": false,
          "icon": true,
          "name": "Receipt PDF for Sep 2 · Extra credits 60,000 characters"
-        },
-        {
-         "label": "Request a refund",
-         "tone": "quiet",
-         "size": "sm",
-         "href": "/business#b-refund",
-         "disabled": false,
-         "icon": false,
-         "name": "Request a refund for Sep 2 · Extra credits 60,000 characters"
         }
        ]
       }
@@ -11017,7 +11136,6 @@
          "label": "환불 요청",
          "tone": "quiet",
          "size": "sm",
-         "href": "/business#b-refund",
          "disabled": false,
          "icon": false,
          "name": "10월 14일 · Pro 매달 환불 요청"
@@ -11041,15 +11159,6 @@
          "disabled": false,
          "icon": true,
          "name": "9월 14일 · Pro 매달 영수증 PDF"
-        },
-        {
-         "label": "환불 요청",
-         "tone": "quiet",
-         "size": "sm",
-         "href": "/business#b-refund",
-         "disabled": false,
-         "icon": false,
-         "name": "9월 14일 · Pro 매달 환불 요청"
         }
        ]
       }
@@ -11070,15 +11179,6 @@
          "disabled": false,
          "icon": true,
          "name": "9월 2일 · 추가 크레딧 60,000자 영수증 PDF"
-        },
-        {
-         "label": "환불 요청",
-         "tone": "quiet",
-         "size": "sm",
-         "href": "/business#b-refund",
-         "disabled": false,
-         "icon": false,
-         "name": "9월 2일 · 추가 크레딧 60,000자 환불 요청"
         }
        ]
       }
@@ -11425,7 +11525,6 @@
          "label": "Request a refund",
          "tone": "quiet",
          "size": "sm",
-         "href": "/business#b-refund",
          "disabled": false,
          "icon": false,
          "name": "Request a refund for Oct 14 · Pro monthly"
@@ -11449,15 +11548,6 @@
          "disabled": false,
          "icon": true,
          "name": "Receipt PDF for Sep 14 · Pro monthly"
-        },
-        {
-         "label": "Request a refund",
-         "tone": "quiet",
-         "size": "sm",
-         "href": "/business#b-refund",
-         "disabled": false,
-         "icon": false,
-         "name": "Request a refund for Sep 14 · Pro monthly"
         }
        ]
       }
@@ -11478,15 +11568,6 @@
          "disabled": false,
          "icon": true,
          "name": "Receipt PDF for Sep 2 · Extra credits 60,000 characters"
-        },
-        {
-         "label": "Request a refund",
-         "tone": "quiet",
-         "size": "sm",
-         "href": "/business#b-refund",
-         "disabled": false,
-         "icon": false,
-         "name": "Request a refund for Sep 2 · Extra credits 60,000 characters"
         }
        ]
       }
@@ -11581,7 +11662,6 @@
          "label": "환불 요청",
          "tone": "quiet",
          "size": "sm",
-         "href": "/business#b-refund",
          "disabled": false,
          "icon": false,
          "name": "10월 14일 · Pro 매달 환불 요청"
@@ -11605,15 +11685,6 @@
          "disabled": false,
          "icon": true,
          "name": "9월 14일 · Pro 매달 영수증 PDF"
-        },
-        {
-         "label": "환불 요청",
-         "tone": "quiet",
-         "size": "sm",
-         "href": "/business#b-refund",
-         "disabled": false,
-         "icon": false,
-         "name": "9월 14일 · Pro 매달 환불 요청"
         }
        ]
       }
@@ -11634,15 +11705,6 @@
          "disabled": false,
          "icon": true,
          "name": "9월 2일 · 추가 크레딧 60,000자 영수증 PDF"
-        },
-        {
-         "label": "환불 요청",
-         "tone": "quiet",
-         "size": "sm",
-         "href": "/business#b-refund",
-         "disabled": false,
-         "icon": false,
-         "name": "9월 2일 · 추가 크레딧 60,000자 환불 요청"
         }
        ]
       }

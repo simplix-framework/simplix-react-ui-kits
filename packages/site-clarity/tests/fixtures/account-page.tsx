@@ -8,7 +8,7 @@ import type { ReactNode } from "react";
 import type { SiteActionSpec, SiteActionTone } from "@simplix-react-ui-kits/site-core/action";
 import { AccountLayout, DaySeries, IdentityRow, PanelLine, QuotaMeter, SectionHead, SectionNav, SettingsActions, SettingsBox, SettingsRow, SettingsRows, SettingsText, SitePanel, TableActions, TableCard } from "@simplix-react-ui-kits/site-core/account";
 import { ChoiceCards } from "@simplix-react-ui-kits/site-core/checkout";
-import { ConfirmByTyping, FormField, SiteInput, SiteSelect } from "@simplix-react-ui-kits/site-core/form";
+import { ConfirmByTyping, FormField, SiteInput, SiteSelect, SiteTextarea } from "@simplix-react-ui-kits/site-core/form";
 import { NoticeBanner } from "@simplix-react-ui-kits/site-core/legal";
 import { SiteCaption, SiteChip, type SiteChipTone, SitePage, SiteTextAction } from "@simplix-react-ui-kits/site-core/page";
 import { SiteBar, SiteFooter, SiteWindow } from "@simplix-react-ui-kits/site-core/shell";
@@ -145,9 +145,13 @@ function BlockView({ block }: { block: Block }): ReactNode {
     }
     case "box": {
       const children = b.blocks as Block[];
-      // The account's own deletion is a typed confirmation on a plain card.
+      // The account's own deletion is a typed confirmation on a plain card; what it asks besides the
+      // typed word (a note, an optional reason) sits between the points and the typed field.
       if (children.some((child) => child.kind === "points")) {
-        const [title, points, input, actions] = children as Record<string, unknown>[];
+        const [title, points, ...rest] = children as Record<string, unknown>[];
+        const input = rest.at(-2);
+        const actions = rest.at(-1);
+        const asked = rest.slice(0, -2) as Block[];
         const [confirm, cancel] = (actions?.actions as Action[]).map(spec);
         return (
           <ConfirmByTyping
@@ -161,7 +165,11 @@ function BlockView({ block }: { block: Block }): ReactNode {
             onValueChange={noop}
             confirm={confirm as SiteActionSpec}
             cancel={cancel as SiteActionSpec}
-          />
+          >
+            {asked.map((child, index) => (
+              <BlockView key={index} block={child} />
+            ))}
+          </ConfirmByTyping>
         );
       }
       return (
@@ -212,6 +220,12 @@ function BlockView({ block }: { block: Block }): ReactNode {
       return (
         <FormField muted={b.muted as boolean} label={b.label as string}>
           <SiteInput value={b.value as string} placeholder={(b.placeholder as string) || undefined} readOnly />
+        </FormField>
+      );
+    case "textarea":
+      return (
+        <FormField muted={b.muted as boolean} label={b.label as string}>
+          <SiteTextarea value={b.value as string} placeholder={(b.placeholder as string) || undefined} rows={b.rows as number} readOnly />
         </FormField>
       );
     default:
