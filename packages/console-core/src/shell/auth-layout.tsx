@@ -19,8 +19,12 @@ import { partAttributes, slotAttributes } from "@simplix-react/ui/design";
  * time one of them is restyled, and the operator who signs into two of them sees two products.
  *
  * <p>Draws the route's page, or `children` where there is no router (a design reference frame).
+ *
+ * <p>The corner holds the language picker and the colour scheme control: the console's dark-mode
+ * toggle, or the `themeControl` a product hands in when its pages keep a scheme choice of their own,
+ * so the page never draws a second control that writes the scheme somewhere else.
  */
-export function AuthLayout({ children }: { readonly children?: ReactNode } = {}) {
+export function AuthLayout({ children, themeControl }: { readonly children?: ReactNode; readonly themeControl?: ReactNode } = {}) {
   const brand = useConsoleBrand();
   return (
     <Flex
@@ -31,7 +35,7 @@ export function AuthLayout({ children }: { readonly children?: ReactNode } = {})
     >
       <Flex gap="xs" align="center" className="absolute right-4 top-4 z-10" {...partAttributes(authPreferencesStyle, {})}>
         <LocalePicker />
-        <DarkModeToggle />
+        {themeControl ?? <DarkModeToggle />}
       </Flex>
       <Stack gap="md" className="w-full max-w-sm">
         {/* The mark sits centred over the form whatever the product hands in. */}
