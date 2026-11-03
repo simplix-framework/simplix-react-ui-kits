@@ -178,3 +178,46 @@ describe("the generated packs page", () => {
     expect(source).not.toMatch(/console-(clarity|core)/);
   });
 });
+
+describe("the generated site failure page", () => {
+  const source = render("error-page.hbs", { namespace: "common", nameKebab: "not-found", NamePascal: "NotFound", nameCamel: "notFound" });
+  const failureFile = join(virtualRoot, "apps", "app", "src", "pages", "not-found", "page.tsx");
+
+  it("compiles alone", () => {
+    expect(typecheck({ [failureFile]: source }, [failureFile])).toEqual([]);
+  });
+
+  it("draws the centred column with the failure part from the page's catalog keys, a way back to the start first, and nothing of the console", () => {
+    expect(source).toContain('<SitePage rhythm="done">');
+    expect(source).toContain('title={t("notFound.title")}');
+    expect(source).toContain('body={t("notFound.body")}');
+    expect(source).toContain('{ id: "home", label: t("notFound.home"), href: "/", tone: "primary" }');
+    expect(source).not.toMatch(/console-(clarity|core)/);
+  });
+
+  it("refuses a page that draws the failure without its mark", () => {
+    const unmarked = source.replace("mark={mark} ", "");
+    expect(typecheck({ [failureFile]: unmarked }, [failureFile]).join("\n")).toContain("TS2741");
+  });
+});
+
+describe("the generated site sign-in step", () => {
+  const source = render("auth-page.hbs", { namespace: "common", nameKebab: "sign-in", NamePascal: "SignIn", nameCamel: "signIn" });
+  const authFile = join(virtualRoot, "apps", "app", "src", "pages", "sign-in", "page.tsx");
+
+  it("compiles alone", () => {
+    expect(typecheck({ [authFile]: source }, [authFile])).toEqual([]);
+  });
+
+  it("draws the step on the sign-in ground and its card, named by the step, from the page's catalog keys, and nothing of the console", () => {
+    expect(source).toContain('<AuthPage step="sign-in">');
+    expect(source).toContain('<AuthCard title={t("signIn.title")} mark={mark}>');
+    expect(source).toContain('{t("signIn.lede")}');
+    expect(source).not.toMatch(/console-(clarity|core)/);
+  });
+
+  it("refuses a step drawn outside the sign-in ground's card", () => {
+    const loose = source.replace('<AuthCard title={t("signIn.title")} mark={mark}>', "<AuthCard>");
+    expect(typecheck({ [authFile]: loose }, [authFile]).join("\n")).toContain("TS2741");
+  });
+});

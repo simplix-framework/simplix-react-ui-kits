@@ -1215,6 +1215,33 @@
       ],
       "carded": false
     },
+    "failure": {
+      "part": "SiteFailure",
+      "slot": "SitePage children (rhythm done)",
+      "marks": [
+        "site-failure-mark"
+      ],
+      "within": "site-page",
+      "controls": [
+        "site-action",
+        "link",
+        "button"
+      ],
+      "$comment": "An address the site has no page for, a page that failed while it was shown, or a session the site cannot go on with: SiteFailure stands directly in the centred column, so the region is the column.",
+      "parts": {
+        "mark": "site-failure-mark",
+        "title": "site-failure-title",
+        "body": "site-failure-text",
+        "actions": "site-failure-actions",
+        "primary": "site-action[data-tone=primary]",
+        "secondary": "site-action[data-tone=secondary]"
+      },
+      "widths": [
+        "root",
+        "body"
+      ],
+      "carded": false
+    },
     "authCard": {
       "part": "AuthCard",
       "slot": "AuthPage children",
@@ -1445,6 +1472,21 @@
         "footer"
       ],
       "$comment": "One-off packs beside the plans (a pack for one presentation, extra credits on a paid plan), a page of its own: the heading and lede, the packs side by side, each with its price, who it is for, what it gives on a meter, its terms and its action (a disabled one with the reason under it), then a closing line."
+    },
+    "failure": {
+      "status": "ready",
+      "root": "[data-page]",
+      "regions": [
+        "bar",
+        "failure",
+        "footer"
+      ],
+      "required": [
+        "bar",
+        "failure",
+        "footer"
+      ],
+      "$comment": "A failure page in the site window: the bar, the centred column with the round mark, the one heading, what happened and the ways on, then the footer."
     }
   }
 }

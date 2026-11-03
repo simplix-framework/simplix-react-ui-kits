@@ -655,6 +655,12 @@
   [data-slot="site-dialog-titles"][data-slot][data-s-site-dialog-titles] {
     @apply flex min-w-0 flex-1 flex-col gap-1;
   }
+  [data-slot="site-error-reason"][data-slot][data-s-site-error-reason] {
+    @apply list-disc text-(length:--site-fs-body-pane) leading-(--site-lh-body-pane) text-(--site-ink);
+  }
+  [data-slot="site-error-reasons"][data-slot][data-s-site-error-reasons] {
+    @apply m-0 flex min-w-0 flex-col gap-1 ps-5;
+  }
   [data-slot="site-field-inline"][data-slot][data-s-site-field-inline] {
     @apply flex min-w-0 items-center gap-2;
   }
@@ -1963,6 +1969,24 @@
   [data-slot="site-wave"][data-slot][data-s-site-wave] {
     @apply block w-full max-w-full;
   }
+  [data-slot="site-failure-actions"][data-slot][data-s-site-failure-actions] {
+    @apply flex min-w-0 flex-wrap justify-center gap-2;
+  }
+  [data-slot="site-failure-mark"][data-slot][data-s-site-failure-mark] {
+    @apply grid size-14 place-items-center rounded-(--site-radius-full);
+  }
+  [data-slot="site-failure-mark"][data-tone="quiet"][data-s-site-failure-mark] {
+    @apply bg-(--site-surface-sunken) text-(--site-ink-muted);
+  }
+  [data-slot="site-failure-mark"][data-tone="bad"][data-s-site-failure-mark] {
+    @apply bg-(--site-bad-soft) text-(--site-bad);
+  }
+  [data-slot="site-failure-text"][data-slot][data-s-site-failure-text] {
+    @apply m-0 max-w-xl text-(length:--site-fs-body) leading-(--site-lh-body) text-(--site-ink-muted);
+  }
+  [data-slot="site-failure-title"][data-slot][data-s-site-failure-title] {
+    @apply m-0 font-(family-name:--site-font-display) text-(length:--site-fs-title) leading-(--site-lh-title) font-(--site-fw-title) tracking-(--site-tracking-display);
+  }
   [data-slot="site-badge"][data-slot][data-s-site-badge] {
     @apply inline-flex items-center gap-1 rounded-(--site-radius-full) px-2 py-0.5 text-(length:--site-fs-label) leading-(--site-lh-label) font-(--site-fw-strong) tracking-(--site-tracking-label);
   }
@@ -2702,6 +2726,9 @@
   }
   :where([data-slot="site-steps-list"])[data-s-site-steps-list] {
     @apply @max-page-medium/page:grid-cols-1;
+  }
+  :where([data-slot="site-failure-mark"])[data-s-site-failure-mark] {
+    @apply [&_svg]:size-7;
   }
   :where([data-slot="site-badge"])[data-s-site-badge] {
     @apply [&_svg]:size-3;

@@ -10,6 +10,8 @@ export { ConfirmByTyping, typedConfirms } from "./confirm-by-typing";
 export type { ConfirmByTypingProps } from "./confirm-by-typing";
 export { SiteDialog, SiteDialogFrame } from "./dialog";
 export type { SiteDialogFrameProps, SiteDialogProps } from "./dialog";
+export { SiteErrorList, siteErrorKind, SiteErrors, siteErrorView } from "./errors";
+export type { SiteErrorEvent, SiteErrorKind, SiteErrorListProps, SiteErrorsCopy, SiteErrorsProps, SiteErrorView } from "./errors";
 export { SiteToastList, SiteToasts } from "./toasts";
 export type { SiteToastListProps } from "./toasts";
 export { radioKeyTarget, radioTabStop } from "./radio-keys";
