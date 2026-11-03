@@ -82,6 +82,7 @@
   --site-lh-display-xl: 48px;
   --site-fw-display: 750;
   --site-fw-strong: 600;
+  --site-fw-bold: 700;
   --site-tracking-display: -0.025em;
   --site-tracking-wide: 0.025em;
   --site-tracking-code: 0.1em;
@@ -104,6 +105,7 @@
   --site-recede: 0.7;
   --site-faint: 0.4;
   --site-dim: 0.45;
+  --site-fade: 0.5;
 
   /* Motion, focus and what floats. */
   --site-duration-fast: 120ms;
@@ -131,6 +133,17 @@
   --site-dark-wave-rest: var(--site-dark-line);
   --site-dark-shadow-window: 0 16px 44px rgb(0 0 0 / 50%), 0 0 0 1px color-mix(in srgb, var(--site-dark-accent) 28%, transparent);
   --site-dark-bar-ink: var(--site-dark-ink);
+  --site-dark-surface-raised: var(--site-dark-surface);
+  --site-dark-control-line: var(--site-control-line);
+  --site-dark-control-disabled: var(--site-control-disabled);
+  --site-dark-ink-disabled: var(--site-ink-disabled);
+  --site-dark-good: var(--site-good);
+  --site-dark-good-soft: var(--site-good-soft);
+  --site-dark-warn: var(--site-warn);
+  --site-dark-warn-soft: var(--site-warn-soft);
+  --site-dark-bad: var(--site-bad);
+  --site-dark-bad-soft: var(--site-bad-soft);
+  --site-dark-shadow-float: var(--site-shadow-float);
 }
 
 /* A band on the dark ground: every site variable a part reads takes the band's value inside it. */
@@ -149,4 +162,15 @@
   --site-voice-text: var(--site-dark-voice-text);
   --site-wave-rest: var(--site-dark-wave-rest);
   --site-shadow-window: var(--site-dark-shadow-window);
+  --site-surface-raised: var(--site-dark-surface-raised);
+  --site-control-line: var(--site-dark-control-line);
+  --site-control-disabled: var(--site-dark-control-disabled);
+  --site-ink-disabled: var(--site-dark-ink-disabled);
+  --site-good: var(--site-dark-good);
+  --site-good-soft: var(--site-dark-good-soft);
+  --site-warn: var(--site-dark-warn);
+  --site-warn-soft: var(--site-dark-warn-soft);
+  --site-bad: var(--site-dark-bad);
+  --site-bad-soft: var(--site-dark-bad-soft);
+  --site-shadow-float: var(--site-dark-shadow-float);
 }

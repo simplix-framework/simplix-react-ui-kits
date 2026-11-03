@@ -1,10 +1,11 @@
-import type { ReactNode } from "react";
+import type { MouseEvent, ReactNode } from "react";
 import { slotAttributes } from "@simplix-react/ui/design";
 
-import { siteBadgeStyle, siteCaptionStyle, siteChipDotStyle, siteChipStyle, siteLiveStyle, siteSpinnerStyle } from "./site-page.style";
+import { SiteLink } from "../link/site-link";
+import { siteBadgeStyle, siteCaptionStyle, siteChipDotStyle, siteChipStyle, siteLiveStyle, siteSpinnerStyle, siteTextActionStyle } from "./site-page.style";
 
 /** How a {@link SiteChip} reads: plain, the accent, or a state that went well, needs care or failed. */
-export type SiteChipTone = "neutral" | "accent" | "good" | "warn" | "bad";
+export type SiteChipTone = "neutral" | "accent" | "good" | "warn" | "bad" | "voice";
 
 /** Props for {@link SiteChip}. */
 export interface SiteChipProps {
@@ -71,5 +72,34 @@ export function SiteBadge({ tone, icon, title, children }: SiteBadgeProps) {
       {icon}
       {children}
     </span>
+  );
+}
+
+/** Props for {@link SiteTextAction}. */
+export interface SiteTextActionProps {
+  readonly children: ReactNode;
+  /** The address it opens; drawn as a link. Without it, or when disabled, it is a button. */
+  readonly href?: string;
+  readonly onSelect?: (event: MouseEvent<HTMLElement>) => void;
+  readonly disabled?: boolean;
+  /** The accessible name, where the words alone repeat elsewhere on the page. */
+  readonly name?: string;
+  readonly kind?: "link" | "inline" | "muted";
+}
+
+/** An action written as a link inside text: a link when it opens an address, a button otherwise. */
+export function SiteTextAction({ children, href, onSelect, disabled = false, name, kind }: SiteTextActionProps) {
+  const marks = slotAttributes(siteTextActionStyle, { kind });
+  if (href !== undefined && !disabled) {
+    return (
+      <SiteLink {...marks} href={href} onClick={onSelect} aria-label={name}>
+        {children}
+      </SiteLink>
+    );
+  }
+  return (
+    <button {...marks} type="button" disabled={disabled} aria-label={name} onClick={onSelect}>
+      {children}
+    </button>
   );
 }

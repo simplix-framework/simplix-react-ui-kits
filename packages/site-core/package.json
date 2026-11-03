@@ -10,10 +10,25 @@
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
+    "./account": {
+      "source": "./src/account/index.ts",
+      "types": "./src/account/index.ts",
+      "import": "./dist/account/index.js"
+    },
     "./action": {
       "source": "./src/action/index.ts",
       "types": "./src/action/index.ts",
       "import": "./dist/action/index.js"
+    },
+    "./auth": {
+      "source": "./src/auth/index.ts",
+      "types": "./src/auth/index.ts",
+      "import": "./dist/auth/index.js"
+    },
+    "./checkout": {
+      "source": "./src/checkout/index.ts",
+      "types": "./src/checkout/index.ts",
+      "import": "./dist/checkout/index.js"
     },
     "./form": {
       "source": "./src/form/index.ts",

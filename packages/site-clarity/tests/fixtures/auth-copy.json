@@ -1,0 +1,5058 @@
+{
+ "web-auth-operator-sign-in--address-not-allowed|en": {
+  "step": "blocked",
+  "dark": false,
+  "title": "StageVoice operator console",
+  "mark": 32,
+  "blocks": [
+   {
+    "kind": "text",
+    "size": "caption",
+    "tone": "lead",
+    "text": "For StageVoice operators only. Opens only from an allowed network address."
+   },
+   {
+    "kind": "banner",
+    "tone": "bad",
+    "title": "This network cannot open the operator console",
+    "body": "175.***.**.40 is not on the allowed list. Connect to the company network or the VPN, then try again."
+   },
+   {
+    "kind": "action",
+    "action": {
+     "label": "Try again",
+     "tone": "primary",
+     "size": "lg",
+     "block": true,
+     "disabled": false,
+     "icon": false,
+     "submit": false
+    }
+   }
+  ]
+ },
+ "web-auth-operator-sign-in--address-not-allowed|ko": {
+  "step": "blocked",
+  "dark": false,
+  "title": "StageVoice 운영 콘솔",
+  "mark": 32,
+  "blocks": [
+   {
+    "kind": "text",
+    "size": "caption",
+    "tone": "lead",
+    "text": "StageVoice 운영자 전용 페이지입니다. 허용된 네트워크 주소에서만 열립니다."
+   },
+   {
+    "kind": "banner",
+    "tone": "bad",
+    "title": "이 네트워크에서는 운영 콘솔을 열 수 없습니다",
+    "body": "175.***.**.40은 허용 목록에 없습니다. 회사 네트워크나 VPN에 연결한 뒤 다시 시도하세요."
+   },
+   {
+    "kind": "action",
+    "action": {
+     "label": "다시 시도",
+     "tone": "primary",
+     "size": "lg",
+     "block": true,
+     "disabled": false,
+     "icon": false,
+     "submit": false
+    }
+   }
+  ]
+ },
+ "web-auth-operator-sign-in--address-not-allowed-dark|en": {
+  "step": "blocked",
+  "dark": true,
+  "title": "StageVoice operator console",
+  "mark": 32,
+  "blocks": [
+   {
+    "kind": "text",
+    "size": "caption",
+    "tone": "lead",
+    "text": "For StageVoice operators only. Opens only from an allowed network address."
+   },
+   {
+    "kind": "banner",
+    "tone": "bad",
+    "title": "This network cannot open the operator console",
+    "body": "175.***.**.40 is not on the allowed list. Connect to the company network or the VPN, then try again."
+   },
+   {
+    "kind": "action",
+    "action": {
+     "label": "Try again",
+     "tone": "primary",
+     "size": "lg",
+     "block": true,
+     "disabled": false,
+     "icon": false,
+     "submit": false
+    }
+   }
+  ]
+ },
+ "web-auth-operator-sign-in--address-not-allowed-dark|ko": {
+  "step": "blocked",
+  "dark": true,
+  "title": "StageVoice 운영 콘솔",
+  "mark": 32,
+  "blocks": [
+   {
+    "kind": "text",
+    "size": "caption",
+    "tone": "lead",
+    "text": "StageVoice 운영자 전용 페이지입니다. 허용된 네트워크 주소에서만 열립니다."
+   },
+   {
+    "kind": "banner",
+    "tone": "bad",
+    "title": "이 네트워크에서는 운영 콘솔을 열 수 없습니다",
+    "body": "175.***.**.40은 허용 목록에 없습니다. 회사 네트워크나 VPN에 연결한 뒤 다시 시도하세요."
+   },
+   {
+    "kind": "action",
+    "action": {
+     "label": "다시 시도",
+     "tone": "primary",
+     "size": "lg",
+     "block": true,
+     "disabled": false,
+     "icon": false,
+     "submit": false
+    }
+   }
+  ]
+ },
+ "web-auth-operator-sign-in--address-not-allowed-phone|en": {
+  "step": "blocked",
+  "dark": false,
+  "title": "StageVoice operator console",
+  "mark": 31.41009521484375,
+  "blocks": [
+   {
+    "kind": "text",
+    "size": "caption",
+    "tone": "lead",
+    "text": "For StageVoice operators only. Opens only from an allowed network address."
+   },
+   {
+    "kind": "banner",
+    "tone": "bad",
+    "title": "This network cannot open the operator console",
+    "body": "175.***.**.40 is not on the allowed list. Connect to the company network or the VPN, then try again."
+   },
+   {
+    "kind": "action",
+    "action": {
+     "label": "Try again",
+     "tone": "primary",
+     "size": "lg",
+     "block": true,
+     "disabled": false,
+     "icon": false,
+     "submit": false
+    }
+   }
+  ]
+ },
+ "web-auth-operator-sign-in--address-not-allowed-phone|ko": {
+  "step": "blocked",
+  "dark": false,
+  "title": "StageVoice 운영 콘솔",
+  "mark": 31.41009521484375,
+  "blocks": [
+   {
+    "kind": "text",
+    "size": "caption",
+    "tone": "lead",
+    "text": "StageVoice 운영자 전용 페이지입니다. 허용된 네트워크 주소에서만 열립니다."
+   },
+   {
+    "kind": "banner",
+    "tone": "bad",
+    "title": "이 네트워크에서는 운영 콘솔을 열 수 없습니다",
+    "body": "175.***.**.40은 허용 목록에 없습니다. 회사 네트워크나 VPN에 연결한 뒤 다시 시도하세요."
+   },
+   {
+    "kind": "action",
+    "action": {
+     "label": "다시 시도",
+     "tone": "primary",
+     "size": "lg",
+     "block": true,
+     "disabled": false,
+     "icon": false,
+     "submit": false
+    }
+   }
+  ]
+ },
+ "web-auth-operator-sign-in--code|en": {
+  "step": "code",
+  "dark": false,
+  "title": "StageVoice operator console",
+  "mark": 32,
+  "blocks": [
+   {
+    "kind": "text",
+    "size": "caption",
+    "tone": "lead",
+    "text": "For StageVoice operators only. Opens only from an allowed network address."
+   },
+   {
+    "kind": "text",
+    "size": "caption",
+    "tone": "muted",
+    "strong": false,
+    "small": false,
+    "smallCaption": false,
+    "text": "Signing in as t@stagevoice.example"
+   },
+   {
+    "kind": "form",
+    "gap": "fields",
+    "blocks": [
+     {
+      "kind": "fieldhead",
+      "title": "Enter the 6-digit code",
+      "hint": "Open your authenticator app. The code changes every 30 seconds."
+     },
+     {
+      "kind": "code",
+      "label": "Code from the authenticator app",
+      "value": "",
+      "length": 6,
+      "invalid": false,
+      "disabled": false
+     },
+     {
+      "kind": "text",
+      "size": "caption",
+      "tone": "muted",
+      "strong": false,
+      "small": true,
+      "smallCaption": true,
+      "text": "Test code 204917"
+     },
+     {
+      "kind": "action",
+      "action": {
+       "label": "Verify",
+       "tone": "primary",
+       "size": "lg",
+       "block": true,
+       "disabled": true,
+       "icon": false,
+       "submit": true
+      }
+     }
+    ]
+   },
+   {
+    "kind": "link",
+    "link": "Use a recovery code",
+    "disabled": false,
+    "button": false
+   },
+   {
+    "kind": "link",
+    "link": "Use another account",
+    "disabled": false,
+    "button": false
+   }
+  ]
+ },
+ "web-auth-operator-sign-in--code|ko": {
+  "step": "code",
+  "dark": false,
+  "title": "StageVoice 운영 콘솔",
+  "mark": 32,
+  "blocks": [
+   {
+    "kind": "text",
+    "size": "caption",
+    "tone": "lead",
+    "text": "StageVoice 운영자 전용 페이지입니다. 허용된 네트워크 주소에서만 열립니다."
+   },
+   {
+    "kind": "text",
+    "size": "caption",
+    "tone": "muted",
+    "strong": false,
+    "small": false,
+    "smallCaption": false,
+    "text": "t@stagevoice.example 계정으로 로그인합니다"
+   },
+   {
+    "kind": "form",
+    "gap": "fields",
+    "blocks": [
+     {
+      "kind": "fieldhead",
+      "title": "여섯 자리 숫자 입력",
+      "hint": "인증 앱에 표시된 여섯 자리 숫자를 넣으세요. 숫자는 30초마다 바뀝니다."
+     },
+     {
+      "kind": "code",
+      "label": "인증 앱의 숫자",
+      "value": "",
+      "length": 6,
+      "invalid": false,
+      "disabled": false
+     },
+     {
+      "kind": "text",
+      "size": "caption",
+      "tone": "muted",
+      "strong": false,
+      "small": true,
+      "smallCaption": true,
+      "text": "시험용 코드 204917"
+     },
+     {
+      "kind": "action",
+      "action": {
+       "label": "확인",
+       "tone": "primary",
+       "size": "lg",
+       "block": true,
+       "disabled": true,
+       "icon": false,
+       "submit": true
+      }
+     }
+    ]
+   },
+   {
+    "kind": "link",
+    "link": "복구 코드 사용",
+    "disabled": false,
+    "button": false
+   },
+   {
+    "kind": "link",
+    "link": "다른 계정으로 로그인",
+    "disabled": false,
+    "button": false
+   }
+  ]
+ },
+ "web-auth-operator-sign-in--code-dark|en": {
+  "step": "code",
+  "dark": true,
+  "title": "StageVoice operator console",
+  "mark": 32,
+  "blocks": [
+   {
+    "kind": "text",
+    "size": "caption",
+    "tone": "lead",
+    "text": "For StageVoice operators only. Opens only from an allowed network address."
+   },
+   {
+    "kind": "text",
+    "size": "caption",
+    "tone": "muted",
+    "strong": false,
+    "small": false,
+    "smallCaption": false,
+    "text": "Signing in as t@stagevoice.example"
+   },
+   {
+    "kind": "form",
+    "gap": "fields",
+    "blocks": [
+     {
+      "kind": "fieldhead",
+      "title": "Enter the 6-digit code",
+      "hint": "Open your authenticator app. The code changes every 30 seconds."
+     },
+     {
+      "kind": "code",
+      "label": "Code from the authenticator app",
+      "value": "",
+      "length": 6,
+      "invalid": false,
+      "disabled": false
+     },
+     {
+      "kind": "text",
+      "size": "caption",
+      "tone": "muted",
+      "strong": false,
+      "small": true,
+      "smallCaption": true,
+      "text": "Test code 204917"
+     },
+     {
+      "kind": "action",
+      "action": {
+       "label": "Verify",
+       "tone": "primary",
+       "size": "lg",
+       "block": true,
+       "disabled": true,
+       "icon": false,
+       "submit": true
+      }
+     }
+    ]
+   },
+   {
+    "kind": "link",
+    "link": "Use a recovery code",
+    "disabled": false,
+    "button": false
+   },
+   {
+    "kind": "link",
+    "link": "Use another account",
+    "disabled": false,
+    "button": false
+   }
+  ]
+ },
+ "web-auth-operator-sign-in--code-dark|ko": {
+  "step": "code",
+  "dark": true,
+  "title": "StageVoice 운영 콘솔",
+  "mark": 32,
+  "blocks": [
+   {
+    "kind": "text",
+    "size": "caption",
+    "tone": "lead",
+    "text": "StageVoice 운영자 전용 페이지입니다. 허용된 네트워크 주소에서만 열립니다."
+   },
+   {
+    "kind": "text",
+    "size": "caption",
+    "tone": "muted",
+    "strong": false,
+    "small": false,
+    "smallCaption": false,
+    "text": "t@stagevoice.example 계정으로 로그인합니다"
+   },
+   {
+    "kind": "form",
+    "gap": "fields",
+    "blocks": [
+     {
+      "kind": "fieldhead",
+      "title": "여섯 자리 숫자 입력",
+      "hint": "인증 앱에 표시된 여섯 자리 숫자를 넣으세요. 숫자는 30초마다 바뀝니다."
+     },
+     {
+      "kind": "code",
+      "label": "인증 앱의 숫자",
+      "value": "",
+      "length": 6,
+      "invalid": false,
+      "disabled": false
+     },
+     {
+      "kind": "text",
+      "size": "caption",
+      "tone": "muted",
+      "strong": false,
+      "small": true,
+      "smallCaption": true,
+      "text": "시험용 코드 204917"
+     },
+     {
+      "kind": "action",
+      "action": {
+       "label": "확인",
+       "tone": "primary",
+       "size": "lg",
+       "block": true,
+       "disabled": true,
+       "icon": false,
+       "submit": true
+      }
+     }
+    ]
+   },
+   {
+    "kind": "link",
+    "link": "복구 코드 사용",
+    "disabled": false,
+    "button": false
+   },
+   {
+    "kind": "link",
+    "link": "다른 계정으로 로그인",
+    "disabled": false,
+    "button": false
+   }
+  ]
+ },
+ "web-auth-operator-sign-in--code-phone|en": {
+  "step": "code",
+  "dark": false,
+  "title": "StageVoice operator console",
+  "mark": 31.41009521484375,
+  "blocks": [
+   {
+    "kind": "text",
+    "size": "caption",
+    "tone": "lead",
+    "text": "For StageVoice operators only. Opens only from an allowed network address."
+   },
+   {
+    "kind": "text",
+    "size": "caption",
+    "tone": "muted",
+    "strong": false,
+    "small": false,
+    "smallCaption": false,
+    "text": "Signing in as t@stagevoice.example"
+   },
+   {
+    "kind": "form",
+    "gap": "fields",
+    "blocks": [
+     {
+      "kind": "fieldhead",
+      "title": "Enter the 6-digit code",
+      "hint": "Open your authenticator app. The code changes every 30 seconds."
+     },
+     {
+      "kind": "code",
+      "label": "Code from the authenticator app",
+      "value": "",
+      "length": 6,
+      "invalid": false,
+      "disabled": false
+     },
+     {
+      "kind": "text",
+      "size": "caption",
+      "tone": "muted",
+      "strong": false,
+      "small": true,
+      "smallCaption": true,
+      "text": "Test code 204917"
+     },
+     {
+      "kind": "action",
+      "action": {
+       "label": "Verify",
+       "tone": "primary",
+       "size": "lg",
+       "block": true,
+       "disabled": true,
+       "icon": false,
+       "submit": true
+      }
+     }
+    ]
+   },
+   {
+    "kind": "link",
+    "link": "Use a recovery code",
+    "disabled": false,
+    "button": false
+   },
+   {
+    "kind": "link",
+    "link": "Use another account",
+    "disabled": false,
+    "button": false
+   }
+  ]
+ },
+ "web-auth-operator-sign-in--code-phone|ko": {
+  "step": "code",
+  "dark": false,
+  "title": "StageVoice 운영 콘솔",
+  "mark": 31.41009521484375,
+  "blocks": [
+   {
+    "kind": "text",
+    "size": "caption",
+    "tone": "lead",
+    "text": "StageVoice 운영자 전용 페이지입니다. 허용된 네트워크 주소에서만 열립니다."
+   },
+   {
+    "kind": "text",
+    "size": "caption",
+    "tone": "muted",
+    "strong": false,
+    "small": false,
+    "smallCaption": false,
+    "text": "t@stagevoice.example 계정으로 로그인합니다"
+   },
+   {
+    "kind": "form",
+    "gap": "fields",
+    "blocks": [
+     {
+      "kind": "fieldhead",
+      "title": "여섯 자리 숫자 입력",
+      "hint": "인증 앱에 표시된 여섯 자리 숫자를 넣으세요. 숫자는 30초마다 바뀝니다."
+     },
+     {
+      "kind": "code",
+      "label": "인증 앱의 숫자",
+      "value": "",
+      "length": 6,
+      "invalid": false,
+      "disabled": false
+     },
+     {
+      "kind": "text",
+      "size": "caption",
+      "tone": "muted",
+      "strong": false,
+      "small": true,
+      "smallCaption": true,
+      "text": "시험용 코드 204917"
+     },
+     {
+      "kind": "action",
+      "action": {
+       "label": "확인",
+       "tone": "primary",
+       "size": "lg",
+       "block": true,
+       "disabled": true,
+       "icon": false,
+       "submit": true
+      }
+     }
+    ]
+   },
+   {
+    "kind": "link",
+    "link": "복구 코드 사용",
+    "disabled": false,
+    "button": false
+   },
+   {
+    "kind": "link",
+    "link": "다른 계정으로 로그인",
+    "disabled": false,
+    "button": false
+   }
+  ]
+ },
+ "web-auth-operator-sign-in--email|en": {
+  "step": "email",
+  "dark": false,
+  "title": "StageVoice operator console",
+  "mark": 32,
+  "blocks": [
+   {
+    "kind": "text",
+    "size": "caption",
+    "tone": "lead",
+    "text": "For StageVoice operators only. Opens only from an allowed network address."
+   },
+   {
+    "kind": "banner",
+    "tone": "good",
+    "title": "Signing in from 211.***.**.12, an allowed address"
+   },
+   {
+    "kind": "form",
+    "gap": "fields",
+    "blocks": [
+     {
+      "kind": "field",
+      "label": "Operator email",
+      "type": "email",
+      "value": "t@stagevoice.example",
+      "placeholder": "",
+      "invalid": false,
+      "mono": false,
+      "notes": [],
+      "muted": false
+     },
+     {
+      "kind": "action",
+      "action": {
+       "label": "Continue",
+       "tone": "primary",
+       "size": "lg",
+       "block": true,
+       "disabled": false,
+       "icon": false,
+       "submit": true
+      }
+     }
+    ]
+   },
+   {
+    "kind": "or",
+    "label": "or"
+   },
+   {
+    "kind": "form",
+    "gap": "none",
+    "blocks": [
+     {
+      "kind": "action",
+      "action": {
+       "label": "Sign in with a passkey",
+       "tone": "secondary",
+       "size": "md",
+       "block": true,
+       "disabled": false,
+       "icon": true,
+       "submit": true
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "web-auth-operator-sign-in--email|ko": {
+  "step": "email",
+  "dark": false,
+  "title": "StageVoice 운영 콘솔",
+  "mark": 32,
+  "blocks": [
+   {
+    "kind": "text",
+    "size": "caption",
+    "tone": "lead",
+    "text": "StageVoice 운영자 전용 페이지입니다. 허용된 네트워크 주소에서만 열립니다."
+   },
+   {
+    "kind": "banner",
+    "tone": "good",
+    "title": "허용된 주소 211.***.**.12에서 접속했습니다"
+   },
+   {
+    "kind": "form",
+    "gap": "fields",
+    "blocks": [
+     {
+      "kind": "field",
+      "label": "운영자 이메일",
+      "type": "email",
+      "value": "t@stagevoice.example",
+      "placeholder": "",
+      "invalid": false,
+      "mono": false,
+      "notes": [],
+      "muted": false
+     },
+     {
+      "kind": "action",
+      "action": {
+       "label": "다음",
+       "tone": "primary",
+       "size": "lg",
+       "block": true,
+       "disabled": false,
+       "icon": false,
+       "submit": true
+      }
+     }
+    ]
+   },
+   {
+    "kind": "or",
+    "label": "또는"
+   },
+   {
+    "kind": "form",
+    "gap": "none",
+    "blocks": [
+     {
+      "kind": "action",
+      "action": {
+       "label": "패스키로 로그인",
+       "tone": "secondary",
+       "size": "md",
+       "block": true,
+       "disabled": false,
+       "icon": true,
+       "submit": true
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "web-auth-operator-sign-in--email-dark|en": {
+  "step": "email",
+  "dark": true,
+  "title": "StageVoice operator console",
+  "mark": 32,
+  "blocks": [
+   {
+    "kind": "text",
+    "size": "caption",
+    "tone": "lead",
+    "text": "For StageVoice operators only. Opens only from an allowed network address."
+   },
+   {
+    "kind": "banner",
+    "tone": "good",
+    "title": "Signing in from 211.***.**.12, an allowed address"
+   },
+   {
+    "kind": "form",
+    "gap": "fields",
+    "blocks": [
+     {
+      "kind": "field",
+      "label": "Operator email",
+      "type": "email",
+      "value": "t@stagevoice.example",
+      "placeholder": "",
+      "invalid": false,
+      "mono": false,
+      "notes": [],
+      "muted": false
+     },
+     {
+      "kind": "action",
+      "action": {
+       "label": "Continue",
+       "tone": "primary",
+       "size": "lg",
+       "block": true,
+       "disabled": false,
+       "icon": false,
+       "submit": true
+      }
+     }
+    ]
+   },
+   {
+    "kind": "or",
+    "label": "or"
+   },
+   {
+    "kind": "form",
+    "gap": "none",
+    "blocks": [
+     {
+      "kind": "action",
+      "action": {
+       "label": "Sign in with a passkey",
+       "tone": "secondary",
+       "size": "md",
+       "block": true,
+       "disabled": false,
+       "icon": true,
+       "submit": true
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "web-auth-operator-sign-in--email-dark|ko": {
+  "step": "email",
+  "dark": true,
+  "title": "StageVoice 운영 콘솔",
+  "mark": 32,
+  "blocks": [
+   {
+    "kind": "text",
+    "size": "caption",
+    "tone": "lead",
+    "text": "StageVoice 운영자 전용 페이지입니다. 허용된 네트워크 주소에서만 열립니다."
+   },
+   {
+    "kind": "banner",
+    "tone": "good",
+    "title": "허용된 주소 211.***.**.12에서 접속했습니다"
+   },
+   {
+    "kind": "form",
+    "gap": "fields",
+    "blocks": [
+     {
+      "kind": "field",
+      "label": "운영자 이메일",
+      "type": "email",
+      "value": "t@stagevoice.example",
+      "placeholder": "",
+      "invalid": false,
+      "mono": false,
+      "notes": [],
+      "muted": false
+     },
+     {
+      "kind": "action",
+      "action": {
+       "label": "다음",
+       "tone": "primary",
+       "size": "lg",
+       "block": true,
+       "disabled": false,
+       "icon": false,
+       "submit": true
+      }
+     }
+    ]
+   },
+   {
+    "kind": "or",
+    "label": "또는"
+   },
+   {
+    "kind": "form",
+    "gap": "none",
+    "blocks": [
+     {
+      "kind": "action",
+      "action": {
+       "label": "패스키로 로그인",
+       "tone": "secondary",
+       "size": "md",
+       "block": true,
+       "disabled": false,
+       "icon": true,
+       "submit": true
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "web-auth-operator-sign-in--email-phone|en": {
+  "step": "email",
+  "dark": false,
+  "title": "StageVoice operator console",
+  "mark": 31.41009521484375,
+  "blocks": [
+   {
+    "kind": "text",
+    "size": "caption",
+    "tone": "lead",
+    "text": "For StageVoice operators only. Opens only from an allowed network address."
+   },
+   {
+    "kind": "banner",
+    "tone": "good",
+    "title": "Signing in from 211.***.**.12, an allowed address"
+   },
+   {
+    "kind": "form",
+    "gap": "fields",
+    "blocks": [
+     {
+      "kind": "field",
+      "label": "Operator email",
+      "type": "email",
+      "value": "t@stagevoice.example",
+      "placeholder": "",
+      "invalid": false,
+      "mono": false,
+      "notes": [],
+      "muted": false
+     },
+     {
+      "kind": "action",
+      "action": {
+       "label": "Continue",
+       "tone": "primary",
+       "size": "lg",
+       "block": true,
+       "disabled": false,
+       "icon": false,
+       "submit": true
+      }
+     }
+    ]
+   },
+   {
+    "kind": "or",
+    "label": "or"
+   },
+   {
+    "kind": "form",
+    "gap": "none",
+    "blocks": [
+     {
+      "kind": "action",
+      "action": {
+       "label": "Sign in with a passkey",
+       "tone": "secondary",
+       "size": "md",
+       "block": true,
+       "disabled": false,
+       "icon": true,
+       "submit": true
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "web-auth-operator-sign-in--email-phone|ko": {
+  "step": "email",
+  "dark": false,
+  "title": "StageVoice 운영 콘솔",
+  "mark": 31.41009521484375,
+  "blocks": [
+   {
+    "kind": "text",
+    "size": "caption",
+    "tone": "lead",
+    "text": "StageVoice 운영자 전용 페이지입니다. 허용된 네트워크 주소에서만 열립니다."
+   },
+   {
+    "kind": "banner",
+    "tone": "good",
+    "title": "허용된 주소 211.***.**.12에서 접속했습니다"
+   },
+   {
+    "kind": "form",
+    "gap": "fields",
+    "blocks": [
+     {
+      "kind": "field",
+      "label": "운영자 이메일",
+      "type": "email",
+      "value": "t@stagevoice.example",
+      "placeholder": "",
+      "invalid": false,
+      "mono": false,
+      "notes": [],
+      "muted": false
+     },
+     {
+      "kind": "action",
+      "action": {
+       "label": "다음",
+       "tone": "primary",
+       "size": "lg",
+       "block": true,
+       "disabled": false,
+       "icon": false,
+       "submit": true
+      }
+     }
+    ]
+   },
+   {
+    "kind": "or",
+    "label": "또는"
+   },
+   {
+    "kind": "form",
+    "gap": "none",
+    "blocks": [
+     {
+      "kind": "action",
+      "action": {
+       "label": "패스키로 로그인",
+       "tone": "secondary",
+       "size": "md",
+       "block": true,
+       "disabled": false,
+       "icon": true,
+       "submit": true
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "web-auth-operator-sign-in--locked|en": {
+  "step": "locked",
+  "dark": false,
+  "title": "StageVoice operator console",
+  "mark": 32,
+  "blocks": [
+   {
+    "kind": "text",
+    "size": "caption",
+    "tone": "lead",
+    "text": "For StageVoice operators only. Opens only from an allowed network address."
+   },
+   {
+    "kind": "text",
+    "size": "caption",
+    "tone": "muted",
+    "strong": false,
+    "small": false,
+    "smallCaption": false,
+    "text": "Signing in as t@stagevoice.example"
+   },
+   {
+    "kind": "banner",
+    "tone": "bad",
+    "title": "Sign-in is locked for 15 minutes",
+    "body": "5 codes in a row did not match, and an administrator was told. Wait, or ask an administrator to unlock it."
+   },
+   {
+    "kind": "form",
+    "gap": "fields",
+    "blocks": [
+     {
+      "kind": "fieldhead",
+      "title": "Enter the 6-digit code",
+      "hint": "Open your authenticator app. The code changes every 30 seconds."
+     },
+     {
+      "kind": "code",
+      "label": "Code from the authenticator app",
+      "value": "",
+      "length": 6,
+      "invalid": false,
+      "disabled": true
+     },
+     {
+      "kind": "action",
+      "action": {
+       "label": "Verify",
+       "tone": "primary",
+       "size": "lg",
+       "block": true,
+       "disabled": true,
+       "icon": false,
+       "submit": true
+      }
+     }
+    ]
+   },
+   {
+    "kind": "link",
+    "link": "Use a recovery code",
+    "disabled": true,
+    "button": true
+   },
+   {
+    "kind": "link",
+    "link": "Use another account",
+    "disabled": false,
+    "button": false
+   }
+  ]
+ },
+ "web-auth-operator-sign-in--locked|ko": {
+  "step": "locked",
+  "dark": false,
+  "title": "StageVoice 운영 콘솔",
+  "mark": 32,
+  "blocks": [
+   {
+    "kind": "text",
+    "size": "caption",
+    "tone": "lead",
+    "text": "StageVoice 운영자 전용 페이지입니다. 허용된 네트워크 주소에서만 열립니다."
+   },
+   {
+    "kind": "text",
+    "size": "caption",
+    "tone": "muted",
+    "strong": false,
+    "small": false,
+    "smallCaption": false,
+    "text": "t@stagevoice.example 계정으로 로그인합니다"
+   },
+   {
+    "kind": "banner",
+    "tone": "bad",
+    "title": "15분 동안 로그인이 잠겼습니다",
+    "body": "숫자가 5번 연속 맞지 않아 관리자에게 알렸습니다. 잠금이 풀릴 때까지 기다리거나 관리자에게 잠금 해제를 요청하세요."
+   },
+   {
+    "kind": "form",
+    "gap": "fields",
+    "blocks": [
+     {
+      "kind": "fieldhead",
+      "title": "여섯 자리 숫자 입력",
+      "hint": "인증 앱에 표시된 여섯 자리 숫자를 넣으세요. 숫자는 30초마다 바뀝니다."
+     },
+     {
+      "kind": "code",
+      "label": "인증 앱의 숫자",
+      "value": "",
+      "length": 6,
+      "invalid": false,
+      "disabled": true
+     },
+     {
+      "kind": "action",
+      "action": {
+       "label": "확인",
+       "tone": "primary",
+       "size": "lg",
+       "block": true,
+       "disabled": true,
+       "icon": false,
+       "submit": true
+      }
+     }
+    ]
+   },
+   {
+    "kind": "link",
+    "link": "복구 코드 사용",
+    "disabled": true,
+    "button": true
+   },
+   {
+    "kind": "link",
+    "link": "다른 계정으로 로그인",
+    "disabled": false,
+    "button": false
+   }
+  ]
+ },
+ "web-auth-operator-sign-in--locked-phone|en": {
+  "step": "locked",
+  "dark": false,
+  "title": "StageVoice operator console",
+  "mark": 31.41009521484375,
+  "blocks": [
+   {
+    "kind": "text",
+    "size": "caption",
+    "tone": "lead",
+    "text": "For StageVoice operators only. Opens only from an allowed network address."
+   },
+   {
+    "kind": "text",
+    "size": "caption",
+    "tone": "muted",
+    "strong": false,
+    "small": false,
+    "smallCaption": false,
+    "text": "Signing in as t@stagevoice.example"
+   },
+   {
+    "kind": "banner",
+    "tone": "bad",
+    "title": "Sign-in is locked for 15 minutes",
+    "body": "5 codes in a row did not match, and an administrator was told. Wait, or ask an administrator to unlock it."
+   },
+   {
+    "kind": "form",
+    "gap": "fields",
+    "blocks": [
+     {
+      "kind": "fieldhead",
+      "title": "Enter the 6-digit code",
+      "hint": "Open your authenticator app. The code changes every 30 seconds."
+     },
+     {
+      "kind": "code",
+      "label": "Code from the authenticator app",
+      "value": "",
+      "length": 6,
+      "invalid": false,
+      "disabled": true
+     },
+     {
+      "kind": "action",
+      "action": {
+       "label": "Verify",
+       "tone": "primary",
+       "size": "lg",
+       "block": true,
+       "disabled": true,
+       "icon": false,
+       "submit": true
+      }
+     }
+    ]
+   },
+   {
+    "kind": "link",
+    "link": "Use a recovery code",
+    "disabled": true,
+    "button": true
+   },
+   {
+    "kind": "link",
+    "link": "Use another account",
+    "disabled": false,
+    "button": false
+   }
+  ]
+ },
+ "web-auth-operator-sign-in--locked-phone|ko": {
+  "step": "locked",
+  "dark": false,
+  "title": "StageVoice 운영 콘솔",
+  "mark": 31.41009521484375,
+  "blocks": [
+   {
+    "kind": "text",
+    "size": "caption",
+    "tone": "lead",
+    "text": "StageVoice 운영자 전용 페이지입니다. 허용된 네트워크 주소에서만 열립니다."
+   },
+   {
+    "kind": "text",
+    "size": "caption",
+    "tone": "muted",
+    "strong": false,
+    "small": false,
+    "smallCaption": false,
+    "text": "t@stagevoice.example 계정으로 로그인합니다"
+   },
+   {
+    "kind": "banner",
+    "tone": "bad",
+    "title": "15분 동안 로그인이 잠겼습니다",
+    "body": "숫자가 5번 연속 맞지 않아 관리자에게 알렸습니다. 잠금이 풀릴 때까지 기다리거나 관리자에게 잠금 해제를 요청하세요."
+   },
+   {
+    "kind": "form",
+    "gap": "fields",
+    "blocks": [
+     {
+      "kind": "fieldhead",
+      "title": "여섯 자리 숫자 입력",
+      "hint": "인증 앱에 표시된 여섯 자리 숫자를 넣으세요. 숫자는 30초마다 바뀝니다."
+     },
+     {
+      "kind": "code",
+      "label": "인증 앱의 숫자",
+      "value": "",
+      "length": 6,
+      "invalid": false,
+      "disabled": true
+     },
+     {
+      "kind": "action",
+      "action": {
+       "label": "확인",
+       "tone": "primary",
+       "size": "lg",
+       "block": true,
+       "disabled": true,
+       "icon": false,
+       "submit": true
+      }
+     }
+    ]
+   },
+   {
+    "kind": "link",
+    "link": "복구 코드 사용",
+    "disabled": true,
+    "button": true
+   },
+   {
+    "kind": "link",
+    "link": "다른 계정으로 로그인",
+    "disabled": false,
+    "button": false
+   }
+  ]
+ },
+ "web-auth-operator-sign-in--not-operator|en": {
+  "step": "email",
+  "dark": false,
+  "title": "StageVoice operator console",
+  "mark": 32,
+  "blocks": [
+   {
+    "kind": "text",
+    "size": "caption",
+    "tone": "lead",
+    "text": "For StageVoice operators only. Opens only from an allowed network address."
+   },
+   {
+    "kind": "banner",
+    "tone": "good",
+    "title": "Signing in from 211.***.**.12, an allowed address"
+   },
+   {
+    "kind": "form",
+    "gap": "fields",
+    "blocks": [
+     {
+      "kind": "field",
+      "label": "Operator email",
+      "type": "email",
+      "value": "t@stagevoice.example",
+      "placeholder": "",
+      "invalid": true,
+      "mono": false,
+      "notes": [
+       {
+        "tone": "bad",
+        "text": "Use your operator address ending in @stagevoice.example."
+       }
+      ],
+      "muted": false
+     },
+     {
+      "kind": "action",
+      "action": {
+       "label": "Continue",
+       "tone": "primary",
+       "size": "lg",
+       "block": true,
+       "disabled": false,
+       "icon": false,
+       "submit": true
+      }
+     }
+    ]
+   },
+   {
+    "kind": "or",
+    "label": "or"
+   },
+   {
+    "kind": "form",
+    "gap": "none",
+    "blocks": [
+     {
+      "kind": "action",
+      "action": {
+       "label": "Sign in with a passkey",
+       "tone": "secondary",
+       "size": "md",
+       "block": true,
+       "disabled": false,
+       "icon": true,
+       "submit": true
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "web-auth-operator-sign-in--not-operator|ko": {
+  "step": "email",
+  "dark": false,
+  "title": "StageVoice 운영 콘솔",
+  "mark": 32,
+  "blocks": [
+   {
+    "kind": "text",
+    "size": "caption",
+    "tone": "lead",
+    "text": "StageVoice 운영자 전용 페이지입니다. 허용된 네트워크 주소에서만 열립니다."
+   },
+   {
+    "kind": "banner",
+    "tone": "good",
+    "title": "허용된 주소 211.***.**.12에서 접속했습니다"
+   },
+   {
+    "kind": "form",
+    "gap": "fields",
+    "blocks": [
+     {
+      "kind": "field",
+      "label": "운영자 이메일",
+      "type": "email",
+      "value": "t@stagevoice.example",
+      "placeholder": "",
+      "invalid": true,
+      "mono": false,
+      "notes": [
+       {
+        "tone": "bad",
+        "text": "@stagevoice.example로 끝나는 운영자 주소를 넣으세요."
+       }
+      ],
+      "muted": false
+     },
+     {
+      "kind": "action",
+      "action": {
+       "label": "다음",
+       "tone": "primary",
+       "size": "lg",
+       "block": true,
+       "disabled": false,
+       "icon": false,
+       "submit": true
+      }
+     }
+    ]
+   },
+   {
+    "kind": "or",
+    "label": "또는"
+   },
+   {
+    "kind": "form",
+    "gap": "none",
+    "blocks": [
+     {
+      "kind": "action",
+      "action": {
+       "label": "패스키로 로그인",
+       "tone": "secondary",
+       "size": "md",
+       "block": true,
+       "disabled": false,
+       "icon": true,
+       "submit": true
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "web-auth-operator-sign-in--passkey|en": {
+  "step": "passkey",
+  "dark": false,
+  "title": "StageVoice operator console",
+  "mark": 32,
+  "blocks": [
+   {
+    "kind": "text",
+    "size": "caption",
+    "tone": "lead",
+    "text": "For StageVoice operators only. Opens only from an allowed network address."
+   },
+   {
+    "kind": "text",
+    "size": "body",
+    "tone": "muted",
+    "strong": false,
+    "small": false,
+    "smallCaption": false,
+    "text": "Your browser is asking your passkey to confirm it is you. Follow its prompt."
+   },
+   {
+    "kind": "banner",
+    "tone": "info",
+    "title": "Waiting for the passkey"
+   },
+   {
+    "kind": "form",
+    "gap": "none",
+    "blocks": [
+     {
+      "kind": "action",
+      "action": {
+       "label": "Ask for the passkey again",
+       "tone": "primary",
+       "size": "lg",
+       "block": true,
+       "disabled": false,
+       "icon": true,
+       "submit": true
+      }
+     }
+    ]
+   },
+   {
+    "kind": "link",
+    "link": "Use another account",
+    "disabled": false,
+    "button": false
+   }
+  ]
+ },
+ "web-auth-operator-sign-in--passkey|ko": {
+  "step": "passkey",
+  "dark": false,
+  "title": "StageVoice 운영 콘솔",
+  "mark": 32,
+  "blocks": [
+   {
+    "kind": "text",
+    "size": "caption",
+    "tone": "lead",
+    "text": "StageVoice 운영자 전용 페이지입니다. 허용된 네트워크 주소에서만 열립니다."
+   },
+   {
+    "kind": "text",
+    "size": "body",
+    "tone": "muted",
+    "strong": false,
+    "small": false,
+    "smallCaption": false,
+    "text": "브라우저에서 패스키로 본인 확인을 요청합니다. 기기의 안내에 따라 확인하세요."
+   },
+   {
+    "kind": "banner",
+    "tone": "info",
+    "title": "패스키 확인을 기다리는 중"
+   },
+   {
+    "kind": "form",
+    "gap": "none",
+    "blocks": [
+     {
+      "kind": "action",
+      "action": {
+       "label": "패스키 다시 요청",
+       "tone": "primary",
+       "size": "lg",
+       "block": true,
+       "disabled": false,
+       "icon": true,
+       "submit": true
+      }
+     }
+    ]
+   },
+   {
+    "kind": "link",
+    "link": "다른 계정으로 로그인",
+    "disabled": false,
+    "button": false
+   }
+  ]
+ },
+ "web-auth-operator-sign-in--passkey-dark|en": {
+  "step": "passkey",
+  "dark": true,
+  "title": "StageVoice operator console",
+  "mark": 32,
+  "blocks": [
+   {
+    "kind": "text",
+    "size": "caption",
+    "tone": "lead",
+    "text": "For StageVoice operators only. Opens only from an allowed network address."
+   },
+   {
+    "kind": "text",
+    "size": "body",
+    "tone": "muted",
+    "strong": false,
+    "small": false,
+    "smallCaption": false,
+    "text": "Your browser is asking your passkey to confirm it is you. Follow its prompt."
+   },
+   {
+    "kind": "banner",
+    "tone": "info",
+    "title": "Waiting for the passkey"
+   },
+   {
+    "kind": "form",
+    "gap": "none",
+    "blocks": [
+     {
+      "kind": "action",
+      "action": {
+       "label": "Ask for the passkey again",
+       "tone": "primary",
+       "size": "lg",
+       "block": true,
+       "disabled": false,
+       "icon": true,
+       "submit": true
+      }
+     }
+    ]
+   },
+   {
+    "kind": "link",
+    "link": "Use another account",
+    "disabled": false,
+    "button": false
+   }
+  ]
+ },
+ "web-auth-operator-sign-in--passkey-dark|ko": {
+  "step": "passkey",
+  "dark": true,
+  "title": "StageVoice 운영 콘솔",
+  "mark": 32,
+  "blocks": [
+   {
+    "kind": "text",
+    "size": "caption",
+    "tone": "lead",
+    "text": "StageVoice 운영자 전용 페이지입니다. 허용된 네트워크 주소에서만 열립니다."
+   },
+   {
+    "kind": "text",
+    "size": "body",
+    "tone": "muted",
+    "strong": false,
+    "small": false,
+    "smallCaption": false,
+    "text": "브라우저에서 패스키로 본인 확인을 요청합니다. 기기의 안내에 따라 확인하세요."
+   },
+   {
+    "kind": "banner",
+    "tone": "info",
+    "title": "패스키 확인을 기다리는 중"
+   },
+   {
+    "kind": "form",
+    "gap": "none",
+    "blocks": [
+     {
+      "kind": "action",
+      "action": {
+       "label": "패스키 다시 요청",
+       "tone": "primary",
+       "size": "lg",
+       "block": true,
+       "disabled": false,
+       "icon": true,
+       "submit": true
+      }
+     }
+    ]
+   },
+   {
+    "kind": "link",
+    "link": "다른 계정으로 로그인",
+    "disabled": false,
+    "button": false
+   }
+  ]
+ },
+ "web-auth-operator-sign-in--recovery-code|en": {
+  "step": "recovery",
+  "dark": false,
+  "title": "StageVoice operator console",
+  "mark": 32,
+  "blocks": [
+   {
+    "kind": "text",
+    "size": "caption",
+    "tone": "lead",
+    "text": "For StageVoice operators only. Opens only from an allowed network address."
+   },
+   {
+    "kind": "text",
+    "size": "caption",
+    "tone": "muted",
+    "strong": false,
+    "small": false,
+    "smallCaption": false,
+    "text": "Signing in as t@stagevoice.example"
+   },
+   {
+    "kind": "form",
+    "gap": "fields",
+    "blocks": [
+     {
+      "kind": "fieldhead",
+      "title": "Enter a recovery code",
+      "hint": "Use one of the recovery codes you saved when you set up the authenticator app. Each works once."
+     },
+     {
+      "kind": "field",
+      "label": "Recovery code",
+      "type": "text",
+      "value": "",
+      "placeholder": "",
+      "invalid": false,
+      "mono": true,
+      "notes": [
+       {
+        "tone": "muted",
+        "text": "Test code 7KQ2-9XHM"
+       }
+      ],
+      "muted": false
+     },
+     {
+      "kind": "action",
+      "action": {
+       "label": "Verify",
+       "tone": "primary",
+       "size": "lg",
+       "block": true,
+       "disabled": true,
+       "icon": false,
+       "submit": true
+      }
+     }
+    ]
+   },
+   {
+    "kind": "link",
+    "link": "Use the authenticator app instead",
+    "disabled": false,
+    "button": false
+   }
+  ]
+ },
+ "web-auth-operator-sign-in--recovery-code|ko": {
+  "step": "recovery",
+  "dark": false,
+  "title": "StageVoice 운영 콘솔",
+  "mark": 32,
+  "blocks": [
+   {
+    "kind": "text",
+    "size": "caption",
+    "tone": "lead",
+    "text": "StageVoice 운영자 전용 페이지입니다. 허용된 네트워크 주소에서만 열립니다."
+   },
+   {
+    "kind": "text",
+    "size": "caption",
+    "tone": "muted",
+    "strong": false,
+    "small": false,
+    "smallCaption": false,
+    "text": "t@stagevoice.example 계정으로 로그인합니다"
+   },
+   {
+    "kind": "form",
+    "gap": "fields",
+    "blocks": [
+     {
+      "kind": "fieldhead",
+      "title": "복구 코드 입력",
+      "hint": "인증 앱을 등록할 때 저장한 복구 코드를 넣으세요. 코드마다 한 번씩만 쓸 수 있습니다."
+     },
+     {
+      "kind": "field",
+      "label": "복구 코드",
+      "type": "text",
+      "value": "",
+      "placeholder": "",
+      "invalid": false,
+      "mono": true,
+      "notes": [
+       {
+        "tone": "muted",
+        "text": "시험용 코드 7KQ2-9XHM"
+       }
+      ],
+      "muted": false
+     },
+     {
+      "kind": "action",
+      "action": {
+       "label": "확인",
+       "tone": "primary",
+       "size": "lg",
+       "block": true,
+       "disabled": true,
+       "icon": false,
+       "submit": true
+      }
+     }
+    ]
+   },
+   {
+    "kind": "link",
+    "link": "인증 앱 숫자로 로그인",
+    "disabled": false,
+    "button": false
+   }
+  ]
+ },
+ "web-auth-operator-sign-in--recovery-code-wrong|en": {
+  "step": "recovery",
+  "dark": false,
+  "title": "StageVoice operator console",
+  "mark": 32,
+  "blocks": [
+   {
+    "kind": "text",
+    "size": "caption",
+    "tone": "lead",
+    "text": "For StageVoice operators only. Opens only from an allowed network address."
+   },
+   {
+    "kind": "text",
+    "size": "caption",
+    "tone": "muted",
+    "strong": false,
+    "small": false,
+    "smallCaption": false,
+    "text": "Signing in as t@stagevoice.example"
+   },
+   {
+    "kind": "form",
+    "gap": "fields",
+    "blocks": [
+     {
+      "kind": "fieldhead",
+      "title": "Enter a recovery code",
+      "hint": "Use one of the recovery codes you saved when you set up the authenticator app. Each works once."
+     },
+     {
+      "kind": "field",
+      "label": "Recovery code",
+      "type": "text",
+      "value": "",
+      "placeholder": "",
+      "invalid": true,
+      "mono": true,
+      "notes": [
+       {
+        "tone": "bad",
+        "text": "That recovery code is not right, or it was already used."
+       },
+       {
+        "tone": "muted",
+        "text": "Test code 7KQ2-9XHM"
+       }
+      ],
+      "muted": false
+     },
+     {
+      "kind": "action",
+      "action": {
+       "label": "Verify",
+       "tone": "primary",
+       "size": "lg",
+       "block": true,
+       "disabled": true,
+       "icon": false,
+       "submit": true
+      }
+     }
+    ]
+   },
+   {
+    "kind": "link",
+    "link": "Use the authenticator app instead",
+    "disabled": false,
+    "button": false
+   }
+  ]
+ },
+ "web-auth-operator-sign-in--recovery-code-wrong|ko": {
+  "step": "recovery",
+  "dark": false,
+  "title": "StageVoice 운영 콘솔",
+  "mark": 32,
+  "blocks": [
+   {
+    "kind": "text",
+    "size": "caption",
+    "tone": "lead",
+    "text": "StageVoice 운영자 전용 페이지입니다. 허용된 네트워크 주소에서만 열립니다."
+   },
+   {
+    "kind": "text",
+    "size": "caption",
+    "tone": "muted",
+    "strong": false,
+    "small": false,
+    "smallCaption": false,
+    "text": "t@stagevoice.example 계정으로 로그인합니다"
+   },
+   {
+    "kind": "form",
+    "gap": "fields",
+    "blocks": [
+     {
+      "kind": "fieldhead",
+      "title": "복구 코드 입력",
+      "hint": "인증 앱을 등록할 때 저장한 복구 코드를 넣으세요. 코드마다 한 번씩만 쓸 수 있습니다."
+     },
+     {
+      "kind": "field",
+      "label": "복구 코드",
+      "type": "text",
+      "value": "",
+      "placeholder": "",
+      "invalid": true,
+      "mono": true,
+      "notes": [
+       {
+        "tone": "bad",
+        "text": "복구 코드가 맞지 않거나 이미 사용한 코드입니다."
+       },
+       {
+        "tone": "muted",
+        "text": "시험용 코드 7KQ2-9XHM"
+       }
+      ],
+      "muted": false
+     },
+     {
+      "kind": "action",
+      "action": {
+       "label": "확인",
+       "tone": "primary",
+       "size": "lg",
+       "block": true,
+       "disabled": true,
+       "icon": false,
+       "submit": true
+      }
+     }
+    ]
+   },
+   {
+    "kind": "link",
+    "link": "인증 앱 숫자로 로그인",
+    "disabled": false,
+    "button": false
+   }
+  ]
+ },
+ "web-auth-operator-sign-in--signed-in|en": {
+  "step": "done",
+  "dark": false,
+  "title": "You are signed in",
+  "mark": 0,
+  "blocks": [
+   {
+    "kind": "done"
+   },
+   {
+    "kind": "text",
+    "size": "body",
+    "tone": "muted",
+    "strong": false,
+    "small": false,
+    "smallCaption": false,
+    "text": "Signed in as t@stagevoice.example. This session ends in 8 hours."
+   },
+   {
+    "kind": "action",
+    "action": {
+     "label": "Open the operator console",
+     "tone": "primary",
+     "size": "lg",
+     "block": true,
+     "disabled": false,
+     "icon": false,
+     "submit": false
+    }
+   }
+  ]
+ },
+ "web-auth-operator-sign-in--signed-in|ko": {
+  "step": "done",
+  "dark": false,
+  "title": "로그인했습니다",
+  "mark": 0,
+  "blocks": [
+   {
+    "kind": "done"
+   },
+   {
+    "kind": "text",
+    "size": "body",
+    "tone": "muted",
+    "strong": false,
+    "small": false,
+    "smallCaption": false,
+    "text": "t@stagevoice.example 계정으로 로그인했습니다. 이 세션은 8시간 뒤 끝납니다."
+   },
+   {
+    "kind": "action",
+    "action": {
+     "label": "운영 콘솔 열기",
+     "tone": "primary",
+     "size": "lg",
+     "block": true,
+     "disabled": false,
+     "icon": false,
+     "submit": false
+    }
+   }
+  ]
+ },
+ "web-auth-operator-sign-in--wrong-code|en": {
+  "step": "code",
+  "dark": false,
+  "title": "StageVoice operator console",
+  "mark": 32,
+  "blocks": [
+   {
+    "kind": "text",
+    "size": "caption",
+    "tone": "lead",
+    "text": "For StageVoice operators only. Opens only from an allowed network address."
+   },
+   {
+    "kind": "text",
+    "size": "caption",
+    "tone": "muted",
+    "strong": false,
+    "small": false,
+    "smallCaption": false,
+    "text": "Signing in as t@stagevoice.example"
+   },
+   {
+    "kind": "banner",
+    "tone": "warn",
+    "title": "That code did not match",
+    "body": "2 tries left before sign-in is locked for 15 minutes."
+   },
+   {
+    "kind": "form",
+    "gap": "fields",
+    "blocks": [
+     {
+      "kind": "fieldhead",
+      "title": "Enter the 6-digit code",
+      "hint": "Open your authenticator app. The code changes every 30 seconds."
+     },
+     {
+      "kind": "code",
+      "label": "Code from the authenticator app",
+      "value": "",
+      "length": 6,
+      "invalid": true,
+      "disabled": false
+     },
+     {
+      "kind": "text",
+      "size": "caption",
+      "tone": "muted",
+      "strong": false,
+      "small": true,
+      "smallCaption": true,
+      "text": "Test code 204917"
+     },
+     {
+      "kind": "action",
+      "action": {
+       "label": "Verify",
+       "tone": "primary",
+       "size": "lg",
+       "block": true,
+       "disabled": true,
+       "icon": false,
+       "submit": true
+      }
+     }
+    ]
+   },
+   {
+    "kind": "link",
+    "link": "Use a recovery code",
+    "disabled": false,
+    "button": false
+   },
+   {
+    "kind": "link",
+    "link": "Use another account",
+    "disabled": false,
+    "button": false
+   }
+  ]
+ },
+ "web-auth-operator-sign-in--wrong-code|ko": {
+  "step": "code",
+  "dark": false,
+  "title": "StageVoice 운영 콘솔",
+  "mark": 32,
+  "blocks": [
+   {
+    "kind": "text",
+    "size": "caption",
+    "tone": "lead",
+    "text": "StageVoice 운영자 전용 페이지입니다. 허용된 네트워크 주소에서만 열립니다."
+   },
+   {
+    "kind": "text",
+    "size": "caption",
+    "tone": "muted",
+    "strong": false,
+    "small": false,
+    "smallCaption": false,
+    "text": "t@stagevoice.example 계정으로 로그인합니다"
+   },
+   {
+    "kind": "banner",
+    "tone": "warn",
+    "title": "숫자가 맞지 않습니다",
+    "body": "2번 더 틀리면 15분 동안 로그인이 잠깁니다."
+   },
+   {
+    "kind": "form",
+    "gap": "fields",
+    "blocks": [
+     {
+      "kind": "fieldhead",
+      "title": "여섯 자리 숫자 입력",
+      "hint": "인증 앱에 표시된 여섯 자리 숫자를 넣으세요. 숫자는 30초마다 바뀝니다."
+     },
+     {
+      "kind": "code",
+      "label": "인증 앱의 숫자",
+      "value": "",
+      "length": 6,
+      "invalid": true,
+      "disabled": false
+     },
+     {
+      "kind": "text",
+      "size": "caption",
+      "tone": "muted",
+      "strong": false,
+      "small": true,
+      "smallCaption": true,
+      "text": "시험용 코드 204917"
+     },
+     {
+      "kind": "action",
+      "action": {
+       "label": "확인",
+       "tone": "primary",
+       "size": "lg",
+       "block": true,
+       "disabled": true,
+       "icon": false,
+       "submit": true
+      }
+     }
+    ]
+   },
+   {
+    "kind": "link",
+    "link": "복구 코드 사용",
+    "disabled": false,
+    "button": false
+   },
+   {
+    "kind": "link",
+    "link": "다른 계정으로 로그인",
+    "disabled": false,
+    "button": false
+   }
+  ]
+ },
+ "web-auth-operator-sign-in--wrong-code-dark|en": {
+  "step": "code",
+  "dark": true,
+  "title": "StageVoice operator console",
+  "mark": 32,
+  "blocks": [
+   {
+    "kind": "text",
+    "size": "caption",
+    "tone": "lead",
+    "text": "For StageVoice operators only. Opens only from an allowed network address."
+   },
+   {
+    "kind": "text",
+    "size": "caption",
+    "tone": "muted",
+    "strong": false,
+    "small": false,
+    "smallCaption": false,
+    "text": "Signing in as t@stagevoice.example"
+   },
+   {
+    "kind": "banner",
+    "tone": "warn",
+    "title": "That code did not match",
+    "body": "2 tries left before sign-in is locked for 15 minutes."
+   },
+   {
+    "kind": "form",
+    "gap": "fields",
+    "blocks": [
+     {
+      "kind": "fieldhead",
+      "title": "Enter the 6-digit code",
+      "hint": "Open your authenticator app. The code changes every 30 seconds."
+     },
+     {
+      "kind": "code",
+      "label": "Code from the authenticator app",
+      "value": "",
+      "length": 6,
+      "invalid": true,
+      "disabled": false
+     },
+     {
+      "kind": "text",
+      "size": "caption",
+      "tone": "muted",
+      "strong": false,
+      "small": true,
+      "smallCaption": true,
+      "text": "Test code 204917"
+     },
+     {
+      "kind": "action",
+      "action": {
+       "label": "Verify",
+       "tone": "primary",
+       "size": "lg",
+       "block": true,
+       "disabled": true,
+       "icon": false,
+       "submit": true
+      }
+     }
+    ]
+   },
+   {
+    "kind": "link",
+    "link": "Use a recovery code",
+    "disabled": false,
+    "button": false
+   },
+   {
+    "kind": "link",
+    "link": "Use another account",
+    "disabled": false,
+    "button": false
+   }
+  ]
+ },
+ "web-auth-operator-sign-in--wrong-code-dark|ko": {
+  "step": "code",
+  "dark": true,
+  "title": "StageVoice 운영 콘솔",
+  "mark": 32,
+  "blocks": [
+   {
+    "kind": "text",
+    "size": "caption",
+    "tone": "lead",
+    "text": "StageVoice 운영자 전용 페이지입니다. 허용된 네트워크 주소에서만 열립니다."
+   },
+   {
+    "kind": "text",
+    "size": "caption",
+    "tone": "muted",
+    "strong": false,
+    "small": false,
+    "smallCaption": false,
+    "text": "t@stagevoice.example 계정으로 로그인합니다"
+   },
+   {
+    "kind": "banner",
+    "tone": "warn",
+    "title": "숫자가 맞지 않습니다",
+    "body": "2번 더 틀리면 15분 동안 로그인이 잠깁니다."
+   },
+   {
+    "kind": "form",
+    "gap": "fields",
+    "blocks": [
+     {
+      "kind": "fieldhead",
+      "title": "여섯 자리 숫자 입력",
+      "hint": "인증 앱에 표시된 여섯 자리 숫자를 넣으세요. 숫자는 30초마다 바뀝니다."
+     },
+     {
+      "kind": "code",
+      "label": "인증 앱의 숫자",
+      "value": "",
+      "length": 6,
+      "invalid": true,
+      "disabled": false
+     },
+     {
+      "kind": "text",
+      "size": "caption",
+      "tone": "muted",
+      "strong": false,
+      "small": true,
+      "smallCaption": true,
+      "text": "시험용 코드 204917"
+     },
+     {
+      "kind": "action",
+      "action": {
+       "label": "확인",
+       "tone": "primary",
+       "size": "lg",
+       "block": true,
+       "disabled": true,
+       "icon": false,
+       "submit": true
+      }
+     }
+    ]
+   },
+   {
+    "kind": "link",
+    "link": "복구 코드 사용",
+    "disabled": false,
+    "button": false
+   },
+   {
+    "kind": "link",
+    "link": "다른 계정으로 로그인",
+    "disabled": false,
+    "button": false
+   }
+  ]
+ },
+ "web-auth-sign-in-and-sign-up--email-code|en": {
+  "step": "verify",
+  "dark": false,
+  "title": "Enter the code from your email",
+  "mark": 32,
+  "blocks": [
+   {
+    "kind": "text",
+    "size": "body",
+    "tone": "muted",
+    "strong": false,
+    "small": false,
+    "smallCaption": false,
+    "text": "We sent six digits to t@example.com. They work for 10 minutes."
+   },
+   {
+    "kind": "code",
+    "label": "Enter the code from your email",
+    "value": "",
+    "length": 6,
+    "invalid": false,
+    "disabled": false
+   },
+   {
+    "kind": "links",
+    "layout": "inline",
+    "items": [
+     {
+      "text": "Test code 604218"
+     },
+     {
+      "link": "Send again",
+      "disabled": false,
+      "button": true
+     },
+     {
+      "link": "Change email",
+      "disabled": false,
+      "button": false
+     }
+    ]
+   }
+  ]
+ },
+ "web-auth-sign-in-and-sign-up--email-code|ko": {
+  "step": "verify",
+  "dark": false,
+  "title": "메일로 받은 숫자를 넣으세요",
+  "mark": 32,
+  "blocks": [
+   {
+    "kind": "text",
+    "size": "body",
+    "tone": "muted",
+    "strong": false,
+    "small": false,
+    "smallCaption": false,
+    "text": "t@example.com으로 여섯 자리 숫자를 보냈습니다. 10분 동안 쓸 수 있습니다."
+   },
+   {
+    "kind": "code",
+    "label": "메일로 받은 숫자를 넣으세요",
+    "value": "",
+    "length": 6,
+    "invalid": false,
+    "disabled": false
+   },
+   {
+    "kind": "links",
+    "layout": "inline",
+    "items": [
+     {
+      "text": "시험용 숫자 604218"
+     },
+     {
+      "link": "다시 보내기",
+      "disabled": false,
+      "button": true
+     },
+     {
+      "link": "이메일 바꾸기",
+      "disabled": false,
+      "button": false
+     }
+    ]
+   }
+  ]
+ },
+ "web-auth-sign-in-and-sign-up--email-code-phone|en": {
+  "step": "verify",
+  "dark": false,
+  "title": "Enter the code from your email",
+  "mark": 31.41009521484375,
+  "blocks": [
+   {
+    "kind": "text",
+    "size": "body",
+    "tone": "muted",
+    "strong": false,
+    "small": false,
+    "smallCaption": false,
+    "text": "We sent six digits to t@example.com. They work for 10 minutes."
+   },
+   {
+    "kind": "code",
+    "label": "Enter the code from your email",
+    "value": "",
+    "length": 6,
+    "invalid": false,
+    "disabled": false
+   },
+   {
+    "kind": "links",
+    "layout": "inline",
+    "items": [
+     {
+      "text": "Test code 604218"
+     },
+     {
+      "link": "Send again",
+      "disabled": false,
+      "button": true
+     },
+     {
+      "link": "Change email",
+      "disabled": false,
+      "button": false
+     }
+    ]
+   }
+  ]
+ },
+ "web-auth-sign-in-and-sign-up--email-code-phone|ko": {
+  "step": "verify",
+  "dark": false,
+  "title": "메일로 받은 숫자를 넣으세요",
+  "mark": 31.41009521484375,
+  "blocks": [
+   {
+    "kind": "text",
+    "size": "body",
+    "tone": "muted",
+    "strong": false,
+    "small": false,
+    "smallCaption": false,
+    "text": "t@example.com으로 여섯 자리 숫자를 보냈습니다. 10분 동안 쓸 수 있습니다."
+   },
+   {
+    "kind": "code",
+    "label": "메일로 받은 숫자를 넣으세요",
+    "value": "",
+    "length": 6,
+    "invalid": false,
+    "disabled": false
+   },
+   {
+    "kind": "links",
+    "layout": "inline",
+    "items": [
+     {
+      "text": "시험용 숫자 604218"
+     },
+     {
+      "link": "다시 보내기",
+      "disabled": false,
+      "button": true
+     },
+     {
+      "link": "이메일 바꾸기",
+      "disabled": false,
+      "button": false
+     }
+    ]
+   }
+  ]
+ },
+ "web-auth-sign-in-and-sign-up--email-taken|en": {
+  "step": "signUp",
+  "dark": false,
+  "title": "Create a StageVoice account",
+  "mark": 32,
+  "blocks": [
+   {
+    "kind": "text",
+    "size": "caption",
+    "tone": "muted",
+    "strong": false,
+    "small": false,
+    "smallCaption": false,
+    "text": "Free voices work without an account. Premium voices and your own voice need one."
+   },
+   {
+    "kind": "providers",
+    "actions": [
+     {
+      "label": "Continue with Google",
+      "tone": "secondary",
+      "size": "md",
+      "block": true,
+      "disabled": false,
+      "icon": false,
+      "submit": false,
+      "href": "login-actions/authenticate?step=broker-google"
+     },
+     {
+      "label": "Continue with Microsoft",
+      "tone": "secondary",
+      "size": "md",
+      "block": true,
+      "disabled": false,
+      "icon": false,
+      "submit": false,
+      "href": "login-actions/authenticate?step=broker-microsoft"
+     },
+     {
+      "label": "Continue with Kakao",
+      "tone": "secondary",
+      "size": "md",
+      "block": true,
+      "disabled": false,
+      "icon": false,
+      "submit": false,
+      "href": "login-actions/authenticate?step=broker-kakao"
+     }
+    ]
+   },
+   {
+    "kind": "or",
+    "label": "or with email"
+   },
+   {
+    "kind": "form",
+    "gap": "fields",
+    "blocks": [
+     {
+      "kind": "field",
+      "label": "Email",
+      "type": "email",
+      "value": "",
+      "placeholder": "you@company.com",
+      "invalid": true,
+      "mono": false,
+      "notes": [
+       {
+        "tone": "bad",
+        "text": "This email already has an account. Sign in instead."
+       }
+      ],
+      "muted": false
+     },
+     {
+      "kind": "field",
+      "label": "Password",
+      "type": "password",
+      "value": "",
+      "placeholder": "",
+      "invalid": false,
+      "mono": false,
+      "notes": [],
+      "strength": {
+       "score": 0,
+       "steps": 3,
+       "label": "Password strength 0 of 3"
+      },
+      "rules": [
+       {
+        "label": "At least 10 characters",
+        "met": false
+       },
+       {
+        "label": "Mix letters and numbers",
+        "met": false
+       }
+      ],
+      "muted": false
+     },
+     {
+      "kind": "action",
+      "action": {
+       "label": "Sign up and get the code",
+       "tone": "primary",
+       "size": "lg",
+       "block": true,
+       "disabled": true,
+       "icon": false,
+       "submit": true
+      }
+     }
+    ]
+   },
+   {
+    "kind": "links",
+    "layout": "prose",
+    "items": [
+     {
+      "text": "By signing up you agree to the terms of use and the privacy policy."
+     },
+     {
+      "text": " "
+     },
+     {
+      "link": "terms of use",
+      "disabled": false,
+      "button": false
+     },
+     {
+      "text": " · "
+     },
+     {
+      "link": "privacy policy",
+      "disabled": false,
+      "button": false
+     }
+    ]
+   },
+   {
+    "kind": "links",
+    "layout": "prose",
+    "items": [
+     {
+      "text": "Already have an account?"
+     },
+     {
+      "text": " "
+     },
+     {
+      "link": "Sign in",
+      "disabled": false,
+      "button": false
+     }
+    ]
+   }
+  ]
+ },
+ "web-auth-sign-in-and-sign-up--email-taken|ko": {
+  "step": "signUp",
+  "dark": false,
+  "title": "StageVoice 계정 만들기",
+  "mark": 32,
+  "blocks": [
+   {
+    "kind": "text",
+    "size": "caption",
+    "tone": "muted",
+    "strong": false,
+    "small": false,
+    "smallCaption": false,
+    "text": "무료 음성은 가입 없이도 씁니다. 프리미엄 음성과 내 목소리에는 계정이 필요합니다."
+   },
+   {
+    "kind": "providers",
+    "actions": [
+     {
+      "label": "Google로 계속",
+      "tone": "secondary",
+      "size": "md",
+      "block": true,
+      "disabled": false,
+      "icon": false,
+      "submit": false,
+      "href": "login-actions/authenticate?step=broker-google"
+     },
+     {
+      "label": "Microsoft로 계속",
+      "tone": "secondary",
+      "size": "md",
+      "block": true,
+      "disabled": false,
+      "icon": false,
+      "submit": false,
+      "href": "login-actions/authenticate?step=broker-microsoft"
+     },
+     {
+      "label": "카카오로 계속",
+      "tone": "secondary",
+      "size": "md",
+      "block": true,
+      "disabled": false,
+      "icon": false,
+      "submit": false,
+      "href": "login-actions/authenticate?step=broker-kakao"
+     }
+    ]
+   },
+   {
+    "kind": "or",
+    "label": "또는 이메일로"
+   },
+   {
+    "kind": "form",
+    "gap": "fields",
+    "blocks": [
+     {
+      "kind": "field",
+      "label": "이메일",
+      "type": "email",
+      "value": "",
+      "placeholder": "you@company.com",
+      "invalid": true,
+      "mono": false,
+      "notes": [
+       {
+        "tone": "bad",
+        "text": "이미 가입한 이메일입니다. 로그인하세요."
+       }
+      ],
+      "muted": false
+     },
+     {
+      "kind": "field",
+      "label": "비밀번호",
+      "type": "password",
+      "value": "",
+      "placeholder": "",
+      "invalid": false,
+      "mono": false,
+      "notes": [],
+      "strength": {
+       "score": 0,
+       "steps": 3,
+       "label": "비밀번호 강도 3단계 가운데 0"
+      },
+      "rules": [
+       {
+        "label": "10자 이상",
+        "met": false
+       },
+       {
+        "label": "글자와 숫자 섞기",
+        "met": false
+       }
+      ],
+      "muted": false
+     },
+     {
+      "kind": "action",
+      "action": {
+       "label": "가입하고 확인 숫자 받기",
+       "tone": "primary",
+       "size": "lg",
+       "block": true,
+       "disabled": true,
+       "icon": false,
+       "submit": true
+      }
+     }
+    ]
+   },
+   {
+    "kind": "links",
+    "layout": "prose",
+    "items": [
+     {
+      "text": "가입하면 이용약관과 개인정보 처리방침에 동의합니다."
+     },
+     {
+      "text": " "
+     },
+     {
+      "link": "이용약관",
+      "disabled": false,
+      "button": false
+     },
+     {
+      "text": " · "
+     },
+     {
+      "link": "개인정보 처리방침",
+      "disabled": false,
+      "button": false
+     }
+    ]
+   },
+   {
+    "kind": "links",
+    "layout": "prose",
+    "items": [
+     {
+      "text": "이미 계정이 있나요?"
+     },
+     {
+      "text": " "
+     },
+     {
+      "link": "로그인",
+      "disabled": false,
+      "button": false
+     }
+    ]
+   }
+  ]
+ },
+ "web-auth-sign-in-and-sign-up--forgot-password|en": {
+  "step": "forgot",
+  "dark": false,
+  "title": "Reset your password",
+  "mark": 32,
+  "blocks": [
+   {
+    "kind": "text",
+    "size": "body",
+    "tone": "muted",
+    "strong": false,
+    "small": false,
+    "smallCaption": false,
+    "text": "Enter the email you signed up with. We send a six-digit code to reset it."
+   },
+   {
+    "kind": "form",
+    "gap": "fields",
+    "blocks": [
+     {
+      "kind": "field",
+      "label": "Email",
+      "type": "email",
+      "value": "",
+      "placeholder": "",
+      "invalid": false,
+      "mono": false,
+      "notes": [],
+      "muted": false
+     },
+     {
+      "kind": "action",
+      "action": {
+       "label": "Send the code",
+       "tone": "primary",
+       "size": "lg",
+       "block": true,
+       "disabled": true,
+       "icon": false,
+       "submit": true
+      }
+     }
+    ]
+   },
+   {
+    "kind": "link",
+    "link": "Back to sign in",
+    "disabled": false,
+    "button": false
+   }
+  ]
+ },
+ "web-auth-sign-in-and-sign-up--forgot-password|ko": {
+  "step": "forgot",
+  "dark": false,
+  "title": "비밀번호 다시 정하기",
+  "mark": 32,
+  "blocks": [
+   {
+    "kind": "text",
+    "size": "body",
+    "tone": "muted",
+    "strong": false,
+    "small": false,
+    "smallCaption": false,
+    "text": "가입한 이메일을 넣으세요. 비밀번호를 다시 정할 여섯 자리 숫자를 보냅니다."
+   },
+   {
+    "kind": "form",
+    "gap": "fields",
+    "blocks": [
+     {
+      "kind": "field",
+      "label": "이메일",
+      "type": "email",
+      "value": "",
+      "placeholder": "",
+      "invalid": false,
+      "mono": false,
+      "notes": [],
+      "muted": false
+     },
+     {
+      "kind": "action",
+      "action": {
+       "label": "숫자 받기",
+       "tone": "primary",
+       "size": "lg",
+       "block": true,
+       "disabled": true,
+       "icon": false,
+       "submit": true
+      }
+     }
+    ]
+   },
+   {
+    "kind": "link",
+    "link": "로그인으로 돌아가기",
+    "disabled": false,
+    "button": false
+   }
+  ]
+ },
+ "web-auth-sign-in-and-sign-up--reset-password|en": {
+  "step": "reset",
+  "dark": false,
+  "title": "Check your email",
+  "mark": 32,
+  "blocks": [
+   {
+    "kind": "text",
+    "size": "body",
+    "tone": "muted",
+    "strong": false,
+    "small": false,
+    "smallCaption": false,
+    "text": "If t@example.com has an account, a code is on its way. It works for 10 minutes."
+   },
+   {
+    "kind": "form",
+    "gap": "fields",
+    "blocks": [
+     {
+      "kind": "codefield",
+      "title": "Code from the email",
+      "blocks": [
+       {
+        "kind": "code",
+        "label": "Code from the email",
+        "value": "",
+        "length": 6,
+        "invalid": false,
+        "disabled": false
+       },
+       {
+        "kind": "text",
+        "size": "caption",
+        "tone": "muted",
+        "strong": false,
+        "small": true,
+        "smallCaption": false,
+        "text": "Test code 381027"
+       }
+      ]
+     },
+     {
+      "kind": "field",
+      "label": "New password",
+      "type": "password",
+      "value": "",
+      "placeholder": "",
+      "invalid": false,
+      "mono": false,
+      "notes": [],
+      "rules": [
+       {
+        "label": "At least 10 characters",
+        "met": false
+       },
+       {
+        "label": "Mix letters and numbers",
+        "met": false
+       }
+      ],
+      "muted": false
+     },
+     {
+      "kind": "action",
+      "action": {
+       "label": "Save the new password",
+       "tone": "primary",
+       "size": "lg",
+       "block": true,
+       "disabled": true,
+       "icon": false,
+       "submit": true
+      }
+     }
+    ]
+   },
+   {
+    "kind": "link",
+    "link": "Back to sign in",
+    "disabled": false,
+    "button": false
+   }
+  ]
+ },
+ "web-auth-sign-in-and-sign-up--reset-password|ko": {
+  "step": "reset",
+  "dark": false,
+  "title": "메일을 확인하세요",
+  "mark": 32,
+  "blocks": [
+   {
+    "kind": "text",
+    "size": "body",
+    "tone": "muted",
+    "strong": false,
+    "small": false,
+    "smallCaption": false,
+    "text": "t@example.com으로 가입한 계정이 있으면 숫자를 보냈습니다. 10분 동안 쓸 수 있습니다."
+   },
+   {
+    "kind": "form",
+    "gap": "fields",
+    "blocks": [
+     {
+      "kind": "codefield",
+      "title": "메일로 받은 숫자",
+      "blocks": [
+       {
+        "kind": "code",
+        "label": "메일로 받은 숫자",
+        "value": "",
+        "length": 6,
+        "invalid": false,
+        "disabled": false
+       },
+       {
+        "kind": "text",
+        "size": "caption",
+        "tone": "muted",
+        "strong": false,
+        "small": true,
+        "smallCaption": false,
+        "text": "시험용 숫자 381027"
+       }
+      ]
+     },
+     {
+      "kind": "field",
+      "label": "새 비밀번호",
+      "type": "password",
+      "value": "",
+      "placeholder": "",
+      "invalid": false,
+      "mono": false,
+      "notes": [],
+      "rules": [
+       {
+        "label": "10자 이상",
+        "met": false
+       },
+       {
+        "label": "글자와 숫자 섞기",
+        "met": false
+       }
+      ],
+      "muted": false
+     },
+     {
+      "kind": "action",
+      "action": {
+       "label": "새 비밀번호 저장",
+       "tone": "primary",
+       "size": "lg",
+       "block": true,
+       "disabled": true,
+       "icon": false,
+       "submit": true
+      }
+     }
+    ]
+   },
+   {
+    "kind": "link",
+    "link": "로그인으로 돌아가기",
+    "disabled": false,
+    "button": false
+   }
+  ]
+ },
+ "web-auth-sign-in-and-sign-up--reset-wrong-code|en": {
+  "step": "reset",
+  "dark": false,
+  "title": "Check your email",
+  "mark": 32,
+  "blocks": [
+   {
+    "kind": "text",
+    "size": "body",
+    "tone": "muted",
+    "strong": false,
+    "small": false,
+    "smallCaption": false,
+    "text": "If t@example.com has an account, a code is on its way. It works for 10 minutes."
+   },
+   {
+    "kind": "form",
+    "gap": "fields",
+    "blocks": [
+     {
+      "kind": "codefield",
+      "title": "Code from the email",
+      "blocks": [
+       {
+        "kind": "code",
+        "label": "Code from the email",
+        "value": "",
+        "length": 6,
+        "invalid": true,
+        "disabled": false
+       },
+       {
+        "kind": "text",
+        "size": "caption",
+        "tone": "bad",
+        "strong": false,
+        "small": true,
+        "smallCaption": false,
+        "text": "The code does not match."
+       },
+       {
+        "kind": "text",
+        "size": "caption",
+        "tone": "muted",
+        "strong": false,
+        "small": true,
+        "smallCaption": false,
+        "text": "Test code 381027"
+       }
+      ]
+     },
+     {
+      "kind": "field",
+      "label": "New password",
+      "type": "password",
+      "value": "",
+      "placeholder": "",
+      "invalid": false,
+      "mono": false,
+      "notes": [],
+      "rules": [
+       {
+        "label": "At least 10 characters",
+        "met": false
+       },
+       {
+        "label": "Mix letters and numbers",
+        "met": false
+       }
+      ],
+      "muted": false
+     },
+     {
+      "kind": "action",
+      "action": {
+       "label": "Save the new password",
+       "tone": "primary",
+       "size": "lg",
+       "block": true,
+       "disabled": true,
+       "icon": false,
+       "submit": true
+      }
+     }
+    ]
+   },
+   {
+    "kind": "link",
+    "link": "Back to sign in",
+    "disabled": false,
+    "button": false
+   }
+  ]
+ },
+ "web-auth-sign-in-and-sign-up--reset-wrong-code|ko": {
+  "step": "reset",
+  "dark": false,
+  "title": "메일을 확인하세요",
+  "mark": 32,
+  "blocks": [
+   {
+    "kind": "text",
+    "size": "body",
+    "tone": "muted",
+    "strong": false,
+    "small": false,
+    "smallCaption": false,
+    "text": "t@example.com으로 가입한 계정이 있으면 숫자를 보냈습니다. 10분 동안 쓸 수 있습니다."
+   },
+   {
+    "kind": "form",
+    "gap": "fields",
+    "blocks": [
+     {
+      "kind": "codefield",
+      "title": "메일로 받은 숫자",
+      "blocks": [
+       {
+        "kind": "code",
+        "label": "메일로 받은 숫자",
+        "value": "",
+        "length": 6,
+        "invalid": true,
+        "disabled": false
+       },
+       {
+        "kind": "text",
+        "size": "caption",
+        "tone": "bad",
+        "strong": false,
+        "small": true,
+        "smallCaption": false,
+        "text": "숫자가 맞지 않습니다"
+       },
+       {
+        "kind": "text",
+        "size": "caption",
+        "tone": "muted",
+        "strong": false,
+        "small": true,
+        "smallCaption": false,
+        "text": "시험용 숫자 381027"
+       }
+      ]
+     },
+     {
+      "kind": "field",
+      "label": "새 비밀번호",
+      "type": "password",
+      "value": "",
+      "placeholder": "",
+      "invalid": false,
+      "mono": false,
+      "notes": [],
+      "rules": [
+       {
+        "label": "10자 이상",
+        "met": false
+       },
+       {
+        "label": "글자와 숫자 섞기",
+        "met": false
+       }
+      ],
+      "muted": false
+     },
+     {
+      "kind": "action",
+      "action": {
+       "label": "새 비밀번호 저장",
+       "tone": "primary",
+       "size": "lg",
+       "block": true,
+       "disabled": true,
+       "icon": false,
+       "submit": true
+      }
+     }
+    ]
+   },
+   {
+    "kind": "link",
+    "link": "로그인으로 돌아가기",
+    "disabled": false,
+    "button": false
+   }
+  ]
+ },
+ "web-auth-sign-in-and-sign-up--sign-in|en": {
+  "step": "signIn",
+  "dark": false,
+  "title": "Sign in to StageVoice",
+  "mark": 32,
+  "blocks": [
+   {
+    "kind": "form",
+    "gap": "fields",
+    "blocks": [
+     {
+      "kind": "field",
+      "label": "Email",
+      "type": "email",
+      "value": "t@example.com",
+      "placeholder": "",
+      "invalid": false,
+      "mono": false,
+      "notes": [],
+      "muted": false
+     },
+     {
+      "kind": "field",
+      "label": "Password",
+      "type": "password",
+      "value": "",
+      "placeholder": "",
+      "invalid": false,
+      "mono": false,
+      "notes": [],
+      "muted": false
+     },
+     {
+      "kind": "action",
+      "action": {
+       "label": "Sign in",
+       "tone": "primary",
+       "size": "lg",
+       "block": true,
+       "disabled": false,
+       "icon": false,
+       "submit": true
+      }
+     }
+    ]
+   },
+   {
+    "kind": "or",
+    "label": "or"
+   },
+   {
+    "kind": "providers",
+    "actions": [
+     {
+      "label": "Continue with Google",
+      "tone": "secondary",
+      "size": "md",
+      "block": true,
+      "disabled": false,
+      "icon": false,
+      "submit": false,
+      "href": "login-actions/authenticate?step=broker-google"
+     },
+     {
+      "label": "Continue with Microsoft",
+      "tone": "secondary",
+      "size": "md",
+      "block": true,
+      "disabled": false,
+      "icon": false,
+      "submit": false,
+      "href": "login-actions/authenticate?step=broker-microsoft"
+     },
+     {
+      "label": "Continue with Kakao",
+      "tone": "secondary",
+      "size": "md",
+      "block": true,
+      "disabled": false,
+      "icon": false,
+      "submit": false,
+      "href": "login-actions/authenticate?step=broker-kakao"
+     }
+    ]
+   },
+   {
+    "kind": "links",
+    "layout": "spread",
+    "items": [
+     {
+      "link": "Forgot your password?",
+      "disabled": false,
+      "button": false
+     },
+     {
+      "link": "Create an account",
+      "disabled": false,
+      "button": false
+     }
+    ]
+   }
+  ]
+ },
+ "web-auth-sign-in-and-sign-up--sign-in|ko": {
+  "step": "signIn",
+  "dark": false,
+  "title": "StageVoice에 로그인",
+  "mark": 32,
+  "blocks": [
+   {
+    "kind": "form",
+    "gap": "fields",
+    "blocks": [
+     {
+      "kind": "field",
+      "label": "이메일",
+      "type": "email",
+      "value": "t@example.com",
+      "placeholder": "",
+      "invalid": false,
+      "mono": false,
+      "notes": [],
+      "muted": false
+     },
+     {
+      "kind": "field",
+      "label": "비밀번호",
+      "type": "password",
+      "value": "",
+      "placeholder": "",
+      "invalid": false,
+      "mono": false,
+      "notes": [],
+      "muted": false
+     },
+     {
+      "kind": "action",
+      "action": {
+       "label": "로그인",
+       "tone": "primary",
+       "size": "lg",
+       "block": true,
+       "disabled": false,
+       "icon": false,
+       "submit": true
+      }
+     }
+    ]
+   },
+   {
+    "kind": "or",
+    "label": "또는"
+   },
+   {
+    "kind": "providers",
+    "actions": [
+     {
+      "label": "Google로 계속",
+      "tone": "secondary",
+      "size": "md",
+      "block": true,
+      "disabled": false,
+      "icon": false,
+      "submit": false,
+      "href": "login-actions/authenticate?step=broker-google"
+     },
+     {
+      "label": "Microsoft로 계속",
+      "tone": "secondary",
+      "size": "md",
+      "block": true,
+      "disabled": false,
+      "icon": false,
+      "submit": false,
+      "href": "login-actions/authenticate?step=broker-microsoft"
+     },
+     {
+      "label": "카카오로 계속",
+      "tone": "secondary",
+      "size": "md",
+      "block": true,
+      "disabled": false,
+      "icon": false,
+      "submit": false,
+      "href": "login-actions/authenticate?step=broker-kakao"
+     }
+    ]
+   },
+   {
+    "kind": "links",
+    "layout": "spread",
+    "items": [
+     {
+      "link": "비밀번호를 잊었나요?",
+      "disabled": false,
+      "button": false
+     },
+     {
+      "link": "계정 만들기",
+      "disabled": false,
+      "button": false
+     }
+    ]
+   }
+  ]
+ },
+ "web-auth-sign-in-and-sign-up--sign-in-phone|en": {
+  "step": "signIn",
+  "dark": false,
+  "title": "Sign in to StageVoice",
+  "mark": 31.41009521484375,
+  "blocks": [
+   {
+    "kind": "form",
+    "gap": "fields",
+    "blocks": [
+     {
+      "kind": "field",
+      "label": "Email",
+      "type": "email",
+      "value": "t@example.com",
+      "placeholder": "",
+      "invalid": false,
+      "mono": false,
+      "notes": [],
+      "muted": false
+     },
+     {
+      "kind": "field",
+      "label": "Password",
+      "type": "password",
+      "value": "",
+      "placeholder": "",
+      "invalid": false,
+      "mono": false,
+      "notes": [],
+      "muted": false
+     },
+     {
+      "kind": "action",
+      "action": {
+       "label": "Sign in",
+       "tone": "primary",
+       "size": "lg",
+       "block": true,
+       "disabled": false,
+       "icon": false,
+       "submit": true
+      }
+     }
+    ]
+   },
+   {
+    "kind": "or",
+    "label": "or"
+   },
+   {
+    "kind": "providers",
+    "actions": [
+     {
+      "label": "Continue with Google",
+      "tone": "secondary",
+      "size": "md",
+      "block": true,
+      "disabled": false,
+      "icon": false,
+      "submit": false,
+      "href": "login-actions/authenticate?step=broker-google"
+     },
+     {
+      "label": "Continue with Microsoft",
+      "tone": "secondary",
+      "size": "md",
+      "block": true,
+      "disabled": false,
+      "icon": false,
+      "submit": false,
+      "href": "login-actions/authenticate?step=broker-microsoft"
+     },
+     {
+      "label": "Continue with Kakao",
+      "tone": "secondary",
+      "size": "md",
+      "block": true,
+      "disabled": false,
+      "icon": false,
+      "submit": false,
+      "href": "login-actions/authenticate?step=broker-kakao"
+     }
+    ]
+   },
+   {
+    "kind": "links",
+    "layout": "spread",
+    "items": [
+     {
+      "link": "Forgot your password?",
+      "disabled": false,
+      "button": false
+     },
+     {
+      "link": "Create an account",
+      "disabled": false,
+      "button": false
+     }
+    ]
+   }
+  ]
+ },
+ "web-auth-sign-in-and-sign-up--sign-in-phone|ko": {
+  "step": "signIn",
+  "dark": false,
+  "title": "StageVoice에 로그인",
+  "mark": 31.41009521484375,
+  "blocks": [
+   {
+    "kind": "form",
+    "gap": "fields",
+    "blocks": [
+     {
+      "kind": "field",
+      "label": "이메일",
+      "type": "email",
+      "value": "t@example.com",
+      "placeholder": "",
+      "invalid": false,
+      "mono": false,
+      "notes": [],
+      "muted": false
+     },
+     {
+      "kind": "field",
+      "label": "비밀번호",
+      "type": "password",
+      "value": "",
+      "placeholder": "",
+      "invalid": false,
+      "mono": false,
+      "notes": [],
+      "muted": false
+     },
+     {
+      "kind": "action",
+      "action": {
+       "label": "로그인",
+       "tone": "primary",
+       "size": "lg",
+       "block": true,
+       "disabled": false,
+       "icon": false,
+       "submit": true
+      }
+     }
+    ]
+   },
+   {
+    "kind": "or",
+    "label": "또는"
+   },
+   {
+    "kind": "providers",
+    "actions": [
+     {
+      "label": "Google로 계속",
+      "tone": "secondary",
+      "size": "md",
+      "block": true,
+      "disabled": false,
+      "icon": false,
+      "submit": false,
+      "href": "login-actions/authenticate?step=broker-google"
+     },
+     {
+      "label": "Microsoft로 계속",
+      "tone": "secondary",
+      "size": "md",
+      "block": true,
+      "disabled": false,
+      "icon": false,
+      "submit": false,
+      "href": "login-actions/authenticate?step=broker-microsoft"
+     },
+     {
+      "label": "카카오로 계속",
+      "tone": "secondary",
+      "size": "md",
+      "block": true,
+      "disabled": false,
+      "icon": false,
+      "submit": false,
+      "href": "login-actions/authenticate?step=broker-kakao"
+     }
+    ]
+   },
+   {
+    "kind": "links",
+    "layout": "spread",
+    "items": [
+     {
+      "link": "비밀번호를 잊었나요?",
+      "disabled": false,
+      "button": false
+     },
+     {
+      "link": "계정 만들기",
+      "disabled": false,
+      "button": false
+     }
+    ]
+   }
+  ]
+ },
+ "web-auth-sign-in-and-sign-up--sign-up|en": {
+  "step": "signUp",
+  "dark": false,
+  "title": "Create a StageVoice account",
+  "mark": 32,
+  "blocks": [
+   {
+    "kind": "text",
+    "size": "caption",
+    "tone": "muted",
+    "strong": false,
+    "small": false,
+    "smallCaption": false,
+    "text": "Free voices work without an account. Premium voices and your own voice need one."
+   },
+   {
+    "kind": "providers",
+    "actions": [
+     {
+      "label": "Continue with Google",
+      "tone": "secondary",
+      "size": "md",
+      "block": true,
+      "disabled": false,
+      "icon": false,
+      "submit": false,
+      "href": "login-actions/authenticate?step=broker-google"
+     },
+     {
+      "label": "Continue with Microsoft",
+      "tone": "secondary",
+      "size": "md",
+      "block": true,
+      "disabled": false,
+      "icon": false,
+      "submit": false,
+      "href": "login-actions/authenticate?step=broker-microsoft"
+     },
+     {
+      "label": "Continue with Kakao",
+      "tone": "secondary",
+      "size": "md",
+      "block": true,
+      "disabled": false,
+      "icon": false,
+      "submit": false,
+      "href": "login-actions/authenticate?step=broker-kakao"
+     }
+    ]
+   },
+   {
+    "kind": "or",
+    "label": "or with email"
+   },
+   {
+    "kind": "form",
+    "gap": "fields",
+    "blocks": [
+     {
+      "kind": "field",
+      "label": "Email",
+      "type": "email",
+      "value": "",
+      "placeholder": "you@company.com",
+      "invalid": false,
+      "mono": false,
+      "notes": [],
+      "muted": false
+     },
+     {
+      "kind": "field",
+      "label": "Password",
+      "type": "password",
+      "value": "",
+      "placeholder": "",
+      "invalid": false,
+      "mono": false,
+      "notes": [],
+      "strength": {
+       "score": 0,
+       "steps": 3,
+       "label": "Password strength 0 of 3"
+      },
+      "rules": [
+       {
+        "label": "At least 10 characters",
+        "met": false
+       },
+       {
+        "label": "Mix letters and numbers",
+        "met": false
+       }
+      ],
+      "muted": false
+     },
+     {
+      "kind": "action",
+      "action": {
+       "label": "Sign up and get the code",
+       "tone": "primary",
+       "size": "lg",
+       "block": true,
+       "disabled": true,
+       "icon": false,
+       "submit": true
+      }
+     }
+    ]
+   },
+   {
+    "kind": "links",
+    "layout": "prose",
+    "items": [
+     {
+      "text": "By signing up you agree to the terms of use and the privacy policy."
+     },
+     {
+      "text": " "
+     },
+     {
+      "link": "terms of use",
+      "disabled": false,
+      "button": false
+     },
+     {
+      "text": " · "
+     },
+     {
+      "link": "privacy policy",
+      "disabled": false,
+      "button": false
+     }
+    ]
+   },
+   {
+    "kind": "links",
+    "layout": "prose",
+    "items": [
+     {
+      "text": "Already have an account?"
+     },
+     {
+      "text": " "
+     },
+     {
+      "link": "Sign in",
+      "disabled": false,
+      "button": false
+     }
+    ]
+   }
+  ]
+ },
+ "web-auth-sign-in-and-sign-up--sign-up|ko": {
+  "step": "signUp",
+  "dark": false,
+  "title": "StageVoice 계정 만들기",
+  "mark": 32,
+  "blocks": [
+   {
+    "kind": "text",
+    "size": "caption",
+    "tone": "muted",
+    "strong": false,
+    "small": false,
+    "smallCaption": false,
+    "text": "무료 음성은 가입 없이도 씁니다. 프리미엄 음성과 내 목소리에는 계정이 필요합니다."
+   },
+   {
+    "kind": "providers",
+    "actions": [
+     {
+      "label": "Google로 계속",
+      "tone": "secondary",
+      "size": "md",
+      "block": true,
+      "disabled": false,
+      "icon": false,
+      "submit": false,
+      "href": "login-actions/authenticate?step=broker-google"
+     },
+     {
+      "label": "Microsoft로 계속",
+      "tone": "secondary",
+      "size": "md",
+      "block": true,
+      "disabled": false,
+      "icon": false,
+      "submit": false,
+      "href": "login-actions/authenticate?step=broker-microsoft"
+     },
+     {
+      "label": "카카오로 계속",
+      "tone": "secondary",
+      "size": "md",
+      "block": true,
+      "disabled": false,
+      "icon": false,
+      "submit": false,
+      "href": "login-actions/authenticate?step=broker-kakao"
+     }
+    ]
+   },
+   {
+    "kind": "or",
+    "label": "또는 이메일로"
+   },
+   {
+    "kind": "form",
+    "gap": "fields",
+    "blocks": [
+     {
+      "kind": "field",
+      "label": "이메일",
+      "type": "email",
+      "value": "",
+      "placeholder": "you@company.com",
+      "invalid": false,
+      "mono": false,
+      "notes": [],
+      "muted": false
+     },
+     {
+      "kind": "field",
+      "label": "비밀번호",
+      "type": "password",
+      "value": "",
+      "placeholder": "",
+      "invalid": false,
+      "mono": false,
+      "notes": [],
+      "strength": {
+       "score": 0,
+       "steps": 3,
+       "label": "비밀번호 강도 3단계 가운데 0"
+      },
+      "rules": [
+       {
+        "label": "10자 이상",
+        "met": false
+       },
+       {
+        "label": "글자와 숫자 섞기",
+        "met": false
+       }
+      ],
+      "muted": false
+     },
+     {
+      "kind": "action",
+      "action": {
+       "label": "가입하고 확인 숫자 받기",
+       "tone": "primary",
+       "size": "lg",
+       "block": true,
+       "disabled": true,
+       "icon": false,
+       "submit": true
+      }
+     }
+    ]
+   },
+   {
+    "kind": "links",
+    "layout": "prose",
+    "items": [
+     {
+      "text": "가입하면 이용약관과 개인정보 처리방침에 동의합니다."
+     },
+     {
+      "text": " "
+     },
+     {
+      "link": "이용약관",
+      "disabled": false,
+      "button": false
+     },
+     {
+      "text": " · "
+     },
+     {
+      "link": "개인정보 처리방침",
+      "disabled": false,
+      "button": false
+     }
+    ]
+   },
+   {
+    "kind": "links",
+    "layout": "prose",
+    "items": [
+     {
+      "text": "이미 계정이 있나요?"
+     },
+     {
+      "text": " "
+     },
+     {
+      "link": "로그인",
+      "disabled": false,
+      "button": false
+     }
+    ]
+   }
+  ]
+ },
+ "web-auth-sign-in-and-sign-up--sign-up-phone|en": {
+  "step": "signUp",
+  "dark": false,
+  "title": "Create a StageVoice account",
+  "mark": 31.41009521484375,
+  "blocks": [
+   {
+    "kind": "text",
+    "size": "caption",
+    "tone": "muted",
+    "strong": false,
+    "small": false,
+    "smallCaption": false,
+    "text": "Free voices work without an account. Premium voices and your own voice need one."
+   },
+   {
+    "kind": "providers",
+    "actions": [
+     {
+      "label": "Continue with Google",
+      "tone": "secondary",
+      "size": "md",
+      "block": true,
+      "disabled": false,
+      "icon": false,
+      "submit": false,
+      "href": "login-actions/authenticate?step=broker-google"
+     },
+     {
+      "label": "Continue with Microsoft",
+      "tone": "secondary",
+      "size": "md",
+      "block": true,
+      "disabled": false,
+      "icon": false,
+      "submit": false,
+      "href": "login-actions/authenticate?step=broker-microsoft"
+     },
+     {
+      "label": "Continue with Kakao",
+      "tone": "secondary",
+      "size": "md",
+      "block": true,
+      "disabled": false,
+      "icon": false,
+      "submit": false,
+      "href": "login-actions/authenticate?step=broker-kakao"
+     }
+    ]
+   },
+   {
+    "kind": "or",
+    "label": "or with email"
+   },
+   {
+    "kind": "form",
+    "gap": "fields",
+    "blocks": [
+     {
+      "kind": "field",
+      "label": "Email",
+      "type": "email",
+      "value": "",
+      "placeholder": "you@company.com",
+      "invalid": false,
+      "mono": false,
+      "notes": [],
+      "muted": false
+     },
+     {
+      "kind": "field",
+      "label": "Password",
+      "type": "password",
+      "value": "",
+      "placeholder": "",
+      "invalid": false,
+      "mono": false,
+      "notes": [],
+      "strength": {
+       "score": 0,
+       "steps": 3,
+       "label": "Password strength 0 of 3"
+      },
+      "rules": [
+       {
+        "label": "At least 10 characters",
+        "met": false
+       },
+       {
+        "label": "Mix letters and numbers",
+        "met": false
+       }
+      ],
+      "muted": false
+     },
+     {
+      "kind": "action",
+      "action": {
+       "label": "Sign up and get the code",
+       "tone": "primary",
+       "size": "lg",
+       "block": true,
+       "disabled": true,
+       "icon": false,
+       "submit": true
+      }
+     }
+    ]
+   },
+   {
+    "kind": "links",
+    "layout": "prose",
+    "items": [
+     {
+      "text": "By signing up you agree to the terms of use and the privacy policy."
+     },
+     {
+      "text": " "
+     },
+     {
+      "link": "terms of use",
+      "disabled": false,
+      "button": false
+     },
+     {
+      "text": " · "
+     },
+     {
+      "link": "privacy policy",
+      "disabled": false,
+      "button": false
+     }
+    ]
+   },
+   {
+    "kind": "links",
+    "layout": "prose",
+    "items": [
+     {
+      "text": "Already have an account?"
+     },
+     {
+      "text": " "
+     },
+     {
+      "link": "Sign in",
+      "disabled": false,
+      "button": false
+     }
+    ]
+   }
+  ]
+ },
+ "web-auth-sign-in-and-sign-up--sign-up-phone|ko": {
+  "step": "signUp",
+  "dark": false,
+  "title": "StageVoice 계정 만들기",
+  "mark": 31.41009521484375,
+  "blocks": [
+   {
+    "kind": "text",
+    "size": "caption",
+    "tone": "muted",
+    "strong": false,
+    "small": false,
+    "smallCaption": false,
+    "text": "무료 음성은 가입 없이도 씁니다. 프리미엄 음성과 내 목소리에는 계정이 필요합니다."
+   },
+   {
+    "kind": "providers",
+    "actions": [
+     {
+      "label": "Google로 계속",
+      "tone": "secondary",
+      "size": "md",
+      "block": true,
+      "disabled": false,
+      "icon": false,
+      "submit": false,
+      "href": "login-actions/authenticate?step=broker-google"
+     },
+     {
+      "label": "Microsoft로 계속",
+      "tone": "secondary",
+      "size": "md",
+      "block": true,
+      "disabled": false,
+      "icon": false,
+      "submit": false,
+      "href": "login-actions/authenticate?step=broker-microsoft"
+     },
+     {
+      "label": "카카오로 계속",
+      "tone": "secondary",
+      "size": "md",
+      "block": true,
+      "disabled": false,
+      "icon": false,
+      "submit": false,
+      "href": "login-actions/authenticate?step=broker-kakao"
+     }
+    ]
+   },
+   {
+    "kind": "or",
+    "label": "또는 이메일로"
+   },
+   {
+    "kind": "form",
+    "gap": "fields",
+    "blocks": [
+     {
+      "kind": "field",
+      "label": "이메일",
+      "type": "email",
+      "value": "",
+      "placeholder": "you@company.com",
+      "invalid": false,
+      "mono": false,
+      "notes": [],
+      "muted": false
+     },
+     {
+      "kind": "field",
+      "label": "비밀번호",
+      "type": "password",
+      "value": "",
+      "placeholder": "",
+      "invalid": false,
+      "mono": false,
+      "notes": [],
+      "strength": {
+       "score": 0,
+       "steps": 3,
+       "label": "비밀번호 강도 3단계 가운데 0"
+      },
+      "rules": [
+       {
+        "label": "10자 이상",
+        "met": false
+       },
+       {
+        "label": "글자와 숫자 섞기",
+        "met": false
+       }
+      ],
+      "muted": false
+     },
+     {
+      "kind": "action",
+      "action": {
+       "label": "가입하고 확인 숫자 받기",
+       "tone": "primary",
+       "size": "lg",
+       "block": true,
+       "disabled": true,
+       "icon": false,
+       "submit": true
+      }
+     }
+    ]
+   },
+   {
+    "kind": "links",
+    "layout": "prose",
+    "items": [
+     {
+      "text": "가입하면 이용약관과 개인정보 처리방침에 동의합니다."
+     },
+     {
+      "text": " "
+     },
+     {
+      "link": "이용약관",
+      "disabled": false,
+      "button": false
+     },
+     {
+      "text": " · "
+     },
+     {
+      "link": "개인정보 처리방침",
+      "disabled": false,
+      "button": false
+     }
+    ]
+   },
+   {
+    "kind": "links",
+    "layout": "prose",
+    "items": [
+     {
+      "text": "이미 계정이 있나요?"
+     },
+     {
+      "text": " "
+     },
+     {
+      "link": "로그인",
+      "disabled": false,
+      "button": false
+     }
+    ]
+   }
+  ]
+ },
+ "web-auth-sign-in-and-sign-up--signed-in-with-microsoft|en": {
+  "step": "done",
+  "dark": false,
+  "title": "You are signed in",
+  "mark": 0,
+  "blocks": [
+   {
+    "kind": "done"
+   },
+   {
+    "kind": "text",
+    "size": "caption",
+    "tone": "plain",
+    "strong": true,
+    "small": false,
+    "smallCaption": false,
+    "text": "Signed up with your Microsoft account"
+   },
+   {
+    "kind": "text",
+    "size": "body",
+    "tone": "muted",
+    "strong": false,
+    "small": false,
+    "smallCaption": false,
+    "text": "Signed in as t@example.com."
+   },
+   {
+    "kind": "action",
+    "action": {
+     "label": "Download the app",
+     "tone": "primary",
+     "size": "lg",
+     "block": true,
+     "disabled": false,
+     "icon": true,
+     "submit": false
+    }
+   },
+   {
+    "kind": "text",
+    "size": "caption",
+    "tone": "muted",
+    "strong": false,
+    "small": false,
+    "smallCaption": false,
+    "text": "If you started in the PowerPoint task pane, close this window to go back."
+   }
+  ]
+ },
+ "web-auth-sign-in-and-sign-up--signed-in-with-microsoft|ko": {
+  "step": "done",
+  "dark": false,
+  "title": "로그인했습니다",
+  "mark": 0,
+  "blocks": [
+   {
+    "kind": "done"
+   },
+   {
+    "kind": "text",
+    "size": "caption",
+    "tone": "plain",
+    "strong": true,
+    "small": false,
+    "smallCaption": false,
+    "text": "Microsoft 계정으로 가입했습니다"
+   },
+   {
+    "kind": "text",
+    "size": "body",
+    "tone": "muted",
+    "strong": false,
+    "small": false,
+    "smallCaption": false,
+    "text": "t@example.com으로 로그인했습니다."
+   },
+   {
+    "kind": "action",
+    "action": {
+     "label": "앱 내려받기",
+     "tone": "primary",
+     "size": "lg",
+     "block": true,
+     "disabled": false,
+     "icon": true,
+     "submit": false
+    }
+   },
+   {
+    "kind": "text",
+    "size": "caption",
+    "tone": "muted",
+    "strong": false,
+    "small": false,
+    "smallCaption": false,
+    "text": "PowerPoint 작업창에서 시작했다면 이 창을 닫으면 돌아갑니다."
+   }
+  ]
+ },
+ "web-auth-sign-in-and-sign-up--signed-up|en": {
+  "step": "done",
+  "dark": false,
+  "title": "You are signed up",
+  "mark": 0,
+  "blocks": [
+   {
+    "kind": "done"
+   },
+   {
+    "kind": "text",
+    "size": "body",
+    "tone": "muted",
+    "strong": false,
+    "small": false,
+    "smallCaption": false,
+    "text": "Signed in as t@example.com. Free voices work right now, and the Pro trial runs 7 days without a card."
+   },
+   {
+    "kind": "action",
+    "action": {
+     "label": "Download the app",
+     "tone": "primary",
+     "size": "lg",
+     "block": true,
+     "disabled": false,
+     "icon": true,
+     "submit": false
+    }
+   },
+   {
+    "kind": "text",
+    "size": "caption",
+    "tone": "muted",
+    "strong": false,
+    "small": false,
+    "smallCaption": false,
+    "text": "If you started in the PowerPoint task pane, close this window to go back."
+   }
+  ]
+ },
+ "web-auth-sign-in-and-sign-up--signed-up|ko": {
+  "step": "done",
+  "dark": false,
+  "title": "가입했습니다",
+  "mark": 0,
+  "blocks": [
+   {
+    "kind": "done"
+   },
+   {
+    "kind": "text",
+    "size": "body",
+    "tone": "muted",
+    "strong": false,
+    "small": false,
+    "smallCaption": false,
+    "text": "t@example.com으로 로그인했습니다. 무료 음성은 지금 바로, Pro 체험은 카드 없이 7일 동안 쓸 수 있습니다."
+   },
+   {
+    "kind": "action",
+    "action": {
+     "label": "앱 내려받기",
+     "tone": "primary",
+     "size": "lg",
+     "block": true,
+     "disabled": false,
+     "icon": true,
+     "submit": false
+    }
+   },
+   {
+    "kind": "text",
+    "size": "caption",
+    "tone": "muted",
+    "strong": false,
+    "small": false,
+    "smallCaption": false,
+    "text": "PowerPoint 작업창에서 시작했다면 이 창을 닫으면 돌아갑니다."
+   }
+  ]
+ },
+ "web-auth-sign-in-and-sign-up--signed-up-with-google|en": {
+  "step": "done",
+  "dark": false,
+  "title": "You are signed up",
+  "mark": 0,
+  "blocks": [
+   {
+    "kind": "done"
+   },
+   {
+    "kind": "text",
+    "size": "caption",
+    "tone": "plain",
+    "strong": true,
+    "small": false,
+    "smallCaption": false,
+    "text": "Signed up with your Google account"
+   },
+   {
+    "kind": "text",
+    "size": "body",
+    "tone": "muted",
+    "strong": false,
+    "small": false,
+    "smallCaption": false,
+    "text": "Signed in as t@example.com. Free voices work right now, and the Pro trial runs 7 days without a card."
+   },
+   {
+    "kind": "action",
+    "action": {
+     "label": "Download the app",
+     "tone": "primary",
+     "size": "lg",
+     "block": true,
+     "disabled": false,
+     "icon": true,
+     "submit": false
+    }
+   },
+   {
+    "kind": "text",
+    "size": "caption",
+    "tone": "muted",
+    "strong": false,
+    "small": false,
+    "smallCaption": false,
+    "text": "If you started in the PowerPoint task pane, close this window to go back."
+   }
+  ]
+ },
+ "web-auth-sign-in-and-sign-up--signed-up-with-google|ko": {
+  "step": "done",
+  "dark": false,
+  "title": "가입했습니다",
+  "mark": 0,
+  "blocks": [
+   {
+    "kind": "done"
+   },
+   {
+    "kind": "text",
+    "size": "caption",
+    "tone": "plain",
+    "strong": true,
+    "small": false,
+    "smallCaption": false,
+    "text": "Google 계정으로 가입했습니다"
+   },
+   {
+    "kind": "text",
+    "size": "body",
+    "tone": "muted",
+    "strong": false,
+    "small": false,
+    "smallCaption": false,
+    "text": "t@example.com으로 로그인했습니다. 무료 음성은 지금 바로, Pro 체험은 카드 없이 7일 동안 쓸 수 있습니다."
+   },
+   {
+    "kind": "action",
+    "action": {
+     "label": "앱 내려받기",
+     "tone": "primary",
+     "size": "lg",
+     "block": true,
+     "disabled": false,
+     "icon": true,
+     "submit": false
+    }
+   },
+   {
+    "kind": "text",
+    "size": "caption",
+    "tone": "muted",
+    "strong": false,
+    "small": false,
+    "smallCaption": false,
+    "text": "PowerPoint 작업창에서 시작했다면 이 창을 닫으면 돌아갑니다."
+   }
+  ]
+ },
+ "web-auth-sign-in-and-sign-up--signed-up-with-kakao-phone|en": {
+  "step": "done",
+  "dark": false,
+  "title": "You are signed up",
+  "mark": 0,
+  "blocks": [
+   {
+    "kind": "done"
+   },
+   {
+    "kind": "text",
+    "size": "caption",
+    "tone": "plain",
+    "strong": true,
+    "small": false,
+    "smallCaption": false,
+    "text": "Signed up with your Kakao account"
+   },
+   {
+    "kind": "text",
+    "size": "body",
+    "tone": "muted",
+    "strong": false,
+    "small": false,
+    "smallCaption": false,
+    "text": "Signed in as t@example.com. Free voices work right now, and the Pro trial runs 7 days without a card."
+   },
+   {
+    "kind": "action",
+    "action": {
+     "label": "Download the app",
+     "tone": "primary",
+     "size": "lg",
+     "block": true,
+     "disabled": false,
+     "icon": true,
+     "submit": false
+    }
+   },
+   {
+    "kind": "text",
+    "size": "caption",
+    "tone": "muted",
+    "strong": false,
+    "small": false,
+    "smallCaption": false,
+    "text": "If you started in the PowerPoint task pane, close this window to go back."
+   }
+  ]
+ },
+ "web-auth-sign-in-and-sign-up--signed-up-with-kakao-phone|ko": {
+  "step": "done",
+  "dark": false,
+  "title": "가입했습니다",
+  "mark": 0,
+  "blocks": [
+   {
+    "kind": "done"
+   },
+   {
+    "kind": "text",
+    "size": "caption",
+    "tone": "plain",
+    "strong": true,
+    "small": false,
+    "smallCaption": false,
+    "text": "카카오 계정으로 가입했습니다"
+   },
+   {
+    "kind": "text",
+    "size": "body",
+    "tone": "muted",
+    "strong": false,
+    "small": false,
+    "smallCaption": false,
+    "text": "t@example.com으로 로그인했습니다. 무료 음성은 지금 바로, Pro 체험은 카드 없이 7일 동안 쓸 수 있습니다."
+   },
+   {
+    "kind": "action",
+    "action": {
+     "label": "앱 내려받기",
+     "tone": "primary",
+     "size": "lg",
+     "block": true,
+     "disabled": false,
+     "icon": true,
+     "submit": false
+    }
+   },
+   {
+    "kind": "text",
+    "size": "caption",
+    "tone": "muted",
+    "strong": false,
+    "small": false,
+    "smallCaption": false,
+    "text": "PowerPoint 작업창에서 시작했다면 이 창을 닫으면 돌아갑니다."
+   }
+  ]
+ },
+ "web-auth-sign-in-and-sign-up--wrong-code|en": {
+  "step": "verify",
+  "dark": false,
+  "title": "Enter the code from your email",
+  "mark": 32,
+  "blocks": [
+   {
+    "kind": "text",
+    "size": "body",
+    "tone": "muted",
+    "strong": false,
+    "small": false,
+    "smallCaption": false,
+    "text": "We sent six digits to t@example.com. They work for 10 minutes."
+   },
+   {
+    "kind": "code",
+    "label": "Enter the code from your email",
+    "value": "",
+    "length": 6,
+    "invalid": true,
+    "disabled": false
+   },
+   {
+    "kind": "text",
+    "size": "caption",
+    "tone": "bad",
+    "strong": false,
+    "small": false,
+    "smallCaption": false,
+    "text": "The code does not match. Try again."
+   },
+   {
+    "kind": "links",
+    "layout": "inline",
+    "items": [
+     {
+      "text": "Test code 604218"
+     },
+     {
+      "link": "Send again",
+      "disabled": false,
+      "button": true
+     },
+     {
+      "link": "Change email",
+      "disabled": false,
+      "button": false
+     }
+    ]
+   }
+  ]
+ },
+ "web-auth-sign-in-and-sign-up--wrong-code|ko": {
+  "step": "verify",
+  "dark": false,
+  "title": "메일로 받은 숫자를 넣으세요",
+  "mark": 32,
+  "blocks": [
+   {
+    "kind": "text",
+    "size": "body",
+    "tone": "muted",
+    "strong": false,
+    "small": false,
+    "smallCaption": false,
+    "text": "t@example.com으로 여섯 자리 숫자를 보냈습니다. 10분 동안 쓸 수 있습니다."
+   },
+   {
+    "kind": "code",
+    "label": "메일로 받은 숫자를 넣으세요",
+    "value": "",
+    "length": 6,
+    "invalid": true,
+    "disabled": false
+   },
+   {
+    "kind": "text",
+    "size": "caption",
+    "tone": "bad",
+    "strong": false,
+    "small": false,
+    "smallCaption": false,
+    "text": "숫자가 맞지 않습니다"
+   },
+   {
+    "kind": "links",
+    "layout": "inline",
+    "items": [
+     {
+      "text": "시험용 숫자 604218"
+     },
+     {
+      "link": "다시 보내기",
+      "disabled": false,
+      "button": true
+     },
+     {
+      "link": "이메일 바꾸기",
+      "disabled": false,
+      "button": false
+     }
+    ]
+   }
+  ]
+ },
+ "web-auth-sign-in-and-sign-up--wrong-password|en": {
+  "step": "signIn",
+  "dark": false,
+  "title": "Sign in to StageVoice",
+  "mark": 32,
+  "blocks": [
+   {
+    "kind": "form",
+    "gap": "fields",
+    "blocks": [
+     {
+      "kind": "alert",
+      "text": "The email or password is not right. Check them and try again."
+     },
+     {
+      "kind": "field",
+      "label": "Email",
+      "type": "email",
+      "value": "t@example.com",
+      "placeholder": "",
+      "invalid": false,
+      "mono": false,
+      "notes": [],
+      "muted": false
+     },
+     {
+      "kind": "field",
+      "label": "Password",
+      "type": "password",
+      "value": "",
+      "placeholder": "",
+      "invalid": false,
+      "mono": false,
+      "notes": [],
+      "muted": false
+     },
+     {
+      "kind": "action",
+      "action": {
+       "label": "Sign in",
+       "tone": "primary",
+       "size": "lg",
+       "block": true,
+       "disabled": false,
+       "icon": false,
+       "submit": true
+      }
+     }
+    ]
+   },
+   {
+    "kind": "or",
+    "label": "or"
+   },
+   {
+    "kind": "providers",
+    "actions": [
+     {
+      "label": "Continue with Google",
+      "tone": "secondary",
+      "size": "md",
+      "block": true,
+      "disabled": false,
+      "icon": false,
+      "submit": false,
+      "href": "login-actions/authenticate?step=broker-google"
+     },
+     {
+      "label": "Continue with Microsoft",
+      "tone": "secondary",
+      "size": "md",
+      "block": true,
+      "disabled": false,
+      "icon": false,
+      "submit": false,
+      "href": "login-actions/authenticate?step=broker-microsoft"
+     },
+     {
+      "label": "Continue with Kakao",
+      "tone": "secondary",
+      "size": "md",
+      "block": true,
+      "disabled": false,
+      "icon": false,
+      "submit": false,
+      "href": "login-actions/authenticate?step=broker-kakao"
+     }
+    ]
+   },
+   {
+    "kind": "links",
+    "layout": "spread",
+    "items": [
+     {
+      "link": "Forgot your password?",
+      "disabled": false,
+      "button": false
+     },
+     {
+      "link": "Create an account",
+      "disabled": false,
+      "button": false
+     }
+    ]
+   }
+  ]
+ },
+ "web-auth-sign-in-and-sign-up--wrong-password|ko": {
+  "step": "signIn",
+  "dark": false,
+  "title": "StageVoice에 로그인",
+  "mark": 32,
+  "blocks": [
+   {
+    "kind": "form",
+    "gap": "fields",
+    "blocks": [
+     {
+      "kind": "alert",
+      "text": "이메일이나 비밀번호가 맞지 않습니다. 확인하고 다시 넣으세요."
+     },
+     {
+      "kind": "field",
+      "label": "이메일",
+      "type": "email",
+      "value": "t@example.com",
+      "placeholder": "",
+      "invalid": false,
+      "mono": false,
+      "notes": [],
+      "muted": false
+     },
+     {
+      "kind": "field",
+      "label": "비밀번호",
+      "type": "password",
+      "value": "",
+      "placeholder": "",
+      "invalid": false,
+      "mono": false,
+      "notes": [],
+      "muted": false
+     },
+     {
+      "kind": "action",
+      "action": {
+       "label": "로그인",
+       "tone": "primary",
+       "size": "lg",
+       "block": true,
+       "disabled": false,
+       "icon": false,
+       "submit": true
+      }
+     }
+    ]
+   },
+   {
+    "kind": "or",
+    "label": "또는"
+   },
+   {
+    "kind": "providers",
+    "actions": [
+     {
+      "label": "Google로 계속",
+      "tone": "secondary",
+      "size": "md",
+      "block": true,
+      "disabled": false,
+      "icon": false,
+      "submit": false,
+      "href": "login-actions/authenticate?step=broker-google"
+     },
+     {
+      "label": "Microsoft로 계속",
+      "tone": "secondary",
+      "size": "md",
+      "block": true,
+      "disabled": false,
+      "icon": false,
+      "submit": false,
+      "href": "login-actions/authenticate?step=broker-microsoft"
+     },
+     {
+      "label": "카카오로 계속",
+      "tone": "secondary",
+      "size": "md",
+      "block": true,
+      "disabled": false,
+      "icon": false,
+      "submit": false,
+      "href": "login-actions/authenticate?step=broker-kakao"
+     }
+    ]
+   },
+   {
+    "kind": "links",
+    "layout": "spread",
+    "items": [
+     {
+      "link": "비밀번호를 잊었나요?",
+      "disabled": false,
+      "button": false
+     },
+     {
+      "link": "계정 만들기",
+      "disabled": false,
+      "button": false
+     }
+    ]
+   }
+  ]
+ }
+}

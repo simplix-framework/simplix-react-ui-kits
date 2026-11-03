@@ -22,6 +22,8 @@ export interface SegmentedSwitchProps<T extends string> {
   readonly label: string;
   /** `sm` sits in a line of small text (a footer); `md` stands above a set of offers. */
   readonly size?: "md" | "sm";
+  /** The whole switch cannot be changed now (the cycle once payment has begun); every option is dimmed. */
+  readonly disabled?: boolean;
 }
 
 /**
@@ -37,9 +39,10 @@ export function switchKeyTarget<T extends string>(options: readonly SegmentedOpt
  * It is a radio group: Tab reaches the chosen option, the arrows move the choice, and one option is
  * always chosen.
  */
-export function SegmentedSwitch<T extends string>({ options, value, onValueChange, label, size }: SegmentedSwitchProps<T>) {
+export function SegmentedSwitch<T extends string>({ options, value, onValueChange, label, size, disabled = false }: SegmentedSwitchProps<T>) {
   const group = useRef<HTMLDivElement>(null);
   const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (disabled) return;
     const target = switchKeyTarget(options, value, event.key);
     if (target === null) return;
     event.preventDefault();
@@ -53,14 +56,14 @@ export function SegmentedSwitch<T extends string>({ options, value, onValueChang
         return (
           <button
             key={option.value}
-            {...slotAttributes(siteSwitchOptionStyle, { checked, size })}
+            {...slotAttributes(siteSwitchOptionStyle, { checked, size, locked: disabled })}
             type="button"
             role="radio"
             aria-checked={checked}
             aria-label={option.name}
             data-value={option.value}
             tabIndex={checked ? 0 : -1}
-            disabled={option.disabled === true}
+            disabled={disabled || option.disabled === true}
             onClick={() => {
               if (!checked) onValueChange(option.value);
             }}

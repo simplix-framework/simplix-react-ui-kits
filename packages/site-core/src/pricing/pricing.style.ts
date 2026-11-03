@@ -31,8 +31,14 @@ export const siteSwitchOptionStyle = defineSlotStyle({
       md: "",
       sm: "h-6",
     },
+    // A switch that cannot be changed now as a whole (a cycle locked once payment has begun) dims
+    // every option like any control that cannot be used; one option left out is fainter.
+    locked: {
+      true: "disabled:opacity-(--site-dim)",
+      false: "",
+    },
   },
-  defaultVariants: { checked: false, size: "md" },
+  defaultVariants: { checked: false, size: "md", locked: false },
 });
 
 /** The offers side by side: four to a row, two below the medium tier, one below the narrow tier. */

@@ -52,13 +52,15 @@ export interface FieldNoteProps {
   readonly tone?: "muted" | "bad" | "good" | "warn";
   /** Spoken as it changes, for a rule that is met while the reader types. */
   readonly live?: boolean;
+  /** `caption` for a line standing on its own under a form rather than inside a field. */
+  readonly size?: "inherit" | "caption";
   readonly children: ReactNode;
 }
 
 /** A short line under a control, in the small print of the field. */
-export function FieldNote({ tone, live = false, children }: FieldNoteProps) {
+export function FieldNote({ tone, live = false, size, children }: FieldNoteProps) {
   return (
-    <small {...slotAttributes(siteFieldNoteStyle, { tone })} aria-live={live ? "polite" : undefined}>
+    <small {...slotAttributes(siteFieldNoteStyle, { tone, size })} aria-live={live ? "polite" : undefined}>
       {children}
     </small>
   );
@@ -82,17 +84,19 @@ export interface SiteInputProps extends Omit<InputHTMLAttributes<HTMLInputElemen
   readonly onValueChange?: (value: string) => void;
   /** The value is refused: the line takes the bad colour and the field reports `aria-invalid`. */
   readonly invalid?: boolean;
+  /** A value read character by character (a recovery code), in the mono family. */
+  readonly mono?: boolean;
 }
 
 /** A one-line text field on the control line. */
-export function SiteInput({ size, onValueChange, invalid = false, type = "text", ...rest }: SiteInputProps) {
+export function SiteInput({ size, onValueChange, invalid = false, mono = false, type = "text", ...rest }: SiteInputProps) {
   return (
     <input
       type={type}
       aria-invalid={invalid || undefined}
       onChange={onValueChange ? (event) => onValueChange(event.target.value) : undefined}
       {...rest}
-      {...slotAttributes(siteInputStyle, { size })}
+      {...slotAttributes(siteInputStyle, { size, mono })}
     />
   );
 }

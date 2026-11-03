@@ -1,6 +1,6 @@
 # @simplix-react-ui-kits/site-clarity
 
-The web site kit in the clarity design: the site parts of `@simplix-react-ui-kits/site-core` drawn with hairline borders, one accent and hierarchy from type. It re-exports site-core segment by segment (`/action`, `/form`, `/help`, `/install`, `/legal`, `/link`, `/marketing`, `/page`, `/pricing`, `/shell`) and adds the stylesheet, the variables it reads, the page region contract and the rendered checks.
+The web site kit in the clarity design: the site parts of `@simplix-react-ui-kits/site-core` drawn with hairline borders, one accent and hierarchy from type. It re-exports site-core segment by segment (`/account`, `/action`, `/auth`, `/checkout`, `/form`, `/help`, `/install`, `/legal`, `/link`, `/marketing`, `/page`, `/pricing`, `/shell`) and adds the stylesheet, the variables it reads, the page region contract and the rendered checks.
 
 ## Using it in an app
 
@@ -101,6 +101,7 @@ Every label is a prop: the kit ships no strings, and the product passes its own 
 | `--site-lh-display-xl` | its line height | `48px` |
 | `--site-fw-display` | a hero title's weight | `750` |
 | `--site-fw-strong` | the current link, actions, names, the chosen option | `600` |
+| `--site-fw-bold` | a receipt's title and a payment method's name and mark | `700` |
 | `--site-tracking-display` | letter spacing of the display family | `-0.025em` |
 | `--site-tracking-wide` | letter spacing of a mono eyebrow | `0.025em` |
 | `--site-tracking-code` | letter spacing of a code to type | `0.1em` |
@@ -119,6 +120,7 @@ Every label is a prop: the kit ships no strings, and the product passes its own 
 | `--site-recede` | the opacity of a bar link that is not the current page | `0.7` |
 | `--site-faint` | a feature an offer leaves out, a disabled switch option | `0.4` |
 | `--site-dim` | a control that cannot be used now (the comparison while the previous version shows) | `0.45` |
+| `--site-fade` | a choice that cannot be taken now (the current plan in a plan change) | `0.5` |
 | `--site-duration-fast` | hover and press transitions | `120ms` |
 | `--site-duration-base` | a switch thumb's travel | `220ms` |
 | `--site-ease` | their easing | `cubic-bezier(0.2, 0.8, 0.2, 1)` |
@@ -142,8 +144,19 @@ Every label is a prop: the kit ships no strings, and the product passes its own 
 | `--site-dark-wave-rest` | a dark band's wave rest colour | `var(--site-dark-line)` |
 | `--site-dark-shadow-window` | a dark band's raised card | `0 16px 44px` at 50% and a 1px accent line |
 | `--site-dark-bar-ink` | the bar's text over a dark band, which may differ from the band's own | `var(--site-dark-ink)` |
+| `--site-dark-surface-raised` | a dark ground's dialogs and open lists | `var(--site-dark-surface)` |
+| `--site-dark-control-line` | a dark ground's control borders | `var(--site-control-line)` |
+| `--site-dark-control-disabled` | a dark ground's disabled action ground | `var(--site-control-disabled)` |
+| `--site-dark-ink-disabled` | a dark ground's disabled action label | `var(--site-ink-disabled)` |
+| `--site-dark-good` | a dark ground's good colour | `var(--site-good)` |
+| `--site-dark-good-soft` | its soft ground | `var(--site-good-soft)` |
+| `--site-dark-warn` | a dark ground's warn colour | `var(--site-warn)` |
+| `--site-dark-warn-soft` | its soft ground | `var(--site-warn-soft)` |
+| `--site-dark-bad` | a dark ground's bad colour | `var(--site-bad)` |
+| `--site-dark-bad-soft` | its soft ground | `var(--site-bad-soft)` |
+| `--site-dark-shadow-float` | a dark ground's raised card and menu | `var(--site-shadow-float)` |
 
-Inside an element marked `data-band="dark"` (`SiteBand`, `HeroBand` with `tone="dark"`, and `SiteBar` with `tone="dark"`), the ground, surface, ink, line, accent, voice, wave and raised-card variables take the `--site-dark-*` values, so the same rules draw on the dark ground. The bar over a dark band draws its text in `--site-dark-bar-ink`.
+Inside an element marked `data-band="dark"` (`SiteBand`, `HeroBand` with `tone="dark"`, `SiteBar` with `tone="dark"`, and `AuthPage` with `scheme="dark"`), the ground, surface, ink, line, accent, voice, wave, raised-card, control, disabled, state-tone and float variables take the `--site-dark-*` values, so the same rules draw on the dark ground. The bar over a dark band draws its text in `--site-dark-bar-ink`.
 
 ## Page region contract
 
@@ -157,9 +170,9 @@ Inside an element marked `data-band="dark"` (`SiteBand`, `HeroBand` with `tone="
 | `help` | ready | bar, search, categories, articles, contact, footer |
 | `article` | ready | bar, breadcrumb, docHead, contents, doc, footer |
 | `legal` | ready | bar, breadcrumb, docHead, contents, doc, footer |
-| `account` | planned | bar, banner, sections, sectionHead, rows, footer |
-| `checkout` | planned | bar, stepper, main, summary, footer |
-| `auth` | planned | card, providers, foot |
+| `account` | ready | bar, sectionNav, accountSection, footer |
+| `checkout` | ready | bar, stepper, checkout, done, footer |
+| `auth` | ready | authCard |
 
 `tests/slot-styles.test.ts` refuses a slot style whose base, or one of whose variant values, sets one property twice (two border colours, two directions): the stylesheet's order, not the class order, would decide which one draws, so an override goes in a variant.
 
@@ -180,7 +193,7 @@ compare(reference, signature); // ["plans.card padding: reference 16px | build 1
 
 `probe` reads, inside the page root, the regions in drawing order, the controls each holds and, for the frame, every region and every named part, the computed first font family, size, weight, line height, letter spacing, colour, background, borders, radius, shadow, padding, gap, opacity, an SVG shape's fill, maximum width, grid columns, and the layout height and width (offset sizes, so a reference painted inside a scaled frame reads at its layout size; an SVG element's painted box is divided by the scale the root is painted at). A mark names a slot or a part: a site part drawn over a framework part (a checkbox, a select) keeps the framework's `data-slot` and carries the site name as `data-part`, and a control is listed by its part mark first. `selectors` stands CSS selectors in for the marks when the reference page carries none. `compare` requires colours, type, borders, radii, shadows, fills and spacing to be equal and a height, and a width the layout decides (`widthParts`: the frame and each region's `widths` in regions.json), to agree within 1px.
 
-`scripts/site-demo.mjs` renders the kit's verification pages: each `tests/fixtures/<name>-page.tsx` is a page composed from the parts (pricing, marketing, ...), rendered on the server and drawn with the stylesheet compiled the way an app's Tailwind compiles it, with the product values of `tests/fixtures/theme.css`. The fixtures carry the reference's words in English and Korean (`props.locale`).
+`scripts/site-demo.mjs` renders the kit's verification pages: each `tests/fixtures/<name>-page.tsx` is a page composed from the parts (pricing, marketing, ...), rendered on the server and drawn with the stylesheet compiled the way an app's Tailwind compiles it, with the product values of `tests/fixtures/theme.css`. The fixtures carry the reference's words in English and Korean (`props.locale`). The account, checkout and sign-in fixtures draw blocks read off the rendered reference per story and language (`account-copy.json`, `checkout-copy.json`, `auth-copy.json`: the reference product's own words, product names and Hangul included, kept because where a line wraps is measured); `tests/` is outside the package's `files`, so none of it ships, and `src` names no product.
 
 ```bash
 node scripts/site-demo.mjs --out page.html --fixture marketing --props '{"locale":"ko"}'   # write a page

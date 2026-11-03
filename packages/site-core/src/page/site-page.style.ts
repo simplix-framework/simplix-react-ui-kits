@@ -14,6 +14,8 @@ export const sitePageStyle = defineSlotStyle({
       page: "gap-5 py-8 @max-page-narrow/page:py-5",
       spaced: "gap-6 py-8",
       open: "gap-8 py-10",
+      steps: "gap-4 py-8 @max-page-narrow/page:py-5",
+      done: "items-center gap-5 py-16 text-center @max-page-narrow/page:py-5",
     },
   },
   defaultVariants: { rhythm: "page" },
@@ -140,7 +142,7 @@ export const SITE_CARD_GROUND = "gap-3 rounded-(--site-radius-xl) border border-
 /** The card with its content one under the other. */
 export const SITE_CARD = `flex min-w-0 flex-col ${SITE_CARD_GROUND}`;
 
-/** A status in one to three words, on its tone's soft ground; `dot` adds a still dot in the tone's colour. */
+/** A status in one to three words, on its tone's soft ground (`voice` for something of the reader's own voice); `dot` adds a still dot in the tone's colour. */
 export const siteChipStyle = defineSlotStyle({
   slot: "site-chip",
   base:
@@ -152,6 +154,7 @@ export const siteChipStyle = defineSlotStyle({
       good: "bg-(--site-good-soft) text-(--site-good)",
       warn: "bg-(--site-warn-soft) text-(--site-warn)",
       bad: "bg-(--site-bad-soft) text-(--site-bad)",
+      voice: "bg-(--site-voice-soft) text-(--site-voice-text)",
     },
   },
   defaultVariants: { tone: "neutral" },
@@ -201,4 +204,24 @@ export const siteBadgeStyle = defineSlotStyle({
     },
   },
   defaultVariants: { tone: "neutral" },
+});
+
+/**
+ * An action written as a link inside text. `link` is the accent's words, underlined under the pointer
+ * (another step, a document); `inline` stays underlined and takes the soft ground under the pointer,
+ * inside a sentence of muted words; `muted` is underlined muted words that darken under the pointer
+ * (a way back, a view of a document beside a consent).
+ */
+export const siteTextActionStyle = defineSlotStyle({
+  slot: "site-text-action",
+  base:
+    "cursor-pointer rounded-(--site-radius-xs) border-0 bg-transparent p-0 text-left font-(family-name:--site-font-sans) underline-offset-2 outline-none transition-colors duration-(--site-duration-fast) ease-(--site-ease) focus-visible:shadow-[var(--site-focus-ring)] disabled:cursor-not-allowed disabled:text-(--site-ink-muted) disabled:no-underline",
+  variants: {
+    kind: {
+      link: "font-(--site-fw-strong) text-(--site-accent-strong) no-underline hover:underline",
+      inline: "font-(--site-fw-strong) text-(--site-accent-strong) underline hover:bg-(--site-accent-soft)",
+      muted: "text-(--site-ink-muted) underline hover:text-(--site-ink)",
+    },
+  },
+  defaultVariants: { kind: "link" },
 });

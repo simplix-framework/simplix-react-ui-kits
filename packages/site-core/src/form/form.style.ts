@@ -39,8 +39,13 @@ export const siteFieldNoteStyle = defineSlotStyle({
       good: "text-(--site-good)",
       warn: "text-(--site-warn)",
     },
+    // `inherit` is the field's small print; `caption` the caption size on its own line under a form.
+    size: {
+      inherit: "",
+      caption: "text-(length:--site-fs-caption) leading-(--site-lh-caption) font-(--site-fw-caption)",
+    },
   },
-  defaultVariants: { tone: "muted" },
+  defaultVariants: { tone: "muted", size: "inherit" },
 });
 
 /** A control and what stands beside it on one line (an address and where it came from). */
@@ -60,8 +65,13 @@ export const siteInputStyle = defineSlotStyle({
       md: "h-(--site-control) px-2.5 text-(length:--site-fs-body-pane) leading-(--site-lh-body-pane) font-(--site-fw-base)",
       sm: "h-(--site-control-sm) px-2 text-(length:--site-fs-caption) leading-(--site-lh-caption) font-(--site-fw-caption)",
     },
+    // A value read character by character (a recovery code) in the mono family.
+    mono: {
+      true: "font-(family-name:--site-font-mono)",
+      false: "",
+    },
   },
-  defaultVariants: { size: "md" },
+  defaultVariants: { size: "md", mono: false },
 });
 
 /** A text of several lines, in the reading size and leading. */

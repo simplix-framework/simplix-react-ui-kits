@@ -103,7 +103,7 @@ export const siteBarAccountStyle = defineSlotStyle({
     "flex shrink-0 cursor-pointer items-center gap-2 rounded-(--site-radius-md) px-1.5 py-1 text-(length:--site-fs-body-pane) leading-(--site-lh-body-pane) text-inherit no-underline outline-none transition-colors duration-(--site-duration-fast) ease-(--site-ease) hover:bg-(--site-surface-sunken) focus-visible:shadow-[var(--site-focus-ring)]",
   variants: {
     current: {
-      true: "font-(--site-fw-strong)",
+      true: "",
       false: "",
     },
   },

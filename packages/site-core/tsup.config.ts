@@ -3,7 +3,10 @@ import { defineConfig } from "tsup";
 // One entry per segment the screens import, and no barrel at the root, as in console-core.
 export default defineConfig((options) => ({
   entry: {
+    "account/index": "src/account/index.ts",
     "action/index": "src/action/index.ts",
+    "auth/index": "src/auth/index.ts",
+    "checkout/index": "src/checkout/index.ts",
     "form/index": "src/form/index.ts",
     "help/index": "src/help/index.ts",
     "install/index": "src/install/index.ts",

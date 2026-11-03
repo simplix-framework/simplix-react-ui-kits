@@ -22,9 +22,10 @@ import {
 export interface SitePageProps {
   /**
    * `spaced` sets the parts under a band that holds the page's head further apart, `open` a
-   * marketing page's sections further still; `page` is every other page.
+   * marketing page's sections further still, `steps` a purchase's steps a little closer, and `done`
+   * centres a page that says a step is finished; `page` is every other page.
    */
-  readonly rhythm?: "page" | "spaced" | "open";
+  readonly rhythm?: "page" | "spaced" | "open" | "steps" | "done";
   readonly children: ReactNode;
 }
 

@@ -824,6 +824,309 @@
       "widths": [
         "root"
       ]
+    },
+    "sectionNav": {
+      "part": "SectionNav",
+      "slot": "AccountLayout.nav",
+      "marks": [
+        "site-section-nav"
+      ],
+      "controls": [
+        "site-section-nav-item"
+      ],
+      "parts": {
+        "item": "site-section-nav-item[data-state=plain]",
+        "current": "site-section-nav-item[data-state=current]",
+        "danger": "site-section-nav-item[data-state=danger]"
+      },
+      "widths": [
+        "root",
+        "item",
+        "current",
+        "danger"
+      ],
+      "carded": false
+    },
+    "accountSection": {
+      "part": "AccountLayout",
+      "slot": "SitePage children",
+      "marks": [
+        "site-account-section"
+      ],
+      "controls": [
+        "site-action",
+        "site-text-action",
+        "site-choice-card",
+        "site-select",
+        "link",
+        "button"
+      ],
+      "$comment": "The section beside the list: the standing notice over every section, the heading, then the section's parts in reading order (settings rows, questions on a card, tables, panels with a meter or a run of days, typed confirmations, notes).",
+      "parts": {
+        "standing": "site-banner",
+        "head": "site-section-head[data-level=\"2\"]",
+        "subhead": "site-section-head[data-level=\"3\"]",
+        "rows": "site-settings-rows",
+        "row": "site-settings-row",
+        "rowTitle": "site-settings-row-title",
+        "rowMeta": "site-settings-row-meta",
+        "rowActions": "site-settings-row-actions",
+        "chip": "site-chip",
+        "box": "site-settings-box",
+        "textPlain": "site-settings-text[data-tone=plain]",
+        "textMuted": "site-settings-text[data-tone=muted]",
+        "caption": "site-caption",
+        "table": "site-table-card",
+        "th": "site-table-card-th",
+        "lead": "site-table-card-cell[data-kind=lead]",
+        "value": "site-table-card-cell[data-kind=value]",
+        "end": "site-table-card-cell[data-kind=end]",
+        "panel": "site-panel",
+        "panelTitle": "site-panel-title",
+        "track": "site-quota-track",
+        "fill": "site-quota-fill",
+        "meterLabels": "site-quota-labels",
+        "line": "site-panel-line",
+        "series": "site-day-series",
+        "bar": "site-day-bar",
+        "axis": "site-day-axis",
+        "identity": "site-identity",
+        "mark": "site-identity-mark",
+        "name": "site-identity-name",
+        "meta": "site-identity-meta",
+        "confirm": "site-confirm",
+        "confirmTitle": "site-confirm-title",
+        "confirmBody": "site-confirm-body[data-list=false]",
+        "points": "site-confirm-body[data-list=true]",
+        "field": "site-field",
+        "input": "site-input",
+        "choices": "site-choice-cards",
+        "choice": "site-choice-card[data-checked=false]",
+        "chosen": "site-choice-card[data-checked=true]",
+        "select": "site-select",
+        "primary": "site-action[data-tone=primary]",
+        "secondary": "site-action[data-tone=secondary]",
+        "danger": "site-action[data-tone=danger]",
+        "subtle": "site-action[data-tone=subtle]",
+        "quiet": "site-action[data-tone=quiet]",
+        "disabled": "site-action:disabled",
+        "textAction": "site-text-action"
+      },
+      "widths": [
+        "root",
+        "rows",
+        "box",
+        "table",
+        "panel",
+        "track",
+        "series",
+        "choices",
+        "input",
+        "select",
+        "confirm",
+        "identity"
+      ],
+      "carded": true
+    },
+    "stepper": {
+      "part": "Stepper",
+      "slot": "SitePage children",
+      "marks": [
+        "site-stepper",
+        "site-stepper-caption"
+      ],
+      "controls": [],
+      "$comment": "The steps of a purchase and the line under them saying what the step asks for: two marks, so the region is counted twice.",
+      "parts": {
+        "step": "site-stepper-step[data-state=next]",
+        "current": "site-stepper-step[data-state=current]",
+        "done": "site-stepper-step[data-state=done]",
+        "line": "site-stepper-line[data-reached=false]",
+        "reached": "site-stepper-line[data-reached=true]",
+        "disc": "site-stepper-disc[data-state=next]",
+        "currentDisc": "site-stepper-disc[data-state=current]",
+        "doneDisc": "site-stepper-disc[data-state=done]",
+        "caption": "site-stepper-caption"
+      },
+      "widths": [
+        "root",
+        "step",
+        "caption"
+      ],
+      "carded": false
+    },
+    "checkout": {
+      "part": "CheckoutLayout",
+      "slot": "SitePage children",
+      "marks": [
+        "site-checkout"
+      ],
+      "controls": [
+        "site-action",
+        "site-choice-card",
+        "site-switch-option",
+        "site-checkbox",
+        "site-text-action",
+        "site-method",
+        "link",
+        "button"
+      ],
+      "$comment": "Our side (the order, what it gives, the receipt, the consents, or the chain after payment) beside the payment provider's frame, whose ways to pay are a MethodGrid and whose other content is the provider's.",
+      "parts": {
+        "head": "site-checkout-title",
+        "lede": "site-checkout-lede",
+        "choices": "site-choice-cards",
+        "choice": "site-choice-card[data-checked=false]",
+        "chosen": "site-choice-card[data-checked=true]",
+        "badge": "site-choice-badge",
+        "choiceTitle": "site-choice-title",
+        "price": "site-choice-price",
+        "unit": "site-choice-unit",
+        "choiceBody": "site-choice-body",
+        "row": "site-checkout-row",
+        "switch": "site-switch",
+        "option": "site-switch-option[data-checked=false]",
+        "chosenOption": "site-switch-option[data-checked=true]",
+        "saving": "site-saving",
+        "panel": "site-panel",
+        "panelTitle": "site-panel-title",
+        "track": "site-quota-track",
+        "fill": "site-quota-fill",
+        "meterLabels": "site-quota-labels",
+        "features": "site-feature-list",
+        "feature": "site-feature",
+        "order": "site-order-summary",
+        "orderHead": "site-order-head",
+        "orderTitle": "site-order-title",
+        "live": "site-order-live",
+        "line": "site-order-line[data-kind=line]",
+        "tax": "site-order-line[data-kind=tax]",
+        "total": "site-order-line[data-kind=total]",
+        "amount": "site-order-amount[data-total=false]",
+        "totalAmount": "site-order-amount[data-total=true]",
+        "orderNote": "site-order-note",
+        "consents": "site-consent-list",
+        "consentAll": "site-consent-all",
+        "consent": "site-consent-item",
+        "checkbox": "site-checkbox",
+        "checkboxBadge": "site-checkbox-badge",
+        "view": "site-text-action",
+        "again": "site-consent-again",
+        "againNote": "site-consent-again-note",
+        "cta": "site-action[data-size=lg]",
+        "frame": "site-provider-frame",
+        "frameLabel": "site-provider-label",
+        "frameBody": "site-provider-body",
+        "methods": "site-method-grid",
+        "method": "site-method[data-pressed=false]",
+        "chosenMethod": "site-method[data-pressed=true]",
+        "methodMark": "site-method-mark",
+        "methodName": "site-method-name",
+        "methodAbout": "site-method-about",
+        "chain": "site-progress-chain",
+        "chainStep": "site-chain-step[data-state=done]",
+        "chainDisc": "site-chain-disc[data-state=done]",
+        "ready": "site-chain-ready",
+        "chainNote": "site-chain-note"
+      },
+      "widths": [
+        "root",
+        "choices",
+        "choice",
+        "chosen",
+        "panel",
+        "order",
+        "consents",
+        "frame",
+        "frameBody",
+        "methods",
+        "method",
+        "chosenMethod",
+        "chain"
+      ],
+      "carded": true
+    },
+    "done": {
+      "part": "DonePanel",
+      "slot": "SitePage children (rhythm done)",
+      "marks": [
+        "site-done-mark"
+      ],
+      "within": "site-page",
+      "controls": [
+        "site-action",
+        "link",
+        "button"
+      ],
+      "$comment": "The page after a payment or a trial start: DonePanel stands directly in the centred column, so the region is the column.",
+      "parts": {
+        "mark": "site-done-mark",
+        "title": "site-done-title",
+        "body": "site-done-text[data-size=body]",
+        "notice": "site-done-text[data-size=caption]",
+        "actions": "site-checkout-actions",
+        "primary": "site-action[data-tone=primary]",
+        "secondary": "site-action[data-tone=secondary]"
+      },
+      "widths": [
+        "root",
+        "body",
+        "notice"
+      ],
+      "carded": false
+    },
+    "authCard": {
+      "part": "AuthCard",
+      "slot": "AuthPage children",
+      "marks": [
+        "site-auth-card"
+      ],
+      "controls": [
+        "site-action",
+        "site-text-action",
+        "link",
+        "button"
+      ],
+      "$comment": "One sign-in step on its card: the head with the mark and the h1, then the step's sentences, ways in, the form with its fields, code cells and submit, notices and links, in reading order.",
+      "parts": {
+        "head": "site-auth-head",
+        "title": "site-auth-title",
+        "text": "site-auth-text[data-tone=muted]",
+        "lead": "site-auth-text[data-tone=lead]",
+        "alert": "site-auth-alert",
+        "banner": "site-banner",
+        "bannerTitle": "site-banner-title",
+        "providers": "site-auth-providers",
+        "provider": "site-action[data-tone=secondary]",
+        "or": "site-auth-or",
+        "orLine": "site-auth-or-line",
+        "form": "site-auth-form",
+        "field": "site-field",
+        "input": "site-input",
+        "note": "site-field-note",
+        "strength": "site-password-strength",
+        "strengthStep": "site-password-step",
+        "rules": "site-password-rules",
+        "rule": "site-password-rule",
+        "fieldHead": "site-auth-field-head",
+        "fieldTitle": "site-auth-field-title",
+        "fieldHint": "site-auth-field-hint",
+        "code": "site-code",
+        "cell": "site-code-cell",
+        "submit": "site-action[data-size=lg]",
+        "links": "site-auth-links",
+        "link": "site-text-action",
+        "done": "site-auth-done"
+      },
+      "widths": [
+        "root",
+        "providers",
+        "form",
+        "input",
+        "code",
+        "submit"
+      ],
+      "carded": false
     }
   },
   "types": {
@@ -926,36 +1229,48 @@
       "$comment": "A legal text on DocLayout: the trail, the head (title with the draft badge, the version picker and Save as PDF, a notice about the version or the list of changes, the disclaimer), the contents rail with a dot on each changed article, then the articles: a numbered heading, the plain summary and the clauses, with additions and removals marked in the comparison, and cards of labelled values on the business page."
     },
     "account": {
-      "status": "planned",
-      "reason": "needs the account segment (AccountLayout, SectionNav, SettingsRows, QuotaMeter, DaySeries, TableCard, ConfirmByTyping, StandingBanner)",
-      "plannedRegions": [
+      "status": "ready",
+      "root": "[data-page]",
+      "regions": [
         "bar",
-        "banner",
-        "sections",
-        "sectionHead",
-        "rows",
+        "sectionNav",
+        "accountSection",
         "footer"
-      ]
+      ],
+      "required": [
+        "bar",
+        "sectionNav",
+        "accountSection",
+        "footer"
+      ],
+      "$comment": "My account: the section list beside one section (stacked below the medium tier). A state that holds over every section (a failed renewal) is a NoticeBanner at the top of the section; there is no page head, the section's h2 names it."
     },
     "checkout": {
-      "status": "planned",
-      "reason": "needs the checkout segment (Stepper, CheckoutLayout, ChoiceCards, ConsentChecklist, OrderSummary, MethodGrid, ProgressChain, DonePanel)",
-      "plannedRegions": [
+      "status": "ready",
+      "root": "[data-page]",
+      "regions": [
         "bar",
         "stepper",
-        "main",
-        "summary",
+        "checkout",
+        "done",
         "footer"
-      ]
+      ],
+      "required": [
+        "bar",
+        "footer"
+      ],
+      "$comment": "A purchase: the steps and their line, then our side beside the provider's frame; the page after payment draws the done column instead."
     },
     "auth": {
-      "status": "planned",
-      "reason": "needs the auth segment (AuthCard) the Keycloak theme draws; it has no site bar or footer",
-      "plannedRegions": [
-        "card",
-        "providers",
-        "foot"
-      ]
+      "status": "ready",
+      "root": "[data-page]",
+      "regions": [
+        "authCard"
+      ],
+      "required": [
+        "authCard"
+      ],
+      "$comment": "The sign-in server's pages (the Keycloak theme): no site bar or footer, one card on the server's own ground, light or dark."
     },
     "article": {
       "status": "ready",

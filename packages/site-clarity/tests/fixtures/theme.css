@@ -44,10 +44,21 @@
   --site-dark-accent: #3ddbc9;
   --site-dark-on-accent: #062421;
   --site-dark-accent-strong: #3ddbc9;
-  --site-dark-accent-soft: #062421;
+  --site-dark-accent-soft: #0f3533;
   --site-dark-surface-sunken: #0f181b;
   --site-dark-voice-soft: #3b1a10;
   --site-dark-voice-text: #ff9d78;
   --site-dark-wave-rest: #3a5458;
   --site-dark-shadow-window: 0 16px 44px #00000080, 0 0 0 1px #3ddbc947;
+  --site-dark-surface-raised: #1a282d;
+  --site-dark-control-line: #60767b;
+  --site-dark-control-disabled: #1f2c30;
+  --site-dark-ink-disabled: #7a8f92;
+  --site-dark-good: #6fe3a8;
+  --site-dark-good-soft: #11392c;
+  --site-dark-warn: #f2b866;
+  --site-dark-warn-soft: #3a2a12;
+  --site-dark-bad: #ff8e7a;
+  --site-dark-bad-soft: #3b1a16;
+  --site-dark-shadow-float: 0 12px 32px #000000b3;
 }
