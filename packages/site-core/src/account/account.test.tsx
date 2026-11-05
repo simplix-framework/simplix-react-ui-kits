@@ -143,6 +143,9 @@ describe("figures", () => {
     expect(bySlot(html, "site-table-card-th").map((tag) => tag.attributes["data-end"])).toEqual(["false", "false", "true"]);
     expect(bySlot(html, "site-table-card-more")).toHaveLength(1);
     expect(bySlot(html, "site-action")[0]?.attributes["data-tone"]).toBe("quiet");
+    // Each row can take the focus `more` moves to the first row it added, and none is a Tab stop.
+    expect(bySlot(html, "site-table-card-row").map((tag) => tag.attributes.tabindex)).toEqual(["-1"]);
+    expect(tabStops(html)).toHaveLength(1);
     expect(unmarked(html)).toEqual([]);
   });
 

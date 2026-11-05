@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { useEffect, useRef, type MouseEvent, type ReactNode } from "react";
 import { slotAttributes } from "@simplix-react/ui/design";
 
 import { SiteAction, type SiteActionSpec } from "../action/site-action";
@@ -157,10 +157,33 @@ export interface TableCardProps<K extends string> {
  * A table on a card: equal columns, a head row on the sunken ground, the first column bold, the
  * middle ones muted and the last one at the end, so figures line up down it. A set that grows past
  * a page passes `more`.
+ *
+ * <p>Pressing `more` moves the focus to the first row it added once the rows arrive, so a reader on
+ * the keyboard reads on from where the table grew. The control is gone after the last page, and the
+ * focus would otherwise fall back to the document.
  */
 export function TableCard<K extends string>({ label, columns, rows, more }: TableCardProps<K>) {
   const last = columns.length - 1;
   const kindOf = (index: number) => (index === 0 ? "lead" : index === last ? "end" : "value");
+  const body = useRef<HTMLTableSectionElement>(null);
+  // The row count when `more` was pressed, until the rows it asked for arrive.
+  const grownFrom = useRef<number | undefined>(undefined);
+  useEffect(() => {
+    const from = grownFrom.current;
+    if (from === undefined || rows.length <= from) return;
+    grownFrom.current = undefined;
+    body.current?.rows[from]?.focus();
+  }, [rows.length]);
+  const pressMore =
+    more === undefined
+      ? undefined
+      : {
+          ...more,
+          onSelect: (event: MouseEvent<HTMLElement>) => {
+            grownFrom.current = rows.length;
+            more.onSelect?.(event);
+          },
+        };
   return (
     <>
       <table {...slotAttributes(siteTableCardStyle, {})} aria-label={label}>
@@ -173,9 +196,10 @@ export function TableCard<K extends string>({ label, columns, rows, more }: Tabl
             ))}
           </tr>
         </thead>
-        <tbody {...slotAttributes(siteTableCardBodyStyle, {})}>
+        <tbody ref={body} {...slotAttributes(siteTableCardBodyStyle, {})}>
           {rows.map((row) => (
-            <tr key={row.key} {...slotAttributes(siteTableCardRowStyle, {})}>
+            // A row takes the focus only from a script (after `more`), never from Tab.
+            <tr key={row.key} tabIndex={-1} {...slotAttributes(siteTableCardRowStyle, {})}>
               {columns.map((column, index) => (
                 <td key={column.key} {...slotAttributes(siteTableCardCellStyle, { kind: kindOf(index) })}>
                   {row.cells[column.key]}
@@ -187,7 +211,7 @@ export function TableCard<K extends string>({ label, columns, rows, more }: Tabl
       </table>
       {more !== undefined ? (
         <div {...slotAttributes(siteTableCardMoreStyle, {})}>
-          <SiteAction {...more} tone={more.tone ?? "quiet"} size="sm" />
+          <SiteAction {...(pressMore ?? more)} tone={more.tone ?? "quiet"} size="sm" />
         </div>
       ) : null}
     </>

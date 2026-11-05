@@ -330,7 +330,7 @@ export const siteTableCardBodyStyle = defineSlotStyle({
 /** One row. */
 export const siteTableCardRowStyle = defineSlotStyle({
   slot: "site-table-card-row",
-  base: "align-middle",
+  base: "align-middle outline-none focus-visible:shadow-[var(--site-focus-ring-inset)]",
   variants: {},
   defaultVariants: {},
 });
