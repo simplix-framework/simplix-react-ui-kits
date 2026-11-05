@@ -40,10 +40,11 @@ The keyboard focus ring (`--focus-halo`, a box-shadow outside the control) is ke
 
 ## List columns
 
-A list draws as many columns as its pane holds. The generated column set gives its first four columns no width condition and each later column the width of the set up to it, so a narrower pane drops columns from the end of the field order. Three columns never drop, because dropping them leaves the screen unreadable:
+A list draws as many columns as its pane holds. The generated column set gives its first four columns no width condition and each later column the width of the set up to it, so a narrower pane drops columns from the end of the field order. A column a screen adds of its own after the leading four (a derived marker) takes the same kind of tier from its place in the order (`ladderColumns`, applied by `RecordList`), so it drops with the others instead of joining the always-drawn set and pushing a table design to cards at a tablet width. These columns never drop, because dropping them leaves the screen unreadable or untrue:
 
 - the leading column, which names the row;
 - the column the rows are sorted by (the list's current sort, so it is the default sort until the reader picks another), because a list sorted by a column it does not draw cannot be checked against its own order;
+- a column the screen keeps (`keep: true` on the contract field or the column), without which another drawn column reads wrong: a consent's withdrawal beside "granted". Everything kept adds to the narrowest table, so a list whose kept set outgrows its narrowest pane falls to cards;
 - the row-action column, which belongs to the table and not to the column set.
 
 A kept column leaves the width ladder and every tier before it grows by the width the kept column now always takes (`keepColumnsDrawn` in `console-core/src/entity/column-priority.ts`, applied by `RecordList`), so the remaining columns still drop from the end and the table does not outgrow the pane. The time column of a log-type list is its default sort column, which is how it stays on screen at every width. A screen whose sort field has no column in its field array is sorted by nothing the reader can see; the field array gets the column. A column's width comes from its contract kind (an enum column is 120px whatever its option labels are), so a column whose longest label is wider than that declares its own `width` in the list and in the board frame, or the label is clipped with an ellipsis.
