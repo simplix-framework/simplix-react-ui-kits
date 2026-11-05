@@ -1,6 +1,7 @@
 import { useEffect, useRef, type MouseEvent, type ReactNode } from "react";
 import { slotAttributes } from "@simplix-react/ui/design";
 
+import { holdDroppedFocus } from "../form/question-focus";
 import { SiteLink } from "../link/site-link";
 import { siteAccountSectionStyle, siteAccountStyle, siteSectionHeadStyle, siteSectionNavItemStyle, siteSectionNavStyle } from "./account.style";
 
@@ -87,7 +88,8 @@ export function AccountLayout({ nav, standing, children }: AccountLayoutProps) {
       if (focused === null || focused.isConnected) return;
       focused = null;
       if (doc.activeElement !== null && doc.activeElement !== doc.body) return;
-      node.querySelector<HTMLElement>("h2")?.focus();
+      const heading = node.querySelector<HTMLElement>("h2");
+      if (heading !== null) holdDroppedFocus(heading);
     });
     doc.addEventListener("focusin", track);
     watch.observe(node, { childList: true, subtree: true });

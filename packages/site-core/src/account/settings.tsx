@@ -68,6 +68,11 @@ export function SettingsRow({ title, badge, meta, actions = [] }: SettingsRowPro
 export interface SettingsBoxProps {
   /** `danger` sets the box on the bad colour's soft ground. */
   readonly tone?: "plain" | "danger";
+  /**
+   * The element `id` of the control the page draws in the box's place once it closes (the action the
+   * box replaced while asking), which takes back a focus the closing box would drop.
+   */
+  readonly returnFocusTo?: string;
   readonly children: ReactNode;
 }
 
@@ -80,14 +85,14 @@ export interface SettingsBoxProps {
  * into it. It is the focus's target, never a Tab stop, and it is named by its first heading (the
  * question's title) so the focus moving in announces the question.
  */
-export function SettingsBox({ tone, children }: SettingsBoxProps) {
+export function SettingsBox({ tone, returnFocusTo, children }: SettingsBoxProps) {
   const root = useRef<HTMLDivElement>(null);
   const headingId = useId();
   // Named before the focus moves in, so the move announces the name.
   useEffect(() => {
     if (root.current !== null) nameByFirstHeading(root.current, headingId);
   }, [headingId]);
-  useQuestionFocus(root);
+  useQuestionFocus(root, returnFocusTo);
   return (
     <div ref={root} tabIndex={-1} role="group" {...slotAttributes(siteSettingsBoxStyle, { tone })}>
       {children}

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { nameByFirstHeading, takeQuestionFocus } from "./question-focus";
+import { holdDroppedFocus, nameByFirstHeading, takeQuestionFocus } from "./question-focus";
 
 /** An element of a fake page: it knows what it holds and records the focus it takes. */
 function element(page: { activeElement: unknown }, name: string, children: unknown[] = []) {
@@ -57,6 +57,76 @@ describe("takeQuestionFocus", () => {
     doc.activeElement = doc.body;
     giveBack();
     expect(doc.activeElement).toBe(doc.body);
+  });
+
+  it("gives the dropped focus to the control the page drew again in the question's place", () => {
+    const doc = page();
+    const opener = element(doc, "opener");
+    opener.focus();
+    // The question replaces its opener as it opens, so the opener is gone before it can be noted.
+    opener.isConnected = false;
+    doc.activeElement = doc.body;
+    const question = element(doc, "question");
+    const giveBack = takeQuestionFocus(question, doc, "cancel");
+    const redrawn = element(doc, "redrawn");
+    const ids: Record<string, typeof redrawn> = { cancel: redrawn };
+    const withIds = Object.assign(doc, { getElementById: (id: string) => ids[id] ?? null });
+    withIds.activeElement = withIds.body;
+    giveBack();
+    expect(doc.activeElement).toBe(redrawn);
+  });
+
+  it("leaves a focus the reader moved alone even where the page names a control to return to", () => {
+    const doc = Object.assign(page(), { getElementById: () => null as { focus(): void } | null });
+    const redrawn = element(doc, "redrawn");
+    doc.getElementById = () => redrawn;
+    const question = element(doc, "question");
+    const giveBack = takeQuestionFocus(question, doc, "cancel");
+    const elsewhere = element(doc, "elsewhere");
+    elsewhere.focus();
+    giveBack();
+    expect(doc.activeElement).toBe(elsewhere);
+  });
+
+  it("takes the focus back from the stand-in that caught it before the question closed", () => {
+    const doc = page();
+    const question = element(doc, "question");
+    const redrawn = element(doc, "redrawn");
+    const withIds = Object.assign(doc, { getElementById: (id: string) => (id === "cancel" ? redrawn : null) });
+    const giveBack = takeQuestionFocus(question, withIds, "cancel");
+    // The section's heading caught the focus the closing question dropped, before the question's cleanup ran.
+    const heading = Object.assign(element(doc, "heading"), { addEventListener: () => undefined });
+    holdDroppedFocus(heading);
+    expect(doc.activeElement).toBe(heading);
+    giveBack();
+    expect(doc.activeElement).toBe(redrawn);
+  });
+
+  it("hands the focus on after a development mount ran the question twice", () => {
+    const doc = page();
+    const question = element(doc, "question");
+    const redrawn = element(doc, "redrawn");
+    let drawn = false;
+    const withIds = Object.assign(doc, { getElementById: (id: string) => (drawn && id === "cancel" ? redrawn : null) });
+    // Mount, the simulated unmount, and the mount again, with the focus inside the question throughout.
+    takeQuestionFocus(question, withIds, "cancel")();
+    const giveBack = takeQuestionFocus(question, withIds, "cancel");
+    expect(doc.activeElement).toBe(question);
+    drawn = true;
+    doc.activeElement = doc.body;
+    giveBack();
+    expect(doc.activeElement).toBe(redrawn);
+  });
+
+  it("leaves a heading the reader focused on purpose alone", () => {
+    const doc = page();
+    const question = element(doc, "question");
+    const redrawn = element(doc, "redrawn");
+    const giveBack = takeQuestionFocus(question, Object.assign(doc, { getElementById: () => redrawn }), "cancel");
+    const heading = element(doc, "heading");
+    heading.focus();
+    giveBack();
+    expect(doc.activeElement).toBe(heading);
   });
 
   it("keeps the focus a question inside it took first", () => {

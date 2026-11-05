@@ -48,6 +48,11 @@ export interface ConfirmByTypingProps {
    * its own, the field's name muted.
    */
   readonly tone?: "danger" | "plain";
+  /**
+   * The element `id` of the control the page draws in the question's place once it closes (the action
+   * the question replaced while asking), which takes back a focus the closing question would drop.
+   */
+  readonly returnFocusTo?: string;
 }
 
 /**
@@ -58,15 +63,14 @@ export interface ConfirmByTypingProps {
  *
  * <p>The question takes the focus when it opens, so the reader who asked is read the question and
  * tabs on into it, and it gives the focus back to the control that opened it when it closes, where
- * that control is still on the page. A page that replaces the opener while asking returns the focus
- * itself.
+ * that control is still on the page, or else to the control `returnFocusTo` names.
  */
-export function ConfirmByTyping({ title, body, points, children, label, word, value, onValueChange, placeholder, confirm, cancel, tone = "danger" }: ConfirmByTypingProps) {
+export function ConfirmByTyping({ title, body, points, children, label, word, value, onValueChange, placeholder, confirm, cancel, tone = "danger", returnFocusTo }: ConfirmByTypingProps) {
   const ok = typedConfirms(value, word);
   const danger = tone === "danger";
   const titleId = useId();
   const root = useRef<HTMLDivElement>(null);
-  useQuestionFocus(root);
+  useQuestionFocus(root, returnFocusTo);
   return (
     <div ref={root} tabIndex={-1} {...slotAttributes(siteConfirmStyle, { tone })} role={danger ? "alertdialog" : "group"} aria-labelledby={titleId}>
       <b id={titleId} {...slotAttributes(siteConfirmTitleStyle, { tone })}>{title}</b>
