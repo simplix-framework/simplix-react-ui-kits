@@ -292,7 +292,7 @@ export const siteRadioBodyStyle = defineSlotStyle({
  */
 export const siteConfirmStyle = defineSlotStyle({
   slot: "site-confirm",
-  base: "flex min-w-0 flex-col",
+  base: "flex min-w-0 flex-col outline-none",
   variants: {
     tone: {
       danger: "gap-2.5 rounded-(--site-radius-lg) bg-(--site-bad-soft) p-3.5",

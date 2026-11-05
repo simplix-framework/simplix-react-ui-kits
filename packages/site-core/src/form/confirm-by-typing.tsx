@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { useEffect, useId, useRef, type ReactNode } from "react";
 import { slotAttributes } from "@simplix-react/ui/design";
 
 import { SiteAction, type SiteActionBase, type SiteActionSpec, type SiteReason } from "../action/site-action";
@@ -52,15 +52,34 @@ export interface ConfirmByTypingProps {
 /**
  * A question that only goes ahead once a word is typed, drawn in place where it was asked (deleting
  * a voice, deleting the account). The confirming action stays disabled until {@link typedConfirms}.
- * On the danger ground it is an `alertdialog` named by its title.
+ * On the danger ground it is an `alertdialog` named by its title; on the plain card a group named
+ * by it.
+ *
+ * <p>The question takes the focus when it opens, so the reader who asked is read the question and
+ * tabs on into it, and it gives the focus back to the control that opened it when it closes, where
+ * that control is still on the page. A page that replaces the opener while asking returns the focus
+ * itself.
  */
 export function ConfirmByTyping({ title, body, points, children, label, word, value, onValueChange, placeholder, confirm, cancel, tone = "danger" }: ConfirmByTypingProps) {
   const ok = typedConfirms(value, word);
   const danger = tone === "danger";
-  const name = typeof title === "string" ? title : undefined;
+  const titleId = useId();
+  const root = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const node = root.current;
+    if (node === null) return;
+    const doc = node.ownerDocument;
+    const opener = doc.activeElement instanceof HTMLElement && doc.activeElement !== doc.body ? doc.activeElement : null;
+    node.focus();
+    return () => {
+      // Only a focus the closing question would otherwise drop goes back; one the reader moved stays.
+      const lost = doc.activeElement === null || doc.activeElement === doc.body || node.contains(doc.activeElement);
+      if (lost && opener !== null && opener.isConnected) opener.focus();
+    };
+  }, []);
   return (
-    <div {...slotAttributes(siteConfirmStyle, { tone })} role={danger ? "alertdialog" : undefined} aria-label={danger ? name : undefined}>
-      <b {...slotAttributes(siteConfirmTitleStyle, { tone })}>{title}</b>
+    <div ref={root} tabIndex={-1} {...slotAttributes(siteConfirmStyle, { tone })} role={danger ? "alertdialog" : "group"} aria-labelledby={titleId}>
+      <b id={titleId} {...slotAttributes(siteConfirmTitleStyle, { tone })}>{title}</b>
       {body !== undefined ? <p {...slotAttributes(siteConfirmBodyStyle, { list: false })}>{body}</p> : null}
       {points !== undefined ? (
         <ul {...slotAttributes(siteConfirmBodyStyle, { list: true })}>

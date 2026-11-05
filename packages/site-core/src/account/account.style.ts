@@ -52,7 +52,7 @@ export const siteAccountSectionStyle = defineSlotStyle({
 /** A heading inside My account: the section's title, or a part's title one level down. */
 export const siteSectionHeadStyle = defineSlotStyle({
   slot: "site-section-head",
-  base: "m-0 font-(family-name:--site-font-display) tracking-(--site-tracking-display) text-(--site-ink)",
+  base: "m-0 outline-none font-(family-name:--site-font-display) tracking-(--site-tracking-display) text-(--site-ink)",
   variants: {
     level: {
       "2": "text-(length:--site-fs-headline) leading-(--site-lh-headline) font-(--site-fw-title)",

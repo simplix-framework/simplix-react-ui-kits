@@ -1,4 +1,4 @@
-import type { MouseEvent, ReactNode } from "react";
+import { useEffect, useRef, type MouseEvent, type ReactNode } from "react";
 import { slotAttributes } from "@simplix-react/ui/design";
 
 import { SiteLink } from "../link/site-link";
@@ -65,12 +65,41 @@ export interface AccountLayoutProps {
   readonly children: ReactNode;
 }
 
-/** My account: the section list beside the section; below the medium tier the list stands over it. */
+/**
+ * My account: the section list beside the section; below the medium tier the list stands over it.
+ *
+ * <p>A part of the section that goes away while it holds the focus (a notice whose action was
+ * pressed, a row a question replaced) would drop the focus to the document; the section's heading
+ * takes it then, so the reader stays in the section. A page that knows a better place moves the
+ * focus on from there.
+ */
 export function AccountLayout({ nav, standing, children }: AccountLayoutProps) {
+  const section = useRef<HTMLElement>(null);
+  useEffect(() => {
+    const node = section.current;
+    if (node === null) return;
+    const doc = node.ownerDocument;
+    let focused: Element | null = null;
+    const track = (event: FocusEvent) => {
+      focused = event.target instanceof Element && node.contains(event.target) ? event.target : null;
+    };
+    const watch = new MutationObserver(() => {
+      if (focused === null || focused.isConnected) return;
+      focused = null;
+      if (doc.activeElement !== null && doc.activeElement !== doc.body) return;
+      node.querySelector<HTMLElement>("h2")?.focus();
+    });
+    doc.addEventListener("focusin", track);
+    watch.observe(node, { childList: true, subtree: true });
+    return () => {
+      doc.removeEventListener("focusin", track);
+      watch.disconnect();
+    };
+  }, []);
   return (
     <div {...slotAttributes(siteAccountStyle, {})}>
       {nav}
-      <section {...slotAttributes(siteAccountSectionStyle, {})}>
+      <section ref={section} {...slotAttributes(siteAccountSectionStyle, {})}>
         {standing}
         {children}
       </section>
@@ -88,5 +117,10 @@ export interface SectionHeadProps {
 /** A heading inside My account, in the display family. */
 export function SectionHead({ level = 2, children }: SectionHeadProps) {
   const Tag = level === 2 ? "h2" : "h3";
-  return <Tag {...slotAttributes(siteSectionHeadStyle, { level: String(level) })}>{children}</Tag>;
+  // The section's title takes the focus a part of the section dropped (AccountLayout); never a Tab stop.
+  return (
+    <Tag tabIndex={level === 2 ? -1 : undefined} {...slotAttributes(siteSectionHeadStyle, { level: String(level) })}>
+      {children}
+    </Tag>
+  );
 }

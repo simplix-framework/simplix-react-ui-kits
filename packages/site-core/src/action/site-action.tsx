@@ -58,6 +58,11 @@ export interface SiteActionBase {
    * its actions passes it here itself; without one, a disabled action is described by its `reason`.
    */
   readonly describedBy?: string;
+  /**
+   * The element's `id`, where something finds the control by it: a server page's script (a passkey
+   * button), or a page returning the focus to an action that a closed question had replaced.
+   */
+  readonly elementId?: string;
 }
 
 /** What a site action does and says. A product builds these; a part draws them. */
@@ -72,8 +77,6 @@ export type SiteActionProps = SiteActionSpec & {
   readonly submit?: boolean;
   /** Below the page's narrow tier: drawn (`shown`), or left out because its place there is elsewhere (`hidden`). */
   readonly narrow?: "shown" | "hidden";
-  /** The element's `id`, where a server page's script finds the control by it (a passkey button). */
-  readonly elementId?: string;
   /** What a submit sends as its own field when it is the one pressed, where a form has two submits. */
   readonly field?: { readonly name: string; readonly value: string };
 };

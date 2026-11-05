@@ -49,10 +49,14 @@ describe("AccountLayout", () => {
   });
 
   it("draws a section title as h2 and a part title as h3", () => {
-    expect(bySlot(renderToStaticMarkup(<SectionHead>Credits</SectionHead>), "site-section-head")[0]?.name).toBe("h2");
+    const title = bySlot(renderToStaticMarkup(<SectionHead>Credits</SectionHead>), "site-section-head")[0];
+    expect(title?.name).toBe("h2");
+    // The section title takes a focus a part of the section dropped, and is no Tab stop.
+    expect(title?.attributes.tabindex).toBe("-1");
     const sub = bySlot(renderToStaticMarkup(<SectionHead level={3}>Credit history</SectionHead>), "site-section-head")[0];
     expect(sub?.name).toBe("h3");
     expect(sub?.attributes["data-level"]).toBe("3");
+    expect(sub?.attributes.tabindex).toBeUndefined();
   });
 });
 

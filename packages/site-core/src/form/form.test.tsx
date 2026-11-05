@@ -157,7 +157,10 @@ describe("ConfirmByTyping", () => {
     const waiting = renderToStaticMarkup(<ConfirmByTyping title="Delete my voice" body="It cannot be undone." label="Type DELETE" word="DELETE" value="DEL" onValueChange={() => {}} {...actions} />);
     const root = bySlot(waiting, "site-confirm")[0];
     expect(root?.attributes.role).toBe("alertdialog");
-    expect(root?.attributes["aria-label"]).toBe("Delete my voice");
+    // Named by its title, and the target of the focus when it opens, never a Tab stop.
+    expect(bySlot(waiting, "site-confirm-title")[0]?.attributes.id).toBe(root?.attributes["aria-labelledby"]);
+    expect(bySlot(waiting, "site-confirm-title")[0]?.attributes.id).toBeTruthy();
+    expect(root?.attributes.tabindex).toBe("-1");
     const confirm = bySlot(waiting, "site-action").find((tag) => tag.attributes["data-action"] === "delete");
     expect(confirm?.attributes.disabled).toBeDefined();
     expect(confirm?.attributes["data-tone"]).toBe("danger");
@@ -182,7 +185,8 @@ describe("ConfirmByTyping", () => {
     const html = renderToStaticMarkup(
       <ConfirmByTyping tone="plain" title="Delete the account" points={[{ key: "a", text: "Voices go" }, { key: "b", text: "Receipts stay" }]} label="Type your email" word="t@example.com" value="" onValueChange={() => {}} {...actions} />,
     );
-    expect(bySlot(html, "site-confirm")[0]?.attributes.role).toBeUndefined();
+    expect(bySlot(html, "site-confirm")[0]?.attributes.role).toBe("group");
+    expect(bySlot(html, "site-confirm")[0]?.attributes["aria-labelledby"]).toBe(bySlot(html, "site-confirm-title")[0]?.attributes.id);
     expect(bySlot(html, "site-confirm-point")).toHaveLength(2);
     expect(bySlot(html, "site-field")[0]?.attributes["data-muted"]).toBe("true");
   });
