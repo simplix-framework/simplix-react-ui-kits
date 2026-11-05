@@ -18,7 +18,13 @@ The parts carry no classes of their own: every element is marked with `data-slot
 import { SiteWindow, SiteBar, SiteFooter } from "@simplix-react-ui-kits/site-clarity/shell";
 import { SitePage, SitePageHead } from "@simplix-react-ui-kits/site-clarity/page";
 
-<SiteWindow page="pricing" linkComponent={RouterLink} bar={<SiteBar … />} footer={<SiteFooter … />}>
+<SiteWindow
+  page="pricing"
+  linkComponent={RouterLink}
+  title={(heading) => t("shell.documentTitle", { page: heading })}
+  bar={<SiteBar … />}
+  footer={<SiteFooter … />}
+>
   <SitePage>
     <SitePageHead title={t("pricing.title")} lede={t("pricing.lede")} />
     …
@@ -26,7 +32,7 @@ import { SitePage, SitePageHead } from "@simplix-react-ui-kits/site-clarity/page
 </SiteWindow>;
 ```
 
-Every label is a prop: the kit ships no strings, and the product passes its own catalogue's text in each language.
+Every label is a prop: the kit ships no strings, and the product passes its own catalogue's text in each language. `title` writes the document title from the text of the page's heading after every drawing, so a tab, a bookmark and the history name the page; left out, the document keeps the title its HTML gives.
 
 ## Variables
 
