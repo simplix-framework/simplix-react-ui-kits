@@ -1,8 +1,9 @@
-import { useEffect, useId, useRef, type ReactNode } from "react";
+import { useId, useRef, type ReactNode } from "react";
 import { slotAttributes } from "@simplix-react/ui/design";
 
 import { SiteAction, type SiteActionBase, type SiteActionSpec, type SiteReason } from "../action/site-action";
 import { FormField, SiteInput } from "./fields";
+import { useQuestionFocus } from "./question-focus";
 import {
   siteConfirmActionsStyle,
   siteConfirmBodyStyle,
@@ -65,18 +66,7 @@ export function ConfirmByTyping({ title, body, points, children, label, word, va
   const danger = tone === "danger";
   const titleId = useId();
   const root = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    const node = root.current;
-    if (node === null) return;
-    const doc = node.ownerDocument;
-    const opener = doc.activeElement instanceof HTMLElement && doc.activeElement !== doc.body ? doc.activeElement : null;
-    node.focus();
-    return () => {
-      // Only a focus the closing question would otherwise drop goes back; one the reader moved stays.
-      const lost = doc.activeElement === null || doc.activeElement === doc.body || node.contains(doc.activeElement);
-      if (lost && opener !== null && opener.isConnected) opener.focus();
-    };
-  }, []);
+  useQuestionFocus(root);
   return (
     <div ref={root} tabIndex={-1} {...slotAttributes(siteConfirmStyle, { tone })} role={danger ? "alertdialog" : "group"} aria-labelledby={titleId}>
       <b id={titleId} {...slotAttributes(siteConfirmTitleStyle, { tone })}>{title}</b>

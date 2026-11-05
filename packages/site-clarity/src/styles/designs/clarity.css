@@ -98,7 +98,7 @@
     @apply flex min-w-0 flex-wrap gap-2;
   }
   [data-slot="site-settings-box"][data-slot][data-s-site-settings-box] {
-    @apply flex min-w-0 flex-col gap-3 rounded-(--site-radius-xl) border p-4;
+    @apply flex min-w-0 flex-col gap-3 rounded-(--site-radius-xl) border p-4 outline-none;
   }
   [data-slot="site-settings-box"][data-tone="plain"][data-s-site-settings-box] {
     @apply border-(--site-line) bg-(--site-surface);

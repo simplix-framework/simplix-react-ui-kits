@@ -1,7 +1,8 @@
-import type { ReactNode } from "react";
+import { useRef, type ReactNode } from "react";
 import { slotAttributes } from "@simplix-react/ui/design";
 
 import { SiteAction, type SiteActionSpec } from "../action/site-action";
+import { useQuestionFocus } from "../form/question-focus";
 import {
   siteIdentityMarkStyle,
   siteIdentityMetaStyle,
@@ -70,9 +71,22 @@ export interface SettingsBoxProps {
   readonly children: ReactNode;
 }
 
-/** A question or a confirmation inside a section, on a card of its own. */
+/**
+ * A question or a confirmation inside a section, on a card of its own.
+ *
+ * <p>The box opens on a press (changing the plan, cancelling, asking for a refund), often in place of
+ * the control that opened it, so it takes the focus when it opens and gives it back to that control
+ * when it closes, as a typed confirmation does; the reader who asked is read the question and tabs on
+ * into it. It is the focus's target, never a Tab stop.
+ */
 export function SettingsBox({ tone, children }: SettingsBoxProps) {
-  return <div {...slotAttributes(siteSettingsBoxStyle, { tone })}>{children}</div>;
+  const root = useRef<HTMLDivElement>(null);
+  useQuestionFocus(root);
+  return (
+    <div ref={root} tabIndex={-1} role="group" {...slotAttributes(siteSettingsBoxStyle, { tone })}>
+      {children}
+    </div>
+  );
 }
 
 /** Props for {@link SettingsText}. */

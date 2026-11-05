@@ -82,6 +82,9 @@ describe("settings", () => {
       </SettingsBox>,
     );
     expect(bySlot(html, "site-settings-box")[0]?.attributes["data-tone"]).toBe("danger");
+    // The question takes the focus when it opens (useQuestionFocus), as a group, and is never a Tab stop.
+    expect(bySlot(html, "site-settings-box")[0]?.attributes.tabindex).toBe("-1");
+    expect(bySlot(html, "site-settings-box")[0]?.attributes.role).toBe("group");
     expect(bySlot(html, "site-settings-text")[0]?.attributes["data-tone"]).toBe("muted");
     expect(bySlot(html, "site-action").map((tag) => tag.attributes["data-tone"])).toEqual(["danger", "secondary"]);
     const alone = bySlot(renderToStaticMarkup(<SettingsActions size="md" actions={[{ id: "cancel", label: "Cancel subscription", tone: "subtle" }]} />), "site-action")[0];

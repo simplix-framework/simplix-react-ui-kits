@@ -113,7 +113,7 @@ export const siteSettingsRowActionsStyle = defineSlotStyle({
 /** A question or a confirmation inside a section, on a card; `danger` on the bad colour's soft ground. */
 export const siteSettingsBoxStyle = defineSlotStyle({
   slot: "site-settings-box",
-  base: "flex min-w-0 flex-col gap-3 rounded-(--site-radius-xl) border p-4",
+  base: "flex min-w-0 flex-col gap-3 rounded-(--site-radius-xl) border p-4 outline-none",
   variants: {
     tone: {
       plain: "border-(--site-line) bg-(--site-surface)",
