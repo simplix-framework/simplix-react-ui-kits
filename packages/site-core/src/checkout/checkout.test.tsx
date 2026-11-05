@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest";
 import { bySlot, tabStops, tagsOf, unmarked } from "../testing/markup";
 import { CheckoutHead, CheckoutLayout, ConsentAgain, ConsentChecklist, DonePanel, MethodGrid, OrderSummary, ProgressChain, ProviderFrame, ProviderTarget, ProviderWaiting, Stepper } from "./checkout";
 import { ChoiceCards } from "./choice-cards";
+import { siteStepperStyle } from "./checkout.style";
 
 const byPart = (html: string, part: string) => tagsOf(html).filter((tag) => tag.attributes["data-part"] === part);
 const frameworkOwned = (html: string) => new Set(tagsOf(html).filter((tag) => tag.name === "svg" || (tag.name === "input" && tag.attributes["aria-hidden"] === "true")).map((tag) => `<${tag.name}>`));
@@ -30,6 +31,15 @@ describe("Stepper", () => {
     expect(bySlot(html, "site-stepper-line").map((line) => line.attributes["data-reached"])).toEqual(["true", "false"]);
     expect(bySlot(html, "site-stepper-caption")).toHaveLength(1);
     expect(unmarked(html)).toEqual([]);
+  });
+
+  it("gives every step a column of the row, however many there are", () => {
+    const html = renderToStaticMarkup(<Stepper label="Checkout steps" current={0} steps={[{ key: "plan", label: "Plan" }, { key: "done", label: "Done" }]} />);
+    expect(bySlot(html, "site-stepper-step")).toHaveLength(2);
+    // A fixed column count would leave a two-step purchase in half of the row.
+    expect(siteStepperStyle.base).not.toMatch(/\bgrid-cols-\d/);
+    expect(siteStepperStyle.base).toMatch(/\bgrid-flow-col\b/);
+    expect(siteStepperStyle.base).toMatch(/\bauto-cols-fr\b/);
   });
 });
 

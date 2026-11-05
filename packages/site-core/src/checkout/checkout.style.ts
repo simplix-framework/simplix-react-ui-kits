@@ -1,9 +1,12 @@
 import { defineSlotStyle } from "@simplix-react/ui/design";
 
-/** The steps of a purchase in a row of equal columns, each a numbered disc over its name. */
+/**
+ * The steps of a purchase in a row of equal columns, one per step whatever their number (a purchase
+ * with a payment has four, a trial that takes no card two), each a numbered disc over its name.
+ */
 export const siteStepperStyle = defineSlotStyle({
   slot: "site-stepper",
-  base: "m-0 grid list-none grid-cols-4 p-0",
+  base: "m-0 grid list-none auto-cols-fr grid-flow-col p-0",
   variants: {},
   defaultVariants: {},
 });
@@ -39,7 +42,7 @@ export const siteStepLineStyle = defineSlotStyle({
 export const siteStepDiscStyle = defineSlotStyle({
   slot: "site-stepper-disc",
   base:
-    "relative grid size-7 place-items-center rounded-(--site-radius-full) border-2 font-(family-name:--site-font-mono) text-(length:--site-fs-caption) leading-(--site-lh-caption) font-(--site-fw-caption) transition duration-(--site-duration-base) ease-(--site-ease) [&_svg]:size-3",
+    "relative z-10 grid size-7 place-items-center rounded-(--site-radius-full) border-2 font-(family-name:--site-font-mono) text-(length:--site-fs-caption) leading-(--site-lh-caption) font-(--site-fw-caption) transition duration-(--site-duration-base) ease-(--site-ease) [&_svg]:size-3",
   variants: {
     state: {
       done: "border-(--site-accent) bg-(--site-accent) text-(--site-on-accent)",

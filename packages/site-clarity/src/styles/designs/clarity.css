@@ -572,7 +572,7 @@
     @apply m-0 min-h-5 text-center text-(length:--site-fs-caption) leading-(--site-lh-caption) font-(--site-fw-caption) text-(--site-ink-muted);
   }
   [data-slot="site-stepper-disc"][data-slot][data-s-site-stepper-disc] {
-    @apply relative grid size-7 place-items-center rounded-(--site-radius-full) border-2 font-(family-name:--site-font-mono) text-(length:--site-fs-caption) leading-(--site-lh-caption) font-(--site-fw-caption) transition duration-(--site-duration-base) ease-(--site-ease);
+    @apply relative z-10 grid size-7 place-items-center rounded-(--site-radius-full) border-2 font-(family-name:--site-font-mono) text-(length:--site-fs-caption) leading-(--site-lh-caption) font-(--site-fw-caption) transition duration-(--site-duration-base) ease-(--site-ease);
   }
   [data-slot="site-stepper-disc"][data-state="done"][data-s-site-stepper-disc] {
     @apply border-(--site-accent) bg-(--site-accent) text-(--site-on-accent);
@@ -605,7 +605,7 @@
     @apply font-(--site-fw-caption) text-(--site-ink-muted);
   }
   [data-slot="site-stepper"][data-slot][data-s-site-stepper] {
-    @apply m-0 grid list-none grid-cols-4 p-0;
+    @apply m-0 grid list-none auto-cols-fr grid-flow-col p-0;
   }
   [data-slot="site-checkbox-badge"][data-slot][data-s-site-checkbox-badge] {
     @apply mr-1 text-(length:--site-fs-label) leading-(--site-lh-label) font-(--site-fw-strong) tracking-(--site-tracking-label) not-italic text-(--site-accent-text);
