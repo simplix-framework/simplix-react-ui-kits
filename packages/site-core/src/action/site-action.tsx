@@ -1,4 +1,4 @@
-import { useId, type MouseEvent, type ReactNode } from "react";
+import { useId, useRef, type MouseEvent, type ReactNode } from "react";
 import { slotAttributes } from "@simplix-react/ui/design";
 
 import { SiteLink } from "../link/site-link";
@@ -107,10 +107,16 @@ export function useRefusal(disabled: boolean, reason: SiteReason | undefined, de
  * A site action, drawn as a link when it opens an address and as a button otherwise. A disabled
  * action is always a disabled button: a link cannot be disabled, and one that only looks disabled
  * still navigates.
+ *
+ * <p>A button that turns disabled while it holds the focus (pressed, and now waiting for its answer)
+ * keeps the focus: it is refused through `aria-disabled` and drawn disabled until the focus leaves,
+ * because a natively disabled button drops the focus to the document and the reader loses their place.
  */
 export function SiteAction({ id, label, href, onSelect, tone, disabled = false, reason, icon, pressed, name, describedBy, size, block, submit = false, narrow, elementId, field }: SiteActionProps) {
   const marks = slotAttributes(siteActionStyle, { tone, size, block, pad: actionPad(tone, size), narrow });
   const refusal = useRefusal(disabled, reason, describedBy);
+  const button = useRef<HTMLButtonElement>(null);
+  const holding = disabled && button.current !== null && button.current.ownerDocument.activeElement === button.current;
   const content = (
     <>
       {icon}
@@ -127,17 +133,19 @@ export function SiteAction({ id, label, href, onSelect, tone, disabled = false, 
   return (
     <>
       <button
+        ref={button}
         {...marks}
         id={elementId}
         data-action={id}
         type={submit ? "submit" : "button"}
         name={submit ? field?.name : undefined}
         value={submit ? field?.value : undefined}
-        disabled={disabled}
+        disabled={disabled && !holding}
+        aria-disabled={holding ? true : undefined}
         aria-pressed={pressed}
         aria-label={name}
         aria-describedby={refusal.describedBy}
-        onClick={onSelect}
+        onClick={holding ? (event) => event.preventDefault() : onSelect}
       >
         {content}
       </button>

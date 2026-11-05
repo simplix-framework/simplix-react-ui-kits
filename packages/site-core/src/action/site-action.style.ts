@@ -15,7 +15,7 @@ import { defineSlotStyle } from "@simplix-react/ui/design";
 export const siteActionStyle = defineSlotStyle({
   slot: "site-action",
   base:
-    "inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-(--site-radius-md) border border-transparent font-(family-name:--site-font-sans) font-(--site-fw-strong) no-underline outline-none transition-colors duration-(--site-duration-fast) ease-(--site-ease) focus-visible:shadow-[var(--site-focus-ring)] disabled:cursor-not-allowed disabled:border-transparent disabled:bg-(--site-control-disabled) disabled:text-(--site-ink-disabled) [&_svg]:size-4 [&_svg]:shrink-0",
+    "inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-(--site-radius-md) border border-transparent font-(family-name:--site-font-sans) font-(--site-fw-strong) no-underline outline-none transition-colors duration-(--site-duration-fast) ease-(--site-ease) focus-visible:shadow-[var(--site-focus-ring)] disabled:cursor-not-allowed disabled:border-transparent disabled:bg-(--site-control-disabled) disabled:text-(--site-ink-disabled) aria-disabled:cursor-not-allowed aria-disabled:border-transparent aria-disabled:bg-(--site-control-disabled) aria-disabled:text-(--site-ink-disabled) [&_svg]:size-4 [&_svg]:shrink-0",
   variants: {
     size: {
       md: "h-(--site-control) px-3.5 text-(length:--site-fs-body-pane) leading-(--site-lh-body-pane)",
