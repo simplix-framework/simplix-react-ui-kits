@@ -2,7 +2,7 @@ import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 
-import { RecordValueView } from "./record-value";
+import { isOtherOrigin, RecordValueView } from "./record-value";
 
 describe("a RecordValue marked as code", () => {
   it("draws its text in the monospaced face, inside a code element", () => {
@@ -26,6 +26,22 @@ describe("a RecordValue drawn as a link", () => {
   it("leaves a link with nowhere to go as plain text", () => {
     const html = renderToStaticMarkup(createElement(RecordValueView, { value: { link: "Credits E2E" } }));
     expect(html).not.toContain("<button");
+  });
+
+  it("opens an address on another origin in a new tab and one on its own in place", () => {
+    const away = renderToStaticMarkup(createElement(RecordValueView, { value: { link: "1.2", href: "https://portal.example/terms?version=1.2" } }));
+    expect(away).toMatch(/<a[^>]*href="https:\/\/portal\.example\/terms\?version=1\.2"[^>]*target="_blank"[^>]*rel="noreferrer"[^>]*>1\.2<\/a>/);
+    const here = renderToStaticMarkup(createElement(RecordValueView, { value: { link: "1.2", href: "/terms?version=1.2" } }));
+    expect(here).not.toContain("target=");
+  });
+});
+
+describe("isOtherOrigin", () => {
+  it("reads an absolute address on another origin as elsewhere, and a relative or same-origin one as here", () => {
+    expect(isOtherOrigin("https://portal.example/terms", "https://console.example")).toBe(true);
+    expect(isOtherOrigin("https://console.example/users", "https://console.example")).toBe(false);
+    expect(isOtherOrigin("/terms?version=1.2", "https://console.example")).toBe(false);
+    expect(isOtherOrigin("https://", "https://console.example")).toBe(false);
   });
 });
 

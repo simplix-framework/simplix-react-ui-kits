@@ -107,9 +107,18 @@ export function RecordValueView({ value }: { readonly value: RecordValue }): Rea
       }
     };
     const name = value.link;
+    // An address on another origin (a public page of another app) opens beside the console, so the
+    // record the reader came from stays where it was.
+    const elsewhere = href !== undefined && isOtherOrigin(href);
     return (
       <Button variant="link" size="link" asChild={href !== undefined} onClick={press}>
-        {href !== undefined ? <a href={href}>{name}</a> : name}
+        {href !== undefined ? (
+          <a href={href} {...(elsewhere ? { target: "_blank", rel: "noreferrer" } : {})}>
+            {name}
+          </a>
+        ) : (
+          name
+        )}
       </Button>
     );
   }
@@ -147,4 +156,16 @@ export function RecordValueView({ value }: { readonly value: RecordValue }): Rea
       <StatusBadge tone={value.badge.tone ?? "neutral"} label={value.badge.label} />
     </span>
   );
+}
+
+/** Whether an address leaves the page's own origin; a relative address never does. */
+export function isOtherOrigin(href: string, here: string = typeof window === "undefined" ? "" : window.location.origin): boolean {
+  if (!/^[a-z][a-z0-9+.-]*:\/\//i.test(href)) return false;
+  try {
+    return new URL(href).origin !== here;
+  } catch (error) {
+    // A malformed address is read as the page's own; any other failure is not this function's to hide.
+    if (error instanceof TypeError) return false;
+    throw error;
+  }
 }

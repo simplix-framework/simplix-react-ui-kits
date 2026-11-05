@@ -114,6 +114,13 @@ export interface ContractField {
    */
   readonly keep?: boolean;
   /**
+   * For a `text` field, the address the value opens, computed from the row (a document version that
+   * opens the published text of that version): the list cell, the card and the detail draw the value
+   * as a link to it, a new tab when the address is on another origin. A row it answers no address for
+   * draws the value as plain text.
+   */
+  readonly linkOf?: (row: Readonly<Record<string, unknown>>) => string | undefined;
+  /**
    * A code the reader types or compares (SimpliX Meta's `format: "code"`, from `@CodeValue`): a
    * text value drawn in the monospaced face.
    */
@@ -500,8 +507,10 @@ export function useRecordContract(entity: string, overrides: ContractOverrides =
         }
         case "json":
           return { text: jsonText(raw), code: true, block: true };
-        default:
-          return textValueOf(field, raw);
+        default: {
+          const href = field.kind === "text" && row !== undefined ? field.linkOf?.(row) : undefined;
+          return href ? { link: String(raw), href } : textValueOf(field, raw);
+        }
       }
     },
     [enumLabel, fieldLabel, locale, peek, t, tones, zone],

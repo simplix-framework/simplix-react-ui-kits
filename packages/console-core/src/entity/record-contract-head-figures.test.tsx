@@ -40,3 +40,24 @@ describe("a record's head figures", () => {
     expect(credits).toContain("credits");
   });
 });
+
+describe("a text field that names where it opens", () => {
+  const linked: ContractField[] = [{ name: "documentVersion", kind: "text", linkOf: (one) => (one.consentType === "TERMS_OF_USE" ? `https://portal.example/terms?version=${String(one.documentVersion)}` : undefined) }];
+
+  function LinkProbe({ consentType }: { readonly consentType: string }) {
+    const contract = useRecordContract("consent-record");
+    return createElement("pre", null, JSON.stringify(contract.value(linked[0] as ContractField, { documentVersion: "1.2", consentType })));
+  }
+  const readLink = (consentType: string) => {
+    const html = renderToStaticMarkup(createElement(UIProvider, { children: createElement(LinkProbe, { consentType }) }));
+    return JSON.parse((/<pre>([\s\S]*)<\/pre>/.exec(html)?.[1] ?? "null").replace(/&quot;/g, '"').replace(/&amp;/g, "&"));
+  };
+
+  it("draws the value as a link to the address the row answers", () => {
+    expect(readLink("TERMS_OF_USE")).toEqual({ link: "1.2", href: "https://portal.example/terms?version=1.2" });
+  });
+
+  it("draws plain text for a row it answers no address for", () => {
+    expect(readLink("MARKETING")).toBe("1.2");
+  });
+});
