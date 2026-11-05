@@ -1984,6 +1984,9 @@
   [data-slot="site-failure-mark"][data-tone="bad"][data-s-site-failure-mark] {
     @apply bg-(--site-bad-soft) text-(--site-bad);
   }
+  [data-slot="site-failure-mark"][data-tone="good"][data-s-site-failure-mark] {
+    @apply bg-(--site-good-soft) text-(--site-good);
+  }
   [data-slot="site-failure-text"][data-slot][data-s-site-failure-text] {
     @apply m-0 max-w-xl text-(length:--site-fs-body) leading-(--site-lh-body) text-(--site-ink-muted);
   }
@@ -2090,7 +2093,13 @@
     @apply flex min-w-0 flex-col gap-2;
   }
   [data-slot="site-spinner"][data-slot][data-s-site-spinner] {
-    @apply inline-block size-3 shrink-0 animate-spin rounded-(--site-radius-full) border-2 border-current border-r-transparent;
+    @apply inline-block shrink-0 animate-spin rounded-(--site-radius-full) border-2;
+  }
+  [data-slot="site-spinner"][data-size="sm"][data-s-site-spinner] {
+    @apply size-3 border-current border-r-transparent;
+  }
+  [data-slot="site-spinner"][data-size="lg"][data-s-site-spinner] {
+    @apply size-6 border-(--site-accent) border-t-transparent;
   }
   [data-slot="site-text-action"][data-slot][data-s-site-text-action] {
     @apply cursor-pointer rounded-(--site-radius-xs) border-0 bg-transparent p-0 text-left font-(family-name:--site-font-sans) underline-offset-2 outline-none transition-colors duration-(--site-duration-fast) ease-(--site-ease);

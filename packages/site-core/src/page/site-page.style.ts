@@ -168,12 +168,20 @@ export const siteChipDotStyle = defineSlotStyle({
   defaultVariants: {},
 });
 
-/** A small ring that turns while something runs. */
+/**
+ * A ring that turns while something runs: small and in the words' colour beside a line, large and in
+ * the accent inside a page's round mark while the page waits for its answer.
+ */
 export const siteSpinnerStyle = defineSlotStyle({
   slot: "site-spinner",
-  base: "inline-block size-3 shrink-0 animate-spin rounded-(--site-radius-full) border-2 border-current border-r-transparent motion-reduce:animate-none",
-  variants: {},
-  defaultVariants: {},
+  base: "inline-block shrink-0 animate-spin rounded-(--site-radius-full) border-2 motion-reduce:animate-none",
+  variants: {
+    size: {
+      sm: "size-3 border-current border-r-transparent",
+      lg: "size-6 border-(--site-accent) border-t-transparent",
+    },
+  },
+  defaultVariants: { size: "sm" },
 });
 
 /** A small muted line under a part: where to go next, what to do if stuck. */

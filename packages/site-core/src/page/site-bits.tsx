@@ -26,9 +26,15 @@ export function SiteChip({ tone, dot = false, children }: SiteChipProps) {
   );
 }
 
-/** A small ring that turns while something runs; it says nothing itself, the words beside it do. */
-export function SiteSpinner() {
-  return <span {...slotAttributes(siteSpinnerStyle, {})} aria-hidden="true" />;
+/** Props for {@link SiteSpinner}. */
+export interface SiteSpinnerProps {
+  /** `sm` beside a line of words, `lg` inside a page's round mark. */
+  readonly size?: "sm" | "lg";
+}
+
+/** A ring that turns while something runs; it says nothing itself, the words beside it do. */
+export function SiteSpinner({ size }: SiteSpinnerProps = {}) {
+  return <span {...slotAttributes(siteSpinnerStyle, { size })} aria-hidden="true" />;
 }
 
 /** Props for {@link SiteCaption}. */

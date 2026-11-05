@@ -2,7 +2,8 @@ import { defineSlotStyle } from "@simplix-react/ui/design";
 
 /**
  * The round mark of a failure page: a quiet ground for an address the site has no page for, the bad
- * tone for a page that failed while it was shown.
+ * tone for a page that failed while it was shown, the good tone for a done thing (the page a mail
+ * link opens, once the link is accepted).
  */
 export const siteFailureMarkStyle = defineSlotStyle({
   slot: "site-failure-mark",
@@ -11,6 +12,7 @@ export const siteFailureMarkStyle = defineSlotStyle({
     tone: {
       quiet: "bg-(--site-surface-sunken) text-(--site-ink-muted)",
       bad: "bg-(--site-bad-soft) text-(--site-bad)",
+      good: "bg-(--site-good-soft) text-(--site-good)",
     },
   },
   defaultVariants: { tone: "quiet" },

@@ -2,6 +2,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 
 import { bySlot, tagsOf, unmarked } from "../testing/markup";
+import { SiteSpinner } from "./site-bits";
 import { SiteFailure } from "./site-failure";
 
 describe("SiteFailure", () => {
@@ -34,6 +35,26 @@ describe("SiteFailure", () => {
     const bad = renderToStaticMarkup(<SiteFailure mark={<svg data-slot="glyph" />} tone="bad" title="This page could not be shown" />);
     expect(bySlot(quiet, "site-failure-mark")[0]?.attributes["data-tone"]).toBe("quiet");
     expect(bySlot(bad, "site-failure-mark")[0]?.attributes["data-tone"]).toBe("bad");
+  });
+
+  it("marks the good tone for a done thing, the page a mail link opens", () => {
+    const good = renderToStaticMarkup(<SiteFailure mark={<svg data-slot="glyph" />} tone="good" title="Your identity is checked" />);
+    expect(bySlot(good, "site-failure-mark")[0]?.attributes["data-tone"]).toBe("good");
+  });
+
+  it("announces the sentence with the role it is handed, and with none when none is", () => {
+    const alert = renderToStaticMarkup(<SiteFailure mark={<svg data-slot="glyph" />} title="Too many tries" body="Wait a little." live="alert" />);
+    const status = renderToStaticMarkup(<SiteFailure mark={<svg data-slot="glyph" />} title="Checking your link" body="One moment." live="status" />);
+    const silent = renderToStaticMarkup(<SiteFailure mark={<svg data-slot="glyph" />} title="Not found" body="The address may be mistyped." />);
+    expect(bySlot(alert, "site-failure-text")[0]?.attributes.role).toBe("alert");
+    expect(bySlot(status, "site-failure-text")[0]?.attributes.role).toBe("status");
+    expect(bySlot(silent, "site-failure-text")[0]?.attributes.role).toBeUndefined();
+  });
+
+  it("holds a large wait ring in the mark while an answer is awaited, the small one elsewhere", () => {
+    const waiting = renderToStaticMarkup(<SiteFailure mark={<SiteSpinner size="lg" />} title="Checking your link" />);
+    expect(bySlot(waiting, "site-spinner")[0]?.attributes["data-size"]).toBe("lg");
+    expect(bySlot(renderToStaticMarkup(<SiteSpinner />), "site-spinner")[0]?.attributes["data-size"]).toBe("sm");
   });
 
   it("draws no sentence and no action row when none is handed", () => {
