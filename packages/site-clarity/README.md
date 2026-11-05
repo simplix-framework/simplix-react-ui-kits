@@ -89,6 +89,8 @@ Every label is a prop: the kit ships no strings, and the product passes its own 
 | `--site-lh-reading` | the line height of a sentence read along | `26px` |
 | `--site-fs-notes` | a text of several lines (`SiteTextarea`) | `13.5px` |
 | `--site-lh-notes` | its line height | `24px` |
+| `--site-fs-input` | a text field (`SiteInput`, `SiteTextarea`) at the narrow page tier, so a phone browser does not zoom into it | `16px` |
+| `--site-lh-input` | its line height at the narrow tier | `24px` |
 | `--site-fs-digits` | a code cell's digit (`CodeField`) | `20px` |
 | `--site-lh-digits` | its line height | `24px` |
 | `--site-fw-digits` | its weight | `600` |

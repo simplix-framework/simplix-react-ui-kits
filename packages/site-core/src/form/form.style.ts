@@ -7,6 +7,12 @@ import { defineSlotStyle } from "@simplix-react/ui/design";
 const SITE_FIELD =
   "block w-full min-w-0 rounded-(--site-radius-md) border border-(--site-control-line) bg-(--site-surface) font-(family-name:--site-font-sans) text-(--site-ink) outline-none transition-colors duration-(--site-duration-fast) ease-(--site-ease) placeholder:text-(--site-ink-muted) hover:border-(--site-ink-muted) focus-visible:border-(--site-accent) focus-visible:shadow-[var(--site-focus-ring)] disabled:cursor-not-allowed disabled:opacity-(--site-dim) aria-invalid:border-(--site-bad)";
 
+/**
+ * A phone-width text control is read at the size that keeps a phone browser from zooming into it on
+ * focus; the size and leading are the product's `--site-fs-input` and `--site-lh-input`.
+ */
+const SITE_FIELD_NARROW = "@max-page-narrow/page:text-(length:--site-fs-input) @max-page-narrow/page:leading-(--site-lh-input)";
+
 /** A field: its name over its control, and any note under it. `muted` draws the name in the muted ink. */
 export const siteFieldStyle = defineSlotStyle({
   slot: "site-field",
@@ -59,7 +65,7 @@ export const siteFieldInlineStyle = defineSlotStyle({
 /** A one-line text field. */
 export const siteInputStyle = defineSlotStyle({
   slot: "site-input",
-  base: SITE_FIELD,
+  base: `${SITE_FIELD} ${SITE_FIELD_NARROW}`,
   variants: {
     size: {
       md: "h-(--site-control) px-2.5 text-(length:--site-fs-body-pane) leading-(--site-lh-body-pane) font-(--site-fw-base)",
@@ -77,7 +83,7 @@ export const siteInputStyle = defineSlotStyle({
 /** A text of several lines, in the reading size and leading. */
 export const siteTextareaStyle = defineSlotStyle({
   slot: "site-textarea",
-  base: `${SITE_FIELD} min-h-16 resize-none px-2.5 py-2 text-(length:--site-fs-notes) leading-(--site-lh-notes) font-(--site-fw-base)`,
+  base: `${SITE_FIELD} min-h-16 resize-none px-2.5 py-2 text-(length:--site-fs-notes) leading-(--site-lh-notes) font-(--site-fw-base) ${SITE_FIELD_NARROW}`,
   variants: {},
   defaultVariants: {},
 });
