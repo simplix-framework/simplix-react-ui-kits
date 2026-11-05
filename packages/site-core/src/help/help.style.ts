@@ -1,5 +1,7 @@
 import { defineSlotStyle } from "@simplix-react/ui/design";
 
+import { SITE_FIELD_NARROW } from "../form/form.style";
+
 import { SITE_CARD } from "../page/site-page.style";
 
 /** The help centre's head: a band on the surface across the window, ruled off from the page under it. */
@@ -81,11 +83,10 @@ export const siteSearchStyle = defineSlotStyle({
   defaultVariants: {},
 });
 
-/** The search field. */
+/** The search field; at phone width it takes the input size, as every field a reader types into does. */
 export const siteSearchInputStyle = defineSlotStyle({
   slot: "site-search-input",
-  base:
-    "block h-(--site-control) w-full min-w-0 rounded-(--site-radius-md) border border-(--site-control-line) bg-(--site-surface) px-2.5 font-(family-name:--site-font-sans) text-(length:--site-fs-body-pane) leading-(--site-lh-body-pane) text-(--site-ink) outline-none placeholder:text-(--site-ink-muted) focus-visible:shadow-[var(--site-focus-ring)]",
+  base: `block h-(--site-control) w-full min-w-0 rounded-(--site-radius-md) border border-(--site-control-line) bg-(--site-surface) px-2.5 font-(family-name:--site-font-sans) text-(length:--site-fs-body-pane) leading-(--site-lh-body-pane) text-(--site-ink) outline-none placeholder:text-(--site-ink-muted) focus-visible:shadow-[var(--site-focus-ring)] ${SITE_FIELD_NARROW}`,
   variants: {},
   defaultVariants: {},
 });

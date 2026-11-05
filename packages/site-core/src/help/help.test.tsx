@@ -5,9 +5,9 @@ import type { SiteActionSpec } from "../action/site-action";
 import { SiteChip } from "../page/site-bits";
 import { bySlot, silentRefusals, tabStops, unmarked } from "../testing/markup";
 import { FieldRow, FormField } from "../form/fields";
-import { siteFieldRowStyle } from "../form/form.style";
+import { SITE_FIELD_NARROW, siteFieldRowStyle, siteInputStyle, siteTextareaStyle } from "../form/form.style";
 import { AttachBox, ContactForm, ContactPanel, ContactSent, SuggestBox } from "./contact";
-import { siteCategoryGridStyle, siteColumnsStyle, siteContactStyle, siteSearchHeroInnerStyle, siteSearchKeysStyle } from "./help.style";
+import { siteCategoryGridStyle, siteColumnsStyle, siteContactStyle, siteSearchHeroInnerStyle, siteSearchInputStyle, siteSearchKeysStyle } from "./help.style";
 import { ArticleList, CategoryGrid, SiteColumns } from "./help-lists";
 import { SearchHero, SiteSearch, searchKeyTarget, StatusLine } from "./search-hero";
 
@@ -200,5 +200,12 @@ describe("the contact parts", () => {
     expect(section?.attributes.tabindex).toBe("-1");
     expect(bySlot(html, "site-contact-title")[0]?.attributes.id).toBe(section?.attributes["aria-labelledby"]);
     expect(siteContactStyle.variants.state.sent).toContain("outline-none");
+  });
+});
+
+describe("text a reader types", () => {
+  it("is read at the input size at phone width in every slot that takes it, the help search included", () => {
+    expect(SITE_FIELD_NARROW).toContain("--site-fs-input");
+    for (const style of [siteInputStyle, siteTextareaStyle, siteSearchInputStyle]) expect(style.base).toContain(SITE_FIELD_NARROW);
   });
 });

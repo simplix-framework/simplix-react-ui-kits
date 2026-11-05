@@ -2578,7 +2578,7 @@
     @apply @max-page-narrow/page:px-4 @max-page-narrow/page:py-6;
   }
   :where([data-slot="site-search-input"])[data-s-site-search-input] {
-    @apply placeholder:text-(--site-ink-muted) focus-visible:shadow-[var(--site-focus-ring)];
+    @apply placeholder:text-(--site-ink-muted) focus-visible:shadow-[var(--site-focus-ring)] @max-page-narrow/page:text-(length:--site-fs-input) @max-page-narrow/page:leading-(--site-lh-input);
   }
   :where([data-slot="site-search-keys"])[data-s-site-search-keys] {
     @apply @max-page-narrow/page:hidden;

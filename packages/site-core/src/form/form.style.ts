@@ -9,9 +9,10 @@ const SITE_FIELD =
 
 /**
  * A phone-width text control is read at the size that keeps a phone browser from zooming into it on
- * focus; the size and leading are the product's `--site-fs-input` and `--site-lh-input`.
+ * focus; the size and leading are the product's `--site-fs-input` and `--site-lh-input`. Every slot
+ * a reader types into carries it, the fields here and the help search alike.
  */
-const SITE_FIELD_NARROW = "@max-page-narrow/page:text-(length:--site-fs-input) @max-page-narrow/page:leading-(--site-lh-input)";
+export const SITE_FIELD_NARROW = "@max-page-narrow/page:text-(length:--site-fs-input) @max-page-narrow/page:leading-(--site-lh-input)";
 
 /** A field: its name over its control, and any note under it. `muted` draws the name in the muted ink. */
 export const siteFieldStyle = defineSlotStyle({
