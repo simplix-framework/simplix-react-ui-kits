@@ -1,8 +1,13 @@
-import { readdirSync, readFileSync, statSync } from "node:fs";
-import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 
 import { SITE_FIELD_NARROW } from "./form.style";
+
+// Vite's module glob, which vitest resolves at build time; the package has no Vite client types.
+declare global {
+  interface ImportMeta {
+    glob<T>(patterns: string | readonly string[], options: { readonly eager: true; readonly import?: string; readonly query?: string }): Record<string, T>;
+  }
+}
 
 /** Every slot style of the kit, by its exported name. */
 const STYLES: Readonly<Record<string, { readonly base?: string }>> = Object.assign(
@@ -10,27 +15,19 @@ const STYLES: Readonly<Record<string, { readonly base?: string }>> = Object.assi
   ...Object.values(import.meta.glob<Record<string, { readonly base?: string }>>("../**/*.style.ts", { eager: true })),
 );
 
-/** The kit's component sources, tests left out. */
-function sources(dir: string): string[] {
-  return readdirSync(dir).flatMap((name) => {
-    const path = join(dir, name);
-    if (statSync(path).isDirectory()) return sources(path);
-    return name.endsWith(".tsx") && !name.includes(".test.") ? [path] : [];
-  });
-}
+/** The kit's component sources as text, by path, tests left out. */
+const SOURCES: Readonly<Record<string, string>> = import.meta.glob<string>(["../**/*.tsx", "!../**/*.test.tsx"], { eager: true, query: "?raw", import: "default" });
 
 /** Types of `<input>` a reader does not type text into. */
 const NOT_TEXT = /type="(checkbox|radio|file|hidden|range|color)"/;
 
 /** Each `<input>` or `<textarea>` element the kit draws, with the slot style it spreads. */
 function typedElements(): { readonly where: string; readonly style: string | undefined }[] {
-  const root = join(__dirname, "..");
-  return sources(root).flatMap((file) => {
-    const text = readFileSync(file, "utf8");
-    return [...text.matchAll(/<(input|textarea)\b([\s\S]*?)\/>/g)]
+  return Object.entries(SOURCES).flatMap(([file, text]) =>
+    [...text.matchAll(/<(input|textarea)\b([\s\S]*?)\/>/g)]
       .filter((match) => !NOT_TEXT.test(match[2] ?? ""))
-      .map((match) => ({ where: `${file.slice(root.length + 1)}:${text.slice(0, match.index).split("\n").length}`, style: /slotAttributes\((\w+)/.exec(match[2] ?? "")?.[1] }));
-  });
+      .map((match) => ({ where: `${file.replace("../", "")}:${text.slice(0, match.index).split("\n").length}`, style: /slotAttributes\((\w+)/.exec(match[2] ?? "")?.[1] })),
+  );
 }
 
 describe("text a reader types", () => {
