@@ -23,7 +23,7 @@ import {
 } from "@simplix-react/ui";
 import { partAttributes, slotAttributes } from "@simplix-react/ui/design";
 import { BulkActionBar } from "@simplix-react/ui/interaction";
-import { CirclePause, CirclePlay, CircleX, FlaskConical, Power, PowerOff, RefreshCw, RotateCcw, ShieldOff, TimerReset, Upload } from "lucide-react";
+import { CirclePause, CirclePlay, CircleX, FlaskConical, Power, PowerOff, RefreshCw, RotateCcw, ShieldOff, TimerReset, Upload, Wallet } from "lucide-react";
 
 import { useReflowFlip } from "../layout/use-reflow-flip";
 import { PACKAGE_NAMESPACE } from "./locales";
@@ -115,7 +115,7 @@ export type RecordFilter<Row> =
  * The verbs the kit names beyond the framework's action types, each with its own glyph, so a screen
  * never borrows an unrelated type (`duplicate` for a retry) to reach the icon strip.
  */
-export type RecordVerbType = "retry" | "reset" | "test" | "reprocess" | "enable" | "disable" | "suspend" | "reinstate" | "cancel" | "revoke" | "upload";
+export type RecordVerbType = "retry" | "reset" | "test" | "reprocess" | "enable" | "disable" | "suspend" | "reinstate" | "cancel" | "revoke" | "upload" | "grant";
 
 const VERB_GLYPHS: Record<RecordVerbType, { readonly type: ActionType; readonly icon: ReactNode }> = {
   retry: { type: "view", icon: <RotateCcw /> },
@@ -131,6 +131,9 @@ const VERB_GLYPHS: Record<RecordVerbType, { readonly type: ActionType; readonly 
   cancel: { type: "view", icon: <CircleX /> },
   revoke: { type: "view", icon: <ShieldOff /> },
   upload: { type: "view", icon: <Upload /> },
+  // `grant` gives the record's owner something it is owed (credits for a payment), drawn with the
+  // wallet the credit screens open an account with.
+  grant: { type: "view", icon: <Wallet /> },
 };
 
 /**

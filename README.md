@@ -72,7 +72,7 @@ The generator turns the entity's searchable fields into the list's filters (`Con
 
 ## Row actions
 
-`RecordList` and `RecordTree` draw `actions` as an icon strip in the row and as the same strip on a card; a row the action cannot run on shows it disabled with the reason. The kit names the verbs a framework type has no glyph for (`retry`, `reset`, `test`, `reprocess`, `enable`, `disable`, `suspend`, `reinstate`, `cancel`, `revoke`, `upload`), each with a glyph of its own, so a screen never borrows `duplicate` for a retry.
+`RecordList` and `RecordTree` draw `actions` as an icon strip in the row and as the same strip on a card; a row the action cannot run on shows it disabled with the reason. The kit names the verbs a framework type has no glyph for (`retry`, `reset`, `test`, `reprocess`, `enable`, `disable`, `suspend`, `reinstate`, `cancel`, `revoke`, `upload`, `grant`), each with a glyph of its own, so a screen never borrows `duplicate` for a retry.
 
 A verb that flips with the row's state is one action, not two: give `type` and `label` as functions of the row.
 
