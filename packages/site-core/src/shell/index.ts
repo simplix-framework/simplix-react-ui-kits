@@ -1,4 +1,4 @@
-export { SiteBand, SiteWindow } from "./site-window";
+export { pageHeading, SiteBand, SiteWindow } from "./site-window";
 export type { SiteBandProps, SiteWindowProps } from "./site-window";
 export { avatarInitial, barMenuActions, menuKeyTarget, SiteBar, SiteBarMenuItems } from "./site-bar";
 export type { SiteBarAccount, SiteBarAction, SiteBarLink, SiteBarProps } from "./site-bar";

@@ -7,7 +7,7 @@ import { avatarInitial, barMenuActions, menuKeyTarget, SiteBar, SiteBarMenuItems
 import { siteActionStyle } from "../action/site-action.style";
 import { siteBarAccountNameStyle, siteBarMenuStyle, siteBarMoreStyle, siteBarNavStyle, siteBarStyle, siteFooterStyle, siteWindowStyle } from "./site-shell.style";
 import { SiteFooter } from "./site-footer";
-import { SiteBand, SiteWindow } from "./site-window";
+import { pageHeading, SiteBand, SiteWindow } from "./site-window";
 import {
   applySiteScheme,
   followSystemScheme,
@@ -436,5 +436,18 @@ describe("the reader's scheme choice", () => {
       { documentElement: unreadable },
     );
     expect(unreadable.classes.has("dark")).toBe(true);
+  });
+});
+
+describe("pageHeading", () => {
+  const root = (h1: string | null) => ({ querySelector: (selector: string) => (selector === "h1" && h1 !== null ? ({ textContent: h1 } as Element) : null) });
+
+  it("reads the page's heading with its spaces folded, for the document's title", () => {
+    expect(pageHeading(root("  Terms of\n   use "))).toBe("Terms of use");
+  });
+
+  it("answers empty for a page without a heading and for a window not drawn yet", () => {
+    expect(pageHeading(root(null))).toBe("");
+    expect(pageHeading(null)).toBe("");
   });
 });

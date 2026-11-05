@@ -7,7 +7,7 @@
  * legal links, the language picker, the theme control and what wraps the routed pages are this file's own, in
  * `useShellParts` below, and are customised here. A page whose route does not exist yet is listed
  * without an address and is drawn as plain text, so no link leads nowhere. The strings come from the
- * `{{namespace}}` catalog (English and Korean in the same change): `shell.title`, `shell.home`,
+ * `{{namespace}}` catalog (English and Korean in the same change): `shell.title`, `shell.documentTitle` (the tab's title: the page's heading, then the product), `shell.home`,
  * `shell.navLabel`, `shell.menu`, `shell.legal`, `shell.owner` and the label of each link.
  *
  * <p>The colour scheme is the reader's choice, kept by `useSiteScheme`: the system's until the reader
@@ -91,6 +91,7 @@ export function RootLayout() {
     <SiteWindow
       page={route}
       linkComponent={RouterLink}
+      title={(heading) => (heading === "" ? t("shell.title") : t("shell.documentTitle", { page: heading }))}
       bar={
         <SiteBar
           brand={parts.brand}

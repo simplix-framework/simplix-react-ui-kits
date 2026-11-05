@@ -18,14 +18,30 @@ export interface SiteWindowProps {
   readonly page: string;
   /** The product's router link, handed to every site part inside. */
   readonly linkComponent?: SiteLinkComponent;
+  /**
+   * The document's title for the page shown, from the text of the page's one heading (empty when it
+   * draws none), so a tab, a bookmark and the history name the page and not only the product.
+   * Left out, the document keeps the title its HTML gives.
+   */
+  readonly title?: (heading: string) => string;
   readonly children: ReactNode;
+}
+
+/**
+ * The text of the page's heading: the first `h1` under `root` as it reads on screen (a line break
+ * inside it, such as a hero's accent line, is a space), its spaces folded; empty without one.
+ */
+export function pageHeading(root: Pick<ParentNode, "querySelector"> | null): string {
+  const heading = root?.querySelector("h1");
+  const text = (heading as { readonly innerText?: string } | null | undefined)?.innerText ?? heading?.textContent ?? "";
+  return text.replace(/\s+/g, " ").trim();
 }
 
 /**
  * The site's window: the bar, the page and the footer. The window is the `page` container whose
  * width every part reflows by.
  */
-export function SiteWindow({ bar, footer, page, linkComponent, children }: SiteWindowProps) {
+export function SiteWindow({ bar, footer, page, linkComponent, title, children }: SiteWindowProps) {
   const main = useRef<HTMLElement>(null);
   const shown = useRef(page);
   useEffect(() => {
@@ -33,6 +49,12 @@ export function SiteWindow({ bar, footer, page, linkComponent, children }: SiteW
     shown.current = page;
     main.current?.focus({ preventScroll: true });
   }, [page]);
+  // After every drawing: the heading follows the page, its language and the data it names.
+  useEffect(() => {
+    if (title === undefined) return;
+    const next = title(pageHeading(main.current));
+    if (document.title !== next) document.title = next;
+  });
   return (
     <SiteLinkProvider component={linkComponent}>
       <div {...slotAttributes(siteWindowStyle, {})} data-page={page}>
