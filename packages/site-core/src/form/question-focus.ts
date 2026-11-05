@@ -53,3 +53,23 @@ export function useQuestionFocus(root: RefObject<HTMLElement | null>): void {
     return takeQuestionFocus(node, node.ownerDocument);
   }, [root]);
 }
+
+/** The parts of a question's root its naming reads and writes. */
+export interface LabelNode {
+  getAttribute(name: string): string | null;
+  setAttribute(name: string, value: string): void;
+  querySelector(selector: string): { id: string } | null;
+}
+
+/**
+ * Names a question that takes the focus by its own first heading, so a screen reader announces the
+ * question and not a bare "group" when the focus moves in. A root named already is left alone, and a
+ * heading without an id is given `id`.
+ */
+export function nameByFirstHeading(node: LabelNode, id: string): void {
+  if (node.getAttribute("aria-labelledby") || node.getAttribute("aria-label")) return;
+  const heading = node.querySelector("h1, h2, h3, h4, h5, h6");
+  if (heading === null) return;
+  if (!heading.id) heading.id = id;
+  node.setAttribute("aria-labelledby", heading.id);
+}

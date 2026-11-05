@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { takeQuestionFocus } from "./question-focus";
+import { nameByFirstHeading, takeQuestionFocus } from "./question-focus";
 
 /** An element of a fake page: it knows what it holds and records the focus it takes. */
 function element(page: { activeElement: unknown }, name: string, children: unknown[] = []) {
@@ -73,5 +73,40 @@ describe("takeQuestionFocus", () => {
     expect(doc.activeElement).toBe(inner);
     innerBack();
     expect(doc.activeElement).toBe(opener);
+  });
+});
+
+describe("nameByFirstHeading", () => {
+  function root(heading: { id: string } | null, own: Record<string, string> = {}) {
+    const attributes = { ...own };
+    return {
+      attributes,
+      getAttribute: (name: string) => attributes[name] ?? null,
+      setAttribute: (name: string, value: string) => {
+        attributes[name] = value;
+      },
+      querySelector: () => heading,
+    };
+  }
+
+  it("names the question by its first heading, giving the heading an id where it has none", () => {
+    const heading = { id: "" };
+    const node = root(heading);
+    nameByFirstHeading(node, "q1");
+    expect(heading.id).toBe("q1");
+    expect(node.attributes["aria-labelledby"]).toBe("q1");
+    const titled = { id: "title" };
+    const other = root(titled);
+    nameByFirstHeading(other, "q2");
+    expect(other.attributes["aria-labelledby"]).toBe("title");
+  });
+
+  it("leaves a named root and a root without a heading alone", () => {
+    const named = root({ id: "" }, { "aria-label": "Cancel" });
+    nameByFirstHeading(named, "q3");
+    expect(named.attributes["aria-labelledby"]).toBeUndefined();
+    const bare = root(null);
+    nameByFirstHeading(bare, "q4");
+    expect(bare.attributes["aria-labelledby"]).toBeUndefined();
   });
 });

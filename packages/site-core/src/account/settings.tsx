@@ -1,8 +1,8 @@
-import { useRef, type ReactNode } from "react";
+import { useEffect, useId, useRef, type ReactNode } from "react";
 import { slotAttributes } from "@simplix-react/ui/design";
 
 import { SiteAction, type SiteActionSpec } from "../action/site-action";
-import { useQuestionFocus } from "../form/question-focus";
+import { nameByFirstHeading, useQuestionFocus } from "../form/question-focus";
 import {
   siteIdentityMarkStyle,
   siteIdentityMetaStyle,
@@ -77,10 +77,16 @@ export interface SettingsBoxProps {
  * <p>The box opens on a press (changing the plan, cancelling, asking for a refund), often in place of
  * the control that opened it, so it takes the focus when it opens and gives it back to that control
  * when it closes, as a typed confirmation does; the reader who asked is read the question and tabs on
- * into it. It is the focus's target, never a Tab stop.
+ * into it. It is the focus's target, never a Tab stop, and it is named by its first heading (the
+ * question's title) so the focus moving in announces the question.
  */
 export function SettingsBox({ tone, children }: SettingsBoxProps) {
   const root = useRef<HTMLDivElement>(null);
+  const headingId = useId();
+  // Named before the focus moves in, so the move announces the name.
+  useEffect(() => {
+    if (root.current !== null) nameByFirstHeading(root.current, headingId);
+  }, [headingId]);
   useQuestionFocus(root);
   return (
     <div ref={root} tabIndex={-1} role="group" {...slotAttributes(siteSettingsBoxStyle, { tone })}>
