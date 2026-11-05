@@ -109,6 +109,11 @@ export interface ContractField {
    */
   readonly markWhenTrue?: boolean;
   /**
+   * The list draws the column at every pane width: a field without which another drawn column reads
+   * wrong (a consent's withdrawal beside "granted"), kept as the leading and the sorted column are.
+   */
+  readonly keep?: boolean;
+  /**
    * A code the reader types or compares (SimpliX Meta's `format: "code"`, from `@CodeValue`): a
    * text value drawn in the monospaced face.
    */
@@ -593,6 +598,7 @@ export function useRecordContract(entity: string, overrides: ContractOverrides =
       ...(sortFieldOf(field, locale) !== undefined ? { sortable: true } : field.sortable === undefined ? {} : { sortable: field.sortable }),
       // A mark drawn only on the rows it is true of leaves no empty cell on the cards that lack it.
       ...(field.kind === "boolean" && field.markWhenTrue ? { cardKeep: false } : {}),
+      ...(field.keep ? { keep: true } : {}),
       value: (row: R) => value(field, row as unknown as Row),
     }),
     [fieldLabel, value, locale],

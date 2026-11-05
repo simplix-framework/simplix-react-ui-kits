@@ -30,9 +30,9 @@ import { PACKAGE_NAMESPACE } from "./locales";
 import { recordListStyle, recordListToolbarStyle } from "./record-list.style";
 import { CARD_LINES_GRID, CARD_LINE_WIDE_VALUE, cardLayout, isBadge, isEmpty, keptColumns, packedLines, wideColumns, type CardPlace } from "./record-card";
 import { RecordValueView, type RecordValue } from "./record-value";
-import { enumValueOf } from "./record-contract";
+import { ALWAYS_DRAWN_COLUMNS, enumValueOf } from "./record-contract";
 import { missingTileFacets, useTileFacets } from "./tile-facets";
-import { FLUID_COLUMN_MIN, keepColumnsDrawn } from "./column-priority";
+import { FLUID_COLUMN_MIN, keepColumnsDrawn, ladderColumns } from "./column-priority";
 import { useRememberedView } from "./list-view-memory";
 
 /** One column of a {@link RecordList}. */
@@ -62,6 +62,11 @@ export interface RecordColumn<Row> {
   readonly align?: "start" | "end";
   /** The width the table needs before this column is drawn; it is dropped from a narrow pane. */
   readonly minTableWidth?: number;
+  /**
+   * Drawn at every pane width, like the leading column and the one the rows are sorted by: a column
+   * without which another drawn column reads wrong (a withdrawal beside "granted").
+   */
+  readonly keep?: boolean;
   /** Whether the header sorts the rows; on for a column with a field unless said otherwise. */
   readonly sortable?: boolean;
   /**
@@ -685,7 +690,7 @@ export function RecordList<Row>({
   // The table's columns: the leading one and the one the rows are sorted by never drop for want of
   // width, the rest drop from the end. The card keeps the declared columns, which it places by shape.
   const sortedBy = on("sort") ? list.sort.field : null;
-  const tableColumns = useMemo(() => keepColumnsDrawn(columns, sortedBy), [columns, sortedBy]);
+  const tableColumns = useMemo(() => keepColumnsDrawn(ladderColumns(columns, ALWAYS_DRAWN_COLUMNS), sortedBy), [columns, sortedBy]);
   const { title: titleColumn, lines: lineColumns } = splitCardColumns(columns, cardTitle);
   // A list drawn as cards always offers the switch to the table; the choice is kept under the key the
   // screen names, else under one derived from the columns.

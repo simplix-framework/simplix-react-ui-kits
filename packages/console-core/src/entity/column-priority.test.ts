@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { ALWAYS_DRAWN_COLUMNS } from "./record-contract";
-import { keepColumnsDrawn, type PrioritisedColumn } from "./column-priority";
+import { keepColumnsDrawn, ladderColumns, type PrioritisedColumn } from "./column-priority";
 
 /** Eight columns the way the generator tiers them: the first four always draw, the rest by running width. */
 function generated(widths: readonly number[], names: readonly string[]): PrioritisedColumn[] {
@@ -81,5 +81,52 @@ describe("keepColumnsDrawn", () => {
     const kept = keepColumnsDrawn(columns, "c");
     expect(kept[1]!.minTableWidth).toBe(200 + 200);
     expect(kept[2]!.minTableWidth).toBeUndefined();
+  });
+});
+
+describe("ladderColumns", () => {
+  // A subscription list: four leading columns, a sorted period end and a screen's own renewal marker.
+  const subscription: PrioritisedColumn[] = [
+    { key: "owner", field: "ownerId", minWidth: 160 },
+    { key: "plan", field: "planId", minWidth: 160 },
+    { key: "status", field: "status", width: 120 },
+    { key: "provider", field: "provider", width: 120 },
+    { key: "seats", field: "seats", width: 112, minTableWidth: 672 },
+    { key: "end", field: "currentPeriodEnd", width: 176, minTableWidth: 848 },
+    { key: "renewal", field: "cancelAtPeriodEnd", width: 120 },
+  ];
+  const widthOf = (columns: readonly PrioritisedColumn[], keys: readonly string[]) =>
+    keys.reduce((sum, key) => sum + (columns.find((column) => column.key === key)!.width ?? columns.find((column) => column.key === key)!.minWidth ?? 0), 0);
+
+  it("gives a screen's own column after the leading ones the tier its place gives it", () => {
+    const laddered = ladderColumns(subscription, ALWAYS_DRAWN_COLUMNS);
+    expect(laddered.find((column) => column.key === "renewal")!.minTableWidth).toBe(968);
+    // Stated tiers and the leading columns are left alone.
+    expect(laddered.slice(0, 6)).toEqual(subscription.slice(0, 6));
+  });
+
+  it("keeps the narrowest table of a list with a screen's own column inside a tablet pane", () => {
+    const pane = 889;
+    const before = drawn(keepColumnsDrawn(subscription, "currentPeriodEnd"), 0);
+    const after = drawn(keepColumnsDrawn(ladderColumns(subscription, ALWAYS_DRAWN_COLUMNS), "currentPeriodEnd"), 0);
+    // Before, the always-drawn set (856 px and the row actions) outgrew the pane and the list fell to cards.
+    expect(before).toContain("renewal");
+    expect(widthOf(subscription, after)).toBeLessThan(pane - 64);
+    expect(after).toEqual(["owner", "plan", "status", "provider", "end"]);
+    expect(drawn(keepColumnsDrawn(ladderColumns(subscription, ALWAYS_DRAWN_COLUMNS), "currentPeriodEnd"), 1200)).toContain("renewal");
+  });
+
+  it("leaves a column the screen keeps drawn at every width", () => {
+    const consent: PrioritisedColumn[] = [
+      { key: "type", width: 120 },
+      { key: "version", minWidth: 140 },
+      { key: "granted", width: 96 },
+      { key: "channel", width: 120 },
+      { key: "recordedAt", field: "recordedAt", width: 176, minTableWidth: 652 },
+      { key: "withdrawnAt", field: "withdrawnAt", width: 176, minTableWidth: 828, keep: true },
+    ];
+    const shown = drawn(keepColumnsDrawn(ladderColumns(consent, ALWAYS_DRAWN_COLUMNS), "recordedAt"), 650);
+    expect(shown).toContain("withdrawnAt");
+    expect(drawn(keepColumnsDrawn(consent.map(({ keep: _keep, ...column }) => column), "recordedAt"), 650)).not.toContain("withdrawnAt");
   });
 });
