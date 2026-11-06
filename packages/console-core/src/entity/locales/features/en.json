@@ -103,6 +103,7 @@
     }
   },
   "recordValue": {
+    "unnamedReference": "{{label}} {{id}}",
     "credits_one": "{{value}} credit",
     "credits_other": "{{value}} credits"
   },

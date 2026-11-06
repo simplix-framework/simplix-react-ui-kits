@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { useTranslation } from "@simplix-react/i18n/react";
+import { useI18n, useTranslation } from "@simplix-react/i18n/react";
 
 import { usePeekHost } from "../peek";
 
@@ -15,8 +15,12 @@ export interface ReferenceTarget {
   readonly kind?: string;
   /** The value the reference holds: the record's id, or the field `by` names. */
   readonly id: string;
-  /** The name the record had when this one was written; the id where none was recorded. */
-  readonly name: string;
+  /**
+   * The name the record had when this one was written. Absent where the holding record names
+   * nothing: the reference is drawn as the referenced entity's label and the start of its id
+   * (「Credit hold 01a1af93」), still opening its peek and asking whether it is gone.
+   */
+  readonly name?: string;
   /** The field of the referenced record `id` is a value of, where it is not its id. */
   readonly by?: string;
   /**
@@ -48,10 +52,13 @@ export interface ReferenceTarget {
 export function useReferenceValue(): (target: ReferenceTarget) => RecordValue {
   const { t } = useTranslation(PACKAGE_NAMESPACE + "/features");
   const peek = usePeekHost();
+  const unnamedText = useUnnamedText();
   return useCallback(
     (target: ReferenceTarget): RecordValue => {
-      const { kind, id, name, by, noun, state } = target;
-      const person = target.person ?? kind === PERSON_KIND;
+      const { kind, id, by, noun, state } = target;
+      const name = target.name ?? unnamedText(kind, id);
+      // A person nothing names has no initials to draw.
+      const person = target.name !== undefined && (target.person ?? kind === PERSON_KIND);
       const look = person ? { avatar: id } : {};
       const live = person && target.sub ? { ...look, sub: target.sub } : look;
       const kindName = t(`recordGone.kinds.${kind || noun || "record"}`, { defaultValue: t("recordGone.kinds.record") });
@@ -72,6 +79,28 @@ export function useReferenceValue(): (target: ReferenceTarget) => RecordValue {
         ...(by ? {} : { check: { kind, id, gone: { deleted: goneAs("deleted"), unavailable: goneAs("unavailable") } } }),
       };
     },
-    [peek, t],
+    [peek, t, unnamedText],
+  );
+}
+
+/** How many characters of a long id a reference nothing names shows: enough to tell rows apart. */
+const ID_PREFIX = 8;
+
+/**
+ * The text of a reference whose holding record names nothing: the referenced entity's label from
+ * its domain catalog (`entity/<kind>` `_label`, as {@link useScreenWords} reads it) and the start of
+ * its id; the whole id where the catalog states no label or the id is short.
+ */
+function useUnnamedText(): (kind: string | undefined, id: string) => string {
+  const { t } = useTranslation(PACKAGE_NAMESPACE + "/features");
+  const i18n = useI18n();
+  return useCallback(
+    (kind: string | undefined, id: string) => {
+      const label = kind && i18n?.exists("_label", `entity/${kind}`) ? i18n.tn(`entity/${kind}`, "_label") : undefined;
+      if (!label) return id;
+      const shown = id.length > ID_PREFIX + 4 ? id.slice(0, ID_PREFIX) : id;
+      return t("recordValue.unnamedReference", { label, id: shown });
+    },
+    [i18n, t],
   );
 }

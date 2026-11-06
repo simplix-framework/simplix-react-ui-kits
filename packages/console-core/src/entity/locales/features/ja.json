@@ -102,6 +102,7 @@
     }
   },
   "recordValue": {
+    "unnamedReference": "{{label}} {{id}}",
     "credits_other": "{{value}}クレジット"
   },
   "recordGone": {

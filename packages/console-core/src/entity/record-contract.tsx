@@ -518,7 +518,8 @@ export function useRecordContract(entity: string, overrides: ContractOverrides =
           return referenceValue({
             kind: peekKindOf(field, row),
             id: String(raw),
-            name: typeof name === "string" && name !== "" ? name : String(raw),
+            // A reference its record names nothing for is drawn by the target's label and its id.
+            name: typeof name === "string" && name !== "" ? name : undefined,
             by: field.peekBy,
             noun: field.peekKinds ? enumValueOf(row?.[field.peekKinds.field]) : undefined,
             // An owner of varying kind says which kind a person is; an all-users column draws none.
