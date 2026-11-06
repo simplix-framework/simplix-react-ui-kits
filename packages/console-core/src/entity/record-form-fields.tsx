@@ -125,7 +125,7 @@ function FieldBody({ field, value, onChange, error, errorsShown, serverError }: 
       // The chosen option's meaning reads under the field; before a choice the field's own hint does.
       const chosen = field.options.find((option) => option.value === value)?.description;
       const options = field.options.map(({ value: optionValue, label }) => ({ value: optionValue, label }));
-      return <FormFields.SelectField {...common} description={chosen ?? common.description} value={value as string} onChange={onChange} options={options} clearable={field.clearable} placeholder={field.placeholder ?? choicePrompt(t, field.options)} />;
+      return <FormFields.SelectField {...common} description={chosen ?? common.description} value={value as string} onChange={onChange} options={options} clearable={field.clearable} clearLabel={field.clearLabel} placeholder={field.placeholder ?? choicePrompt(t, field.options)} />;
     }
     case "radio":
       return <FormFields.RadioGroupField {...common} direction="row" value={(value as string) ?? ""} onChange={onChange} options={[...field.options]} />;

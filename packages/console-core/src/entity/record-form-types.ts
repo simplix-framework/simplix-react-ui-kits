@@ -109,9 +109,11 @@ export type RecordFormField =
   | ({ readonly kind: "number"; readonly value?: number | null; readonly unit?: string; readonly min?: number; readonly max?: number } & FieldCommon)
   /**
    * One choice from a list. `clearable` draws a control that returns an optional field to no value,
-   * which a select otherwise cannot do once something is picked (frontend invariant #75).
+   * which a select otherwise cannot do once something is picked (frontend invariant #75), and
+   * `clearLabel` names that entry where the absence has a name of its own (「every chip」); without it
+   * the entry reads as the field's prompt.
    */
-  | ({ readonly kind: "select"; readonly value?: string; readonly options: readonly RecordOption[]; readonly clearable?: boolean } & FieldCommon)
+  | ({ readonly kind: "select"; readonly value?: string; readonly options: readonly RecordOption[]; readonly clearable?: boolean; readonly clearLabel?: string } & FieldCommon)
   /** One choice of a few, every option visible at once as a row of radio buttons. */
   | ({ readonly kind: "radio"; readonly value?: string; readonly options: readonly RecordOption[] } & FieldCommon)
   | ({ readonly kind: "multi"; readonly value?: readonly string[]; readonly options: readonly RecordOption[] } & FieldCommon)
