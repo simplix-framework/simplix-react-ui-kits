@@ -7,7 +7,9 @@
 // a placeholder or a console message. What is read is the text a file can draw: a script's string
 // and template literals and its JSX text, and a style sheet's `content` values. Comments are read
 // in the source and are left to the people editing it; tests are left out, because a test that
-// refuses the character has to spell it.
+// refuses the character has to spell it. A Handlebars template (`.hbs`) is read whole, comments
+// included: everything in it is written into a generated file, where the comment is source a
+// product ships.
 import { mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { tmpdir } from "node:os";
@@ -20,14 +22,17 @@ const ts = require("typescript");
 const SKIPPED_DIRECTORIES = new Set(["node_modules", "dist", ".turbo", ".git"]);
 const EM_DASH = "\u2014";
 
-/** The character as written, or spelled as an escape in a script (`\u2014`) or a style sheet (`\2014`). */
+/**
+ * The character as written, or spelled as an escape in a script (`\u2014`), a style sheet
+ * (`\2014`) or JSX text and markup (`&mdash;`, `&#8212;`, `&#x2014;`).
+ */
 export function holdsEmDash(text) {
-  return text.includes(EM_DASH) || /\\u2014|\\2014/i.test(text);
+  return text.includes(EM_DASH) || /\\u2014|\\2014|&mdash;|&#8212;|&#x2014;/i.test(text);
 }
 
 function isScanned(name) {
   if (/\.test\.[cm]?[jt]sx?$/.test(name) || name.endsWith(".d.ts")) return false;
-  return /\.(?:[cm]?[jt]sx?|css)$/.test(name);
+  return /\.(?:[cm]?[jt]sx?|css|hbs)$/.test(name);
 }
 
 function listSources(directory, found) {
@@ -49,6 +54,9 @@ function scriptKind(file) {
 
 /** The drawable text of one file, each piece with the line it starts on. */
 export function drawnText(file, text) {
+  if (file.endsWith(".hbs")) {
+    return text.split("\n").map((line, index) => ({ line: index + 1, text: line }));
+  }
   if (file.endsWith(".css")) {
     const withoutComments = text.replace(/\/\*[\s\S]*?\*\//g, (comment) => comment.replace(/[^\n]/g, " "));
     return [...withoutComments.matchAll(/content:\s*([^;}]+)/g)].map((match) => ({
@@ -96,8 +104,24 @@ function selfTest() {
     write("a/src/clean.css", `/* k ${EM_DASH} l */\ntd:empty::after { content: '-'; }\n`);
     write("a/src/cell.test.tsx", `expect(text).not.toContain("${EM_DASH}");\n`);
     write("a/node_modules/dep/index.js", `export const x = "${EM_DASH}";\n`);
+    // A template is read whole: the character in drawn output, an escape inside a template
+    // comment and an entity in JSX text are all written into the generated file.
+    write("a/templates/list.hbs", `export const List = () => (\n  <span>{{label}} ${EM_DASH} {{count}}</span>\n);\n`);
+    write("a/templates/detail.hbs", "{{!-- the row \\u2014 its value --}}\nexport const Detail = () => null;\n");
+    write("a/templates/empty.hbs", "export const Empty = () => <td>&mdash;</td>;\n");
+    write("a/templates/clean.hbs", "{{!-- the row - its value --}}\nexport const Clean = () => <span>{{label}} - {{count}}</span>;\n");
+    // The same template text in a test's comment is left alone, as every test is.
+    write("a/templates/list.test.ts", `// <span>{{label}} ${EM_DASH} {{count}}</span>\nexport {};\n`);
     const hits = findEmDashes([root]).map((hit) => `${relative(root, hit.file)}:${hit.line}`).sort();
-    const expected = ["a/src/absent.ts:1", "a/src/app.css:2", "a/src/cell.tsx:2", "a/src/message.ts:1"];
+    const expected = [
+      "a/src/absent.ts:1",
+      "a/src/app.css:2",
+      "a/src/cell.tsx:2",
+      "a/src/message.ts:1",
+      "a/templates/detail.hbs:1",
+      "a/templates/empty.hbs:1",
+      "a/templates/list.hbs:2",
+    ];
     if (JSON.stringify(hits) !== JSON.stringify(expected)) {
       console.error(`check-em-dash self-test failed: expected ${expected.join(", ")}, found ${hits.join(", ") || "none"}`);
       process.exit(1);
