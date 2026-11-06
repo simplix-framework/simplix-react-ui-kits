@@ -11,8 +11,8 @@ import { adaptForcedList, forcedScope, {{#if holdersKeywordSearch}}SEARCHABLE_KE
 {{/if}}
 
 import { {{hookGet}} } from "{{packageName}}";
-{{#each holders}}
-import { {{this.accessList}}, {{this.hookList}} } from "{{this.packageName}}";
+{{#each holderImports}}
+import { {{this.names}} } from "{{this.packageName}}";
 {{/each}}
 
 /** The fields the contract gives this record, each drawn by its kind. */
