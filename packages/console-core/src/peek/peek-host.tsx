@@ -8,6 +8,21 @@ import { peekRendererFor, registeredPeekKinds } from "./peek-registry";
 interface StackedPeek {
   readonly key: number;
   readonly entry: PeekEntry;
+  /** What held the focus when this peek opened: the reference pressed, which takes it back on close. */
+  readonly returnTo: HTMLElement | null;
+}
+
+/**
+ * Gives the focus back to what opened a peek once the peek is gone. The dialog is mounted by the
+ * host, not by the reference that opened it, so the dialog's own focus return finds no trigger and
+ * the focus falls to the page: a keyboard reader pressing Escape would start over from the top.
+ */
+function restoreFocus(target: HTMLElement | null): void {
+  if (!target) return;
+  // After the dialog's own unmount, which moves the focus last.
+  requestAnimationFrame(() => {
+    if (target.isConnected) target.focus();
+  });
 }
 
 /** Props for {@link PeekHost}. */
@@ -30,6 +45,9 @@ export interface PeekHostProps {
 export function PeekHost({ children }: PeekHostProps) {
   const [stack, setStack] = useState<readonly StackedPeek[]>([]);
   const nextKey = useRef(0);
+  // The stack as last rendered, so closing reads the entry being closed without a stale closure.
+  const stackRef = useRef(stack);
+  stackRef.current = stack;
   const depth = stack.length;
 
   const controller = useMemo<PeekHostController>(
@@ -37,10 +55,17 @@ export function PeekHost({ children }: PeekHostProps) {
       open: (next) => {
         nextKey.current += 1;
         const key = nextKey.current;
-        setStack((current) => [...current, { key, entry: next }]);
+        const returnTo = typeof document !== "undefined" && document.activeElement instanceof HTMLElement ? document.activeElement : null;
+        setStack((current) => [...current, { key, entry: next, returnTo }]);
       },
-      close: () => setStack((current) => current.slice(0, -1)),
-      closeAll: () => setStack([]),
+      close: () => {
+        restoreFocus(stackRef.current[stackRef.current.length - 1]?.returnTo ?? null);
+        setStack((current) => current.slice(0, -1));
+      },
+      closeAll: () => {
+        restoreFocus(stackRef.current[0]?.returnTo ?? null);
+        setStack([]);
+      },
       depth,
     }),
     [depth],

@@ -18,9 +18,11 @@ const alias = (name: string) => [
   { find: new RegExp(`^${name}/(.*)$`), replacement: `${frameworkDir(name)}/$1` },
 ];
 
+// React Query and zustand are inlined for the same reason as the framework: left external, Node resolves its
+// `react` import from its own location and a hook rendered under the aliased React has no dispatcher.
 // Only `*.test.*` files are tests: the design specs under `src/styles/designs` end in `.spec.ts`
 // and hold a design, not a suite.
 export default defineConfig({
   resolve: { dedupe: ["react", "react-dom"], alias: [...alias("react"), ...alias("react-dom"), ...alias("lucide-react")] },
-  test: { include: ["src/**/*.test.{ts,tsx}"], server: { deps: { inline: [/@simplix-react\//] } } },
+  test: { include: ["src/**/*.test.{ts,tsx}"], server: { deps: { inline: [/@simplix-react\//, /@tanstack\/react-query/, /zustand/] } } },
 });

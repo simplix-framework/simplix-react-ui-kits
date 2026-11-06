@@ -9,11 +9,12 @@ import { useEntityTranslation, useI18nEditLanguage, useLocale, useTranslation } 
 import { SearchOperator, type EntityFacet, type EntitySearch, type LanguageSelectorPlacement, type StatusTone } from "@simplix-react/ui";
 
 import { PACKAGE_NAMESPACE } from "./locales";
-import { usePeekHost, type PeekTarget } from "../peek";
+import type { PeekTarget } from "../peek";
 import type { RecordFormField } from "./record-form-types";
 import type { RecordFilter } from "./record-list";
 import { bytesText, durationText, figureSign, signedText } from "./record-figure";
 import type { RecordValue } from "./record-value";
+import { useReferenceValue } from "./reference-value";
 
 /**
  * What the contract says one field is, as the generator writes it from SimpliX Meta.
@@ -467,7 +468,7 @@ export function useRecordContract(entity: string, overrides: ContractOverrides =
   const { t } = useTranslation(PACKAGE_NAMESPACE + "/features");
   const locale = useLocale();
   const zone = useAppTimeZone();
-  const peek = usePeekHost();
+  const referenceValue = useReferenceValue();
   const { languages } = useI18nEditLanguage();
   const { tones, searches, facets } = overrides;
 
@@ -509,25 +510,14 @@ export function useRecordContract(entity: string, overrides: ContractOverrides =
           return languageName(String(raw), locale);
         case "reference": {
           const name = field.nameField ? valueAtPath(row, field.nameField) : undefined;
-          const text = typeof name === "string" && name !== "" ? name : String(raw);
-          const kind = peekKindOf(field, row);
-          const state = field.stateField ? enumValueOf(row?.[field.stateField]) : undefined;
-          if (state === "DELETED" || state === "UNAVAILABLE") {
-            const reason = state === "DELETED" ? "deleted" : "unavailable";
-            const noun = field.peekKinds ? enumValueOf(row?.[field.peekKinds.field]) : "";
-            // A person is drawn as the avatar plus the name with the line naming what they are, as a live user is.
-            const person = kind === "userAccount" || noun === "USER";
-            const kindName = t(`recordGone.kinds.${kind || noun || "record"}`, { defaultValue: t("recordGone.kinds.record") });
-            return {
-              gone: {
-                name: text,
-                reason,
-                ...(person ? { avatar: String(raw), sub: t("recordGone.personLine") } : {}),
-                badge: t(`recordGone.reasons.${reason}.badge`), title: t(`recordGone.reasons.${reason}.title`, { kind: kindName }) },
-            };
-          }
-          if (!kind) return { link: text };
-          return { link: text, onClick: () => peek.open({ kind, target: peekTargetOf(field, String(raw), text) }) };
+          return referenceValue({
+            kind: peekKindOf(field, row),
+            id: String(raw),
+            name: typeof name === "string" && name !== "" ? name : String(raw),
+            by: field.peekBy,
+            noun: field.peekKinds ? enumValueOf(row?.[field.peekKinds.field]) : undefined,
+            state: field.stateField ? enumValueOf(row?.[field.stateField]) : undefined,
+          });
         }
         case "json":
           return { text: jsonText(raw), code: true, block: true };
@@ -537,7 +527,7 @@ export function useRecordContract(entity: string, overrides: ContractOverrides =
         }
       }
     },
-    [enumLabel, fieldLabel, locale, peek, t, tones, zone],
+    [enumLabel, fieldLabel, locale, referenceValue, t, tones, zone],
   );
 
   const formField = useCallback(

@@ -6,8 +6,8 @@ export { accountLockLiftsAt, isAccountLocked, type AccountLockSource } from "./a
 export { AddressFieldset, type AddressFieldsetProps, type AddressFieldsetValues } from "./address-fieldset";
 export { getUserAvatarUrl, type UserAvatarSize } from "./avatar-url";
 export { publishAvatarDirectory, useAvatarDirectory } from "./avatar-directory";
-export { DEFAULT_USER_AVATAR_URL, UserAvatar, UserHeading, UserLabel } from "./user-avatar";
-export { avatarTone, AVATAR_TONE_COUNT, InitialsAvatar, type InitialsAvatarProps } from "./initials-avatar";
+export { UserAvatar, UserHeading, UserLabel } from "./user-avatar";
+export { avatarInitials, avatarTone, AVATAR_TONE_COUNT, InitialsAvatar, type InitialsAvatarProps } from "./initials-avatar";
 export { usePermissionGroupName } from "./permission-groups";
 export {
   ConsoleProductProvider,

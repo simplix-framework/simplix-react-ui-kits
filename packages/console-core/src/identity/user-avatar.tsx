@@ -4,12 +4,10 @@ import { EllipsisText } from "../layout/ellipsis-text";
 import { Flex, Heading, cn } from "@simplix-react/ui";
 
 import { getUserAvatarUrl, type UserAvatarSize } from "./avatar-url";
+import { InitialsAvatar } from "./initials-avatar";
 import { useAvatarDirectory } from "./avatar-directory";
 import { userAvatarStyle } from "./user-avatar.style";
 import { slotAttributes } from "@simplix-react/ui/design";
-
-/** App-served person-icon placeholder for users without an uploaded profile photo. */
-export const DEFAULT_USER_AVATAR_URL = "/images/avatars/default-avatar.svg";
 
 /**
  * Avatar URLs that already failed to load this session. Remembering failures renders the
@@ -49,11 +47,10 @@ interface UserAvatarProps {
 }
 
 /**
- * Round user avatar for user-account labels in lists, grids, and dialogs.
- * Prefers the user's uploaded avatar (via the public avatar endpoint) and
- * falls back to the app-wide person-icon placeholder when none exists. When
- * the avatar directory knows the user, its attachment id cache-busts the URL
- * and a known-absent avatar skips the request entirely.
+ * A person's avatar: their uploaded photo where the deployment serves one and it loads, otherwise
+ * their letters on the tone their id gives them ({@link InitialsAvatar}), which is what every other
+ * avatar in the console draws. When the avatar directory knows the user, its attachment id
+ * cache-busts the URL and a known-absent photo skips the request entirely.
  */
 export function UserAvatar({
   name,
@@ -74,15 +71,16 @@ export function UserAvatar({
     (AVATAR_ENDPOINT_AVAILABLE && userId && !knownNoAvatar
       ? getUserAvatarUrl(userId, { size, version: effectiveVersion })
       : undefined);
-  const resolved = preferred && !failedAvatarUrls.has(preferred) ? preferred : DEFAULT_USER_AVATAR_URL;
-
+  if (!preferred || failedAvatarUrls.has(preferred)) {
+    // The letters repeat the name beside them; a lone avatar is named by the label it sits in.
+    return <InitialsAvatar name={name} seed={userId ?? name} />;
+  }
   return (
     <img
-      src={resolved}
+      src={preferred}
       alt={decorative ? "" : name}
       onError={() => {
-        if (resolved === DEFAULT_USER_AVATAR_URL) return;
-        failedAvatarUrls.add(resolved);
+        failedAvatarUrls.add(preferred);
         setFailCount((count) => count + 1);
       }}
       className={cn("size-6 shrink-0 object-cover", className)}

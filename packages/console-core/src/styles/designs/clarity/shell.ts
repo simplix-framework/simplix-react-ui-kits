@@ -61,8 +61,6 @@ export const shellSlots: Record<string, string> = {
   "console-preview-account":
     "ml-1.5 h-8 gap-2 pl-1 pr-1.5 text-(length:--fs-cell) leading-(--lh-cell) font-(--fw-strong) hover:bg-[var(--hover-bg-strong)] max-[1281px]:[&_[data-part=console-preview-account-name]]:hidden",
   "console-preview-account-caret": "text-muted-foreground opacity-100 max-[900px]:hidden",
-  "console-preview-avatar":
-    "size-[26px] bg-[var(--avatar-1)] text-(length:--fs-xs) leading-(--lh-xs) font-(--fw-heavy) tracking-[-0.04em] text-[var(--avatar-1-ink)]",
 
   // Menu column: 240px on its own near-white ground, rows that take a soft ground on hover and
   // the accent soft ground where the reader is, a rail of 38px marks when collapsed.

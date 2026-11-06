@@ -109,7 +109,8 @@
     "./styles/*": "./src/styles/*"
   },
   "bin": {
-    "simplix-design-literals": "scripts/check-design-literals.mjs"
+    "simplix-design-literals": "scripts/check-design-literals.mjs",
+    "simplix-avatar-owner": "scripts/check-avatar-owner.mjs"
   },
   "files": [
     "dist",
@@ -120,7 +121,7 @@
     "build": "NODE_OPTIONS=--max-old-space-size=4096 tsup",
     "dev": "tsup --no-clean --no-dts",
     "typecheck": "tsc --noEmit",
-    "lint": "oxlint src",
+    "lint": "oxlint src && node scripts/check-avatar-owner.mjs --test && node scripts/check-avatar-owner.mjs --owner 'src/identity/initials-avatar*' src ../console-clarity/src",
     "test": "vitest run --passWithNoTests",
     "clean": "rm -rf dist .turbo",
     "design:css": "simplix-design-css --root . --out src/styles/designs/classic.css && simplix-design-css --root . --design-spec src/styles/designs/clarity.spec.ts --out src/styles/designs/clarity.css --compiled src/styles/designs/clarity-stylesheet.ts --tailwind-from ../../../accesscore/simplix-react/apps/storybook --reference src/styles/utilities.css",

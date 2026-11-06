@@ -21,6 +21,7 @@ import {
   TooltipTrigger,
 } from "@simplix-react/ui";
 import { partAttributes, slotAttributes } from "@simplix-react/ui/design";
+import { InitialsAvatar } from "../identity/initials-avatar";
 import { EllipsisText } from "../layout";
 import { UNBUILT, type ActionOrUnbuilt } from "../notice";
 import { ConsoleAreaSwitch, type ConsoleArea } from "./area-switch";
@@ -32,7 +33,6 @@ import {
   previewAccountCaretStyle,
   previewAccountNameStyle,
   previewAccountStyle,
-  previewAvatarStyle,
   previewBadgeStyle,
   previewBrandLinkStyle,
   previewBrandStyle,
@@ -82,6 +82,8 @@ export interface ConsoleTopBarNotifications {
 /** The signed-in person and what their menu holds. */
 export interface ConsoleTopBarAccount {
   readonly name: string;
+  /** The account's id, which seeds the avatar's tone so the reader has the colour every screen gives them. */
+  readonly id?: string;
   /** The role, under the name in the menu. */
   readonly role?: ReactNode;
   /** The menu's rows, as `DropdownMenuItem`s, under the name. */
@@ -120,15 +122,6 @@ export interface ConsoleTopBarProps {
    * "not built yet" sentence.
    */
   readonly unbuiltReason?: string;
-}
-
-/** The two characters an avatar shows: a Korean name's given name, otherwise the first two letters. */
-function initialsOf(name: string): string {
-  const trimmed = name.trim();
-  if (/^[가-힣]{3,}$/.test(trimmed)) return trimmed.slice(1, 3);
-  const words = trimmed.split(/\s+/).filter(Boolean);
-  if (words.length > 1) return (words[0][0] + words[1][0]).toUpperCase();
-  return trimmed.slice(0, 2).toUpperCase();
 }
 
 /**
@@ -282,9 +275,7 @@ export function ConsoleTopBar({
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="sm" {...partAttributes(previewAccountStyle, {})}>
-                <span aria-hidden className="inline-grid shrink-0 place-items-center" {...slotAttributes(previewAvatarStyle, {})}>
-                  {initialsOf(account.name)}
-                </span>
+                <InitialsAvatar name={account.name} seed={account.id ?? account.name} />
                 <EllipsisText maxWidth="sm" {...partAttributes(previewAccountNameStyle, {})}>
                   {account.name}
                 </EllipsisText>

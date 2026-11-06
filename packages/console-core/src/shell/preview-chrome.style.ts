@@ -138,14 +138,6 @@ export const previewAccountCaretStyle = defineSlotStyle({
   defaultVariants: {},
 });
 
-/** The signed-in account's initials in a circle. */
-export const previewAvatarStyle = defineSlotStyle({
-  slot: "console-preview-avatar",
-  base: "rounded-full bg-muted text-(length:--fs-2xs) leading-(--lh-2xs) font-semibold text-muted-foreground size-[26px]",
-  variants: {},
-  defaultVariants: {},
-});
-
 /** The previewed console's status strip: its rule, chrome tint and inset. */
 export const previewStatusStyle = defineSlotStyle({
   slot: "console-preview-status",

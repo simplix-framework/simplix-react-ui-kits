@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { useTranslation } from "@simplix-react/i18n/react";
 import { Button, Flex, Stack, StepIndicator, Text } from "@simplix-react/ui";
-import { Check, UserRound, X } from "lucide-react";
+import { Check, X } from "lucide-react";
 import { partAttributes, slotAttributes } from "@simplix-react/ui/design";
 
 
@@ -10,7 +10,6 @@ import { PACKAGE_NAMESPACE } from "./locales";
 import {
   approvalActionsStyle,
   approvalAvatarStyle,
-  approvalHolderStandInStyle,
   approvalMarkerStyle,
   approvalRuleStyle,
   approvalStepStyle,
@@ -114,12 +113,8 @@ function stepDetail(step: ApprovalStep): ReactNode {
     <Stack gap="xs" data-approval-step={step.key} data-state={step.state}>
       {typeof step.who === "string" ? (
         <Flex gap="xs" align="center">
-          {step.avatar ? <UserAvatar name={step.who} src={step.avatar} decorative className="size-6" {...partAttributes(approvalAvatarStyle, {})} /> : (
-            // raw layout: a round frame around the stand-in icon, the shape a photo takes.
-            <span aria-hidden className="inline-flex size-6 shrink-0 items-center justify-center overflow-hidden" {...slotAttributes(approvalHolderStandInStyle, {})}>
-              <UserRound className="size-4" />
-            </span>
-          )}
+          {/* The holder's photo where one is given, their letters otherwise: the console's one avatar. */}
+          <UserAvatar name={step.who} src={step.avatar} decorative className="size-6" {...partAttributes(approvalAvatarStyle, {})} />
           <Text size="caption">{step.who}</Text>
         </Flex>
       ) : (

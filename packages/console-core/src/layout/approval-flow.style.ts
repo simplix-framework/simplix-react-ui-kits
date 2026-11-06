@@ -9,14 +9,6 @@ export const approvalAvatarStyle = defineSlotStyle({
   defaultVariants: {},
 });
 
-/** The round frame around the stand-in icon of a holder with no picture. */
-export const approvalHolderStandInStyle = defineSlotStyle({
-  slot: "console-approval-holder-stand-in",
-  base: "rounded-full border border-border bg-muted text-muted-foreground",
-  variants: {},
-  defaultVariants: {},
-});
-
 /** The vertical chain, ending with room for the window's status bar. */
 export const approvalStepsStyle = defineSlotStyle({
   slot: "console-approval-steps",

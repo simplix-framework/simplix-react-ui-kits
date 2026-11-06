@@ -7,6 +7,7 @@ import { InitialsAvatar } from "../identity/initials-avatar";
 import { MonoBlock } from "../notice/mono-block";
 
 import { RecordExcerpt } from "./record-excerpt";
+import { useReferenceState } from "./reference-state";
 import { RecordMeter, type RecordMeterValue } from "./record-meter";
 import { recordFigureStyle } from "./record-excerpt.style";
 import type { FigureSign } from "./record-figure";
@@ -65,7 +66,21 @@ export type RecordValue =
    * With `onClick` or `href` it is drawn as a link that opens that record; the press does not reach
    * the row beneath it.
    */
-  | { readonly link: string; readonly onClick?: () => void; readonly href?: string; readonly badge?: RecordBadge }
+  | {
+      readonly link: string;
+      readonly onClick?: () => void;
+      readonly href?: string;
+      readonly badge?: RecordBadge;
+      /** Draws the person the name names beside it, tinted by this seed (their id). */
+      readonly avatar?: string;
+      /** A quieter second line under the name, such as the kind of record. */
+      readonly sub?: string;
+      /**
+       * Asks whether the record still exists before anybody presses it: while the answer is on its
+       * way the name stays the link it is, and a record that is gone or unreadable is drawn as `gone`.
+       */
+      readonly check?: RecordReferenceCheck;
+    }
   /**
    * The name of another record that can no longer be opened: it was deleted, or the reader may not
    * see it. The name stays as plain text in the muted ink (never a link: no pointer, no hover, no
@@ -85,6 +100,22 @@ export interface RecordGone {
   readonly avatar?: string;
   /** A quieter second line under the name, such as the kind of record. */
   readonly sub?: string;
+}
+
+/** What a reference asks before it is drawn as a link: its kind, its id, and how it reads when gone. */
+export interface RecordReferenceCheck {
+  /** The referenced entity's name, whose registered lookup answers (`registerReferenceLookup`). */
+  readonly kind: string;
+  readonly id: string;
+  readonly gone: { readonly deleted: RecordGone; readonly unavailable: RecordGone };
+}
+
+/** A reference drawn once its record's existence is known: gone when it is, the link otherwise. */
+function CheckedReference({ value }: { readonly value: Extract<RecordValue, { link: string }> }): ReactNode {
+  const { check, ...link } = value;
+  const state = useReferenceState(check?.kind, check?.id);
+  if (check && (state === "deleted" || state === "unavailable")) return <RecordValueView value={{ gone: check.gone[state] }} />;
+  return <RecordValueView value={link} />;
 }
 
 /** Draws a {@link RecordValue}. */
@@ -131,6 +162,28 @@ export function RecordValueView({ value }: { readonly value: RecordValue }): Rea
     );
   }
   if ("link" in value) {
+    if (value.check) return <CheckedReference value={value} />;
+    // A person is the avatar, the name and the line naming what they are, as a gone person is.
+    if (value.avatar !== undefined || value.sub !== undefined) {
+      const { avatar, sub, ...name } = value;
+      const lines = (
+        <Flex direction="column" gap="none" minSize>
+          <RecordValueView value={name} />
+          {sub ? (
+            <Text size="caption" tone="muted">
+              {sub}
+            </Text>
+          ) : null}
+        </Flex>
+      );
+      if (avatar === undefined) return lines;
+      return (
+        <Flex align="center" gap="sm" minSize>
+          <InitialsAvatar name={value.link} seed={avatar} />
+          {lines}
+        </Flex>
+      );
+    }
     // A badge beside the name says something about that record (out of use), not about this one.
     if (value.badge) {
       const { badge, ...name } = value;
