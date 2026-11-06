@@ -521,6 +521,8 @@ export function useRecordContract(entity: string, overrides: ContractOverrides =
             name: typeof name === "string" && name !== "" ? name : String(raw),
             by: field.peekBy,
             noun: field.peekKinds ? enumValueOf(row?.[field.peekKinds.field]) : undefined,
+            // An owner of varying kind says which kind a person is; an all-users column draws none.
+            sub: field.peekKinds ? t("recordGone.personLine") : undefined,
             state: field.stateField ? enumValueOf(row?.[field.stateField]) : undefined,
           });
         }

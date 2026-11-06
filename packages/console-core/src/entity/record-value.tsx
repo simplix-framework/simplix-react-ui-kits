@@ -103,7 +103,7 @@ export interface RecordGone {
   readonly title: string;
   /** Draws a muted avatar of the name beside it, seeded by this (the record's id). */
   readonly avatar?: string;
-  /** A quieter second line under the name, such as the kind of record. */
+  /** A quieter second line under the name; the reference builder leaves it out of a gone person. */
   readonly sub?: string;
 }
 

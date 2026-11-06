@@ -39,11 +39,18 @@ describe("a reference asks whether its record exists before it is pressed", () =
     expect(value.check.gone.unavailable.reason).toBe("unavailable");
   });
 
-  it("draws a live person with the avatar and the line naming what they are, as a gone one", () => {
+  it("draws a person of an all-users column as the avatar and the name, with no second line", () => {
     const value = read(user, { userId: "u1", userName: "Mira Han" });
     expect(value.avatar).toBe("u1");
-    expect(value.sub).toBe("recordGone.personLine");
+    expect(value.sub).toBeUndefined();
     expect(value.check.gone.deleted.avatar).toBe("u1");
+    expect(value.check.gone.deleted.sub).toBeUndefined();
+  });
+
+  it("names the kind of a user owner where the owner kind varies", () => {
+    const value = read(owner, { ownerId: "u9", ownerType: "USER", ownerName: "Mira" });
+    expect(value.sub).toBe("recordGone.personLine");
+    expect(value.check.gone.deleted.sub).toBeUndefined();
   });
 
   it("looks a team owner up as a team, never as a user", () => {
