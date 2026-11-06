@@ -301,6 +301,7 @@
       "RecordColumn.wrap": "a column whose values are prose wraps instead of truncating; decided by the value, not by the screen's look",
       "RecordColumn.sortable": "behaviour: whether the server sorts by the column",
       "RecordColumn.cardKeep": "content: the column stays on the card presentation because the card is unreadable without it",
+      "RecordColumn.keep": "content: the column stays in the table at every width because another drawn column reads wrong without it; decided by the content, not by the screen's look",
       "RecordListFeatures.search": "turns the search region on or off",
       "RecordListFeatures.filters": "turns the filter region on or off",
       "RecordListFeatures.chips": "turns the chip filters on or off",
