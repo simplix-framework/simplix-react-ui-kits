@@ -10,6 +10,8 @@ export interface InitialsAvatarProps {
   /** What tells the person apart, from which the palette tone is taken, so it stays put across screens. */
   readonly seed: string;
   readonly size?: "sm" | "lg";
+  /** Draws the circle in the muted ground and ink, for a person whose account no longer exists or cannot be read. */
+  readonly muted?: boolean;
 }
 
 /** How many avatar tones the palette holds (`--avatar-1` to `--avatar-6`). */
@@ -26,7 +28,7 @@ export function avatarTone(seed: string): number {
  * A person as letters on a tinted circle, for a row or a record head that has no photo to show.
  * It repeats the name beside it, so it is hidden from assistive technology.
  */
-export function InitialsAvatar({ name, seed, size = "sm" }: InitialsAvatarProps) {
+export function InitialsAvatar({ name, seed, size = "sm", muted = false }: InitialsAvatarProps) {
   const letters = [...name.trim()].slice(-2).join("");
   return (
     <span
@@ -34,8 +36,8 @@ export function InitialsAvatar({ name, seed, size = "sm" }: InitialsAvatarProps)
       className="shrink-0 place-items-center"
       style={
         {
-          "--avatar-ground": `var(--avatar-${avatarTone(seed)})`,
-          "--avatar-ink": `var(--avatar-${avatarTone(seed)}-ink)`,
+          "--avatar-ground": muted ? "var(--muted)" : `var(--avatar-${avatarTone(seed)})`,
+          "--avatar-ink": muted ? "var(--muted-foreground)" : `var(--avatar-${avatarTone(seed)}-ink)`,
         } as CSSProperties
       }
       {...slotAttributes(initialsAvatarStyle, { size })}

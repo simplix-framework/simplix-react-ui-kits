@@ -143,8 +143,12 @@ export interface DetailPeekDialogProps {
   onOpenChange: (open: boolean) => void;
   /** Dialog title — the value that identifies the peeked record to a human. */
   title: ReactNode;
-  /** Destination page of the go-to action (deep link, e.g. `/route?id=<id>`). */
-  goToHref: string;
+  /**
+   * Destination page of the go-to action (deep link, e.g. `/route?id=<id>`). Omit it, with
+   * `goToLabel`, for a record that has no page to go to (a deleted one): the footer then holds
+   * the close action alone.
+   */
+  goToHref?: string;
   /**
    * Takes the reader to that destination in place of the address assignment below.
    *
@@ -156,7 +160,7 @@ export interface DetailPeekDialogProps {
    */
   onGoTo?: () => void;
   /** Label of the go-to action (localized by the caller). */
-  goToLabel: string;
+  goToLabel?: string;
   /** Label of the close action (localized by the caller). */
   closeLabel: string;
   /**
@@ -207,18 +211,20 @@ export function DetailPeekDialog({
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             {closeLabel}
           </Button>
-          <Button
-            onClick={() => {
-              if (onGoTo) {
-                onGoTo();
-                return;
-              }
-              window.location.href = goToHref;
-            }}
-          >
-            <ExternalLinkIcon className="size-4" />
-            {goToLabel}
-          </Button>
+          {goToLabel !== undefined && (goToHref !== undefined || onGoTo) ? (
+            <Button
+              onClick={() => {
+                if (onGoTo) {
+                  onGoTo();
+                  return;
+                }
+                if (goToHref !== undefined) window.location.href = goToHref;
+              }}
+            >
+              <ExternalLinkIcon className="size-4" />
+              {goToLabel}
+            </Button>
+          ) : null}
         </DialogFooter>
       </BoundedDialogContent>
     </Dialog>

@@ -515,9 +515,15 @@ export function useRecordContract(entity: string, overrides: ContractOverrides =
           if (state === "DELETED" || state === "UNAVAILABLE") {
             const reason = state === "DELETED" ? "deleted" : "unavailable";
             const noun = field.peekKinds ? enumValueOf(row?.[field.peekKinds.field]) : "";
+            // A person is drawn as the avatar plus the name with the line naming what they are, as a live user is.
+            const person = kind === "userAccount" || noun === "USER";
             const kindName = t(`recordGone.kinds.${kind || noun || "record"}`, { defaultValue: t("recordGone.kinds.record") });
             return {
-              gone: { name: text, reason, badge: t(`recordGone.reasons.${reason}.badge`), title: t(`recordGone.reasons.${reason}.title`, { kind: kindName }) },
+              gone: {
+                name: text,
+                reason,
+                ...(person ? { avatar: String(raw), sub: t("recordGone.personLine") } : {}),
+                badge: t(`recordGone.reasons.${reason}.badge`), title: t(`recordGone.reasons.${reason}.title`, { kind: kindName }) },
             };
           }
           if (!kind) return { link: text };

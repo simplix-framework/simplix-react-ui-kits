@@ -122,6 +122,7 @@
       "userAccount": "account",
       "USER": "account",
       "TEAM": "team"
-    }
+    },
+    "personLine": "User"
   }
 }

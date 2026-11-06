@@ -120,6 +120,7 @@
       "userAccount": "계정",
       "USER": "계정",
       "TEAM": "팀"
-    }
+    },
+    "personLine": "사용자"
   }
 }

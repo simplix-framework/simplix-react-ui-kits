@@ -81,6 +81,10 @@ export interface RecordGone {
   readonly reason: "deleted" | "unavailable";
   readonly badge: string;
   readonly title: string;
+  /** Draws a muted avatar of the name beside it, seeded by this (the record's id). */
+  readonly avatar?: string;
+  /** A quieter second line under the name, such as the kind of record. */
+  readonly sub?: string;
 }
 
 /** Draws a {@link RecordValue}. */
@@ -103,13 +107,26 @@ export function RecordValueView({ value }: { readonly value: RecordValue }): Rea
     );
   }
   if ("gone" in value) {
-    const { name, reason, badge, title } = value.gone;
+    const { name, reason, badge, title, avatar, sub } = value.gone;
+    const lines = (
+      <Flex direction="column" gap="none" minSize>
+        <Flex align="center" gap="xs">
+          <Text as="span" tone="muted" className="cursor-default">
+            {name}
+          </Text>
+          <StatusBadge tone="neutral" label={badge} />
+        </Flex>
+        {sub ? (
+          <Text size="caption" tone="muted">
+            {sub}
+          </Text>
+        ) : null}
+      </Flex>
+    );
     return (
-      <Flex align="center" gap="xs" title={title} data-record-gone={reason}>
-        <Text as="span" tone="muted" className="cursor-default">
-          {name}
-        </Text>
-        <StatusBadge tone="neutral" label={badge} />
+      <Flex align="center" gap="sm" minSize title={title} data-record-gone={reason}>
+        {avatar === undefined ? null : <InitialsAvatar name={name} seed={avatar} muted />}
+        {lines}
       </Flex>
     );
   }
