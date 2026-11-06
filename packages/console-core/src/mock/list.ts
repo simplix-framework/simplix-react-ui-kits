@@ -8,6 +8,12 @@ export type MockList<Row> = UseCrudListResult<Row> & {
   readonly matched: readonly Row[];
 };
 
+/** What a mock list is opened with besides its rows. */
+export interface MockListOptions {
+  /** The column and direction the list opens sorted by. */
+  readonly defaultSort?: { readonly field: string; readonly direction: "asc" | "desc" };
+}
+
 /**
  * The sample rows a list's committed filters and search text leave in, as the in-memory list holds
  * them: the same test the list applies (`matchesFilter` per committed key, the search text
@@ -35,10 +41,12 @@ export function matchMockRows<Row>(rows: readonly Row[], filters: Pick<CrudListF
  *
  * @param rows the sample rows, the current ones a `useMockRecords` holds
  * @param pageSize how many rows a page shows
+ * @param options.defaultSort the order the list opens in, as a generated list's `defaultSort`: the
+ * first render is already sorted and the list's sort state reports it
  */
-export function useMockList<Row>(rows: readonly Row[], pageSize = 20): MockList<Row> {
+export function useMockList<Row>(rows: readonly Row[], pageSize = 20, options: MockListOptions = {}): MockList<Row> {
   const useRows = useMemo<ListHook<Row>>(() => () => ({ data: [...rows], total: rows.length, isLoading: false, error: null }), [rows]);
-  const list = useCrudList(useRows, { stateMode: "client", filterMode: "immediate", defaultPageSize: pageSize });
+  const list = useCrudList(useRows, { stateMode: "client", filterMode: "immediate", defaultPageSize: pageSize, defaultSort: options.defaultSort });
   const { search, committedValues } = list.filters;
   const matched = useMemo(() => matchMockRows(rows, { search, committedValues }), [rows, search, committedValues]);
   return { ...list, matched };
