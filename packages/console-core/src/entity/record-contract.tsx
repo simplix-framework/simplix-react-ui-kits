@@ -257,7 +257,11 @@ export interface ContractHeadFigure {
   readonly value: RecordValue;
 }
 
-/** How many leading columns of a generated list draw at every pane width. */
+/**
+ * How many leading columns of a generated list carry no tier of their own: they draw until every
+ * later column has dropped, and then the list's ladder drops them from their end too
+ * (`ladderColumns` with `NAMING_COLUMNS`), so a narrow pane draws a narrower table before cards.
+ */
 export const ALWAYS_DRAWN_COLUMNS = 4;
 
 /** What one screen adds to the contract's drawing: tones for its enums, pickers for its references. */
@@ -614,9 +618,10 @@ export function useRecordContract(entity: string, overrides: ContractOverrides =
   );
 
   /**
-   * Every field as a column. The leading columns always draw; each one after them is dropped from a
-   * pane narrower than the table that holds it, so a wide record set narrows column by column
-   * instead of flipping to cards, and the card layout is left to a phone.
+   * Every field as a column. Each one after the leading block is dropped from a pane narrower than
+   * the table that holds it, and the leading block drops last, from its end, when the list ladders
+   * it; so a wide record set narrows column by column instead of flipping to cards, and the card
+   * layout is left to a phone.
    */
   const columns = useCallback(
     <R,>(fields: readonly ContractField[]) => {

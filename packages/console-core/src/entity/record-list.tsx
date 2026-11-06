@@ -30,9 +30,9 @@ import { PACKAGE_NAMESPACE } from "./locales";
 import { recordListStyle, recordListToolbarStyle } from "./record-list.style";
 import { CARD_LINES_GRID, CARD_LINE_WIDE_VALUE, cardLayout, isBadge, isEmpty, keptColumns, packedLines, wideColumns, type CardPlace } from "./record-card";
 import { RecordValueView, type RecordValue } from "./record-value";
-import { ALWAYS_DRAWN_COLUMNS, enumValueOf } from "./record-contract";
+import { enumValueOf } from "./record-contract";
 import { missingTileFacets, useTileFacets } from "./tile-facets";
-import { FLUID_COLUMN_MIN, keepColumnsDrawn, ladderColumns } from "./column-priority";
+import { FLUID_COLUMN_MIN, tableColumnsOf } from "./column-priority";
 import { useRememberedView } from "./list-view-memory";
 
 /** One column of a {@link RecordList}. */
@@ -688,9 +688,10 @@ export function RecordList<Row>({
   const actionCell = rowActions.length === 0 ? 0 : labelled ? labelledActionWidth(widestLabels) : rowActions.length * ACTION_WIDTH + ACTION_CELL_INSET;
 
   // The table's columns: the leading one and the one the rows are sorted by never drop for want of
-  // width, the rest drop from the end. The card keeps the declared columns, which it places by shape.
+  // width, the rest drop from the end, the contract's leading block last. The card keeps the declared
+  // columns, which it places by shape.
   const sortedBy = on("sort") ? list.sort.field : null;
-  const tableColumns = useMemo(() => keepColumnsDrawn(ladderColumns(columns, ALWAYS_DRAWN_COLUMNS), sortedBy), [columns, sortedBy]);
+  const tableColumns = useMemo(() => tableColumnsOf(columns, sortedBy), [columns, sortedBy]);
   const { title: titleColumn, lines: lineColumns } = splitCardColumns(columns, cardTitle);
   // A list drawn as cards always offers the switch to the table; the choice is kept under the key the
   // screen names, else under one derived from the columns.

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { ALWAYS_DRAWN_COLUMNS } from "./record-contract";
-import { keepColumnsDrawn, ladderColumns, type PrioritisedColumn } from "./column-priority";
+import { keepColumnsDrawn, ladderColumns, tableColumnsOf, type PrioritisedColumn } from "./column-priority";
 
 /** Eight columns the way the generator tiers them: the first four always draw, the rest by running width. */
 function generated(widths: readonly number[], names: readonly string[]): PrioritisedColumn[] {
@@ -128,5 +128,50 @@ describe("ladderColumns", () => {
     const shown = drawn(keepColumnsDrawn(ladderColumns(consent, ALWAYS_DRAWN_COLUMNS), "recordedAt"), 650);
     expect(shown).toContain("withdrawnAt");
     expect(drawn(keepColumnsDrawn(consent.map(({ keep: _keep, ...column }) => column), "recordedAt"), 650)).not.toContain("withdrawnAt");
+  });
+});
+
+describe("tableColumnsOf over the leading block", () => {
+  // A release list: four leading columns as the contract tiers them, a size column, the sorted
+  // publication time and an offered marker. Its row actions take 168 px.
+  const release: PrioritisedColumn[] = [
+    { key: "name", field: "artifactName", minWidth: 140 },
+    { key: "version", field: "releaseVersion", width: 104 },
+    { key: "kind", field: "kind", width: 144 },
+    { key: "platform", field: "platform", width: 154 },
+    { key: "size", field: "sizeBytes", width: 136, minTableWidth: 678 },
+    { key: "published", field: "publishedAt", width: 176, minTableWidth: 854 },
+    { key: "active", field: "active", width: 96, minTableWidth: 950 },
+  ];
+  const actions = 168;
+  const widthOf = (keys: readonly string[]) => keys.reduce((sum, key) => sum + (release.find((column) => column.key === key)!.width ?? release.find((column) => column.key === key)!.minWidth ?? 0), 0);
+  /** What a pane draws as a table, or `null` where the untiered set and the actions do not fit and the list is cards. */
+  const table = (columns: readonly PrioritisedColumn[], pane: number) => {
+    const untiered = columns.filter((column) => column.minTableWidth === undefined).map((column) => column.key);
+    return widthOf(untiered) + actions > pane ? null : drawn(columns, pane - actions);
+  };
+
+  it("falls to cards a pane a classic scrollbar narrows, while the leading block never drops", () => {
+    const fixed = keepColumnsDrawn(release, "publishedAt");
+    expect(table(fixed, 887)).toEqual(["name", "version", "kind", "platform", "published"]);
+    expect(table(fixed, 872)).toBeNull();
+  });
+
+  it("drops the leading block's last column instead, and stays a table", () => {
+    const laddered = tableColumnsOf(release, "publishedAt");
+    expect(table(laddered, 887)).toEqual(["name", "version", "kind", "platform", "published"]);
+    expect(table(laddered, 872)).toEqual(["name", "version", "kind", "published"]);
+    // Later columns still drop first: the size returns before the platform is ever given up.
+    expect(table(laddered, 1200)).toEqual(["name", "version", "kind", "platform", "size", "published", "active"]);
+  });
+
+  it("leaves cards to a pane that cannot hold the name, the sorted column and the actions", () => {
+    const laddered = tableColumnsOf(release, "publishedAt");
+    expect(table(laddered, 500)).toEqual(["name", "published"]);
+    expect(table(laddered, 483)).toBeNull();
+    for (const pane of [490, 560, 640, 720, 800, 872, 887, 960, 1100]) {
+      const shown = table(laddered, pane);
+      expect(shown === null || widthOf(shown) + actions <= pane).toBe(true);
+    }
   });
 });
