@@ -141,11 +141,14 @@ export function RecordValueView({ value }: { readonly value: RecordValue }): Rea
     const { name, reason, badge, title, avatar, sub } = value.gone;
     const lines = (
       <Flex direction="column" gap="none" minSize>
-        <Flex align="center" gap="xs">
-          <Text as="span" tone="muted" className="cursor-default">
+        {/* The name ellipsizes in a narrow column; the badge saying why is drawn whole. */}
+        <Flex align="center" gap="xs" minSize>
+          <Text as="span" tone="muted" className="min-w-0 cursor-default truncate">
             {name}
           </Text>
-          <StatusBadge tone="neutral" label={badge} />
+          <span className="shrink-0">
+            <StatusBadge tone="neutral" label={badge} />
+          </span>
         </Flex>
         {sub ? (
           <Text size="caption" tone="muted">
@@ -188,9 +191,11 @@ export function RecordValueView({ value }: { readonly value: RecordValue }): Rea
     if (value.badge) {
       const { badge, ...name } = value;
       return (
-        <Flex align="center" gap="xs">
+        <Flex align="center" gap="xs" minSize>
           <RecordValueView value={name} />
-          <StatusBadge tone={badge.tone ?? "neutral"} label={badge.label} />
+          <span className="shrink-0">
+            <StatusBadge tone={badge.tone ?? "neutral"} label={badge.label} />
+          </span>
         </Flex>
       );
     }
