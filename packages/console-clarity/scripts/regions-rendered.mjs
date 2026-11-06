@@ -11,7 +11,19 @@ const here = dirname(dirname(fileURLToPath(import.meta.url)));
 export const contract = JSON.parse(readFileSync(resolve(here, "regions.json"), "utf8"));
 
 /**
- * Runs in the page. `regions` is contract.regions; returns { region: { kinds: string[], perCard: number } }.
+ * The regions a page type draws, as the subset of contract.regions `probe` takes. A page is probed with
+ * its own type's regions only: a mark another type owns (the record's notice banner, its view switch)
+ * would otherwise claim a control of this page for a region this page does not have.
+ */
+export function regionsOf(type, c = contract) {
+  const t = c.types[type];
+  if (!t) throw new Error(`unknown page type ${type}`);
+  return Object.fromEntries(t.regions.map((key) => [key, c.regions[key]]));
+}
+
+/**
+ * Runs in the page. `regions` is `regionsOf(type)`; returns { region: { kinds: string[], perCard: number } }.
+ * `root` is a selector: `main` for a page, the type's own root for a surface such as the opened record.
  * Self-contained so a driver can serialise it.
  */
 export function probe(regions, root = "main") {
@@ -268,6 +280,18 @@ if (process.argv.includes("--selftest")) {
   const gridAbsent = compareCardGrid(undefined);
   const gridInCompare = compare({ ...cards, rows: 4, cardGrid: gridOf({ tracks: 2 }) }, "list-detail");
   const says = (found, pattern) => found.some((problem) => pattern.test(problem));
+  // The opened record is its own type: its head, view switch, body, audit strip and footer hold; a list's
+  // toolbar, a chip in the footer or a control no region claims inside the drawer do not.
+  const record = { recordHead: { kinds: ["button"], perCard: 0 }, recordView: { kinds: ["button"], perCard: 0 }, recordFigures: { kinds: [], perCard: 0 }, recordBody: { kinds: ["button", "link"], perCard: 3 }, recordAudit: { kinds: ["crud-detail-audit-id"], perCard: 1 }, recordFooter: { kinds: ["button"], perCard: 2 }, tabs: { kinds: ["tabs-trigger"], perCard: 4 }, rows: 2 };
+  const recordGood = compare(record, "record-detail");
+  const recordToolbar = compare({ ...record, toolbar: { kinds: ["crud-filter-bar-trigger"], perCard: 1 } }, "record-detail");
+  const recordFooterChip = compare({ ...record, recordFooter: { kinds: ["button", "crud-chip"], perCard: 2 } }, "record-detail");
+  const recordLoose = compare({ ...record, unassigned: { kinds: ["button"], perCard: 0 } }, "record-detail");
+  const recordRoot = regionsOf("record-detail");
+  const listRoot = regionsOf("list-detail");
+  const recordOk =
+    recordGood.length === 0 && says(recordToolbar, /toolbar: not a region of record-detail/) && says(recordFooterChip, /recordFooter: crud-chip not allowed/) && says(recordLoose, /unassigned: button/) &&
+    Object.keys(recordRoot).join() === contract.types["record-detail"].regions.join() && !("recordNotices" in listRoot) && !("recordView" in listRoot) && "toolbar" in listRoot;
   const gridOk =
     gridGood.length === 0 && gridFewCards.length === 0 && gridOneColumn.length === 0 && gridAbsent.length === 0 &&
     says(gridWide, /1 of 4 cards are not the column width/) && says(gridWide, /differ in width from the first card/) &&
@@ -298,7 +322,7 @@ if (process.argv.includes("--selftest")) {
     says(dashWide, /card 1 \(span 2\) is 600px wide, 556px at 4 columns/) && says(dashWide, /card 2 \(span 2\) is 512px wide/) &&
     says(dashThree, /card 1 has span 3, not 1, 2 or 4/) &&
     dashInCompare.length === 1;
-  const ok = dashOk && gridOk && unboxed.length === 1 && boxed.length === 0 && cardList.length === 0 && cardsNoStrip.length === 1 && switchInCell.length === 1 && linkTile.length === 0 && buttonTile.length === 1 && rampHit.length === 1 && rampMiss.length === 0 && vacuous.length === 1 && tokHit.length === 1 && tokMiss.length === 0 && miss.length === 0 && noStrip.length === 1 && empty.length === 0 && hit.length === 4 && compare(good, "system").length === 4;
-  console.log(ok ? "regions-rendered selftest: 13 region cases, 11 card grid cases and 7 dashboard grid cases hold" : `regions-rendered selftest FAILED\nhit: ${hit.join("\n")}\nmiss: ${miss.join("\n")}\ngrid: ${[gridGood, gridFewCards, gridOneColumn, gridWide, gridColumns, gridStart, gridGap, gridRows, gridInCompare].map((one) => one.join(" | ")).join("\n      ")}\ndashboard: ${[dashGood, dashTwo, dashOne, dashGap, dashWide, dashThree, dashInCompare].map((one) => one.join(" | ")).join("\n      ")}`);
+  const ok = recordOk && dashOk && gridOk && unboxed.length === 1 && boxed.length === 0 && cardList.length === 0 && cardsNoStrip.length === 1 && switchInCell.length === 1 && linkTile.length === 0 && buttonTile.length === 1 && rampHit.length === 1 && rampMiss.length === 0 && vacuous.length === 1 && tokHit.length === 1 && tokMiss.length === 0 && miss.length === 0 && noStrip.length === 1 && empty.length === 0 && hit.length === 4 && compare(good, "system").length === 4;
+  console.log(ok ? "regions-rendered selftest: 13 region cases, 7 record cases, 11 card grid cases and 7 dashboard grid cases hold" : `regions-rendered selftest FAILED\nrecord: ${[recordGood, recordToolbar, recordFooterChip, recordLoose].map((one) => one.join(" | ")).join("\n      ")}\nhit: ${hit.join("\n")}\nmiss: ${miss.join("\n")}\ngrid: ${[gridGood, gridFewCards, gridOneColumn, gridWide, gridColumns, gridStart, gridGap, gridRows, gridInCompare].map((one) => one.join(" | ")).join("\n      ")}\ndashboard: ${[dashGood, dashTwo, dashOne, dashGap, dashWide, dashThree, dashInCompare].map((one) => one.join(" | ")).join("\n      ")}`);
   process.exit(ok ? 0 : 1);
 }

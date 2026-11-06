@@ -136,7 +136,9 @@
       "controls": [
         "crud-list-page-button",
         "select-trigger"
-      ]
+      ],
+      "countFollowsData": true,
+      "$comment": "countFollowsData: one page button per page the rows fill, so a rendered comparison with a frame compares the kinds drawn here and not their count."
     },
     "body": {
       "part": "the type's content area",
@@ -195,6 +197,81 @@
         "button"
       ],
       "$comment": "Language and theme, drawn by the layout on every page before a session; no screen fills it."
+    },
+    "recordHead": {
+      "part": "The opened record's head (title, status, close)",
+      "slot": null,
+      "marks": [
+        "crud-list-detail-drawer-body"
+      ],
+      "controls": [
+        "button"
+      ],
+      "$comment": "The drawer's body holds the head, the record and its footer; a control that no nearer region claims (the record's close) is the head's."
+    },
+    "recordView": {
+      "part": "DetailPresentationSwitch",
+      "slot": null,
+      "marks": [
+        "presentation-group"
+      ],
+      "controls": [
+        "button"
+      ],
+      "$comment": "Panel, drawer, dialog, full page and the view settings, drawn by the record head on every record."
+    },
+    "recordFigures": {
+      "part": "ConsoleRecordHead figures",
+      "slot": "figures",
+      "marks": [
+        "console-record-head-figures"
+      ],
+      "controls": [
+        "link"
+      ]
+    },
+    "recordNotices": {
+      "part": "The record's notices",
+      "slot": "notices",
+      "marks": [
+        "alert-banner",
+        "console-notice-card"
+      ],
+      "controls": [
+        "button"
+      ]
+    },
+    "recordBody": {
+      "part": "CrudDetail body",
+      "slot": "body",
+      "marks": [
+        "crud-detail-body"
+      ],
+      "controls": [
+        "*"
+      ],
+      "$comment": "Free content: sections, fields, tables and the controls their values carry (copy, peek, a tab's own list)."
+    },
+    "recordAudit": {
+      "part": "CrudDetail audit strip",
+      "slot": null,
+      "marks": [
+        "crud-detail-audit"
+      ],
+      "controls": [
+        "crud-detail-audit-id"
+      ]
+    },
+    "recordFooter": {
+      "part": "CrudDetail footer",
+      "slot": "actions",
+      "marks": [
+        "crud-detail-footer"
+      ],
+      "controls": [
+        "button",
+        "link"
+      ]
     },
     "unassigned": {
       "part": null,
@@ -270,6 +347,21 @@
         "authNotices",
         "authBody",
         "authFoot"
+      ]
+    },
+    "record-detail": {
+      "template": "detail.hbs",
+      "$comment": "The record a list row opens, read on the surface it stands on: the drawer (the sheet's part), the panel beside the list or the dialog. A list-detail page is read twice, the list under `main` and the opened record under this root, so the record's signature is never the list's.",
+      "root": "[data-part=crud-list-detail-drawer], [data-slot=crud-list-detail-detail], [data-slot=dialog-content]",
+      "regions": [
+        "recordHead",
+        "recordView",
+        "recordFigures",
+        "recordNotices",
+        "tabs",
+        "recordBody",
+        "recordAudit",
+        "recordFooter"
       ]
     }
   },
