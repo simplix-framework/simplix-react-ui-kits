@@ -64,15 +64,29 @@ describe("the catalogs", () => {
 });
 
 describe("the gone reference drawing", () => {
-  it("is plain muted text with a neutral badge, no button, link or focus stop", () => {
-    const html = renderToStaticMarkup(
+  const draw = (reason: "deleted" | "unavailable", badge: string) =>
+    renderToStaticMarkup(
       createElement(UIProvider, {
-        children: createElement(RecordValueView, { value: { gone: { name: "Mira Han", reason: "deleted", badge: "Deleted", title: "gone" } } }),
+        children: createElement(RecordValueView, { value: { gone: { name: "Mira Han", reason, badge, title: "gone" } } }),
       }),
     );
+
+  it("is plain muted text with no button, link or focus stop, and no badge", () => {
+    const html = draw("deleted", "Deleted");
     expect(html).toContain("Mira Han");
-    expect(html).toContain("Deleted");
     expect(html).toContain('title="gone"');
     expect(html).not.toMatch(/<(a|button)\b|tabindex/i);
+    expect(html).not.toContain("data-slot=\"status-badge\"");
+    expect(html).not.toMatch(/>Deleted</);
+  });
+
+  it("follows the name with an icon of its own shape per reason, named for assistive technology", () => {
+    const deleted = draw("deleted", "Deleted");
+    const hidden = draw("unavailable", "Not available");
+    expect(deleted).toMatch(/<svg[^>]*role="img"[^>]*aria-label="Deleted"|<svg[^>]*aria-label="Deleted"[^>]*role="img"/);
+    expect(hidden).toMatch(/<svg[^>]*role="img"[^>]*aria-label="Not available"|<svg[^>]*aria-label="Not available"[^>]*role="img"/);
+    expect(deleted).toContain("lucide-trash-2");
+    expect(hidden).toContain("lucide-eye-off");
+    expect(deleted.indexOf("Mira Han")).toBeLessThan(deleted.indexOf("<svg"));
   });
 });

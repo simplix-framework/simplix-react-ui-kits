@@ -1,5 +1,6 @@
 import type { MouseEvent, ReactNode } from "react";
 import { Button, EmptyValue, Flex, StatusBadge, Text, type StatusTone } from "@simplix-react/ui";
+import { EyeOffIcon, Trash2Icon } from "lucide-react";
 
 import { slotAttributes } from "@simplix-react/ui/design";
 
@@ -84,11 +85,15 @@ export type RecordValue =
   /**
    * The name of another record that can no longer be opened: it was deleted, or the reader may not
    * see it. The name stays as plain text in the muted ink (never a link: no pointer, no hover, no
-   * focus stop) with a neutral badge saying why, and `title` explains it on hover.
+   * focus stop) followed by a small muted icon saying why (a bin for deleted, a closed eye for
+   * unavailable), and `title` explains it on hover.
    */
   | { readonly gone: RecordGone };
 
-/** A reference whose record cannot be opened; `badge` and `title` are written by the caller in the reader's language. */
+/**
+ * A reference whose record cannot be opened; `badge` and `title` are written by the caller in the
+ * reader's language. `badge` is the accessible name of the icon drawn after the name (no badge is drawn).
+ */
 export interface RecordGone {
   /** The name the record had, kept as it was recorded. */
   readonly name: string;
@@ -139,16 +144,17 @@ export function RecordValueView({ value }: { readonly value: RecordValue }): Rea
   }
   if ("gone" in value) {
     const { name, reason, badge, title, avatar, sub } = value.gone;
+    const GoneIcon = reason === "deleted" ? Trash2Icon : EyeOffIcon;
     const lines = (
       <Flex direction="column" gap="none" minSize>
-        {/* The name ellipsizes in a narrow column; the badge saying why is drawn whole. */}
+        {/* The name ellipsizes in a narrow column; the icon saying why keeps its width and is no focus stop. */}
         <Flex align="center" gap="xs" minSize>
           <Text as="span" tone="muted" className="min-w-0 cursor-default truncate">
             {name}
           </Text>
-          <span className="shrink-0">
-            <StatusBadge tone="neutral" label={badge} />
-          </span>
+          <Text as="span" tone="muted" className="inline-flex shrink-0 cursor-default">
+            <GoneIcon className="size-3.5" role="img" aria-label={badge} data-record-gone-icon={reason} />
+          </Text>
         </Flex>
         {sub ? (
           <Text size="caption" tone="muted">
