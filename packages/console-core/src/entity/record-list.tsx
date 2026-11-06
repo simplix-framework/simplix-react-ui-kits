@@ -692,6 +692,12 @@ export function RecordList<Row>({
   // columns, which it places by shape.
   const sortedBy = on("sort") ? list.sort.field : null;
   const tableColumns = useMemo(() => tableColumnsOf(columns, sortedBy), [columns, sortedBy]);
+  // A fixed column whose rows draw badges draws them whole: the width is a floor a longer label
+  // widens, never a box that cuts the badge (the table then drops a tier or scrolls sideways).
+  const wholeColumns = useMemo(
+    () => new Set(columns.filter((column) => column.width !== undefined && list.data.some((row) => isBadge(valueOf(column, row)))).map((column) => column.key)),
+    [columns, list.data],
+  );
   const { title: titleColumn, lines: lineColumns } = splitCardColumns(columns, cardTitle);
   // A list drawn as cards always offers the switch to the table; the choice is kept under the key the
   // screen names, else under one derived from the columns.
@@ -939,6 +945,7 @@ export function RecordList<Row>({
             width={column.width}
             minWidth={column.width === undefined ? column.minWidth : undefined}
             minTableWidth={column.minTableWidth}
+            fitContent={wholeColumns.has(column.key)}
             align={column.align}
             sortable={on("sort") && column.field !== undefined && column.sortable !== false}
           >
