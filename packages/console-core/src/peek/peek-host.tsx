@@ -2,7 +2,7 @@ import { Component, useMemo, useRef, useState } from "react";
 import type { ErrorInfo, ReactNode } from "react";
 
 import { PeekHostContext, type PeekEntry, type PeekHostController } from "./peek-context";
-import { peekRendererFor, registeredPeekKinds } from "./peek-registry";
+import { peekRendererFor, registeredPeekKinds, unregisteredPeekRenderer } from "./peek-registry";
 
 /** One entry on the stack, with the key that keeps React from reusing a sibling's state. */
 interface StackedPeek {
@@ -144,15 +144,17 @@ function TopPeek({ entry, onClose }: { entry: PeekEntry; onClose: () => void }) 
   if (!render) {
     // Saying so rather than opening an empty dialog. A kind that matches nothing is a typo or a
     // registration the app never made, and both look identical to a reader if the host stays
-    // quiet — the control answers, a dialog appears, and it has no content. Naming what IS
-    // registered turns that into something somebody can see.
+    // quiet: the control answers, a dialog appears, and it has no content. Naming what IS
+    // registered turns that into something somebody can see, and the reader is told in the dialog
+    // the entity module registers for it, so the press is never answered with nothing.
     // eslint-disable-next-line no-console
     console.error(
       `[peek] nothing is registered for kind "${entry.kind}". Registered: ` +
         `${registeredPeekKinds().join(", ") || "(none)"}. Register it where the app wires its ` +
         "modules together, since a module cannot import another module's detail component.",
     );
-    return null;
+    const fallback = unregisteredPeekRenderer();
+    return fallback ? <>{fallback(entry.kind, entry.target, props)}</> : null;
   }
   return <>{render(entry.target, props)}</>;
 }

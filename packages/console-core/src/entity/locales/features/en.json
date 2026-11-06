@@ -128,6 +128,7 @@
   },
   "entityPeek": {
     "goToPage": "Go to page",
-    "close": "Close"
+    "close": "Close",
+    "unregistered": "The console has no view for this kind of record, so it cannot be shown here."
   }
 }

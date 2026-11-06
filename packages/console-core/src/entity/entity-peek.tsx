@@ -1,9 +1,9 @@
 import { Suspense, type ComponentType } from "react";
-import { QueryFallback } from "@simplix-react/ui";
+import { QueryFallback, Text } from "@simplix-react/ui";
 import { useTranslation } from "@simplix-react/i18n/react";
 
 import { DetailPeekDialog } from "../layout/detail-peek-dialog";
-import type { PeekRenderProps, PeekRenderer, PeekTarget } from "../peek";
+import { registerUnregisteredPeek, type PeekRenderProps, type PeekRenderer, type PeekTarget } from "../peek";
 
 import { PACKAGE_NAMESPACE } from "./locales";
 
@@ -72,3 +72,19 @@ function EntityPeekDialog({ spec, target, open, onOpenChange }: { readonly spec:
 export function entityPeek(spec: EntityPeekSpec): PeekRenderer {
   return (target, props) => <EntityPeekDialog spec={spec} target={target} open={props.open} onOpenChange={props.onOpenChange} />;
 }
+
+/**
+ * The peek of a reference whose kind the app registered nothing for: the record's name and a sentence
+ * saying the console has no view for it, with 「Close」 alone. The host reports the kind on the
+ * console; this dialog keeps the press from being answered with nothing.
+ */
+export function UnregisteredKindPeek({ target, open, onOpenChange }: { readonly target: PeekTarget } & PeekRenderProps) {
+  const { t } = useTranslation(PACKAGE_NAMESPACE + "/features");
+  return (
+    <DetailPeekDialog open={open} onOpenChange={onOpenChange} title={target.name ?? ""} closeLabel={t("entityPeek.close")}>
+      <Text tone="muted">{t("entityPeek.unregistered")}</Text>
+    </DetailPeekDialog>
+  );
+}
+
+registerUnregisteredPeek((_kind, target, props) => <UnregisteredKindPeek target={target} open={props.open} onOpenChange={props.onOpenChange} />);

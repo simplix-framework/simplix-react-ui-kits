@@ -75,3 +75,30 @@ export function peekRendererFor(kind: string): PeekRenderer | undefined {
 export function registeredPeekKinds(): readonly string[] {
   return [...renderers.keys()].sort();
 }
+
+/** Draws the peek of a kind nothing registered: the kind asked for, and the record it named. */
+export type UnregisteredPeekRenderer = (kind: string, target: PeekTarget, props: PeekRenderProps) => ReactNode;
+
+let unregistered: UnregisteredPeekRenderer | undefined;
+
+/**
+ * Teach the host what to open for a kind nothing registered, so a reference the app forgot to wire
+ * still answers its press with a dialog saying it cannot be shown, rather than with nothing.
+ *
+ * <p>The entity module, which carries the dialog and its words, registers one when it loads; the
+ * host also reports the missing kind on the console.
+ *
+ * @param render draws that dialog
+ */
+export function registerUnregisteredPeek(render: UnregisteredPeekRenderer): void {
+  unregistered = render;
+}
+
+/**
+ * The renderer for a kind nothing registered, or `undefined` where none was given.
+ *
+ * @returns the renderer, or `undefined`
+ */
+export function unregisteredPeekRenderer(): UnregisteredPeekRenderer | undefined {
+  return unregistered;
+}

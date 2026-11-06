@@ -8,8 +8,11 @@ export {
 } from "./peek-context";
 export {
   registerPeek,
+  registerUnregisteredPeek,
   peekRendererFor,
   registeredPeekKinds,
+  unregisteredPeekRenderer,
   type PeekRenderer,
   type PeekTarget,
+  type UnregisteredPeekRenderer,
 } from "./peek-registry";

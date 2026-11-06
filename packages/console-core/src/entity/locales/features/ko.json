@@ -126,6 +126,7 @@
   },
   "entityPeek": {
     "goToPage": "페이지로 이동",
-    "close": "닫기"
+    "close": "닫기",
+    "unregistered": "콘솔에 이 종류의 항목을 보여 줄 화면이 없어 여기에서 열 수 없습니다."
   }
 }
