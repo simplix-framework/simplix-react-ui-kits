@@ -31,17 +31,28 @@ export interface DetailPresentationSwitchProps {
   readonly defaultSettingsOpen?: boolean;
 }
 
-/** Whether the last input was a key press (Tab, arrows), as opposed to a pointer. */
+/**
+ * Whether a key press moves the focus itself (Tab, the arrows, Home, End, a page step). Enter and
+ * Space press the focused control instead: a row opened with Enter opens the record's drawer, which
+ * moves the focus to its first control, and that move is the drawer's, not the reader's.
+ */
+export function keyMovesFocus(key: string): boolean {
+  return key === "Tab" || key.startsWith("Arrow") || key === "Home" || key === "End" || key === "PageUp" || key === "PageDown";
+}
+
+/** Whether the last input was a key press that moves the focus, as opposed to a pointer or another key. */
 let keyboardLast = false;
 if (typeof document !== "undefined") {
-  document.addEventListener("keydown", () => (keyboardLast = true), true);
+  document.addEventListener("keydown", (event) => (keyboardLast = keyMovesFocus(event.key)), true);
   document.addEventListener("pointerdown", () => (keyboardLast = false), true);
 }
 
 /**
- * Keeps a tooltip shut when focus arrives without the keyboard: a drawer or a dialog moves focus
- * to its first control as it opens, and the tooltip would otherwise open each time the record does.
- * Browsers mark that programmatic focus `:focus-visible` too, so the last input decides instead.
+ * Keeps a tooltip shut when focus arrives without the reader moving it: a drawer or a dialog moves
+ * focus to its first control as it opens, whether a pointer or Enter opened it, and the tooltip
+ * would otherwise open each time the record does (placed where the button stood mid-slide, over
+ * the record's close). Browsers mark that programmatic focus `:focus-visible` too, so the last
+ * input decides instead.
  */
 function keyboardFocusOnly(event: FocusEvent<HTMLElement>): void {
   if (!keyboardLast) event.preventDefault();
