@@ -88,7 +88,7 @@ class PeekBoundary extends Component<
     // eslint-disable-next-line no-console
     console.error(
       "[peek] the dialog threw while rendering and was closed rather than taking the screen "
-        + "under it. A detail drawn inside a peek gets the app's contexts and not a page's — a "
+        + "under it. A detail drawn inside a peek gets the app's contexts and not a page's, so a "
         + "router link, a page-header slot or a layout value it expected may be absent here.",
       error,
       info.componentStack,
@@ -125,7 +125,7 @@ function TopPeek({ entry, onClose }: { entry: PeekEntry; onClose: () => void }) 
     console.error(
       `[peek] nothing is registered for kind "${entry.kind}". Registered: ` +
         `${registeredPeekKinds().join(", ") || "(none)"}. Register it where the app wires its ` +
-        "modules together — a module cannot import another module's detail component.",
+        "modules together, since a module cannot import another module's detail component.",
     );
     return null;
   }

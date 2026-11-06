@@ -3,6 +3,7 @@ import { useCan } from "@simplix-react/access/react";
 import { useEntityTranslation, useLocale, useTranslation } from "@simplix-react/i18n/react";
 import {
   CrudList,
+  EMPTY_VALUE_TEXT,
   EmptyState,
   EmptyValue,
   Flex,
@@ -214,8 +215,8 @@ export function useChangeHistory(
   };
 }
 
-/** What a value reads as when the row has none — never blank, so a gap is a gap and not a bug. */
-const NOTHING = "—";
+/** What a value reads as when the row has none: never blank, so a gap is a gap and not a bug. */
+const NOTHING = EMPTY_VALUE_TEXT;
 
 /**
  * The catalogue name of an audited entity.

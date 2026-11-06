@@ -69,15 +69,16 @@
     cursor: pointer;
   }
 
-  /* A table cell with no value shows the same dash as the cell beside it.
+  /* A table cell with no value shows the same placeholder as the cell beside it.
      Said once here rather than by every column that might be missing a value: a column
-     rendering its value straight — a code, an address, a count — draws nothing at all when the
-     row has none, while the neighbour that hand-writes a placeholder draws a dash. A blank cell
-     next to a dashed one reads as a different kind of data rather than as the same absence, and
-     the reader cannot tell "nothing is stored here" from "this failed to draw". The framework
-     leaves the placeholder to whoever is drawing the screen, so it is decided here, once. */
+     rendering its value straight (a code, an address, a count) draws nothing at all when the
+     row has none, while the neighbour drawing `EmptyValue` draws the placeholder. A blank cell
+     next to a marked one reads as a different kind of data rather than as the same absence, and
+     the reader cannot tell "nothing is stored here" from "this failed to draw". CSS cannot read
+     the framework's EMPTY_VALUE_TEXT, so this is the one other place its text is written; write
+     the same hyphen-minus here when it changes. */
   table > tbody > tr > td:empty::after {
-    content: '—';
+    content: '-';
     color: var(--muted-foreground);
   }
 

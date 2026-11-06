@@ -2,6 +2,7 @@ import { type CSSProperties, type DragEvent, type KeyboardEvent, useEffect, useL
 import { useTranslation } from "@simplix-react/i18n/react";
 import {
   cn,
+  EMPTY_VALUE_TEXT,
   Flex,
   Grid,
   MenuLink,
@@ -281,8 +282,8 @@ export interface ComputedSettingsTile extends SettingsTileShape {
   readonly filter?: never;
 }
 
-/** What an absent figure reads as. Centralized so no screen invents its own placeholder. */
-const ABSENT = "—";
+/** What an absent figure reads as: the framework's placeholder, so no screen invents its own. */
+const ABSENT = EMPTY_VALUE_TEXT;
 
 /**
  * A tile's figure with its unit on it, or the placeholder where nobody counted.

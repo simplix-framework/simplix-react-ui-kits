@@ -32,7 +32,7 @@ export interface TilesCollapse {
 
 const MISSING_PROVIDER =
   "No TilesCollapseProvider is mounted. The choice outlives the visit and is written under " +
-  "the app's own preference namespace, so the provider goes at the app root — ConsoleProviders " +
+  "the app's own preference namespace, so the provider goes at the app root: ConsoleProviders " +
   "mounts it from the `namespace` it is given.";
 
 /**
