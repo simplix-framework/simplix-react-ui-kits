@@ -122,5 +122,9 @@
       "TEAM": "チーム"
     },
     "personLine": "ユーザー"
+  },
+  "entityPeek": {
+    "goToPage": "ページへ移動",
+    "close": "閉じる"
   }
 }

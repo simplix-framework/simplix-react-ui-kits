@@ -96,6 +96,11 @@ export interface ContractField {
   /** Whether the server orders a list by it, as SimpliX Meta's searchable metadata states; absent means unstated. */
   readonly sortable?: boolean;
   /**
+   * The field the column sorts by where it is not the field drawn: a reference drawn by its
+   * recorded name sorts by that name (`nameField`), since its id orders nothing a reader can see.
+   */
+  readonly sortField?: string;
+  /**
    * Locale → the field the server orders this one by in that language (SimpliX Meta's
    * `searchable.sortAlias`): a translated name sorts by its per-language sort key, so the visible
    * name column sorts in the reader's language rather than not at all.
@@ -616,7 +621,7 @@ export function useRecordContract(entity: string, overrides: ContractOverrides =
     <R,>(field: ContractField) => ({
       key: field.name,
       header: fieldLabel(field.name),
-      field: (sortFieldOf(field, locale) ?? field.name) as keyof R & string,
+      field: (sortFieldOf(field, locale) ?? field.sortField ?? field.name) as keyof R & string,
       ...CONTRACT_COLUMN_SIZE[field.kind],
       ...(sortFieldOf(field, locale) !== undefined ? { sortable: true } : field.sortable === undefined ? {} : { sortable: field.sortable }),
       // A mark drawn only on the rows it is true of leaves no empty cell on the cards that lack it.

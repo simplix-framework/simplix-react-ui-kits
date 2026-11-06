@@ -124,5 +124,9 @@
       "TEAM": "team"
     },
     "personLine": "User"
+  },
+  "entityPeek": {
+    "goToPage": "Go to page",
+    "close": "Close"
   }
 }

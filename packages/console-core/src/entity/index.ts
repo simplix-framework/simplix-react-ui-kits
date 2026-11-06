@@ -48,6 +48,8 @@ export type { RecordBadge, RecordGone, RecordReferenceCheck, RecordValue } from 
 export { REFERENCE_BATCH_SIZE, createReferenceStateLoader, lookupFromList, referenceLookupFor, referenceStateKey, registerReferenceLookup, useReferenceState } from "./reference-state";
 export type { ReferenceLookup, ReferenceState, ReferenceStateLoader } from "./reference-state";
 export { PERSON_KIND, useReferenceValue } from "./reference-value";
+export { entityPageHref, entityPeek } from "./entity-peek";
+export type { EntityPeekSpec } from "./entity-peek";
 export type { ReferenceTarget } from "./reference-value";
 export { RecordDetail, RecordTabBody } from "./record-detail";
 export type { RecordDetailProps, RecordField, RecordHeadFigure, RecordSection, RecordTab, RecordTabContent, RecordTabToggle } from "./record-detail";

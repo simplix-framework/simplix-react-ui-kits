@@ -122,5 +122,9 @@
       "TEAM": "팀"
     },
     "personLine": "사용자"
+  },
+  "entityPeek": {
+    "goToPage": "페이지로 이동",
+    "close": "닫기"
   }
 }

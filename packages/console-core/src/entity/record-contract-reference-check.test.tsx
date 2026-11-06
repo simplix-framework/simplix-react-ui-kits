@@ -90,3 +90,17 @@ describe("a checked reference while its answer is on its way", () => {
     expect(html).not.toContain("data-record-gone");
   });
 });
+
+function ColumnProbe(props: { field: ContractField }) {
+  const contract = useRecordContract("credit-ledger-entry");
+  const column = contract.column(props.field);
+  return createElement("pre", null, JSON.stringify({ key: column.key, field: column.field }));
+}
+
+describe("a reference column drawn by its recorded name", () => {
+  it("sorts by the field it names and keeps its own key", () => {
+    const field: ContractField = { name: "creditAccountId", kind: "reference", peekKind: "creditAccount", nameField: "ownerName", sortField: "ownerName", sortable: true };
+    const html = renderToStaticMarkup(createElement(UIProvider, { children: createElement(ColumnProbe, { field }) }));
+    expect(html.replace(/&quot;/g, '"')).toContain('{"key":"creditAccountId","field":"ownerName"}');
+  });
+});
