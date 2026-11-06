@@ -103,5 +103,23 @@
   },
   "recordValue": {
     "credits_other": "{{value}}크레딧"
+  },
+  "recordGone": {
+    "reasons": {
+      "deleted": {
+        "badge": "삭제됨",
+        "title": "삭제된 {{kind}}입니다. 이 기록은 당시 이름을 그대로 보관합니다."
+      },
+      "unavailable": {
+        "badge": "볼 수 없음",
+        "title": "이 기록을 볼 권한이 없습니다."
+      }
+    },
+    "kinds": {
+      "record": "기록",
+      "userAccount": "계정",
+      "USER": "계정",
+      "TEAM": "팀"
+    }
   }
 }

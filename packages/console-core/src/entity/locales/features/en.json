@@ -105,5 +105,23 @@
   "recordValue": {
     "credits_one": "{{value}} credit",
     "credits_other": "{{value}} credits"
+  },
+  "recordGone": {
+    "reasons": {
+      "deleted": {
+        "badge": "Deleted",
+        "title": "This {{kind}} was deleted. The record keeps the name it had."
+      },
+      "unavailable": {
+        "badge": "Not available",
+        "title": "You do not have access to this record."
+      }
+    },
+    "kinds": {
+      "record": "record",
+      "userAccount": "account",
+      "USER": "account",
+      "TEAM": "team"
+    }
   }
 }

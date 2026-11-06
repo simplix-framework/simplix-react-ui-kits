@@ -32,6 +32,7 @@ export const textOf = (value: RecordValue): string => {
   if (typeof value === "string" || typeof value === "number") return String(value);
   if (!value || typeof value !== "object") return "";
   if ("link" in value) return value.link;
+  if ("gone" in value) return value.gone.name;
   if ("text" in value) return value.text;
   if ("figure" in value) return value.figure;
   if ("excerpt" in value) return value.excerpt;

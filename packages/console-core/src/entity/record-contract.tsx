@@ -77,6 +77,11 @@ export interface ContractField {
    * (SimpliX Meta's `reference.idField`), that field: the peek looks the record up by it.
    */
   readonly peekBy?: string;
+  /**
+   * The field beside a `reference` that says why its record cannot be opened: `DELETED` or
+   * `UNAVAILABLE` (no access). Absent or any other value means the record opens as usual.
+   */
+  readonly stateField?: string;
   /** The field beside a `reference` that carries the referenced record's name, or a dotted path into the nested record. */
   readonly nameField?: string;
   /** The server owns it: drawn in a detail, never edited in a form. */
@@ -506,6 +511,15 @@ export function useRecordContract(entity: string, overrides: ContractOverrides =
           const name = field.nameField ? valueAtPath(row, field.nameField) : undefined;
           const text = typeof name === "string" && name !== "" ? name : String(raw);
           const kind = peekKindOf(field, row);
+          const state = field.stateField ? enumValueOf(row?.[field.stateField]) : undefined;
+          if (state === "DELETED" || state === "UNAVAILABLE") {
+            const reason = state === "DELETED" ? "deleted" : "unavailable";
+            const noun = field.peekKinds ? enumValueOf(row?.[field.peekKinds.field]) : "";
+            const kindName = t(`recordGone.kinds.${kind || noun || "record"}`, { defaultValue: t("recordGone.kinds.record") });
+            return {
+              gone: { name: text, reason, badge: t(`recordGone.reasons.${reason}.badge`), title: t(`recordGone.reasons.${reason}.title`, { kind: kindName }) },
+            };
+          }
           if (!kind) return { link: text };
           return { link: text, onClick: () => peek.open({ kind, target: peekTargetOf(field, String(raw), text) }) };
         }
@@ -681,6 +695,7 @@ export function recordValueText(value: RecordValue): string {
   if (typeof value === "string" || typeof value === "number") return String(value);
   if ("text" in value) return value.text;
   if ("link" in value) return value.link;
+  if ("gone" in value) return value.gone.name;
   if ("figure" in value) return value.figure;
   if ("excerpt" in value) return value.excerpt;
   if ("meter" in value) return value.meter.text ?? `${value.meter.value} / ${value.meter.total}`;

@@ -103,5 +103,23 @@
   },
   "recordValue": {
     "credits_other": "{{value}}クレジット"
+  },
+  "recordGone": {
+    "reasons": {
+      "deleted": {
+        "badge": "削除済み",
+        "title": "削除された{{kind}}です。この記録は当時の名前をそのまま保管します。"
+      },
+      "unavailable": {
+        "badge": "表示不可",
+        "title": "この記録を表示する権限がありません。"
+      }
+    },
+    "kinds": {
+      "record": "記録",
+      "userAccount": "アカウント",
+      "USER": "アカウント",
+      "TEAM": "チーム"
+    }
   }
 }

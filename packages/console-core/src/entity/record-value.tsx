@@ -65,7 +65,23 @@ export type RecordValue =
    * With `onClick` or `href` it is drawn as a link that opens that record; the press does not reach
    * the row beneath it.
    */
-  | { readonly link: string; readonly onClick?: () => void; readonly href?: string; readonly badge?: RecordBadge };
+  | { readonly link: string; readonly onClick?: () => void; readonly href?: string; readonly badge?: RecordBadge }
+  /**
+   * The name of another record that can no longer be opened: it was deleted, or the reader may not
+   * see it. The name stays as plain text in the muted ink (never a link: no pointer, no hover, no
+   * focus stop) with a neutral badge saying why, and `title` explains it on hover.
+   */
+  | { readonly gone: RecordGone };
+
+/** A reference whose record cannot be opened; `badge` and `title` are written by the caller in the reader's language. */
+export interface RecordGone {
+  /** The name the record had, kept as it was recorded. */
+  readonly name: string;
+  /** Why it cannot be opened: the record no longer exists, or the reader has no access to it. */
+  readonly reason: "deleted" | "unavailable";
+  readonly badge: string;
+  readonly title: string;
+}
 
 /** Draws a {@link RecordValue}. */
 export function RecordValueView({ value }: { readonly value: RecordValue }): ReactNode {
@@ -83,6 +99,17 @@ export function RecordValueView({ value }: { readonly value: RecordValue }): Rea
         {value.badges.map((badge) => (
           <StatusBadge key={badge.label} tone={badge.tone ?? "neutral"} label={badge.label} />
         ))}
+      </Flex>
+    );
+  }
+  if ("gone" in value) {
+    const { name, reason, badge, title } = value.gone;
+    return (
+      <Flex align="center" gap="xs" title={title} data-record-gone={reason}>
+        <Text as="span" tone="muted" className="cursor-default">
+          {name}
+        </Text>
+        <StatusBadge tone="neutral" label={badge} />
       </Flex>
     );
   }
