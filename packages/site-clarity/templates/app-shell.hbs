@@ -8,7 +8,16 @@
  * `useShellParts` below, and are customised here. A page whose route does not exist yet is listed
  * without an address and is drawn as plain text, so no link leads nowhere. The strings come from the
  * `{{namespace}}` catalog (English and Korean in the same change): `shell.title`, `shell.documentTitle` (the tab's title: the page's heading, then the product), `shell.home`,
- * `shell.navLabel`, `shell.menu`, `shell.legal`, `shell.owner` and the label of each link.
+ * `shell.navLabel`, `shell.menu`, `shell.legal`, `shell.owner` and the label of each link, and the
+ * error dialog's `errors.titles.<kind>`, `errors.unavailable`, `errors.fallback`, `errors.close` and
+ * `errors.closeAll` (with `count`).
+ *
+ * <p>While the server refuses the signed-in identity's own read for a reason `refusalPages` names, that
+ * page is drawn in place of the whole site, read from the boot access extension's refusal store.
+ *
+ * <p>The framework's failures and toasts are drawn once, by the site: the error dialog over the window
+ * and the sign-in ground alike, the toasts inside the window. A product that also mounts the console's
+ * provider stack switches the console's own surfaces off (`drawErrors={false}`, `drawToasts={false}`).
  *
  * <p>The colour scheme is the reader's choice, kept by `useSiteScheme`: the system's until the reader
  * picks light or dark in a theme control the parts hand to the footer. The page's head runs the kit's
@@ -16,9 +25,11 @@
  */
 import { Outlet, useRouter, useRouterState } from "@tanstack/react-router";
 import type { MouseEvent, ReactNode } from "react";
+import { useSelfAccessRefusal } from "@simplix-react-ext/simplix-boot-access";
 import { useTranslation } from "@simplix-react/i18n/react";
+import { SiteErrors, SiteToasts, type SiteErrorsCopy } from "@simplix-react-ui-kits/site-clarity/form";
 import type { SiteLinkProps } from "@simplix-react-ui-kits/site-clarity/link";
-import { SiteBar, SiteFooter, SiteWindow, useSiteScheme, type SiteBarAccount, type SiteBarAction, type SiteBarLink, type SiteFooterLink } from "@simplix-react-ui-kits/site-clarity/shell";
+import { refusalPageFor, SiteBar, SiteFooter, SiteWindow, useSiteScheme, type SiteBarAccount, type SiteBarAction, type SiteBarLink, type SiteFooterLink, type SiteRefusalPages } from "@simplix-react-ui-kits/site-clarity/shell";
 
 export interface ShellParts {
   /** The product's mark at the bar's start, inside the link home. */
@@ -39,6 +50,11 @@ export interface ShellParts {
   readonly isOutsideTheShell: (route: string) => boolean;
   /** Providers the routed page needs inside the window. */
   readonly wrap: (page: ReactNode) => ReactNode;
+  /**
+   * The page drawn in place of the whole site while the server refuses the signed-in identity's own
+   * read, keyed by the error code its envelope carries. A refusal with no entry leaves the site as it is.
+   */
+  readonly refusalPages?: SiteRefusalPages;
 }
 
 /** The shell's parts for the route on screen, which the bar reads to mark where the reader stands. */
@@ -51,6 +67,27 @@ export function useShellParts(route: string): ShellParts {
     isOutsideTheShell: () => false,
     wrap: (page) => page,
   };
+}
+
+/** The framework's error store (`dispatchError`), drawn once by the site in the words of the `{{namespace}}` catalog. */
+function ShellErrors() {
+  const { t } = useTranslation("{{namespace}}");
+  const copy: SiteErrorsCopy = {
+    titles: {
+      validation: t("errors.titles.validation"),
+      auth: t("errors.titles.auth"),
+      client: t("errors.titles.client"),
+      server: t("errors.titles.server"),
+      network: t("errors.titles.network"),
+      unknown: t("errors.titles.unknown"),
+      gateway: t("errors.titles.gateway"),
+    },
+    unavailable: t("errors.unavailable"),
+    fallback: t("errors.fallback"),
+    close: t("errors.close"),
+    closeAll: (count) => t("errors.closeAll", { count }),
+  };
+  return <SiteErrors copy={copy} />;
 }
 
 /** A press that opens the link in place: the main button with no key that asks for a new tab or window. */
@@ -86,8 +123,25 @@ export function RootLayout() {
   // until the next one loads.
   const route = useRouterState({ select: (s) => s.matches[s.matches.length - 1]?.pathname ?? s.location.pathname });
   const parts = useShellParts(route);
-  if (parts.isOutsideTheShell(route)) return <Outlet />;
+  // A refusal of the signed-in identity's own read replaces the whole site: every read behind it is
+  // refused the same way.
+  const Refused = refusalPageFor(parts.refusalPages, useSelfAccessRefusal());
+  if (Refused)
+    return (
+      <>
+        <Refused />
+        <ShellErrors />
+      </>
+    );
+  if (parts.isOutsideTheShell(route))
+    return (
+      <>
+        <Outlet />
+        <ShellErrors />
+      </>
+    );
   return (
+    <>
     <SiteWindow
       page={route}
       linkComponent={RouterLink}
@@ -107,6 +161,10 @@ export function RootLayout() {
       footer={<SiteFooter owner={t("shell.owner")} links={parts.legal} linksLabel={t("shell.legal")} language={parts.language} theme={parts.theme} />}
     >
       {parts.wrap(<Outlet />)}
+      {/* The framework's toast store (`addToast`), drawn once by the site. */}
+      <SiteToasts />
     </SiteWindow>
+    <ShellErrors />
+    </>
   );
 }

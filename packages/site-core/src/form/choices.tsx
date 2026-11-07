@@ -37,13 +37,21 @@ export interface SiteCheckboxProps {
    */
   readonly required?: boolean;
   readonly badge?: ReactNode;
+  /**
+   * What a plain form posts for the box while it is checked, as a native checkbox would
+   * (`rememberMe=on`): a page posted without script reads it, and an unchecked box posts nothing.
+   */
+  readonly field?: { readonly name: string; readonly value: string };
 }
 
 /**
  * A box that is checked, unchecked or mixed, with its words beside it. The box is the framework's
  * checkbox (its keyboard and state), drawn in the site design.
  */
-export function SiteCheckbox({ checked, onCheckedChange, label, name, disabled = false, describedBy, required = false, badge }: SiteCheckboxProps) {
+export function SiteCheckbox({ checked, onCheckedChange, label, name, disabled = false, describedBy, required = false, badge, field }: SiteCheckboxProps) {
+  // The framework box is a button, which a form does not post; the field travels in a hidden input
+  // for exactly as long as the box is checked.
+  const posted = field && checked === true ? <input type="hidden" name={field.name} value={field.value} /> : null;
   const box = (
     <Checkbox
       {...partAttributes(siteCheckboxStyle, {})}
@@ -56,10 +64,19 @@ export function SiteCheckbox({ checked, onCheckedChange, label, name, disabled =
       aria-describedby={describedBy}
     />
   );
-  if (label === undefined) return box;
+  if (label === undefined)
+    return posted ? (
+      <>
+        {box}
+        {posted}
+      </>
+    ) : (
+      box
+    );
   return (
     <label {...slotAttributes(siteCheckStyle, {})}>
       {box}
+      {posted}
       <span {...slotAttributes(siteCheckLabelStyle, {})}>
         {badge !== undefined ? (
           <em {...slotAttributes(siteCheckBadgeStyle, {})} aria-hidden="true">

@@ -35,6 +35,19 @@ describe("the generated site shell", () => {
     expect(source).not.toMatch(/DarkModeToggle|useTheme\(|useSystemScheme/);
   });
 
+  it("draws the framework's failures once over every ground (a refusal page, the sign-in ground, the window), in catalog words, and its toasts inside the window", () => {
+    expect(source).toContain("<SiteErrors copy={copy} />");
+    expect((source.match(/<ShellErrors \/>/g) ?? []).length).toBe(3);
+    expect(source).toContain("<SiteToasts />");
+    for (const key of ["errors.titles.server", "errors.unavailable", "errors.fallback", "errors.close", "errors.closeAll"]) expect(source).toContain(`t("${key}"`);
+  });
+
+  it("draws the page an app names for a refused self read in place of the whole site, from the framework's one refusal store", () => {
+    expect(source).toContain('import { useSelfAccessRefusal } from "@simplix-react-ext/simplix-boot-access";');
+    expect(source).toContain("refusalPageFor(parts.refusalPages, useSelfAccessRefusal())");
+    expect(source).toContain("readonly refusalPages?: SiteRefusalPages;");
+  });
+
   it("hands every site part a link that moves the router on a plain press and keeps the real address", () => {
     expect(source).toContain("linkComponent={RouterLink}");
     expect(source).toContain("void router.navigate({ href });");

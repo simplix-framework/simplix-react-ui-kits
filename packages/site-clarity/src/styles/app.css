@@ -29,3 +29,18 @@
     scrollbar-color: var(--site-ink-faint) transparent;
   }
 }
+
+/* The site window and the sign-in ground are the whole document: their ground reaches every edge, and
+   a sign-in step fills the window's height. The mount point is the one an app's index page renders
+   into (`#root`, as the CLI's app template writes it). */
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+    margin: 0;
+  }
+  body {
+    background: var(--site-canvas);
+  }
+}

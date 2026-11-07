@@ -22,9 +22,45 @@ export interface SchemeQuery {
   removeEventListener(type: "change", listener: (event: { readonly matches: boolean }) => void): void;
 }
 
-/** What the scheme is written on: the document element's class list. */
+/**
+ * What the scheme is written on: the document element's class list, and its style where it has one,
+ * whose `color-scheme` tells the browser to draw its own controls and scrollbars in the same scheme.
+ */
 export interface SchemeTarget {
   readonly classList: { toggle(token: string, force: boolean): boolean };
+  readonly style?: { colorScheme: string };
+}
+
+/**
+ * The address parameter a site hands the reader's choice to another origin in (a sign-in page, an
+ * account page), as it hands the language over in `ui_locales`. Every part that writes or reads it
+ * names this constant, so the two sides cannot drift apart.
+ */
+export const SCHEME_PARAM = "ui_scheme";
+
+/** A value read as a choice where an unknown value means no choice at all, as an address parameter is read. */
+export function parseSchemeParam(value: string | null | undefined): SiteScheme | null {
+  return value === "light" || value === "dark" || value === "system" ? value : null;
+}
+
+/**
+ * The first choice among `candidates` that names one, in the order given (the address parameter,
+ * then a kept value), or the system's where none does.
+ *
+ * @param candidates the values to read, most specific first
+ */
+export function pickSiteScheme(...candidates: readonly (string | null | undefined)[]): SiteScheme {
+  for (const candidate of candidates) {
+    const choice = parseSchemeParam(candidate);
+    if (choice !== null) return choice;
+  }
+  return "system";
+}
+
+/** Marks `target` dark or light: the class the dark values key off, and its `color-scheme`. */
+export function markSiteScheme(target: SchemeTarget, dark: boolean): void {
+  target.classList.toggle("dark", dark);
+  if (target.style) target.style.colorScheme = dark ? "dark" : "light";
 }
 
 /** Where the choice is stored: `localStorage`, or any store with its three calls. */
@@ -44,9 +80,9 @@ export function parseSiteScheme(value: string | null | undefined): SiteScheme {
  * change, and returns the function that stops following.
  */
 export function followSystemScheme(query: SchemeQuery, target: SchemeTarget): () => void {
-  target.classList.toggle("dark", query.matches);
+  markSiteScheme(target, query.matches);
   const listener = (event: { readonly matches: boolean }) => {
-    target.classList.toggle("dark", event.matches);
+    markSiteScheme(target, event.matches);
   };
   query.addEventListener("change", listener);
   return () => query.removeEventListener("change", listener);
@@ -58,7 +94,7 @@ export function followSystemScheme(query: SchemeQuery, target: SchemeTarget): ()
  */
 export function applySiteScheme(scheme: SiteScheme, query: SchemeQuery, target: SchemeTarget): () => void {
   if (scheme === "system") return followSystemScheme(query, target);
-  target.classList.toggle("dark", scheme === "dark");
+  markSiteScheme(target, scheme === "dark");
   return () => {};
 }
 
@@ -74,7 +110,7 @@ export function siteSchemeBootstrap(key: string = SITE_SCHEME_KEY): string {
     JSON.stringify(key) +
     '); } catch (e) {} var d = s === "dark" || (s !== "light" && window.matchMedia(' +
     JSON.stringify(SYSTEM_DARK_QUERY) +
-    ').matches); document.documentElement.classList.toggle("dark", d); })();'
+    ').matches); var r = document.documentElement; r.classList.toggle("dark", d); if (r.style) r.style.colorScheme = d ? "dark" : "light"; })();'
   );
 }
 
