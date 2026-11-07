@@ -715,9 +715,17 @@ export function useRecordContract(entity: string, overrides: ContractOverrides =
    * Every field as a column. Each one after the leading block is dropped from a pane narrower than
    * the table that holds it, and the leading block drops last, from its end, when the list ladders
    * it; so a wide record set narrows column by column instead of flipping to cards, and the card
-   * layout is left to a phone.
+   * layout is left to a phone. The first field that carries the rows' state ({@link carriesState})
+   * is kept at every width: a table without it reads every row as the same, a revoked grant as an
+   * active one.
    */
-  const columns = useCallback(<R,>(fields: readonly ContractField[]) => ladderColumns(fields.map((field) => column<R>(field))), [column]);
+  const columns = useCallback(
+    <R,>(fields: readonly ContractField[]) => {
+      const state = fields.find(carriesState);
+      return ladderColumns(fields.map((field) => (field === state ? { ...column<R>(field), keep: true } : column<R>(field))));
+    },
+    [column],
+  );
 
   /** The searchable fields as list filters, labelled by the field and, for an enum, by its values. */
   const filters = useCallback(
@@ -843,6 +851,17 @@ export function booleanBadge(
 
 export function badgeOf(value: RecordValue): RecordBadge | undefined {
   return value && typeof value === "object" && "badge" in value ? value.badge : undefined;
+}
+
+/**
+ * Whether a field is the kind that tells one row's state from another's: an enum whose values carry
+ * a tone other than neutral (an active grant against a revoked one). A screen that states `keep`
+ * for the field, either way, has decided it.
+ *
+ * @param field the contract field
+ */
+export function carriesState(field: Pick<ContractField, "kind" | "keep" | "tones">): boolean {
+  return field.keep === undefined && field.kind === "enum" && Object.values(field.tones ?? {}).some((tone) => tone !== "neutral");
 }
 
 /** The text a drawn value reads as, or `""` where it draws nothing. */

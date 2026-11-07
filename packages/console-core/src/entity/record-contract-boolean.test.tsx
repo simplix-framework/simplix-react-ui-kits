@@ -90,3 +90,25 @@ describe("a size field's label", () => {
     expect(await probe((contract) => contract.column(count).header)).toBe("Count (bytes)");
   });
 });
+
+describe("the columns of a contract", () => {
+  const fields: ContractField[] = [
+    { name: "account", kind: "text" },
+    { name: "role", kind: "enum", enumName: "Role", options: ["A", "B"] },
+    { name: "status", kind: "enum", enumName: "Standing", options: ["ACTIVE", "REVOKED"], tones: { ACTIVE: "success", REVOKED: "danger" } },
+    { name: "channel", kind: "enum", enumName: "Channel", options: ["MAIL", "SMS"], tones: { MAIL: "info", SMS: "info" } },
+    { name: "validTo", kind: "date" },
+  ];
+
+  it("keeps the first field that carries the rows' state at every width, and no other", async () => {
+    const kept = await probe((contract) => contract.columns(fields).filter((column) => column.keep === true).map((column) => column.key));
+    expect(kept).toEqual(["status"]);
+  });
+
+  it("leaves a field the screen decided alone, either way", async () => {
+    const dropped = await probe((contract) => contract.columns(fields.map((field) => (field.name === "status" ? { ...field, keep: false } : field))).filter((column) => column.keep === true).map((column) => column.key));
+    expect(dropped).toEqual(["channel"]);
+    const own = await probe((contract) => contract.columns(fields.map((field) => (field.name === "validTo" ? { ...field, keep: true } : field))).filter((column) => column.keep === true).map((column) => column.key));
+    expect(own).toEqual(["status", "validTo"]);
+  });
+});
