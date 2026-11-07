@@ -49,8 +49,9 @@ export function use{{EntityPascal}}List(params?: Readonly<Record<string, unknown
     defaultSort: { field: "{{defaultSort.field}}", direction: "{{defaultSort.direction}}" },
 {{/if}}
     filterMode: "immediate",
-    // The address's filters narrowed to the ones the controls below commit; a stale key is dropped.
-    addressedFilters: {{EntityPascal}}ListAddress.addressed(address, params),
+    // The address's filters narrowed to the ones the controls below commit, and the keys this list
+    // wrote itself; a stale key is dropped.
+    addressedFilters: {{EntityPascal}}ListAddress.useAddressed(address, params),
   });
 {{#if figureTiles.aggregates}}
   // The conditions of the list's own request ride on the controller, so the page's sums are read

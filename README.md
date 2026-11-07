@@ -95,7 +95,7 @@ What the list reads from the address. The list file declares its address once, a
 | `narrow(filters)` | the filters a list will accept: only the keys its controls commit |
 | `controls` | the field and kind of each control, so a toggle's `true` and a number's text read back as the value the control commits; hand it to `filtersToRequestParams` |
 | `keys` | the filter keys the controls commit |
-| `addressed(address, forced)` | the `addressedFilters` option the hook gives `useCrudList` |
+| `useAddressed(address, forced)` | a hook: the `addressedFilters` option the list's hook gives `useCrudList` |
 
 Narrowing keeps a key only when the list has a control that commits it: a choice and a reference filter carry `<field>.in`, a toggle `<field>.equals`, a text filter the operators it declares (contains and equals when it declares none the bar knows), a number filter equals and its two bounds, a period `greaterThanOrEqualTo` and `lessThanOrEqualTo`. A reference filter the list supplies no facet for draws no control, so its key is dropped (the list names the fields it has facets for when it declares its address). A stale or hand-typed key therefore never reaches a request the server would refuse, and an address left with no declared key opens the list on its defaults. `declareListAddress`, `narrowAddressedFilters` and `filterControlsOf` in `console-core/src/entity/list-address.ts` hold the rule, and the operator lists are the ones the filter bar draws, so the two cannot drift.
 
@@ -107,7 +107,7 @@ const count = useListCount(useListJobs, filtersToRequestParams(filters, { contro
 const href = { to: "/jobs", search: { filters } };
 ```
 
-A key a screen writes through something other than the filter bar (a pressed tile, a chip row, the time range) reaches the address like any other, and is read back only where the entity declares a filter for that field. A link to a field the list has no control for is dropped whole.
+A key a screen writes through something other than the filter bar (a pressed tile, a chip row, the time range strip) reaches the address like any other, and the list reads it back for as long as the list that wrote it stays mounted, so it survives the reader's next filter change. A key that arrives from outside (a link, a typed address, a reload) is read through the declaration alone: a link to a field the list has no control for is dropped, and so is a time range over an undeclared stamp after a reload.
 
 Tabs. A tab that pins a field passes its request as the list's `params` (`listParams` in the page's blocks). A filter over a field `params` pins with `equals` is not applied and the bar draws no control for it, because the pinned value wins in every request and the control would change no row. The key stays in the address until the reader's next filter change writes it out, and it applies again on a tab that does not pin the field. The pinned request rides on the list controller (`withForced`), which is how `RecordList` knows which controls to leave out. A tile that means a tab's set links to `?tab=<key>`, never to a filter over the field the tab pins. Moving between tabs keeps the address's filters.
 

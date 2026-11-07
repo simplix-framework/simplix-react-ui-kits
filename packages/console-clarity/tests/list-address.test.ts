@@ -73,7 +73,7 @@ describe("the generated list's address", () => {
   it("takes the page's address as its second argument and hands the list the declaration's addressed filters", () => {
     const source = renderList();
     expect(source).toContain("export function useJobList(params?: Readonly<Record<string, unknown>>, address?: ListAddress) {");
-    expect(source).toContain("addressedFilters: JobListAddress.addressed(address, params),");
+    expect(source).toContain("addressedFilters: JobListAddress.useAddressed(address, params),");
     expect(source).toContain('filterMode: "immediate",');
   });
 
