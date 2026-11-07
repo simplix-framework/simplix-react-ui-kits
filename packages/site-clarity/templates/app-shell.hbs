@@ -24,11 +24,11 @@
  * `siteSchemeBootstrap()` so the first paint is already in that choice.
  */
 import { Outlet, useRouter, useRouterState } from "@tanstack/react-router";
-import type { MouseEvent, ReactNode } from "react";
+import type { ReactNode } from "react";
 import { useSelfAccessRefusal } from "@simplix-react-ext/simplix-boot-access";
 import { useTranslation } from "@simplix-react/i18n/react";
 import { SiteErrors, SiteToasts, type SiteErrorsCopy } from "@simplix-react-ui-kits/site-clarity/form";
-import type { SiteLinkProps } from "@simplix-react-ui-kits/site-clarity/link";
+import { routesInPage, type SiteLinkProps } from "@simplix-react-ui-kits/site-clarity/link";
 import { refusalPageFor, SiteBar, SiteFooter, SiteWindow, useSiteScheme, type SiteBarAccount, type SiteBarAction, type SiteBarLink, type SiteFooterLink, type SiteRefusalPages } from "@simplix-react-ui-kits/site-clarity/shell";
 
 export interface ShellParts {
@@ -90,14 +90,11 @@ function ShellErrors() {
   return <SiteErrors copy={copy} />;
 }
 
-/** A press that opens the link in place: the main button with no key that asks for a new tab or window. */
-function isPlainPress(event: MouseEvent<HTMLAnchorElement>): boolean {
-  return event.button === 0 && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey;
-}
-
 /**
  * The link every site part draws: an anchor with the real address, so it opens in a new tab too,
- * whose plain press moves the router instead of loading the page again.
+ * whose plain press on an address of the site moves the router instead of loading the page again.
+ * A press the router does not answer (another origin's file or page, a download, a new tab) is the
+ * browser's, so a page hands another site's address as a plain `href`.
  */
 function RouterLink({ href, onClick, ...anchor }: SiteLinkProps) {
   const router = useRouter();
@@ -107,7 +104,7 @@ function RouterLink({ href, onClick, ...anchor }: SiteLinkProps) {
       href={href}
       onClick={(event) => {
         onClick?.(event);
-        if (event.defaultPrevented || !isPlainPress(event) || anchor.target !== undefined) return;
+        if (!routesInPage(event, href, anchor)) return;
         event.preventDefault();
         void router.navigate({ href });
       }}
