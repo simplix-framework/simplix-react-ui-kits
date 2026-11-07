@@ -42,13 +42,15 @@
 //   entityCatalog    where an entity's words live under locales/, `{entity}` in camel case
 //                    (default entity/{entity})
 import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
-import { join, resolve } from "node:path";
+import { dirname, join, resolve } from "node:path";
 import { parseArgs } from "../lib/fs-util.mjs";
 import {
   camel,
   menuDecisionProblems,
   readClaimedFrames,
   readMenu,
+  readRelativeImports,
+  readStringTables,
   readPageRoutes,
   readRoutes,
   renderMenu,
@@ -79,10 +81,29 @@ if (missing.length > 0) {
 }
 const at = (path) => resolve(root, path);
 
-const menu = readMenu(readFileSync(at(settings.source), "utf8"), settings.source, {
-  menu: settings.menuConstant ?? "ADMIN_MENU",
-  account: settings.accountConstant ?? "ACCOUNT_ENTRY",
-});
+const menuText = readFileSync(at(settings.source), "utf8");
+// The string tables the menu imports by relative path (a routes table its entries' `href` reads), by
+// the local name the menu uses for each.
+const constants = new Map();
+for (const { from, names } of readRelativeImports(menuText, settings.source)) {
+  const base = resolve(dirname(at(settings.source)), from);
+  const file = [`${base}.ts`, `${base}.tsx`, join(base, "index.ts")].find((path) => existsSync(path));
+  if (file === undefined) continue;
+  const tables = readStringTables(readFileSync(file, "utf8"), file);
+  for (const { local, exported } of names) {
+    const table = tables.get(exported);
+    if (table !== undefined) constants.set(local, table);
+  }
+}
+const menu = readMenu(
+  menuText,
+  settings.source,
+  {
+    menu: settings.menuConstant ?? "ADMIN_MENU",
+    account: settings.accountConstant ?? "ACCOUNT_ENTRY",
+  },
+  constants,
+);
 const routeDir = at(settings.routes);
 const routeTexts = readdirSync(routeDir)
   .filter((file) => /\.tsx?$/.test(file))
