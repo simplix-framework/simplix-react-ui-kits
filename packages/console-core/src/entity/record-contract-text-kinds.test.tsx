@@ -104,3 +104,30 @@ describe("the language kind", () => {
     expect(read({ locale: "ko" }).list[2]).toBe("Korean");
   });
 });
+
+describe("the excerpt kind", () => {
+  const trace = "java.lang.IllegalStateException: refused\n\tat com.example.Service.run(Service.java:42)";
+  const excerptFields: ContractField[] = [{ name: "stackTrace", kind: "excerpt" }];
+
+  function ExcerptProbe(props: { row: Record<string, unknown> }) {
+    const contract = useRecordContract("error-record");
+    return createElement("pre", null, JSON.stringify({ list: excerptFields.map((field) => contract.value(field, props.row)), detail: excerptFields.map((field) => contract.detailField(field, props.row)) }));
+  }
+
+  function readExcerpt(row: Record<string, unknown>) {
+    const html = renderToStaticMarkup(createElement(UIProvider, { children: createElement(ExcerptProbe, { row }) }));
+    const json = /<pre>([\s\S]*)<\/pre>/.exec(html)?.[1] ?? "{}";
+    return JSON.parse(json.replace(/&quot;/g, '"').replace(/&amp;/g, "&").replace(/&#x27;/g, "'")) as { list: unknown[]; detail: { value: unknown; wide: boolean; copy: boolean }[] };
+  }
+
+  it("keeps an excerpt in a list and draws the whole message as a copyable code block in a detail", () => {
+    const { list, detail } = readExcerpt({ stackTrace: trace });
+    expect(list[0]).toEqual({ excerpt: trace });
+    expect(detail[0]).toMatchObject({ value: { text: trace, code: true, block: true }, wide: true, copy: true });
+  });
+
+  it("draws nothing to copy where the message is absent", () => {
+    const { detail } = readExcerpt({ stackTrace: null });
+    expect(detail[0]).toMatchObject({ value: null, wide: true, copy: false });
+  });
+});

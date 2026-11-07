@@ -722,13 +722,22 @@ export function useRecordContract(entity: string, overrides: ContractOverrides =
   );
 
   const detailField = useCallback(
-    (field: ContractField, row: Row | undefined) => ({
-      label: fieldLabel(field.name),
-      // A detail draws the whole text and a yes or no, where a list draws the start and a mark.
-      value: value(field.kind === "prose" ? { ...field, kind: "longText" } : field.markWhenTrue ? { ...field, markWhenTrue: false } : field, row),
-      wide: detailFieldIsWide(field),
-      copy: field.identifier === true,
-    }),
+    (field: ContractField, row: Row | undefined) => {
+      // A machine message (an error, a trace, a hash, a storage path) is read and copied whole in a
+      // record, in the monospaced face and across the panel; a list cell keeps its first line.
+      if (field.kind === "excerpt") {
+        const raw = row?.[field.name];
+        const text = raw == null || raw === "" ? undefined : String(raw);
+        return { label: fieldLabel(field.name), value: text ? { text, code: true, block: true } : null, wide: true, copy: text !== undefined };
+      }
+      return {
+        label: fieldLabel(field.name),
+        // A detail draws the whole text and a yes or no, where a list draws the start and a mark.
+        value: value(field.kind === "prose" ? { ...field, kind: "longText" } : field.markWhenTrue ? { ...field, markWhenTrue: false } : field, row),
+        wide: detailFieldIsWide(field),
+        copy: field.identifier === true,
+      };
+    },
     [fieldLabel, value],
   );
 
