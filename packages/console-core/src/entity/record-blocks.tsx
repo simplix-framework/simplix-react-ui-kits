@@ -41,6 +41,8 @@ export interface RecordVerb {
   readonly disabled?: string;
   /** `primary` finishes the work, `danger` cannot be taken back lightly, `plain` is anything else. */
   readonly kind?: "primary" | "danger" | "plain" | "quiet";
+  /** Set while the verb's work is running: the button is drawn busy with this word and cannot be pressed again. */
+  readonly pending?: string;
 }
 
 const NOTICE_TONE: Record<RecordNotice["tone"], StatusTone> = {
@@ -114,7 +116,15 @@ export function RecordVerbs({ verbs, end = false }: { readonly verbs?: readonly 
 export function RecordVerbButton({ verb }: { readonly verb: RecordVerb }) {
   const variant = verb.kind === "primary" ? "primary" : verb.kind === "danger" ? "destructive" : verb.kind === "quiet" ? "ghost" : "outline";
   const button = (
-    <Button size="sm" variant={variant} onClick={verb.onClick} disabled={Boolean(verb.disabled)} title={verb.disabled}>
+    <Button
+      size="sm"
+      variant={variant}
+      onClick={verb.onClick}
+      disabled={Boolean(verb.disabled) || verb.pending !== undefined}
+      title={verb.disabled}
+      loading={verb.pending !== undefined}
+      loadingText={verb.pending}
+    >
       {verb.label}
     </Button>
   );

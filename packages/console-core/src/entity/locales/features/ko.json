@@ -56,6 +56,9 @@
     "unreadTitle": "이 화면의 일부 수치를 불러오지 못했습니다",
     "unreadHint": "화면을 새로 고쳐 다시 불러와 주세요. 불러오지 못한 수치는 비어 있는 것으로 표시되며, 해당하는 항목이 없다는 뜻이 아닙니다."
   },
+  "actionDialog": {
+    "running": "처리하는 중…"
+  },
   "recordList": {
     "selected": "개 선택",
     "clearSelection": "선택 해제",

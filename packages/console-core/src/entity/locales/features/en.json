@@ -57,6 +57,9 @@
     "unreadTitle": "Some figures on this page could not be read",
     "unreadHint": "Reload the page to read them again. A figure that could not be read is drawn empty, which does not mean there is nothing to count."
   },
+  "actionDialog": {
+    "running": "Working…"
+  },
   "recordList": {
     "selected": "selected",
     "clearSelection": "Clear selection",
