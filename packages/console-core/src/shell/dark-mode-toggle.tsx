@@ -33,7 +33,10 @@ export function DarkModeToggle({ className }: DarkModeToggleProps) {
       variant="ghost"
       size="icon"
       className={cn("h-8 w-8", className)}
+      // The name stays "Dark mode" and the state is `aria-pressed`: a name that flipped with the
+      // scheme would read as a different control to somebody who just pressed it.
       aria-label={t("theme.darkMode")}
+      aria-pressed={isDark}
       onClick={toggleDarkMode}
     >
       <ThemeGlyph dark={isDark} />
