@@ -100,6 +100,19 @@ describe("a detail's holder tab", () => {
   });
 });
 
+describe("a holder whose list exports no column hook", () => {
+  it("gets no tab, no import and no read, and the detail still type-checks", () => {
+    const source = render("detail.hbs", {
+      ...context,
+      holders: [holder],
+      holderImports: [{ packageName: "@test/domain-member", names: "listMembersAccess, useListMembers" }],
+      holderColumnsHooks: [null],
+    });
+    expect(source).not.toMatch(/useHolder0Columns|holder0List|HolderFields_/);
+    expect(source).toContain('{ key: "overview", label: words.overview');
+  });
+});
+
 describe("a detail's header badge", () => {
   it("is drawn from any enum field the screen's entry names, through the kit's badgeOf", () => {
     const source = render("detail.hbs", { ...context, statusBadgeField: "kind", statusField: "status" });

@@ -78,7 +78,7 @@ describe("a detail's holder tab", () => {
     hasKeywordSearch,
   });
   const detail = (hasKeywordSearch: boolean) =>
-    render("detail.hbs", { ...context, detailFields: [field], hookGet: "useGetProduct", holders: [holder(hasKeywordSearch)], holdersKeywordSearch: hasKeywordSearch });
+    render("detail.hbs", { ...context, detailFields: [field], hookGet: "useGetProduct", holders: [holder(hasKeywordSearch)], holderColumnsHooks: [{ hook: "useMemberColumns", from: "@test/member-widgets", field: "productId" }], holdersKeywordSearch: hasKeywordSearch });
 
   it("sends its search as the holder route's keyword search where that route declares keyword fields", () => {
     const source = detail(true);

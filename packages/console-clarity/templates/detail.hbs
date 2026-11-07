@@ -14,6 +14,7 @@ import { {{hookGet}} } from "{{packageName}}";
 {{#each holderImports}}
 import { {{this.names}} } from "{{this.packageName}}";
 {{/each}}
+{{!-- A holder whose list exports no column hook is null in holderColumnsHooks and gets no tab. --}}
 {{#each holders}}
 {{#with (lookup ../holderColumnsHooks @index)}}
 // The {{../entity}} records are drawn with their own list's columns, from that list's hook.
@@ -85,6 +86,7 @@ export function {{EntityPascal}}Detail(props: {{EntityPascal}}DetailProps) {
   const headerStatus = undefined;
 {{/if}}
 {{#each holders}}
+{{#if (lookup ../holderColumnsHooks @index)}}
   // Grows with the records that hold this one, so it is a list with its own search and pager,
   // forced to this record's key rather than narrowed by a filter the reader could clear.
 {{#if this.matchField}}
@@ -105,16 +107,16 @@ export function {{EntityPascal}}Detail(props: {{EntityPascal}}DetailProps) {
     defaultSort: { field: "{{this.defaultSort.field}}", direction: "{{this.defaultSort.direction}}" },
 {{/if}}
   });
-{{#with (lookup ../holderColumnsHooks @index)}}
   // The holder's own list columns, less the key that only repeats this record.
-  const holder{{@index}}Columns = useHolder{{@index}}Columns(undefined, { omit: ["{{this.field}}"] });
-{{/with}}
+  const holder{{@index}}Columns = useHolder{{@index}}Columns(undefined, { omit: ["{{lookup (lookup ../holderColumnsHooks @index) "field"}}"] });
   const holder{{@index}}Words = useScreenWords("{{this.entity}}");
+{{/if}}
 {{/each}}
 {{#if holders.length}}
   const generatedTabs: RecordTab[] = [
     { key: "overview", label: words.overview, sections: [{ key: "overview", fields: generated }] },
 {{#each holders}}
+{{#if (lookup ../holderColumnsHooks @index)}}
     ...(holder{{@index}}Allowed ? [{
       key: "{{this.key}}",
       label: holder{{@index}}Words.plural,
@@ -130,6 +132,7 @@ export function {{EntityPascal}}Detail(props: {{EntityPascal}}DetailProps) {
 {{/unless}}
       },
     }] : []),
+{{/if}}
 {{/each}}
   ];
   const tabs = generatedTabs;

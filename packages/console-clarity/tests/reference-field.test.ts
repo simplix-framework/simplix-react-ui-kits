@@ -32,13 +32,13 @@ describe("a holder that names the record by another field than its key", () => {
   const voice = { ...context, entity: "catalogVoice", EntityPascal: "CatalogVoice", rowIdField: "catalogVoiceId", hookGet: "useGetCatalogVoice" };
 
   it("is forced to that field of the open record, once the record has loaded", () => {
-    const out = render("detail.hbs", { ...voice, holders: [{ ...holder, matchField: "voiceCode" }] });
+    const out = render("detail.hbs", { ...voice, holders: [{ ...holder, matchField: "voiceCode" }], holderColumnsHooks: [{ hook: "useSpeechResultColumns", from: "@test/speech-widgets", field: "voiceCode" }] });
     expect(out).toContain("?.voiceCode;");
     expect(out).not.toContain('"voiceCode.equals": props.catalogVoiceId');
     expect(out).toContain('enabled: holder0Allowed && holder0Forced["voiceCode.equals"] !== ""');
   });
 
   it("is forced to the record's key otherwise", () => {
-    expect(render("detail.hbs", { ...voice, holders: [holder] })).toContain('"voiceCode.equals": props.catalogVoiceId');
+    expect(render("detail.hbs", { ...voice, holders: [holder], holderColumnsHooks: [{ hook: "useSpeechResultColumns", from: "@test/speech-widgets", field: "catalogVoiceId" }] })).toContain('"voiceCode.equals": props.catalogVoiceId');
   });
 });
