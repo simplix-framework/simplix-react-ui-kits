@@ -1,7 +1,8 @@
-import type { ReactNode } from "react";
+import { useCallback, useState, type ReactNode } from "react";
 import { slotAttributes } from "@simplix-react/ui/design";
 
 import { SiteAction, type SiteActionSpec } from "../action/site-action";
+import { SiteSelect } from "../form/select";
 import { siteDocActionStyle } from "../help/help.style";
 import { SiteBreadcrumb, SitePage, type SiteBreadcrumbStep } from "../page/site-page";
 import {
@@ -35,6 +36,33 @@ export interface SiteTocEntry {
   readonly changed?: boolean;
   /** A step the reader marked as tried, marked with a tick. */
   readonly done?: boolean;
+  /**
+   * The entry's words in the jump select below the medium tier. Left out, they are the number and the
+   * title when both are words (`"Article 3 Payment"`); an entry whose title is not words names itself here.
+   */
+  readonly label?: string;
+}
+
+/** The words an entry stands under in the jump select, or none when its title is not words. */
+function jumpLabel(entry: SiteTocEntry): string | undefined {
+  if (entry.label !== undefined) return entry.label;
+  if (typeof entry.title !== "string") return undefined;
+  return typeof entry.no === "string" || typeof entry.no === "number" ? `${entry.no} ${entry.title}` : entry.title;
+}
+
+/**
+ * The section a reader jumped to, and the jump: the section scrolls into view, smoothly unless the
+ * reader asks for less motion, and the rail and the jump select mark it. A document page hands both
+ * to {@link DocLayout}.
+ */
+export function useDocJump(): { readonly current: string | null; readonly jump: (id: string) => void } {
+  const [current, setCurrent] = useState<string | null>(null);
+  const jump = useCallback((id: string) => {
+    setCurrent(id);
+    const reduce = typeof window.matchMedia === "function" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    document.getElementById(id)?.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
+  }, []);
+  return { current, jump };
 }
 
 /** Props for {@link DocLayout}. */
@@ -59,7 +87,10 @@ export interface DocLayoutProps {
   readonly onJump: (id: string) => void;
   /** What a done section's tick is, a glyph the product draws. */
   readonly doneMark?: ReactNode;
-  /** The product's jump control (a select over the same sections), drawn below the medium tier. */
+  /**
+   * The jump control drawn below the medium tier. Left out, the layout draws a select over the same
+   * sections named by the rail's title, whose entries all have words ({@link SiteTocEntry.label}).
+   */
   readonly jump?: ReactNode;
   /** What the rail holds under the list (progress through the steps). */
   readonly side?: ReactNode;
@@ -75,6 +106,12 @@ export interface DocLayoutProps {
  * column above the sections and its list gives way to the product's jump control.
  */
 export function DocLayout({ crumbs, crumbsLabel, crumbSeparator, title, badge, controls, notice, tocTitle, toc, current, onJump, doneMark, jump, side, sideAction, children }: DocLayoutProps) {
+  const labels = toc.map(jumpLabel);
+  const select =
+    jump ??
+    (toc.length > 0 && labels.every((label) => label !== undefined) ? (
+      <SiteSelect label={tocTitle} block value={current ?? toc[0]?.id ?? null} onValueChange={onJump} options={toc.map((entry, index) => ({ value: entry.id, label: labels[index] ?? "" }))} />
+    ) : undefined);
   return (
     <SitePage>
       <SiteBreadcrumb steps={crumbs} label={crumbsLabel} separator={crumbSeparator} />
@@ -105,7 +142,7 @@ export function DocLayout({ crumbs, crumbsLabel, crumbSeparator, title, badge, c
               </li>
             ))}
           </ol>
-          {jump !== undefined ? <div {...slotAttributes(siteTocJumpStyle, {})}>{jump}</div> : null}
+          {select !== undefined ? <div {...slotAttributes(siteTocJumpStyle, {})}>{select}</div> : null}
           {side !== undefined ? <div {...slotAttributes(siteDocSideStyle, {})}>{side}</div> : null}
           {sideAction !== undefined ? (
             <span {...slotAttributes(siteDocActionStyle, {})}>

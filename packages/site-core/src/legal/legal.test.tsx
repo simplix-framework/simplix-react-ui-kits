@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 
 import { SiteBadge } from "../page/site-bits";
 import { bySlot, silentRefusals, tabStops, unmarked } from "../testing/markup";
+import { DocLayout } from "./doc-layout";
 import { ChangeList, ClauseList, DiffText, diffChanged, diffVisible, FilledText, InfoCard, InfoGrid, KeyValues, LegalArticle, NoticeBanner, PlainSummary, PrintButton, VersionPicker } from "./legal-parts";
 import { siteInfoGridStyle, siteKeyValuesStyle, siteValueStyle } from "./legal.style";
 
@@ -124,5 +125,28 @@ describe("the legal body parts", () => {
     expect(siteValueStyle.base).toContain("col-span-2");
     expect(siteInfoGridStyle.base).toContain("@max-page-narrow/page:grid-cols-1");
     expect(unmarked(html)).toEqual([]);
+  });
+});
+
+describe("DocLayout", () => {
+  const draw = (jump?: string) =>
+    renderToStaticMarkup(
+      <DocLayout crumbs={[]} crumbsLabel="Trail" title="Terms" tocTitle="Contents" toc={[{ id: "t-pay", no: "Article 4", title: "Payment" }, { id: "t-end", title: "Effective date" }]} current={null} onJump={() => undefined} {...(jump === undefined ? {} : { jump: <span>{jump}</span> })}>
+        <p>Body</p>
+      </DocLayout>,
+    );
+
+  it("draws its own jump select over the rail's sections, named by the rail's title, when the page hands none", () => {
+    const html = draw();
+    const jump = bySlot(html, "site-toc-jump")[0];
+    expect(jump).toBeDefined();
+    expect(html).toContain('aria-label="Contents"');
+    expect(html).toContain("Article 4 Payment");
+  });
+
+  it("draws the page's own jump control in its place when it hands one", () => {
+    const html = draw("own control");
+    expect(html).toContain("own control");
+    expect(html).not.toContain("Article 4 Payment");
   });
 });
