@@ -15,7 +15,7 @@
 import type { ReactNode } from "react";
 {{/if}}
 import { useTranslation } from "@simplix-react/i18n/react";
-import { CrudPage, {{#if hasCreate}}PageAction, {{/if}}type ConsoleSearch, type CrudPageBlocks, useDetailPresentationSetting } from "@simplix-react-ui-kits/console-clarity/page";
+import { CrudPage, {{#if hasCreate}}PageAction, {{/if}}type ConsoleSearch, type CrudNavigateOptions, type CrudPageBlocks, useDetailPresentationSetting } from "@simplix-react-ui-kits/console-clarity/page";
 import { {{#if (or hasCreate hasUpdate hasDelete)}}useAllowed, {{/if}}{{#if hasDelete}}useAnnounceOutcome, {{#if displayNameField}}useRecordContract, {{/if}}{{/if}}{{#if figureTiles}}RECORD_READ_META, useFigureTiles, {{/if}}useScreenWords{{#if hasDelete}}{{#if displayNameField}}, type ContractField{{/if}}{{/if}} } from "@simplix-react-ui-kits/console-clarity/entity";
 {{#if figureTiles}}
 import { {{#if figureTiles.status}}{{figureTiles.status.hook}}{{/if}}{{#if figureTiles.status}}{{#if figureTiles.aggregates}}, {{/if}}{{/if}}{{#if figureTiles.aggregates}}{{figureTiles.aggregates.hook}}{{/if}} } from "{{packageName}}";
@@ -43,7 +43,8 @@ import { {{timeBuckets.fetch}} } from "{{packageName}}";
 
 interface {{EntityPascal}}CrudPageProps {
   readonly search: ConsoleSearch;
-  readonly onNavigate: (search: ConsoleSearch) => void;
+  /** Moves the address; a change the reader makes while staying on the list passes `{ replace: true }`. */
+  readonly onNavigate: (search: ConsoleSearch, options?: CrudNavigateOptions) => void;
 }
 
 /** {{EntityPascal}}: the list, and the record it opens. */
@@ -79,7 +80,12 @@ export function {{EntityPascal}}CrudPage({ search, onNavigate }: {{EntityPascal}
   const description = line && line !== "screen.{{entity}}.description" ? line : undefined;
   // The page's own departures (./page.blocks.tsx), read once and typed by the kit's list of keys.
   const blocks: ReturnType<typeof usePageBlocks> & CrudPageBlocks<{{EntityPascal}}Row, {{EntityPascal}}ListProps, {{EntityPascal}}DetailProps, ReturnType<typeof use{{EntityPascal}}List>> = usePageBlocks({ search, onNavigate });
-  const list = use{{EntityPascal}}List(blocks.listParams);
+  // The list keeps its filters in the page's address, so a link can open it filtered, Back leaves the
+  // page in one step, and a reload keeps them. A change replaces the history entry.
+  const list = use{{EntityPascal}}List(blocks.listParams, {
+    value: search.filters,
+    onChange: (next) => onNavigate({ ...search, filters: next }, { replace: true }),
+  });
   const presentation = useDetailPresentationSetting();
 {{#if figureTiles}}
   // The figures the entity's SimpliX Meta says it counts and sums, drawn as the page's figure row.
@@ -128,7 +134,8 @@ export function {{EntityPascal}}CrudPage({ search, onNavigate }: {{EntityPascal}
     },
     onDeleted: () => {
       announce({ message: words.deleted });
-      onNavigate({});
+      // Back to the list the reader left: its tab and its filters stay, the record and the mode go.
+      onNavigate({ tab: search.tab, filters: search.filters });
     },
   });
 {{#if displayNameField}}

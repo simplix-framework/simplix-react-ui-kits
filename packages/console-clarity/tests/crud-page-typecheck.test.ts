@@ -35,7 +35,7 @@ const widgetsDir = join(virtualRoot, "modules", "mymod", "src", "widgets", "prod
 const widgetsStub = `
 import type { ReactNode } from "react";
 import type { CrudListFilters } from "@simplix-react/ui";
-import type { RecordAction } from "@simplix-react-ui-kits/console-clarity/entity";
+import type { ListAddress, RecordAction } from "@simplix-react-ui-kits/console-clarity/entity";
 
 export interface ProductRow { readonly productId: string; readonly name?: string }
 export interface ProductListProps {
@@ -57,7 +57,7 @@ export interface ProductFormProps {
   readonly onSuccess?: () => void;
   readonly onCancel?: () => void;
 }
-export declare function useProductList(params?: Readonly<Record<string, unknown>>): { readonly rows: readonly ProductRow[]; readonly filters: CrudListFilters; readonly requestParams: Readonly<Record<string, unknown>> };
+export declare function useProductList(params?: Readonly<Record<string, unknown>>, address?: ListAddress): { readonly rows: readonly ProductRow[]; readonly filters: CrudListFilters; readonly requestParams: Readonly<Record<string, unknown>> };
 export declare function ProductList(props: ProductListProps): ReactNode;
 export declare function ProductDetail(props: ProductDetailProps): ReactNode;
 export declare function ProductForm(props: ProductFormProps): ReactNode;

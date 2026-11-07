@@ -82,8 +82,16 @@ describe("crud-page.hbs delete", () => {
     const text = page({ hasCreate: false, hasUpdate: false, hasDelete: true });
     expect(text).toContain("const announce = useAnnounceOutcome();");
     expect(text).toContain("announce({ message: words.deleted });");
-    expect(text.indexOf("announce({")).toBeLessThan(text.indexOf("onNavigate({});"));
+    expect(text.indexOf("announce({")).toBeLessThan(text.indexOf("onNavigate({ tab: search.tab, filters: search.filters });"));
     const without = page({ hasCreate: true, hasUpdate: true, hasDelete: false });
     expect(without).not.toContain("useAnnounceOutcome");
+  });
+
+  // `onNavigate({})` took the reader to an unfiltered first tab: the list they deleted from is the one
+  // they come back to, with the filters and the tab they had narrowed it to.
+  it("returns to the list the reader left, with its tab and its filters, never to a bare address", () => {
+    const text = page({ hasCreate: false, hasUpdate: false, hasDelete: true });
+    expect(text).toContain("onNavigate({ tab: search.tab, filters: search.filters });");
+    expect(text).not.toContain("onNavigate({})");
   });
 });

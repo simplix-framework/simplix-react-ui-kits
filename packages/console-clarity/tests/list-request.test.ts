@@ -46,14 +46,15 @@ describe("the generated list under a page that reads sums", () => {
   it("hands its request conditions to the page, with the keyword key and the forced scope", () => {
     const source = render("list.hbs", { ...context, hasKeywordSearch: true, figureTiles: aggregates });
     expect(source).toContain("const list = useCrudList<ProductRow>(");
-    expect(source).toContain("return withListRequest(list, { forced: params, ...options });");
+    expect(source).toContain("const requested = withListRequest(list, { forced: params, ...options });");
+    expect(source).toContain("return withForced(requested, { ...params });");
     expect(check(source)).toEqual([]);
   });
 
   it("hands them over where the route has no keyword search and no money filter", () => {
     const source = render("list.hbs", { ...context, hasKeywordSearch: false, figureTiles: aggregates });
     expect(source).not.toContain("const options");
-    expect(source).toContain("return withListRequest(list, { forced: params });");
+    expect(source).toContain("const requested = withListRequest(list, { forced: params });");
     expect(check(source)).toEqual([]);
   });
 
@@ -61,14 +62,15 @@ describe("the generated list under a page that reads sums", () => {
     const money = { kind: "number", field: "price", currency: "KRW", scale: 0 };
     const source = render("list.hbs", { ...context, hasKeywordSearch: true, hasMoneyFilter: true, contractFilters: [money], figureTiles: aggregates });
     expect(source).toContain("transformFilters: moneyFilterTransform(ProductFilters)");
-    expect(source).toContain("return withListRequest(list, { forced: params, ...options });");
+    expect(source).toContain("const requested = withListRequest(list, { forced: params, ...options });");
     expect(check(source)).toEqual([]);
   });
 
   it("is unchanged for a page that reads no sums", () => {
     const source = render("list.hbs", { ...context, hasKeywordSearch: true });
     expect(source).not.toContain("withListRequest");
-    expect(source).toContain("return useCrudList<ProductRow>(");
+    expect(source).toContain("const list = useCrudList<ProductRow>(");
+    expect(source).toContain("return withForced(list, { ...params });");
     const counts = render("list.hbs", { ...context, hasKeywordSearch: true, figureTiles: { status: { hook: "useGetProductStatusCounts", field: "name", enumName: "E", options: ["a"] } } });
     expect(counts).not.toContain("withListRequest");
   });

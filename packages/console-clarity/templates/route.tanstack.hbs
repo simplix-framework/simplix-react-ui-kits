@@ -29,5 +29,11 @@ function {{EntityPascal}}Route() {
   const search = Route.useSearch();
   const navigate = useNavigate();
 
-  return <{{EntityPascal}}CrudPage search={search} onNavigate={(next) => navigate({ to: "/{{routePath}}", search: next })} />;
+  return (
+    <{{EntityPascal}}CrudPage
+      search={search}
+      // A change the reader makes while staying on the list (narrowing it) replaces the history entry.
+      onNavigate={(next, options) => navigate({ to: "/{{routePath}}", search: next, replace: options?.replace })}
+    />
+  );
 }
