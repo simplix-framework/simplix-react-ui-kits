@@ -686,7 +686,7 @@
     @apply cursor-not-allowed;
   }
   [data-slot="console-tile-chips"][data-slot][data-s-console-tile-chips] {
-    @apply gap-1.5 [scrollbar-width:none];
+    @apply -m-[var(--focus-gutter)] gap-1.5 p-[var(--focus-gutter)] [scrollbar-width:none];
   }
   [data-slot="console-tile-go"][data-slot][data-s-console-tile-go] {
     @apply text-muted-foreground transition-[color,translate] duration-[var(--dur-base)] ease-[var(--ease)];

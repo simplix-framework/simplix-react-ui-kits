@@ -105,13 +105,14 @@ describe("folds that are out of the keyboard's path", () => {
 });
 
 describe("the folded row's scroller", () => {
-  it("leaves the keyboard halo of a chip room beside it, with a margin that keeps the row in place", () => {
+  it("leaves the keyboard halo of a chip room beside it, with a margin that keeps the row in place", async () => {
+    const { tileChipsStyle } = await import("./settings-tiles.style");
     const html = renderToStaticMarkup(
       createElement(UIProvider, { children: createElement(SettingsTiles, { tiles, folded: true, title: "Summary", filters }) }),
     );
-    const scroller = /<div class="([^"]*)"[^>]*data-slot="console-tile-chips"/.exec(html)?.[1] ?? "";
-    expect(scroller).toContain("overflow-x-auto");
-    expect(scroller).toContain("p-[var(--focus-gutter)]");
-    expect(scroller).toContain("-m-[var(--focus-gutter)]");
+    // The row is a sideways scroller, which clips the other axis too, and the slot gives the halo its gutter.
+    expect(/<div class="([^"]*)"[^>]*data-slot="console-tile-chips"/.exec(html)?.[1]).toContain("overflow-x-auto");
+    expect(tileChipsStyle.base).toContain("p-[var(--focus-gutter)]");
+    expect(tileChipsStyle.base).toContain("-m-[var(--focus-gutter)]");
   });
 });

@@ -73,10 +73,15 @@ export const tileHeadStyle = defineSlotStyle({
   defaultVariants: { folded: false },
 });
 
-/** The folded figures in a titled row's head, one chip each. */
+/**
+ * The folded figures in a titled row's head, one chip each. The row scrolls sideways, and
+ * `overflow-x` makes the other axis clip too, so the 3px halo of a focused chip would be cut: the
+ * row takes the focus gutter as padding and the same negative margin, which gives the halo its room
+ * and leaves the row where it was.
+ */
 export const tileChipsStyle = defineSlotStyle({
   slot: "console-tile-chips",
-  base: "gap-1.5 [scrollbar-width:none]",
+  base: "-m-[var(--focus-gutter)] gap-1.5 p-[var(--focus-gutter)] [scrollbar-width:none]",
   variants: {},
   defaultVariants: {},
 });

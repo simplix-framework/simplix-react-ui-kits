@@ -44,13 +44,13 @@ export interface PackSectionProps {
  */
 export function PackSection({ heading, level = 2, lede, note, children }: PackSectionProps) {
   const id = useId();
-  const Heading = level === 1 ? "h1" : "h2";
+  const Tag = level === 1 ? "h1" : "h2";
   return (
     <section {...slotAttributes(sitePackSectionStyle, {})} aria-labelledby={id}>
       <div {...slotAttributes(sitePackHeadStyle, {})}>
-        <Heading {...slotAttributes(siteSectionHeadingStyle, { size: "lg" })} id={id}>
+        <Tag {...slotAttributes(siteSectionHeadingStyle, { size: "lg" })} id={id}>
           {heading}
-        </Heading>
+        </Tag>
         {lede !== undefined ? <p {...slotAttributes(siteSectionLedeStyle, {})}>{lede}</p> : null}
       </div>
       <div {...slotAttributes(sitePackGridStyle, {})}>{children}</div>

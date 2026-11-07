@@ -14,7 +14,7 @@
   ],
   "allow": {},
   "max": {
-    "arbitrary-literal": 107,
+    "arbitrary-literal": 104,
     "arbitrary-shadow": 0,
     "arbitrary-colour": 0,
     "css-literal": 13
