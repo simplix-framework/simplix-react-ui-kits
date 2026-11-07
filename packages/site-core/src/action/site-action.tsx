@@ -125,7 +125,8 @@ export function useRefusal(disabled: boolean, reason: SiteReason | undefined, de
  */
 export function SiteAction({ id, label, href, onSelect, tone, disabled: refused = false, reason: refusedFor, pending, icon, pressed, name, describedBy, size, block, submit = false, narrow, elementId, field }: SiteActionProps) {
   const marks = slotAttributes(siteActionStyle, { tone, size, block, pad: actionPad(tone, size), narrow });
-  // A pending action is refused for as long as it waits, and its wait is the reason it says.
+  // A pending action is refused for as long as it waits, and its wait is the reason it says. It is
+  // marked busy, which the design draws in the action's own tone rather than the disabled grey.
   const waiting = pending !== undefined;
   const disabled = refused || waiting;
   const reason = waiting ? pending : refusedFor;
@@ -157,6 +158,7 @@ export function SiteAction({ id, label, href, onSelect, tone, disabled: refused 
         value={submit ? field?.value : undefined}
         disabled={disabled && !holding}
         aria-disabled={holding ? true : undefined}
+        aria-busy={waiting || undefined}
         aria-pressed={pressed}
         aria-label={name}
         aria-describedby={refusal.describedBy}

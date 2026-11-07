@@ -33,10 +33,19 @@ describe("SiteAction", () => {
     expect(action?.attributes["aria-describedby"]).toBe(reason?.attributes.id);
     expect(html).toContain(">Sending the request</span>");
     expect(html).not.toContain("href=");
+    // It is marked busy, which the design draws in the action's own tone and not in the disabled grey.
+    expect(action?.attributes["aria-busy"]).toBe("true");
     // Without a wait the same spec presses again, with no reason drawn.
     const idle = renderToStaticMarkup(<SiteAction id="send" label="Send" onSelect={() => undefined} pending={undefined} />);
     expect(bySlot(idle, "site-action")[0]?.attributes.disabled).toBeUndefined();
+    expect(bySlot(idle, "site-action")[0]?.attributes["aria-busy"]).toBeUndefined();
     expect(bySlot(idle, "site-action-reason")).toEqual([]);
+  });
+
+  it("draws a refused action that is not waiting without the busy mark, so it keeps the disabled look", () => {
+    const refused = bySlot(renderToStaticMarkup(<SiteAction id="a" label="A" disabled reason="Pick a plan first" />), "site-action")[0];
+    expect(refused?.attributes.disabled).toBeDefined();
+    expect(refused?.attributes["aria-busy"]).toBeUndefined();
   });
 
   it("writes its tone, size and width as the variants the design draws, secondary and medium by default", () => {

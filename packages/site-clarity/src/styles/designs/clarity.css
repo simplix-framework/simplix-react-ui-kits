@@ -2449,7 +2449,7 @@
     @apply @max-page-narrow/page:table-auto;
   }
   :where([data-slot="site-action"])[data-s-site-action] {
-    @apply focus-visible:shadow-[var(--site-focus-ring)] disabled:cursor-not-allowed disabled:border-transparent disabled:bg-(--site-control-disabled) disabled:text-(--site-ink-disabled) aria-disabled:cursor-not-allowed aria-disabled:border-transparent aria-disabled:bg-(--site-control-disabled) aria-disabled:text-(--site-ink-disabled) [&_svg]:size-4 [&_svg]:shrink-0;
+    @apply focus-visible:shadow-[var(--site-focus-ring)] disabled:cursor-not-allowed disabled:not-aria-busy:border-transparent disabled:not-aria-busy:bg-(--site-control-disabled) disabled:not-aria-busy:text-(--site-ink-disabled) aria-disabled:cursor-not-allowed aria-disabled:not-aria-busy:border-transparent aria-disabled:not-aria-busy:bg-(--site-control-disabled) aria-disabled:not-aria-busy:text-(--site-ink-disabled) aria-busy:opacity-(--site-recede) [&_svg]:size-4 [&_svg]:shrink-0;
   }
   :where([data-slot="site-action"][data-tone="primary"])[data-s-site-action] {
     @apply hover:bg-(--site-accent-strong);

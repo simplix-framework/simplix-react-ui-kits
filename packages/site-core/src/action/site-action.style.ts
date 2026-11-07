@@ -11,11 +11,15 @@ import { defineSlotStyle } from "@simplix-react/ui/design";
  * depends on the size (`quietSm`, `quietMd`); {@link actionPad} picks it from the tone and the size.
  * `subtle` is a quiet action in the muted ink (a way out that should not draw the eye, such as
  * cancelling a subscription); `danger` is outlined in the bad colour for an action that removes.
+ *
+ * <p>A refused action takes the disabled ground and ink. An action that waits for its answer
+ * (`aria-busy`) is refused too, but it keeps its own tone, drawn at the `--site-recede` opacity: a
+ * grey button reads as a refusal, and a press that is on its way is not one.
  */
 export const siteActionStyle = defineSlotStyle({
   slot: "site-action",
   base:
-    "inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-(--site-radius-md) border border-transparent font-(family-name:--site-font-sans) font-(--site-fw-strong) no-underline outline-none transition-colors duration-(--site-duration-fast) ease-(--site-ease) focus-visible:shadow-[var(--site-focus-ring)] disabled:cursor-not-allowed disabled:border-transparent disabled:bg-(--site-control-disabled) disabled:text-(--site-ink-disabled) aria-disabled:cursor-not-allowed aria-disabled:border-transparent aria-disabled:bg-(--site-control-disabled) aria-disabled:text-(--site-ink-disabled) [&_svg]:size-4 [&_svg]:shrink-0",
+    "inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-(--site-radius-md) border border-transparent font-(family-name:--site-font-sans) font-(--site-fw-strong) no-underline outline-none transition-colors duration-(--site-duration-fast) ease-(--site-ease) focus-visible:shadow-[var(--site-focus-ring)] disabled:cursor-not-allowed disabled:not-aria-busy:border-transparent disabled:not-aria-busy:bg-(--site-control-disabled) disabled:not-aria-busy:text-(--site-ink-disabled) aria-disabled:cursor-not-allowed aria-disabled:not-aria-busy:border-transparent aria-disabled:not-aria-busy:bg-(--site-control-disabled) aria-disabled:not-aria-busy:text-(--site-ink-disabled) aria-busy:opacity-(--site-recede) [&_svg]:size-4 [&_svg]:shrink-0",
   variants: {
     size: {
       md: "h-(--site-control) px-3.5 text-(length:--site-fs-body-pane) leading-(--site-lh-body-pane)",

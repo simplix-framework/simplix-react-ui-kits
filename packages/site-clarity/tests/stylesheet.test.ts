@@ -37,6 +37,18 @@ describe("the site stylesheet", () => {
   const readme = read("README.md");
   const slots: Set<string> = declaredSlots();
 
+  it("draws a refused action grey and an action that waits for its answer in its own tone at the recede opacity", () => {
+    const action = /:where\(\[data-slot="site-action"\]\)\[data-s-site-action\] \{([^}]*)\}/.exec(css)?.[1] ?? "";
+    // The disabled ground and ink do not reach an action marked busy ...
+    for (const property of ["border-transparent", "bg-(--site-control-disabled)", "text-(--site-ink-disabled)"]) {
+      expect(action).toContain(`disabled:not-aria-busy:${property}`);
+      expect(action).toContain(`aria-disabled:not-aria-busy:${property}`);
+      expect(action).not.toMatch(new RegExp(`(?<![-\\w:])(?:aria-)?disabled:${property.replace(/[()]/g, "\\$&")}`));
+    }
+    // ... which is drawn dimmer by the token that names how far a thing recedes.
+    expect(action).toContain("aria-busy:opacity-(--site-recede)");
+  });
+
   it("draws every slot site-core declares and no slot it does not", () => {
     expect(slots.size).toBeGreaterThan(0);
     expect(without(slots, drawnSlots(css))).toEqual([]);
