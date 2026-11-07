@@ -67,6 +67,20 @@ describe("the card's parts", () => {
     expect(bySlot(renderToStaticMarkup(<AuthText>Fine print</AuthText>), "site-auth-text")[0]?.attributes.role).toBeUndefined();
   });
 
+  it("draws a refusal's glyph beside its words, hidden from a screen reader, and nothing extra without one", () => {
+    const marked = renderToStaticMarkup(<AuthAlert mark={<svg data-slot="glyph" />}>Wrong password</AuthAlert>);
+    const alert = bySlot(marked, "site-auth-alert")[0];
+    expect([alert?.attributes.role, alert?.attributes["data-marked"]]).toEqual(["alert", "true"]);
+    const mark = bySlot(marked, "site-auth-alert-mark")[0];
+    expect(mark?.attributes["aria-hidden"]).toBe("true");
+    expect(marked.indexOf("glyph")).toBeLessThan(marked.indexOf("Wrong password"));
+    const plain = renderToStaticMarkup(<AuthAlert>Wrong password</AuthAlert>);
+    expect(bySlot(plain, "site-auth-alert")[0]?.attributes["data-marked"]).toBe("false");
+    expect(bySlot(plain, "site-auth-alert-mark")).toEqual([]);
+    expect(plain).toContain(">Wrong password</p>");
+    expect(unmarked(marked)).toEqual([]);
+  });
+
   it("fills the strength bars up to the score and names the strength", () => {
     const html = renderToStaticMarkup(<PasswordStrength score={2} label="Password strength 2 of 3" />);
     expect(bySlot(html, "site-password-step").map((tag) => tag.attributes["data-on"])).toEqual(["true", "true", "false"]);

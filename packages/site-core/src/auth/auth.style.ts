@@ -108,6 +108,28 @@ export const siteAuthTextStyle = defineSlotStyle({
 export const siteAuthAlertStyle = defineSlotStyle({
   slot: "site-auth-alert",
   base: "m-0 rounded-(--site-radius-lg) bg-(--site-bad-soft) px-3 py-2 text-(length:--site-fs-caption) leading-(--site-lh-caption) font-(--site-fw-caption) text-(--site-bad)",
+  variants: {
+    // With a mark the glyph stands beside the words, top-aligned with the first line.
+    marked: {
+      true: "flex items-start gap-2",
+      false: "",
+    },
+  },
+  defaultVariants: { marked: false },
+});
+
+/** An alert's words beside its glyph: one box, so words made of several pieces wrap together. */
+export const siteAuthAlertTextStyle = defineSlotStyle({
+  slot: "site-auth-alert-text",
+  base: "min-w-0",
+  variants: {},
+  defaultVariants: {},
+});
+
+/** The glyph beside an alert's words: one line tall, so it stands level with the first line however far the words wrap. */
+export const siteAuthAlertMarkStyle = defineSlotStyle({
+  slot: "site-auth-alert-mark",
+  base: "inline-flex h-(--site-lh-caption) shrink-0 items-center [&_svg]:size-4 [&_svg]:shrink-0",
   variants: {},
   defaultVariants: {},
 });

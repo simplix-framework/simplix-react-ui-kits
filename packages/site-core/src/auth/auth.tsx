@@ -1,8 +1,11 @@
-import type { FormEvent, ReactNode } from "react";
+import { useRef, type FormEvent, type ReactNode } from "react";
 import { slotAttributes } from "@simplix-react/ui/design";
 
+import { useHeadingTitle } from "../shell/site-window";
 import {
+  siteAuthAlertMarkStyle,
   siteAuthAlertStyle,
+  siteAuthAlertTextStyle,
   siteAuthCardStyle,
   siteAuthDoneStyle,
   siteAuthFieldHeadStyle,
@@ -32,14 +35,22 @@ export interface AuthPageProps {
   readonly step: string;
   /** A light or dark ground: the sign-in server follows the reader's scheme; dark takes the site's dark values. */
   readonly scheme?: "light" | "dark";
+  /**
+   * The document's title for the step shown, from the text of its card's title (the page's h1), as
+   * the site window names its pages: a step the reader reaches names the tab, the bookmark and the
+   * history, not only the product. Left out, the document keeps the title its HTML gives.
+   */
+  readonly title?: (heading: string) => string;
   /** The step's {@link AuthCard}, and the product's toasts. */
   readonly children: ReactNode;
 }
 
 /** The sign-in server's page: its own ground outside the site window, the `page` container of its card. */
-export function AuthPage({ step, scheme, children }: AuthPageProps) {
+export function AuthPage({ step, scheme, title, children }: AuthPageProps) {
+  const page = useRef<HTMLDivElement>(null);
+  useHeadingTitle(page, title);
   return (
-    <div {...slotAttributes(siteAuthStyle, {})} data-page={step} data-band={scheme === "dark" ? "dark" : undefined}>
+    <div ref={page} {...slotAttributes(siteAuthStyle, {})} data-page={step} data-band={scheme === "dark" ? "dark" : undefined}>
       {children}
     </div>
   );
@@ -164,14 +175,28 @@ export function AuthText({ size, tone, live = false, children }: AuthTextProps) 
 
 /** Props for {@link AuthAlert}. */
 export interface AuthAlertProps {
+  /**
+   * A glyph beside the words (a warning mark), which says the line is a refusal before it is read.
+   * It is decorative: the line's role and its words are what is spoken.
+   */
+  readonly mark?: ReactNode;
   readonly children: ReactNode;
 }
 
 /** What went wrong with what was sent, spoken at once. */
-export function AuthAlert({ children }: AuthAlertProps) {
+export function AuthAlert({ mark, children }: AuthAlertProps) {
   return (
-    <p {...slotAttributes(siteAuthAlertStyle, {})} role="alert">
-      {children}
+    <p {...slotAttributes(siteAuthAlertStyle, { marked: mark !== undefined })} role="alert">
+      {mark !== undefined ? (
+        <>
+          <span {...slotAttributes(siteAuthAlertMarkStyle, {})} aria-hidden="true">
+            {mark}
+          </span>
+          <span {...slotAttributes(siteAuthAlertTextStyle, {})}>{children}</span>
+        </>
+      ) : (
+        children
+      )}
     </p>
   );
 }
