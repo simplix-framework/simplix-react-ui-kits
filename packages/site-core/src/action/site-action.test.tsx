@@ -24,6 +24,21 @@ describe("SiteAction", () => {
     expect(tabStops(html)).toEqual([]);
   });
 
+  it("draws a pending action as a disabled button that says what it waits for, even with an address or a line of its own", () => {
+    const html = renderToStaticMarkup(<SiteAction id="send" label="Send" href="/send" describedBy="note" onSelect={() => undefined} pending="Sending the request" />);
+    const action = bySlot(html, "site-action")[0];
+    const reason = bySlot(html, "site-action-reason")[0];
+    expect(action?.name).toBe("button");
+    expect(action?.attributes.disabled).toBeDefined();
+    expect(action?.attributes["aria-describedby"]).toBe(reason?.attributes.id);
+    expect(html).toContain(">Sending the request</span>");
+    expect(html).not.toContain("href=");
+    // Without a wait the same spec presses again, with no reason drawn.
+    const idle = renderToStaticMarkup(<SiteAction id="send" label="Send" onSelect={() => undefined} pending={undefined} />);
+    expect(bySlot(idle, "site-action")[0]?.attributes.disabled).toBeUndefined();
+    expect(bySlot(idle, "site-action-reason")).toEqual([]);
+  });
+
   it("writes its tone, size and width as the variants the design draws, secondary and medium by default", () => {
     const plain = bySlot(renderToStaticMarkup(<SiteAction id="a" label="A" />), "site-action")[0];
     expect(plain?.attributes["data-tone"]).toBe("secondary");
