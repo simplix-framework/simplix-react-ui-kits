@@ -77,10 +77,14 @@ describe("the generated list's address", () => {
     expect(source).toContain('filterMode: "immediate",');
   });
 
-  it("declares the address once, from the filters the list states, beside them", () => {
+  // The declaration closes the file: a screen edits the imports, the filters and the columns above it,
+  // and nothing below the list component, so a regeneration adds it without a conflict.
+  it("declares the address once, from the filters the list states, after the list it reads", () => {
     const source = renderList();
     expect(source).toContain("export const JobListAddress = declareListAddress(JobFilters, { facetFields: [] });");
     expect(source.indexOf("const JobFilters")).toBeLessThan(source.indexOf("export const JobListAddress"));
+    expect(source.indexOf("export function JobList(")).toBeLessThan(source.indexOf("export const JobListAddress"));
+    expect(source.trimEnd().endsWith("declareListAddress(JobFilters, { facetFields: [] });")).toBe(true);
     expect(source.split("declareListAddress(").length - 1).toBe(1);
   });
 

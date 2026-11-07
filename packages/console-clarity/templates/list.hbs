@@ -5,8 +5,8 @@
  * matches. It is the list's start: its columns, filters, chips and empty state are customised
  * here, in this file, and a later template change is merged into it three ways.
  */
-import { adaptForcedList, adaptOrvalList{{#if hasKeywordSearch}}, SEARCHABLE_KEYWORD_PARAM{{/if}}, useCrudList{{#if hookOrder}}{{#if orderField}}, useInvalidateEntity{{/if}}{{/if}}, withForced } from "@simplix-react/ui";
-import { {{#if hasMoneyFilter}}moneyFilterTransform, {{/if}}declareListAddress, RecordList, {{#if figureTiles.aggregates}}withListRequest, {{/if}}{{#if hookOrder}}{{#if orderField}}useAllowed, {{/if}}{{/if}}pickFields, useRecordContract, useScreenWords, type ContractField, type ContractFilter, type ContractOverrides, type ListAddress, type RecordAction, type RecordColumn, type RecordFilter, type RecordListProps } from "@simplix-react-ui-kits/console-clarity/entity";
+import { adaptForcedList, adaptOrvalList{{#if hasKeywordSearch}}, SEARCHABLE_KEYWORD_PARAM{{/if}}, useCrudList{{#if hookOrder}}{{#if orderField}}, useInvalidateEntity{{/if}}{{/if}} } from "@simplix-react/ui";
+import { {{#if hasMoneyFilter}}moneyFilterTransform, {{/if}}declareListAddress, RecordList, {{#if figureTiles.aggregates}}withListRequest, {{/if}}{{#if hookOrder}}{{#if orderField}}useAllowed, {{/if}}{{/if}}pickFields, useRecordContract, useScreenWords, withForced, type ContractField, type ContractFilter, type ContractOverrides, type ListAddress, type RecordAction, type RecordColumn, type RecordFilter, type RecordListProps } from "@simplix-react-ui-kits/console-clarity/entity";
 
 import { {{hookList}}, {{#if hookOrder}}{{#if orderField}}{{hookOrder}}, {{#if accessOrder}}{{accessOrder}}, {{/if}}{{#if entityPathExport}}{{entityPathExport}}, {{/if}}{{/if}}{{/if}}type {{listRowType}} } from "{{packageName}}";
 {{#each listFacetImports}}
@@ -109,14 +109,6 @@ const {{EntityPascal}}Filters: readonly ContractFilter[] = [
 ];
 
 /**
- * What this list's address may carry: the filter keys the controls above commit, and the controls
- * the list reads the address back with. The hook reads the address through it, and a screen that
- * links to this list (a tile counting what the list would show) narrows its keys with `narrow` and
- * reads the same `controls`, so a link and the list cannot disagree about a key.
- */
-export const {{EntityPascal}}ListAddress = declareListAddress({{EntityPascal}}Filters, { facetFields: [{{#each listFacets}}"{{this.field}}"{{#unless @last}}, {{/unless}}{{/each}}] });
-
-/**
  * The columns the list draws, in the order it draws them: the generator writes every field in the
  * order it arrives, and the screen reorders or trims this list by hand. A name the table lacks is
  * skipped, so a field the backend drops leaves the list instead of breaking it.
@@ -216,3 +208,11 @@ export function {{EntityPascal}}List({ list, activeRowId, onRowClick, actions, n
     />
   );
 }
+
+/**
+ * What this list's address may carry: the filter keys the controls in `{{EntityPascal}}Filters` commit,
+ * and the controls the list reads the address back with. The hook reads the address through it, and a
+ * screen that links to this list (a tile counting what the list would show) narrows its keys with
+ * `narrow` and reads the same `controls`, so a link and the list cannot disagree about a key.
+ */
+export const {{EntityPascal}}ListAddress = declareListAddress({{EntityPascal}}Filters, { facetFields: [{{#each listFacets}}"{{this.field}}"{{#unless @last}}, {{/unless}}{{/each}}] });
