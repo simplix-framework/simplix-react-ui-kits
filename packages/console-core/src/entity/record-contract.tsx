@@ -13,7 +13,8 @@ import type { PeekTarget } from "../peek";
 import type { RecordFormField } from "./record-form-types";
 import type { RecordFilter } from "./record-list";
 import { bytesText, durationText, figureSign, signedText } from "./record-figure";
-import type { RecordValue } from "./record-value";
+import { pickFields } from "./contract-pick";
+import type { RecordBadge, RecordValue } from "./record-value";
 import { useReferenceValue } from "./reference-value";
 
 /**
@@ -148,6 +149,12 @@ export interface ContractField {
   readonly scale?: number;
   /** The value a new record starts the field with (SimpliX Meta's `defaultValue`). */
   readonly defaultValue?: string | number | boolean;
+  /**
+   * The tone of each value's badge as SimpliX Meta declares it (an enum value's `tone`, a boolean's
+   * `tones`), keyed by the value (`"true"` and `"false"` for a boolean). A screen's
+   * {@link ContractOverrides.tones} for the field wins over it; a value neither names is neutral.
+   */
+  readonly tones?: Readonly<Record<string, StatusTone>>;
 }
 
 /** The record a reference opens: its value, its name, and the field the value matches where it is not the identifier. */
@@ -275,9 +282,65 @@ export interface ContractHeadFigure {
  */
 export const ALWAYS_DRAWN_COLUMNS = 4;
 
+/**
+ * The column ladder every generated list climbs: each column after the leading block is dropped from
+ * a pane narrower than the table that holds it, so a wide record set narrows column by column. A
+ * list that writes its own columns runs them through this rather than copying the loop.
+ *
+ * @param columns the drawn columns, in order, each with its fixed width or its floor
+ * @param always how many leading columns carry no tier of their own
+ * @returns the same columns, each after the leading block with the table width it needs
+ */
+export function ladderColumns<C extends { readonly width?: number; readonly minWidth?: number }>(
+  columns: readonly C[],
+  always: number = ALWAYS_DRAWN_COLUMNS,
+): (C & { readonly minTableWidth?: number })[] {
+  let running = 0;
+  return columns.map((column, index) => {
+    running += column.width ?? column.minWidth ?? 0;
+    return index < always ? column : { ...column, minTableWidth: running };
+  });
+}
+
+/** Pixels a badge adds around its label: its padding and border, and the cell's own padding. */
+const ENUM_BADGE_CHROME = 40;
+
+/**
+ * The width an enum column takes: the kind's standard width, or the width its longest label needs
+ * where that is wider, so a label such as 「Google Cloud TTS」 is never cut. The label is measured by
+ * its characters at the badge's type size: a full-width character (Hangul, kana, CJK) at its em, any
+ * other at about half of it.
+ *
+ * @param labels the labels of every value, in the reader's language
+ */
+export function enumColumnWidth(labels: readonly string[]): number {
+  const standard = CONTRACT_COLUMN_SIZE.enum.width ?? 0;
+  let widest = 0;
+  for (const label of labels) {
+    let width = 0;
+    for (const char of label) width += /[ᄀ-ᇿ　-鿿가-힯＀-￯]/.test(char) ? 12 : 7;
+    widest = Math.max(widest, width);
+  }
+  return Math.max(standard, Math.ceil(widest + ENUM_BADGE_CHROME));
+}
+
+/**
+ * The fields a detail draws as sections, each with its title and the field names it holds in order:
+ * the `SECTIONS` table a detail with more than one section declares.
+ */
+export type ContractSectionSpec = readonly { readonly key: string; readonly title: string; readonly fields: readonly string[] }[];
+
+/** How {@link useRecordContract}'s `detailSections` names and trims the sections. */
+export interface DetailSectionsOptions {
+  /** A section's title in the reader's language, from the key the spec names (a catalog key). */
+  readonly title: (title: string) => string;
+  /** Leave out the fields that draw nothing, and then the sections left with no field. */
+  readonly omitEmpty?: boolean;
+}
+
 /** What one screen adds to the contract's drawing: tones for its enums, pickers for its references. */
 export interface ContractOverrides {
-  /** Field → enum value → tone. A value with no tone is neutral. */
+  /** Field → enum value → tone, over the field's own {@link ContractField.tones}. A value with no tone is neutral. */
   readonly tones?: Readonly<Record<string, Readonly<Record<string, StatusTone>>>>;
   /** Field → the search a form's reference picker reads. A reference without one is edited as text. */
   readonly searches?: Readonly<Record<string, EntitySearch>>;
@@ -486,11 +549,12 @@ export function useRecordContract(entity: string, overrides: ContractOverrides =
           const constant = enumValueOf(raw);
           if (!constant) return null;
           const label = field.enumName ? enumLabel(field.enumName, constant) : constant;
-          return { badge: { label, tone: tones?.[field.name]?.[constant] ?? "neutral" } };
+          // The screen's tone first, then the one SimpliX Meta declares on the value.
+          return { badge: { label, tone: tones?.[field.name]?.[constant] ?? field.tones?.[constant] ?? "neutral" } };
         }
         case "boolean":
           // A mark for the rows it is true of, drawn under the field's own name; nothing on the others.
-          if (field.markWhenTrue) return raw ? { badge: { label: fieldLabel(field.name), tone: tones?.[field.name]?.["true"] ?? "info" } } : null;
+          if (field.markWhenTrue) return raw ? { badge: { label: fieldLabel(field.name), tone: tones?.[field.name]?.["true"] ?? field.tones?.["true"] ?? "info" } } : null;
           return { badge: { label: raw ? t("recordForm.yes") : t("recordForm.no"), tone: raw ? "success" : "neutral" } };
         case "instant":
           return zoneDateTimeText(zone, String(raw), locale);
@@ -626,13 +690,17 @@ export function useRecordContract(entity: string, overrides: ContractOverrides =
       header: fieldLabel(field.name),
       field: (sortFieldOf(field, locale) ?? field.sortField ?? field.name) as keyof R & string,
       ...CONTRACT_COLUMN_SIZE[field.kind],
+      // An enum column is as wide as its longest label needs, so no badge is cut.
+      ...(field.kind === "enum" && field.enumName && field.options?.length
+        ? { width: enumColumnWidth(field.options.map((option) => enumLabel(field.enumName as string, option))) }
+        : {}),
       ...(sortFieldOf(field, locale) !== undefined ? { sortable: true } : field.sortable === undefined ? {} : { sortable: field.sortable }),
       // A mark drawn only on the rows it is true of leaves no empty cell on the cards that lack it.
       ...(field.kind === "boolean" && field.markWhenTrue ? { cardKeep: false } : {}),
       ...(field.keep ? { keep: true } : {}),
       value: (row: R) => value(field, row as unknown as Row),
     }),
-    [fieldLabel, value, locale],
+    [enumLabel, fieldLabel, value, locale],
   );
 
   /**
@@ -641,17 +709,7 @@ export function useRecordContract(entity: string, overrides: ContractOverrides =
    * it; so a wide record set narrows column by column instead of flipping to cards, and the card
    * layout is left to a phone.
    */
-  const columns = useCallback(
-    <R,>(fields: readonly ContractField[]) => {
-      let running = 0;
-      return fields.map((field, index) => {
-        const drawn = column<R>(field);
-        running += drawn.width ?? drawn.minWidth ?? 0;
-        return index < ALWAYS_DRAWN_COLUMNS ? drawn : { ...drawn, minTableWidth: running };
-      });
-    },
-    [column],
-  );
+  const columns = useCallback(<R,>(fields: readonly ContractField[]) => ladderColumns(fields.map((field) => column<R>(field))), [column]);
 
   /** The searchable fields as list filters, labelled by the field and, for an enum, by its values. */
   const filters = useCallback(
@@ -683,14 +741,62 @@ export function useRecordContract(entity: string, overrides: ContractOverrides =
   );
 
   // A record's name as one line of text: each name field drawn as its kind draws it (an enum by
-  // its label, an instant in the installation's zone), the parts joined in order.
+  // its label, an instant in the installation's zone), the parts joined in order. A header that
+  // separates the parts (`" · "`) passes the separator, and the delete dialog names the record the
+  // same way by passing it too.
   const recordName = useCallback(
-    (fields: readonly ContractField[], row: Row | undefined): string => recordNameOf(fields.map((field) => value(field, row))),
+    (fields: readonly ContractField[], row: Row | undefined, options: { readonly separator?: string } = {}): string =>
+      recordNameOf(
+        fields.map((field) => value(field, row)),
+        options.separator,
+      ),
     [value],
   );
 
+  /** One field's value as plain text, drawn as its kind draws it: for a notice, a title, a sentence. */
+  const text = useCallback((field: ContractField, row: Row | undefined): string => recordValueText(value(field, row)), [value]);
+
+  /** An instant written in the installation's zone and the reader's language, or `""` for none or one that does not parse. */
+  const instantText = useCallback((iso: string | null | undefined): string => (iso ? (zoneDateTimeText(zone, iso, locale) ?? "") : ""), [locale, zone]);
+
+  /** A calendar day (`2026-11-30`) written as the reader reads a date, or `""` for none. */
+  const dateText = useCallback((day: string | null | undefined): string => (day ? calendarDayLabel(day, locale, "iso") || day : ""), [locale]);
+
+  /** The detail fields a screen names, in the order it names them; a name the table lacks is skipped. */
+  const detailFields = useCallback(
+    (fields: readonly ContractField[], names: readonly string[], row: Row | undefined) => pickFields(fields, names).map((field) => detailField(field, row)),
+    [detailField],
+  );
+
+  /**
+   * The detail's sections from its `SECTIONS` table, each holding the fields it names in that order.
+   * With `omitEmpty`, a field that draws nothing is left out, and then a section left with none.
+   */
+  const detailSections = useCallback(
+    (spec: ContractSectionSpec, fields: readonly ContractField[], row: Row | undefined, options: DetailSectionsOptions) =>
+      spec.flatMap((section) => {
+        const drawn = detailFields(fields, section.fields, row);
+        const kept = options.omitEmpty ? drawn.filter((field) => field.value !== null && field.value !== undefined) : drawn;
+        return options.omitEmpty && kept.length === 0 ? [] : [{ key: section.key, title: options.title(section.title), fields: kept }];
+      }),
+    [detailFields],
+  );
+
   // `enumLabel` is returned for a screen that draws an enum constant outside a column or a filter (a tab per group).
-  return useMemo(() => ({ value, formField, request, column, columns, filters, detailField, headFigures, fieldLabel, enumLabel, recordName }), [value, formField, request, column, columns, filters, detailField, headFigures, fieldLabel, enumLabel, recordName]);
+  return useMemo(
+    () => ({ value, text, formField, request, column, columns, filters, detailField, detailFields, detailSections, headFigures, fieldLabel, enumLabel, recordName, instantText, dateText }),
+    [value, text, formField, request, column, columns, filters, detailField, detailFields, detailSections, headFigures, fieldLabel, enumLabel, recordName, instantText, dateText],
+  );
+}
+
+/**
+ * The badge a drawn value carries, for a record's header: the status, type or kind badge the field
+ * is drawn as in the list, or nothing where the value is not a badge.
+ *
+ * @param value what `useRecordContract().value` drew for the field
+ */
+export function badgeOf(value: RecordValue): RecordBadge | undefined {
+  return value && typeof value === "object" && "badge" in value ? value.badge : undefined;
 }
 
 /** The text a drawn value reads as, or `""` where it draws nothing. */
@@ -709,11 +815,11 @@ export function recordValueText(value: RecordValue): string {
 }
 
 /**
- * A record's name from the values of its name fields, in order, joined by a space with the parts
- * that draw nothing left out.
+ * A record's name from the values of its name fields, in order, joined by `separator` (a space
+ * unless the screen names another) with the parts that draw nothing left out.
  */
-export function recordNameOf(values: readonly RecordValue[]): string {
-  return values.map(recordValueText).filter((part) => part !== "").join(" ");
+export function recordNameOf(values: readonly RecordValue[], separator: string = " "): string {
+  return values.map(recordValueText).filter((part) => part !== "").join(separator);
 }
 
 /**

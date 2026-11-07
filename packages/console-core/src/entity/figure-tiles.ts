@@ -4,6 +4,7 @@ import type { CrudListFilters, StatusTone } from "@simplix-react/ui";
 import { useRecordContract, recordValueText, type ContractField } from "./record-contract";
 import { aggregateValue, statusTiles, useStatusCounts } from "./status-counts";
 import type { SettingsTile } from "../layout/settings-tiles";
+import type { TileFilter } from "./tile-filter";
 
 /** A read the tiles are counted from: the generated query's result. */
 export interface FigureQuery {
@@ -16,22 +17,42 @@ export interface FigureTilesSpec {
   /** A tile per value of one enum, from the status-counts read. */
   readonly status?: {
     readonly query: FigureQuery;
-    readonly field: string;
-    readonly enumName: string;
-    readonly values: readonly string[];
+    /**
+     * The field the counts are by: its name, or its contract field, whose `enumName`, `options` and
+     * `tones` then stand in for the three below where the page leaves them out.
+     */
+    readonly field: string | ContractField;
+    readonly enumName?: string;
+    /** The values to draw a tile for, in order; absent, every option the contract field declares. */
+    readonly values?: readonly string[];
     /**
      * The tone of the tile of each enum value, keyed by the value. A tile takes its tone only while
      * its count is above zero (a zero counts nothing to act on), so `danger` and `warning` mark a
      * set the reader must act on now (frontend invariant #48). A value the enum does not list, or
-     * one left out, is drawn without a tone.
+     * one left out, is drawn without a tone. Absent, the tones the contract field declares.
      */
     readonly tones?: Readonly<Record<string, StatusTone>>;
+    /** What each value's figure counts, written under it; absent, nothing. */
+    readonly basis?: (value: string) => string | undefined;
+    /**
+     * The narrowing a value's tile writes where it is not the one value of the counted field: a
+     * figure that counts under a second condition narrows by both. Absent, `<field>.in` the value.
+     */
+    readonly filter?: (value: string) => TileFilter | undefined;
   };
   /** A tile per sum or row count, from the aggregates read, drawn by each field's own kind. */
   readonly aggregates?: {
     readonly query: FigureQuery;
-    readonly figures: readonly { readonly field: ContractField; readonly op: "sum" | "count"; readonly rowCount?: boolean }[];
+    readonly figures: readonly {
+      readonly field: ContractField;
+      readonly op: "sum" | "count";
+      readonly rowCount?: boolean;
+      /** The tile's tone for the figure it holds: a tone, or one chosen by the value (a failure count tinted while above zero). */
+      readonly tone?: StatusTone | ((value: number | undefined) => StatusTone | undefined);
+    }[];
   };
+  /** Tiles of the page's own after the generated ones: a figure no status count or aggregate answers. */
+  readonly extra?: readonly SettingsTile[];
   /** What a count of every row is called: the entity's plural name. */
   readonly rowsLabel: string;
 }
@@ -111,27 +132,57 @@ export interface FigureWords {
 export function figureTiles(spec: FigureTilesSpec, words: FigureWords, counts: Readonly<Record<string, number>> | undefined): SettingsTile[] {
   const tiles: SettingsTile[] = [];
   if (spec.status) {
-    const { enumName, field, values, tones } = spec.status;
-    tiles.push(...statusTiles({ field, values, counts, tones, label: (value) => words.enumLabel(enumName, value), fieldLabel: words.fieldLabel(field) }));
+    const status = statusFieldOf(spec.status);
+    const { basis, filter } = spec.status;
+    const drawn = statusTiles({ field: status.field, values: status.values, counts, tones: status.tones, basis, label: (value) => (status.enumName ? words.enumLabel(status.enumName, value) : value), fieldLabel: words.fieldLabel(status.field) });
+    // A value whose figure counts under a second condition narrows by both when pressed.
+    tiles.push(...drawn.map((tile) => (filter?.(tile.key) ? { ...tile, filter: filter(tile.key) as TileFilter } : tile)));
   }
   for (const figure of spec.aggregates?.figures ?? []) {
     const raw = aggregateValue(spec.aggregates?.query.data, figure.field.name, figure.op);
     const shown = raw === undefined ? undefined : figure.op === "count" ? raw : recordValueText(words.value(figure.field, { [figure.field.name]: raw })) || raw;
+    const tone = typeof figure.tone === "function" ? figure.tone(raw) : figure.tone;
     tiles.push({
       key: `${figure.field.name}:${figure.op}`,
       label: figure.rowCount ? spec.rowsLabel : words.fieldLabel(figure.field.name),
       value: shown,
       counted: false,
+      ...(tone ? { tone } : {}),
       // A sum is read under the list's current conditions, so it is being read again whenever they
       // change; its tile says so on its own, and the counts beside it keep their numbers.
       ...(spec.aggregates?.query.isLoading ? { loading: true } : {}),
     });
   }
+  tiles.push(...(spec.extra ?? []));
   return tiles;
 }
 
 /**
- * The default figure tiles of a list page and whether the status counts are still being read.
+ * The counted field of a status spec with the contract field's own declarations standing in for
+ * what the page leaves out: its enum, every option it declares, and the tones SimpliX Meta gives
+ * its values.
+ *
+ * @param status the page's status spec
+ */
+export function statusFieldOf(status: NonNullable<FigureTilesSpec["status"]>): {
+  readonly field: string;
+  readonly enumName: string | undefined;
+  readonly values: readonly string[];
+  readonly tones: Readonly<Record<string, StatusTone>> | undefined;
+} {
+  const declared = typeof status.field === "string" ? undefined : status.field;
+  return {
+    field: typeof status.field === "string" ? status.field : status.field.name,
+    enumName: status.enumName ?? declared?.enumName,
+    values: status.values ?? declared?.options ?? [],
+    tones: status.tones ?? declared?.tones,
+  };
+}
+
+/**
+ * The default figure tiles of a list page, whether the status counts are still being read, and the
+ * counts themselves, so a notice or a tile of the page's own reads the same answer instead of
+ * counting again.
  *
  * <p>The sums are read under the list's current conditions and are read again whenever those change;
  * each sum tile carries its own loading state (`SettingsTile.loading`), so the status counts, which
@@ -139,12 +190,18 @@ export function figureTiles(spec: FigureTilesSpec, words: FigureWords, counts: R
  *
  * @param entity the entity the labels are read for
  * @param spec what the page counts and sums, with the reads that answer it
+ * @returns the tiles, the loading state, and the count of every value (`undefined` until answered)
  */
-export function useFigureTiles(entity: string, spec: FigureTilesSpec): { readonly tiles: SettingsTile[]; readonly loading: boolean } {
+export function useFigureTiles(
+  entity: string,
+  spec: FigureTilesSpec,
+): { readonly tiles: SettingsTile[]; readonly loading: boolean; readonly counts: Readonly<Record<string, number>> | undefined } {
   const contract = useRecordContract(entity);
-  const counts = useStatusCounts(spec.status?.query ?? {});
+  // Every declared value is present in the answer, a value no row counts as 0.
+  const counts = useStatusCounts(spec.status?.query ?? {}, { options: spec.status ? statusFieldOf(spec.status).values : [] });
   return {
     tiles: figureTiles(spec, contract, counts),
     loading: Boolean(spec.status?.query.isLoading),
+    counts,
   };
 }
