@@ -16,7 +16,7 @@ import type { ReactNode } from "react";
 {{/if}}
 import { useTranslation } from "@simplix-react/i18n/react";
 import { CrudPage, {{#if hasCreate}}PageAction, {{/if}}type ConsoleSearch, type CrudPageBlocks, useDetailPresentationSetting } from "@simplix-react-ui-kits/console-clarity/page";
-import { {{#if (or hasCreate hasUpdate hasDelete)}}useAllowed, {{/if}}{{#if hasDelete}}{{#if displayNameField}}useRecordContract, {{/if}}{{/if}}{{#if figureTiles}}RECORD_READ_META, useFigureTiles, {{/if}}useScreenWords{{#if hasDelete}}{{#if displayNameField}}, type ContractField{{/if}}{{/if}} } from "@simplix-react-ui-kits/console-clarity/entity";
+import { {{#if (or hasCreate hasUpdate hasDelete)}}useAllowed, {{/if}}{{#if hasDelete}}useAnnounceOutcome, {{#if displayNameField}}useRecordContract, {{/if}}{{/if}}{{#if figureTiles}}RECORD_READ_META, useFigureTiles, {{/if}}useScreenWords{{#if hasDelete}}{{#if displayNameField}}, type ContractField{{/if}}{{/if}} } from "@simplix-react-ui-kits/console-clarity/entity";
 {{#if figureTiles}}
 import { {{#if figureTiles.status}}{{figureTiles.status.hook}}{{/if}}{{#if figureTiles.status}}{{#if figureTiles.aggregates}}, {{/if}}{{/if}}{{#if figureTiles.aggregates}}{{figureTiles.aggregates.hook}}{{/if}} } from "{{packageName}}";
 {{/if}}
@@ -116,6 +116,7 @@ export function {{EntityPascal}}CrudPage({ search, onNavigate }: {{EntityPascal}
 {{/if}}
 {{#if hasDelete}}
   const invalidate = useInvalidateEntity({{#if entityPathExport}}{{entityPathExport}}{{else}}"{{entityPath}}"{{/if}});
+  const announce = useAnnounceOutcome();
   const { requestDelete, deleteDialog } = useCrudDeleteWired({
     deleteMutation: adaptOrvalDelete({{hookDelete}}(), "{{#if deletePathParam}}{{deletePathParam}}{{else}}{{rowIdField}}{{/if}}", { onSettled: invalidate }),
     labels: {
@@ -125,7 +126,10 @@ export function {{EntityPascal}}CrudPage({ search, onNavigate }: {{EntityPascal}
       delete: words.delete,
       deleting: words.deleting,
     },
-    onDeleted: () => onNavigate({}),
+    onDeleted: () => {
+      announce({ message: words.deleted });
+      onNavigate({});
+    },
   });
 {{#if displayNameField}}
   // The record's name is every field its entity declares for it, each drawn by its kind, joined in order.

@@ -97,6 +97,9 @@
     "deleteDescription": "“{{name}}” 항목을 삭제합니다. 되돌릴 수 없습니다.",
     "cancel": "취소",
     "deleting": "삭제하는 중…",
+    "created": "{{entity, josa(을/를)}} 만들었습니다",
+    "saved": "{{entity, josa(을/를)}} 저장했습니다",
+    "deleted": "{{entity, josa(을/를)}} 삭제했습니다",
     "view": "보기",
     "readFailed": "이 항목을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요."
   },

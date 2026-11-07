@@ -98,6 +98,9 @@
     "deleteDescription": "Delete “{{name}}”? This cannot be undone.",
     "cancel": "Cancel",
     "deleting": "Deleting…",
+    "created": "{{entity}} created",
+    "saved": "{{entity}} saved",
+    "deleted": "{{entity}} deleted",
     "view": "View",
     "readFailed": "This record could not be read. Try again in a moment."
   },

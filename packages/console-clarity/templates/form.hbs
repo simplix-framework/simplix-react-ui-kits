@@ -5,7 +5,7 @@
  * matches. It is the form's start: its sections, rules and the request it sends are customised
  * here, in this file, and a later template change is merged into it three ways.
  */
-import { RecordForm, useRecordContract, useScreenWords, type ContractField, type RecordFormField } from "@simplix-react-ui-kits/console-clarity/entity";
+import { RecordForm, useAnnounceOutcome, useRecordContract, useScreenWords, type ContractField, type RecordFormField } from "@simplix-react-ui-kits/console-clarity/entity";
 import { QueryFallback, useInvalidateEntity } from "@simplix-react/ui";
 {{#each formPickerImports}}
 import { {{{this.hooks}}} } from "{{this.from}}";
@@ -32,6 +32,7 @@ export interface {{EntityPascal}}FormProps {
 /** Creates or edits a {{entity}} through the kit's record form. */
 export function {{EntityPascal}}Form(props: {{EntityPascal}}FormProps) {
   const words = useScreenWords("{{entity}}");
+  const announce = useAnnounceOutcome();
 {{#if hasUpdate}}
   const editing = Boolean(props.{{entity}}Id);
   // The edit read is the record as the update takes it back, so a field the form does not show
@@ -95,6 +96,8 @@ export function {{EntityPascal}}Form(props: {{EntityPascal}}FormProps) {
 {{else}}
         await create.mutateAsync({ data: body } as never);
 {{/if}}
+        // A saved record says so where the reader is looking; the panel closing is not an answer.
+        announce({ message: editing ? words.saved : words.created });
         props.onSuccess?.();
       }}
     />

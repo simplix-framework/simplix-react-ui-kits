@@ -11,4 +11,10 @@ describe("the words every generated detail reads", () => {
       expect(catalog.screen.timeline).toBeTruthy();
     }
   });
+
+  it("word a created, saved and deleted record in every language the kit ships", () => {
+    for (const catalog of [en, ko, ja]) {
+      for (const key of ["created", "saved", "deleted"] as const) expect(catalog.screen[key]).toContain("{{entity");
+    }
+  });
 });

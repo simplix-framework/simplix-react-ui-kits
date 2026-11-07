@@ -76,3 +76,14 @@ describe("crud-page.hbs record name", () => {
     expect(text).toContain("const nameOf = (row: object) => contract.recordName(NAME_FIELDS, row as Readonly<Record<string, unknown>>);");
   });
 });
+
+describe("crud-page.hbs delete", () => {
+  it("says a deleted record in a toast before it returns to the list, and only where the entity deletes", () => {
+    const text = page({ hasCreate: false, hasUpdate: false, hasDelete: true });
+    expect(text).toContain("const announce = useAnnounceOutcome();");
+    expect(text).toContain("announce({ message: words.deleted });");
+    expect(text.indexOf("announce({")).toBeLessThan(text.indexOf("onNavigate({});"));
+    const without = page({ hasCreate: true, hasUpdate: true, hasDelete: false });
+    expect(without).not.toContain("useAnnounceOutcome");
+  });
+});

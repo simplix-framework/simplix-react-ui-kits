@@ -40,6 +40,12 @@ export interface ScreenWords {
   readonly deleteDescription: (name: string) => string;
   readonly cancel: string;
   readonly deleting: string;
+  /** What a toast says once a new record was saved, naming the entity. */
+  readonly created: string;
+  /** What a toast says once an edit was saved, naming the entity. */
+  readonly saved: string;
+  /** What a toast says once a record was deleted, naming the entity. */
+  readonly deleted: string;
   /** What a detail says when its read failed, so a failure never reads as an empty record. */
   readonly readFailed: string;
 }
@@ -83,6 +89,10 @@ export function useScreenWords(entity: string): ScreenWords {
       deleteDescription: (record: string) => t("screen.deleteDescription", { name: record }),
       cancel: t("screen.cancel"),
       deleting: t("screen.deleting"),
+      // These open the sentence, so the entity's name keeps the capital its label states.
+      created: t("screen.created", { entity: label }),
+      saved: t("screen.saved", { entity: label }),
+      deleted: t("screen.deleted", { entity: label }),
       readFailed: t("screen.readFailed"),
     };
   }, [name, t]);

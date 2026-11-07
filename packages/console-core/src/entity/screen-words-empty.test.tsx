@@ -87,3 +87,17 @@ describe("the verbs that name the entity", () => {
     }
   });
 });
+
+describe("the toast words of a save", () => {
+  it("name the entity with the capital its label states, since they open the sentence", () => {
+    const entity = catalogs.entity.en;
+    const saved = { ...entity };
+    Object.assign(entity, { _label: "Release file", _plural: "Release files" });
+    try {
+      const words = wordsIn("en");
+      expect([words.created, words.saved, words.deleted]).toEqual(["Release file created", "Release file saved", "Release file deleted"]);
+    } finally {
+      Object.assign(entity, saved);
+    }
+  });
+});

@@ -97,6 +97,9 @@
     "deleteDescription": "「{{name}}」を削除します。元に戻せません。",
     "cancel": "キャンセル",
     "deleting": "削除しています…",
+    "created": "{{entity}}を作成しました",
+    "saved": "{{entity}}を保存しました",
+    "deleted": "{{entity}}を削除しました",
     "view": "表示",
     "readFailed": "この項目を読み込めませんでした。しばらくしてからもう一度お試しください。"
   },

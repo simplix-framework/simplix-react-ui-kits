@@ -83,3 +83,12 @@ describe("the generated form with a field only a verb moves", () => {
     expect(check("form", source)).toEqual([]);
   });
 });
+
+describe("the generated form's save", () => {
+  it("says a saved record in a toast, new or edited, before the panel closes", () => {
+    const source = render("form.hbs", context);
+    expect(source).toContain("announce({ message: editing ? words.saved : words.created });");
+    expect(source.indexOf("announce({")).toBeLessThan(source.indexOf("props.onSuccess?.()"));
+    expect(check("form", source)).toEqual([]);
+  });
+});
