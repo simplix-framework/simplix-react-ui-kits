@@ -1449,11 +1449,17 @@
   :where([data-part="console-tile-chip-figure"])[data-part][data-p-console-tile-chip-figure] {
     @apply text-(length:--fs-control) leading-(--lh-control);
   }
+  :where([data-part="console-tile-chip-figure"][data-part-tone="success"])[data-part][data-p-console-tile-chip-figure] {
+    @apply text-[var(--success-text)]!;
+  }
   :where([data-part="console-tile-chip-figure"][data-part-tone="warning"])[data-part][data-p-console-tile-chip-figure] {
     @apply text-[var(--warning-text)]!;
   }
   :where([data-part="console-tile-chip-figure"][data-part-tone="danger"])[data-part][data-p-console-tile-chip-figure] {
     @apply text-[var(--destructive-text)]!;
+  }
+  :where([data-part="console-tile-chip-figure"][data-part-tone="info"])[data-part][data-p-console-tile-chip-figure] {
+    @apply text-[var(--info-text)]!;
   }
   :where([data-part="console-tile-trend"])[data-part][data-p-console-tile-trend] {
     @apply font-semibold;

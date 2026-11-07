@@ -32,8 +32,12 @@ export const pageSlots: Record<string, string> = {
   "console-tile-chip pressable=false": "cursor-not-allowed hover:border-[var(--border)] active:scale-100",
   // The tint the tile carries is a class the figure is handed at runtime, so it is outweighed.
   "console-tile-chip-figure": "text-(length:--fs-control) leading-(--lh-control)",
+  // Every tone that colours words takes the design's text grade (`--*-text`); the tones with no
+  // such variable (pending, processing) keep the text grade the figure is handed (`toneTextClass`).
+  "console-tile-chip-figure tone=success": "text-[var(--success-text)]!",
   "console-tile-chip-figure tone=warning": "text-[var(--warning-text)]!",
   "console-tile-chip-figure tone=danger": "text-[var(--destructive-text)]!",
+  "console-tile-chip-figure tone=info": "text-[var(--info-text)]!",
   // An untitled row under the header: its fold control 12px below the header, the tiles 36px
   // under that, as the proposal's bare section head draws them.
   "console-tile-reach leads=rule": "-mt-5",

@@ -6,7 +6,6 @@ import {
   Flex,
   Grid,
   MenuLink,
-  STATUS_TONES,
   StatCard,
   Text,
   useMediaQuery,
@@ -16,6 +15,7 @@ import {
 } from "@simplix-react/ui";
 import { DigitRoll } from "@simplix-react/ui/interaction";
 import { useReflowFlip } from "./use-reflow-flip";
+import { toneTextClass } from "./tone-text";
 import { ArrowRightIcon, ChevronDownIcon, GripVerticalIcon } from "lucide-react";
 
 import { PACKAGE_NAMESPACE } from "./locales";
@@ -78,27 +78,36 @@ export interface TileTrend {
 }
 
 /**
+ * The tone a tile is drawn in: a zero counts nothing to act on, and a figure nobody has counted
+ * (absent, or still unread) has nothing to warn of, so neither is drawn in a tone.
+ */
+function shownTone(tile: SettingsTile): StatusTone | undefined {
+  return tile.value === undefined || tile.value === 0 || tile.value === "0" ? undefined : tile.tone;
+}
+
+/**
+ * The colour a tile's figure takes on a line with no card to tint, in a tone's text grade (a tone's
+ * icon colour is too faint for words); none for a toneless tile.
+ */
+function toneTextClassOf(tile: SettingsTile): string | undefined {
+  const tone = shownTone(tile);
+  return tone ? toneTextClass(tone) : undefined;
+}
+
+/**
  * What a movement means for a figure: a rising count that is already a warning is worse, the same
  * count falling is better, and a figure in the success tone reads the other way round. A figure with
  * no tone, or one that did not move, is neither.
  */
-/** The tone a tile is drawn in: a zero counts nothing to act on, so it is never drawn in a tone. */
-function shownTone(tile: SettingsTile): StatusTone | undefined {
-  return tile.value === 0 || tile.value === "0" ? undefined : tile.tone;
-}
-
-/** The colour a tile's figure takes on a line with no card to tint; none for a toneless tile. */
-function toneIconClass(tile: SettingsTile): string | undefined {
-  const tone = shownTone(tile);
-  return tone ? STATUS_TONES[tone].icon : undefined;
-}
-
 function verdictOf(tone: StatusTone | undefined, direction: TileTrendDirection): "worse" | "better" | "neutral" {
   if (direction === "flat") return "neutral";
   if (tone === "warning" || tone === "danger") return direction === "up" ? "worse" : "better";
   if (tone === "success") return direction === "up" ? "better" : "worse";
   return "neutral";
 }
+
+/** Keeps a tile figure's unit (「크레딧」, "credits") in one piece where the figure itself breaks anywhere. */
+const TILE_UNIT_UNBREAKABLE = "[&_[data-slot=stat-card-unit]]:whitespace-nowrap";
 
 /** The arrow each direction is drawn with. */
 const TREND_ARROW: Readonly<Record<TileTrendDirection, string>> = {
@@ -652,7 +661,7 @@ function TileChips({
             <span>{tile.label}</span>
             <NumericText
               weight="semibold"
-              className={toneIconClass(tile)}
+              className={toneTextClassOf(tile)}
               {...partAttributes(tileChipFigureStyle, { tone: shownTone(tile) ?? "none" })}
             >
               {tileFigure(tile, locale)}
@@ -784,7 +793,7 @@ function TileStrip({
         <NumericText
           size="sm"
           weight="semibold"
-          className={cn("shrink-0", toneIconClass(tile))}
+          className={cn("shrink-0", toneTextClassOf(tile))}
         >
           {tileFigure(tile, locale)}
         </NumericText>
@@ -896,6 +905,9 @@ function TileGrid({
             tone={tone}
             highlighted={tone === "warning" || tone === "danger"}
             loading={loading || Boolean(tile.loading)}
+            // The card lets its figure break anywhere, so a figure wider than the card never
+            // overflows it; the unit is a word and is never cut inside, so it wraps whole.
+            className={TILE_UNIT_UNBREAKABLE}
           />
         );
         // The card fills whatever height it is handed, so a tile that is a link needs its anchor
