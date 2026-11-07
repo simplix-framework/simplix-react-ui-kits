@@ -84,6 +84,8 @@
     "emptyDescription": "추가하면 이 목록에 표시됩니다.",
     "emptyDescriptionRecorded": "기록이 생기면 이 목록에 표시됩니다.",
     "overview": "개요",
+    "changes": "변경 이력",
+    "timeline": "진행 과정",
     "delete": "삭제",
     "deleteTitle": "{{entity}} 삭제",
     "deleteDescription": "“{{name}}” 항목을 삭제합니다. 되돌릴 수 없습니다.",

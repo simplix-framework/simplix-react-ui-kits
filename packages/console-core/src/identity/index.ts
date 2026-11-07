@@ -22,9 +22,14 @@ export {
   changeValueLabel,
   FieldEnumsProvider,
   type ChangeValueReaders,
+  CHANGES_TAB_KEY,
+  changesTabOf,
   useChangeHistory,
+  useChangeHistoryRead,
   useRefreshChangeHistory,
+  type ChangeHistoryRead,
   type ChangeHistoryScope,
+  type ChangeHistoryTab,
 } from "./change-history";
 export { ChangeHistorySourceProvider, useChangeHistorySource } from "./change-history-source";
 export type {

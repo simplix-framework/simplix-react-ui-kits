@@ -38,7 +38,7 @@ import { CheckMatrix, type CheckMatrixProps } from "../layout/check-matrix";
 import { MeasurementGrid, type MeasurementGridProps } from "../layout/measurement-grid";
 import { FormSheet, type FormSheetProps } from "../screen/form-sheet";
 import { HistoryRail, type HistoryRailProps } from "../screen/history-rail";
-import { ChangeHistoryTable, FieldEnumsProvider, type useChangeHistory } from "../identity/change-history";
+import { ChangeHistoryTable, FieldEnumsProvider, type ChangeHistoryRead } from "../identity/change-history";
 import { ScoreSheet, type ScoreSheetProps } from "../screen/score-sheet";
 import { useCrudPresentation } from "../page/crud-page";
 import { DetailPresentationSwitch, type DetailPresentationSwitchProps } from "../page/detail-presentation-switch";
@@ -99,7 +99,7 @@ export interface RecordTabContent {
    * The record's change history from the audit log, drawn as the kit's history table with its own
    * refusal when the reader may not read the log.
    */
-  readonly changes?: { readonly history: ReturnType<typeof useChangeHistory>; readonly emptyBody?: string };
+  readonly changes?: { readonly history: ChangeHistoryRead; readonly emptyBody?: string };
 }
 
 /** One tab of a {@link RecordDetail}. */

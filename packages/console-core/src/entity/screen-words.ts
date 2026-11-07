@@ -19,6 +19,10 @@ export interface ScreenWords {
   readonly save: string;
   /** The first tab of a record that has more than one. */
   readonly overview: string;
+  /** The tab holding the record's change history from the audit log. */
+  readonly changes: string;
+  /** The section or rail holding the steps a record went through, in time order. */
+  readonly timeline: string;
   /** The create verb, naming the entity (「Add Job Position」). */
   readonly add: string;
   /** The edit form's title, naming the entity. */
@@ -63,6 +67,8 @@ export function useScreenWords(entity: string): ScreenWords {
       view: t("screen.view"),
       edit: t("screen.edit"),
       overview: t("screen.overview"),
+      changes: t("screen.changes"),
+      timeline: t("screen.timeline"),
       save: t("screen.save"),
       add: t("screen.add", { entity: label }),
       editTitle: t("screen.editTitle", { entity: label }),

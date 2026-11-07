@@ -84,6 +84,8 @@
     "emptyDescription": "追加するとここに表示されます。",
     "emptyDescriptionRecorded": "記録されるとここに表示されます。",
     "overview": "概要",
+    "changes": "変更履歴",
+    "timeline": "経過",
     "delete": "削除",
     "deleteTitle": "{{entity}}を削除",
     "deleteDescription": "「{{name}}」を削除します。元に戻せません。",

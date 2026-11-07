@@ -85,6 +85,8 @@
     "emptyDescription": "What you add appears here.",
     "emptyDescriptionRecorded": "Records appear here as they are made.",
     "overview": "Overview",
+    "changes": "Changes",
+    "timeline": "Timeline",
     "delete": "Delete",
     "deleteTitle": "Delete {{entity}}",
     "deleteDescription": "Delete “{{name}}”? This cannot be undone.",
