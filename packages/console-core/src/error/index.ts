@@ -7,6 +7,7 @@ export {
   AuthRequiredPage,
   FailurePage,
   NotFoundPage,
+  ScreenErrorPage,
   ServerErrorPage,
   ServiceUnavailablePage,
 } from "./error-pages";

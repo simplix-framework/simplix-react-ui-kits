@@ -131,31 +131,52 @@ export function NotFoundPage() {
   );
 }
 
-/** 500 — Internal Server Error */
-export function ServerErrorPage({ reset }: { reset?: () => void }) {
+/** What the failure page offers after a failure: the way home and the way to try again. */
+function FailureActions({ reset }: { reset?: () => void }) {
   const { t } = useTranslation(PACKAGE_NAMESPACE + "/features");
+  return (
+    <>
+      <Link to="/">
+        <Button variant="outline">
+          <Home />
+          {t("error.goHome")}
+        </Button>
+      </Link>
+      <Button onClick={() => (reset ? reset() : window.location.reload())}>
+        <RefreshCw />
+        {t("error.tryAgain")}
+      </Button>
+    </>
+  );
+}
 
+/** The server failed to handle a request: its status (500 where nobody knows a more exact one) under the actions. */
+export function ServerErrorPage({ reset, code = "500" }: { reset?: () => void; code?: string }) {
   return (
     <ErrorPageLayout
-      code="500"
+      code={code}
       icon={<AlertTriangle />}
       iconTint="red"
       titleKey="error.serverErrorTitle"
       descriptionKey="error.serverErrorDescription"
-      actions={
-        <>
-          <Link to="/">
-            <Button variant="outline">
-              <Home />
-              {t("error.goHome")}
-            </Button>
-          </Link>
-          <Button onClick={() => reset ? reset() : window.location.reload()}>
-            <RefreshCw />
-            {t("error.tryAgain")}
-          </Button>
-        </>
-      }
+      actions={<FailureActions reset={reset} />}
+    />
+  );
+}
+
+/**
+ * The screen itself failed while it was being drawn. The server answered nothing wrong, so the
+ * page names neither the server nor a status, which would send the reader to the wrong place.
+ */
+export function ScreenErrorPage({ reset }: { reset?: () => void }) {
+  return (
+    <ErrorPageLayout
+      code=""
+      icon={<AlertTriangle />}
+      iconTint="red"
+      titleKey="error.screenErrorTitle"
+      descriptionKey="error.screenErrorDescription"
+      actions={<FailureActions reset={reset} />}
     />
   );
 }

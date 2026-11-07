@@ -53,6 +53,20 @@ const gatewayConfig = {
   titleKey: "error.serviceUnavailableShort",
 };
 
+/**
+ * The sentence under the dialog's title: the server's own message, else the text of the error code,
+ * else a sentence for the kind of failure, so the band under the title is never drawn empty.
+ *
+ * @param message the server's message, which names the rule that rejected the request
+ * @param generic the text of the error code, or `""` where there is none
+ * @param fallback the sentence for the kind of failure
+ */
+export function errorReason(message: string | undefined, generic: string, fallback: string): string {
+  const stated = message?.trim();
+  if (stated) return stated;
+  return generic.trim() || fallback;
+}
+
 export function ErrorDialog() {
   const { t } = useTranslation(PACKAGE_NAMESPACE + "/features");
   const { tOr } = useOptionalTranslation("common");
@@ -75,7 +89,7 @@ export function ErrorDialog() {
   // own message, which says no more than that validation failed. Those lines are the only thing
   // that tells somebody what to change, so they lead when they are there.
   const fieldReasons = isGateway ? undefined : current.validationErrors;
-  const reason = isGateway ? t("error.serviceUnavailable") : current.message || generic;
+  const reason = isGateway ? t("error.serviceUnavailable") : errorReason(current.message, generic, t(`error.detail.${config.kind}`));
 
   return (
     <Dialog open onOpenChange={() => dismissError()}>

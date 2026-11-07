@@ -9,6 +9,14 @@
     "authRequiredTitle": "Sign-in required",
     "clientErrorShort": "Request error",
     "close": "Close",
+    "detail": {
+      "server": "Try again in a moment. Tell a system administrator if it keeps happening.",
+      "client": "The server did not accept the request. Check what was sent and try again.",
+      "network": "The connection to the server was lost. Check the network and try again.",
+      "auth": "This account holds no permission for this action. Ask a system administrator if you need one.",
+      "validation": "A value was not accepted. Check what you entered and try again.",
+      "unknown": "Something went wrong. Try again in a moment."
+    },
     "dismissAll": "Dismiss all",
     "goBack": "Back",
     "goHome": "Home",
@@ -16,6 +24,8 @@
     "notFoundDescription": "There is no screen at the address requested.",
     "notFoundTitle": "Screen not found",
     "refresh": "Refresh",
+    "screenErrorDescription": "Something failed while the screen was being drawn. Try again, and reload the page if it keeps happening. Tell a system administrator if that does not help.",
+    "screenErrorTitle": "This screen stopped working",
     "serverErrorDescription": "Try again in a moment. Tell a system administrator if it keeps happening.",
     "serverErrorShort": "Server error",
     "serverErrorTitle": "The server could not handle the request",
