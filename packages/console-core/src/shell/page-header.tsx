@@ -1,6 +1,7 @@
 import { Flex, Heading, Stack, Text, usePageHeaderState } from "@simplix-react/ui";
 
 import { NoticeMenu, useNoticeEntries } from "../notice";
+import { useDocumentTitle } from "./document-title";
 import { useConsoleOnAPhone } from "./phone-shell";
 import { pageHeaderActionsStyle, pageHeaderDescriptionStyle, pageHeaderMetadataStyle, pageHeaderStyle } from "./page-header.style";
 import { partAttributes } from "@simplix-react/ui/design";
@@ -47,6 +48,9 @@ export function ConsolePageHeader() {
   const { title, back, description, metadata, center, actions } = usePageHeaderState();
   const onAPhone = useConsoleOnAPhone();
   const notices = useNoticeEntries();
+  // The header is mounted on every routed screen at every width, so the tab names the page here
+  // (a title that is not text names nothing).
+  useDocumentTitle(typeof title === "string" ? title : undefined);
   if (!title) return null;
   if (onAPhone) {
     if (!phoneRowHasContent({ back, actions, noticeCount: notices.length })) return null;
