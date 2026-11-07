@@ -19,7 +19,18 @@ describe("a console page's address", () => {
     expect(validateConsoleSearch({ q: 7 })).toHaveProperty("q", undefined);
   });
 
+  // The route's `validateSearch` is this function, so a field it leaves out never reaches the page:
+  // the list filters of a link (a home tile's count) arrive here or nowhere.
+  it("keeps the list filters a link carries, a lone value as a string and a set as an array", () => {
+    expect(validateConsoleSearch({ filters: { "status.in": "FAILED", "state.in": ["A", "B"] } })).toHaveProperty("filters", { "status.in": "FAILED", "state.in": ["A", "B"] });
+  });
+
+  it("drops what is not a filter, and never lets a field the page owns pass as a filter key", () => {
+    expect(validateConsoleSearch({ filters: { "status.in": 3, id: "1", tab: "open", "a.in": { nested: true } } })).toHaveProperty("filters", undefined);
+    expect(validateConsoleSearch({ filters: "status.in" })).toHaveProperty("filters", undefined);
+  });
+
   it("writes every field it owns, so none of the address's own values is left in place", () => {
-    expect(Object.keys(validateConsoleSearch({}))).toEqual(expect.arrayContaining(["id", "mode", "tab", "help", "gap", "grant", "q"]));
+    expect(Object.keys(validateConsoleSearch({}))).toEqual(expect.arrayContaining(["id", "mode", "tab", "filters", "help", "gap", "grant", "q"]));
   });
 });

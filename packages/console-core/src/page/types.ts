@@ -1,5 +1,5 @@
 import type { ComponentType, ReactNode } from "react";
-import type { CrudListFilters, CrudSearch } from "@simplix-react/ui";
+import type { CrudListFilters, CrudNavigateOptions, CrudSearch } from "@simplix-react/ui";
 import type { PageTimeRangeSlot } from "../datetime/page-time-range";
 
 import type { SettingsTile, TileFilters } from "../layout";
@@ -28,7 +28,12 @@ export interface PageBlocks {
  */
 export interface PageBlocksContext<S extends ConsoleSearch = ConsoleSearch> {
   readonly search: S;
-  readonly onNavigate: (search: S) => void;
+  /**
+   * Moves the address. The second argument says how the router records the move: a change the
+   * reader makes while staying on the view (narrowing a list) passes `{ replace: true }`, so Back
+   * leaves the screen instead of stepping through every filter tried.
+   */
+  readonly onNavigate: (search: S, options?: CrudNavigateOptions) => void;
 }
 
 /**

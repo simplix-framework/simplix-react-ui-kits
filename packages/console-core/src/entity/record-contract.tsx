@@ -6,7 +6,7 @@ import { i18nBaseValue, seedI18nDefaults } from "@simplix-react/i18n";
 /** A text per content language, as the i18n helpers take it. */
 type I18nMap = Parameters<typeof i18nBaseValue>[0] & object;
 import { useEntityTranslation, useI18nEditLanguage, useLocale, useTranslation } from "@simplix-react/i18n/react";
-import { SearchOperator, type EntityFacet, type EntitySearch, type LanguageSelectorPlacement, type StatusTone } from "@simplix-react/ui";
+import type { EntityFacet, EntitySearch, LanguageSelectorPlacement, StatusTone } from "@simplix-react/ui";
 
 import { PACKAGE_NAMESPACE } from "./locales";
 import type { PeekTarget } from "../peek";
@@ -14,6 +14,7 @@ import type { RecordFormField } from "./record-form-types";
 import type { RecordFilter } from "./record-list";
 import { bytesText, durationText, figureSign, signedText, withoutByteUnit } from "./record-figure";
 import { pickFields } from "./contract-pick";
+import { knownFilterOperators } from "./filter-operators";
 import { groupedNumber } from "./grouped-number";
 import type { RecordBadge, RecordValue } from "./record-value";
 import { useReferenceValue } from "./reference-value";
@@ -260,8 +261,7 @@ export function recordFilterOf<R>(
       return { kind: "number", field, label: def.currency ? `${label} (${def.currency})` : label };
     case "text": {
       // An operator the filter bar does not know is dropped; a field left with none takes the default pair.
-      const known = new Set<string>(Object.values(SearchOperator));
-      const operators = (def.operators ?? []).filter((operator): operator is SearchOperator => known.has(operator));
+      const operators = knownFilterOperators(def.operators);
       return operators.length > 0 ? { kind: "text", field, label, operators } : { kind: "text", field, label };
     }
     default:

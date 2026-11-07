@@ -16,6 +16,7 @@ export type { ActionDialogProps, ActionStep } from "./action-dialog";
 export type { PageActionKind, PageActionProps } from "./page-action";
 export type { CrudPresentation, CrudPageListFilters, CrudPageNavigation, CrudPageNotice, CrudPagePresentation, CrudPageProps } from "./crud-page";
 export type { CrudPageBlocks } from "./crud-page-blocks";
+export type { CrudNavigateOptions } from "@simplix-react/ui";
 export { countNotice } from "./count-notice";
 export type { CountNoticeNarrowing, CountNoticeSpec } from "./count-notice";
 export { PageBackProvider, usePageBackLink } from "./page-back";

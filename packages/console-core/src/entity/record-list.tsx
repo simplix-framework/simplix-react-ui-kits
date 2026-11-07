@@ -11,6 +11,7 @@ import {
   Text,
   ListTotalBadge,
   SearchOperator,
+  filtersOutsideForced,
   useCrudList,
   type ActionType,
   type CrudListFilters,
@@ -35,6 +36,15 @@ import { missingTileFacets, useTileFacets } from "./tile-facets";
 import { FLUID_COLUMN_MIN, tableColumnsOf } from "./column-priority";
 import { useRememberedView } from "./list-view-memory";
 import { listTotal } from "./list-total";
+import { DEFAULT_TEXT_FILTER_OPERATORS, NUMBER_FILTER_OPERATORS } from "./filter-operators";
+
+/**
+ * The request a list was built under (`withForced`), which a page that pins a field (a tab's
+ * `status.equals`) hands back with its list controller so the bar can leave that field's control out.
+ */
+interface ForcedBy {
+  readonly forced?: Readonly<Record<string, unknown>>;
+}
 
 /** One column of a {@link RecordList}. */
 export interface RecordColumn<Row> {
@@ -241,7 +251,7 @@ export interface RecordListProps<Row> {
    * sort and the pager then drive its request instead of the rows in memory, and the count is the
    * server's total.
    */
-  readonly list?: UseCrudListResult<Row>;
+  readonly list?: UseCrudListResult<Row> & ForcedBy;
   readonly columns: readonly RecordColumn<Row>[];
   /** The value that names a row, in the address and in the open panel. */
   readonly rowId: (row: Row) => string;
@@ -577,11 +587,11 @@ export function filterDef<Row>(filter: RecordFilter<Row>): FilterDef {
       type: "number",
       field: filter.field,
       label: filter.label,
-      operators: [SearchOperator.EQUALS, SearchOperator.GREATER_THAN_OR_EQUAL, SearchOperator.LESS_THAN_OR_EQUAL],
+      operators: [...NUMBER_FILTER_OPERATORS],
       defaultOperator: SearchOperator.EQUALS,
     } as FilterDef;
   }
-  const operators = filter.operators && filter.operators.length > 0 ? [...filter.operators] : [SearchOperator.CONTAINS, SearchOperator.EQUALS];
+  const operators = filter.operators && filter.operators.length > 0 ? [...filter.operators] : [...DEFAULT_TEXT_FILTER_OPERATORS];
   return {
     type: "text",
     field: filter.field,
@@ -769,10 +779,12 @@ export function RecordList<Row>({
     chipField: chips?.field,
     narrowingKey: narrowing?.field,
   });
-  const filterDefs: FilterDef[] = [
+  // A filter over a field the page forces (a tab pins `status.equals`) is not drawn: the forced value
+  // wins in the request, so its control would open, take a choice and change not one row.
+  const filterDefs: FilterDef[] = filtersOutsideForced({ ...serverList?.forced }, [
     ...filters.map(filterDef),
     ...tileFacets.map((facet): FilterDef => ({ type: "faceted", field: facet.field, label: facet.label, options: [...facet.options], multiSelect: true })),
-  ];
+  ]);
   const filtered = on("filters") && filterDefs.length > 0;
   const search = on("search") ? (
     <div

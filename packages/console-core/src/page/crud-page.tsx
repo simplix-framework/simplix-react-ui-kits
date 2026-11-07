@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useRef, type ReactNode } from "react";
-import { ListDetail, type CrudListFilters, useCrudNavigation, useCrudPageState, useMediaQuery, useUIDefaults } from "@simplix-react/ui";
+import { ListDetail, type CrudListFilters, type CrudNavigateOptions, useCrudNavigation, useCrudPageState, useMediaQuery, useUIDefaults } from "@simplix-react/ui";
 
 import { PHONE_WINDOW } from "../layout/window-size";
 
@@ -82,7 +82,8 @@ export interface CrudPageProps {
   /** The page around the list: header, figures, notices, help, tabs. Its `body` is the list and its record. */
   readonly spec: Omit<PageSpec, "body">;
   readonly search: ConsoleSearch;
-  readonly onNavigate: (search: ConsoleSearch) => void;
+  /** Moves the address; `{ replace: true }` replaces the history entry instead of adding one. */
+  readonly onNavigate: (search: ConsoleSearch, options?: CrudNavigateOptions) => void;
   /** Where a picked record opens; the installation's `UIProvider` default when absent. */
   readonly presentation?: CrudPagePresentation;
   /**
