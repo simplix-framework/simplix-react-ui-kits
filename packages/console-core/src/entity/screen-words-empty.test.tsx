@@ -6,7 +6,10 @@ import en from "./locales/features/en.json";
 import ko from "./locales/features/ko.json";
 
 /** The catalogs a screen reads: the kit's words and one entity's names, in the language under test. */
-const catalogs = vi.hoisted(() => ({ locale: "en" as "en" | "ko", entity: { en: { _label: "Usage event", _plural: "Usage events" }, ko: { _label: "사용 이벤트", _plural: "사용 이벤트" } } }));
+const catalogs = vi.hoisted(() => ({
+  locale: "en" as "en" | "ko",
+  entity: { en: { _label: "Usage event", _plural: "Usage events" } as Record<string, string>, ko: { _label: "사용 이벤트", _plural: "사용 이벤트" } as Record<string, string> },
+}));
 
 vi.mock("@simplix-react/i18n/react", () => ({
   useTranslation: (namespace: string) => ({
@@ -42,6 +45,45 @@ describe("the empty list's title", () => {
   });
 
   it("sets the Korean name as it is", () => {
-    expect(wordsIn("ko").emptyTitle).toBe("등록된 사용 이벤트 없음");
+    expect(wordsIn("ko").emptyTitle).toBe("사용 이벤트 없음");
+  });
+
+  it("does not repeat a word the Korean name already starts with", () => {
+    const entity = catalogs.entity.ko;
+    const saved = { ...entity };
+    Object.assign(entity, { _label: "등록 보이스", _plural: "등록 보이스" });
+    try {
+      expect(wordsIn("ko").emptyTitle).toBe("등록 보이스 없음");
+    } finally {
+      Object.assign(entity, saved);
+    }
+  });
+});
+
+describe("the verbs that name the entity", () => {
+  it("set a title-cased singular name in lower case inside the English sentence", () => {
+    const entity = catalogs.entity.en;
+    const saved = { ...entity };
+    Object.assign(entity, { _label: "Release file", _plural: "Release files" });
+    try {
+      const words = wordsIn("en");
+      expect(words.add).toBe("Add release file");
+      expect(words.editTitle).toBe("Edit release file");
+      expect(words.deleteTitle).toBe("Delete release file");
+      expect(words.label).toBe("Release file");
+    } finally {
+      Object.assign(entity, saved);
+    }
+  });
+
+  it("keep an acronym whole", () => {
+    const entity = catalogs.entity.en;
+    const saved = { ...entity };
+    Object.assign(entity, { _label: "AI provider connection", _plural: "AI provider connections" });
+    try {
+      expect(wordsIn("en").add).toBe("Add AI provider connection");
+    } finally {
+      Object.assign(entity, saved);
+    }
   });
 });
