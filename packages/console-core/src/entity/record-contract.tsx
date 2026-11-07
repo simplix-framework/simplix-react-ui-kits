@@ -524,7 +524,8 @@ export function moneyText(field: Pick<ContractField, "currency" | "scale">, raw:
  * Draws and edits fields by their contract kind.
  *
  * <p>`value` gives a list cell or a detail field: an enum as a badge with its translated label, a
- * boolean as a yes or no badge, an instant in the installation's zone, a day as a calendar label, a
+ * boolean as a badge worded by the entity catalog's `values.<field>.true` / `.false` (yes or no where
+ * the catalog has none) and toned as SimpliX Meta declares, an instant in the installation's zone, a day as a calendar label, a
  * number grouped, a reference as the referenced record's name that opens its peek. `formField` gives
  * the control: a select, a switch, a date, a number, a reference picker, a text area.
  *
@@ -534,6 +535,8 @@ export function moneyText(field: Pick<ContractField, "currency" | "scale">, raw:
 export function useRecordContract(entity: string, overrides: ContractOverrides = {}) {
   const { fieldLabel, enumLabel } = useEntityTranslation(entity);
   const { t } = useTranslation(PACKAGE_NAMESPACE + "/features");
+  // The entity's own words for a boolean's two values (`values.<field>.true`), beside its field labels.
+  const { t: entityWord, exists: entityHasWord } = useTranslation(`entity/${entity}`);
   const locale = useLocale();
   const zone = useAppTimeZone();
   const referenceValue = useReferenceValue();
@@ -555,7 +558,13 @@ export function useRecordContract(entity: string, overrides: ContractOverrides =
         case "boolean":
           // A mark for the rows it is true of, drawn under the field's own name; nothing on the others.
           if (field.markWhenTrue) return raw ? { badge: { label: fieldLabel(field.name), tone: tones?.[field.name]?.["true"] ?? field.tones?.["true"] ?? "info" } } : null;
-          return { badge: { label: raw ? t("recordForm.yes") : t("recordForm.no"), tone: raw ? "success" : "neutral" } };
+          return {
+            badge: booleanBadge(Boolean(raw), field, tones?.[field.name], {
+              word: (key) => (entityHasWord(key) ? entityWord(key) : undefined),
+              yes: t("recordForm.yes"),
+              no: t("recordForm.no"),
+            }),
+          };
         case "instant":
           return zoneDateTimeText(zone, String(raw), locale);
         case "date":
@@ -599,7 +608,7 @@ export function useRecordContract(entity: string, overrides: ContractOverrides =
         }
       }
     },
-    [enumLabel, fieldLabel, locale, referenceValue, t, tones, zone],
+    [entityHasWord, entityWord, enumLabel, fieldLabel, locale, referenceValue, t, tones, zone],
   );
 
   const formField = useCallback(
@@ -804,6 +813,35 @@ export function useRecordContract(entity: string, overrides: ContractOverrides =
  *
  * @param value what `useRecordContract().value` drew for the field
  */
+/** What a boolean's badge is worded from: the entity's own word for a value, else yes or no. */
+export interface BooleanWords {
+  /** The entity catalog's text under `key`, or undefined where it has none. */
+  readonly word: (key: string) => string | undefined;
+  readonly yes: string;
+  readonly no: string;
+}
+
+/**
+ * A boolean value as a badge: worded by the entity's `values.<field>.true` / `.false` (an offered
+ * voice reads 「Offered」, not 「Yes」), else yes or no; toned by the screen's override for the value,
+ * else the tone SimpliX Meta declares on the field, else a true value success and a false one neutral.
+ *
+ * @param value the value
+ * @param field the field, with the tones Meta declares
+ * @param override the screen's tones for this field, keyed `"true"` and `"false"`
+ * @param words the entity catalog's reader and the kit's yes and no
+ */
+export function booleanBadge(
+  value: boolean,
+  field: Pick<ContractField, "name" | "tones">,
+  override: Readonly<Record<string, StatusTone>> | undefined,
+  words: BooleanWords,
+): RecordBadge {
+  const key = value ? "true" : "false";
+  const label = words.word(`values.${field.name}.${key}`) ?? (value ? words.yes : words.no);
+  return { label, tone: override?.[key] ?? field.tones?.[key] ?? (value ? "success" : "neutral") };
+}
+
 export function badgeOf(value: RecordValue): RecordBadge | undefined {
   return value && typeof value === "object" && "badge" in value ? value.badge : undefined;
 }

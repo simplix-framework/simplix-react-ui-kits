@@ -75,3 +75,11 @@ describe("the generated detail's read", () => {
   });
 });
 
+
+describe("the generated form with a field only a verb moves", () => {
+  it("compiles with the field's create default in the body", () => {
+    const source = render("form.hbs", { ...context, verbOnlyCreateDefaults: [{ name: "enabled", defaultLiteral: "true" }] });
+    expect(source).toContain("{ enabled: true, ...written }");
+    expect(check("form", source)).toEqual([]);
+  });
+});

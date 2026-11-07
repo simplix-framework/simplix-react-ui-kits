@@ -74,7 +74,13 @@ export function {{EntityPascal}}Form(props: {{EntityPascal}}FormProps) {
         const written = contract.request({{EntityPascal}}FormFields, values);
 {{#if formOrderField}}
         // The list's drag sets the order, so a new record starts first and an edit keeps its place.
-        const body = editing && row ? { ...row, ...written } : { {{formOrderField}}: 0, ...written };
+{{/if}}
+{{#if verbOnlyCreateDefaults.length}}
+        // Only a verb moves {{#each verbOnlyCreateDefaults}}{{#unless @first}}{{#if @last}} and {{else}}, {{/if}}{{/unless}}`{{this.name}}`{{/each}} (frontend invariant #74), so the form leaves it out:
+        // a new record starts at the contract's default and an edit sends the stored value back.
+{{/if}}
+{{#if (or formOrderField verbOnlyCreateDefaults.length)}}
+        const body = editing && row ? { ...row, ...written } : { {{#if formOrderField}}{{formOrderField}}: 0, {{/if}}{{#each verbOnlyCreateDefaults}}{{this.name}}: {{{this.defaultLiteral}}}, {{/each}}...written };
 {{else}}
         const body = editing && row ? { ...row, ...written } : written;
 {{/if}}

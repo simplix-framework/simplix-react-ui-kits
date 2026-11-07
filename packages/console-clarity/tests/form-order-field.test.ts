@@ -58,3 +58,31 @@ describe("the generated form for a contract that edits and never creates", () =>
     expect(out).toContain("else await create.mutateAsync");
   });
 });
+
+describe("the generated form for a field only a verb moves", () => {
+  const verbOnly = [{ name: "enabled", defaultLiteral: "true" }];
+
+  it("draws no control for it and starts a new record at the contract's default", async () => {
+    const out = await render("form.hbs", { ...context, verbOnlyCreateDefaults: verbOnly });
+    expect(out).not.toContain('name: "enabled"');
+    expect(out).toContain("const body = editing && row ? { ...row, ...written } : { enabled: true, ...written };");
+    expect(out).toContain("Only a verb moves `enabled`");
+  });
+
+  it("sends the order field's start and the verb's default together under a drag", async () => {
+    const out = await render("form.hbs", { ...context, formFields: unordered, formOrderField: "sortOrder", verbOnlyCreateDefaults: verbOnly });
+    expect(out).toContain("{ sortOrder: 0, enabled: true, ...written }");
+  });
+
+  it("names every such field in its note", async () => {
+    const out = await render("form.hbs", { ...context, verbOnlyCreateDefaults: [...verbOnly, { name: "editable", defaultLiteral: "true" }, { name: "kind", defaultLiteral: '"A"' }] });
+    expect(out).toContain("Only a verb moves `enabled`, `editable` and `kind`");
+    expect(out).toContain('{ enabled: true, editable: true, kind: "A", ...written }');
+  });
+
+  it("leaves a form with none as it was", async () => {
+    const out = await render("form.hbs", { ...context, verbOnlyCreateDefaults: [] });
+    expect(out).toContain("const body = editing && row ? { ...row, ...written } : written;");
+    expect(out).not.toContain("Only a verb moves");
+  });
+});

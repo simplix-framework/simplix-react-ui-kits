@@ -122,6 +122,15 @@ describe("a detail's header badge", () => {
     expect(check(join(widgetsDir, "detail.tsx"), source)).toEqual([]);
   });
 
+  it("is drawn from a boolean field the entry names, carrying the tones Meta declares for its two values", () => {
+    const offered = { name: "offered", contractKind: "boolean", tones: { true: "success", false: "neutral" } };
+    const source = render("detail.hbs", { ...context, detailFields: [...context.detailFields, offered], statusBadgeField: "offered", statusField: "status" });
+    expect(source).toContain('{ name: "offered", kind: "boolean", tones: { "true": "success", "false": "neutral" } }');
+    expect(source).toContain('const BADGE_FIELD = ProductDetailFields.find((field) => field.name === "offered");');
+    expect(source).toContain("badgeOf(contract.value(BADGE_FIELD, row))");
+    expect(check(join(widgetsDir, "detail.tsx"), source)).toEqual([]);
+  });
+
   it("falls back to the entity's status field", () => {
     expect(render("detail.hbs", { ...context, statusField: "status" })).toContain('field.name === "status"');
   });

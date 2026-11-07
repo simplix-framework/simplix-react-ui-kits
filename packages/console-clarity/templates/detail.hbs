@@ -45,8 +45,9 @@ const {{EntityPascal}}DetailFields: readonly ContractField[] = [
 
 {{#if (or statusBadgeField statusField)}}
 /**
- * The field the header's badge is drawn from (a status, a type, a kind), as its list draws it: any
- * enum field the screen's entry names, else the entity's status field.
+ * The field the header's badge is drawn from (a status, a type, a kind, whether it is offered), as
+ * its list draws it: any enum or boolean field the screen's entry names, else the entity's status
+ * field. A boolean reads the entity's words for its two values and the tones Meta declares.
  */
 const BADGE_FIELD = {{EntityPascal}}DetailFields.find((field) => field.name === "{{#if statusBadgeField}}{{statusBadgeField}}{{else}}{{statusField}}{{/if}}");
 
