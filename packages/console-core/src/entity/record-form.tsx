@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { getErrorMessage, getValidationErrors } from "@simplix-react/api";
 import { useTranslation } from "@simplix-react/i18n/react";
-import { Button, CrudForm, Flex, Heading, Stack, Text } from "@simplix-react/ui";
+import { Button, CrudForm, Flex, Heading, Stack, Text, useUnsavedChanges } from "@simplix-react/ui";
 import { slotAttributes } from "@simplix-react/ui/design";
 
 import { RecordNote, RecordNotices, RecordVerbButton, type RecordNotice, type RecordVerb } from "./record-blocks";
@@ -20,6 +20,18 @@ function initialValues(sections: readonly RecordFormSection[]): Values {
   const values: Values = {};
   for (const section of sections) for (const field of section.fields) values[field.key] = initialFieldValue(field);
   return values;
+}
+
+/**
+ * Whether any value of a form differs from the one it started with. Values are compared by their
+ * JSON, since a field's value may be a list or a per-language map; a key the baseline never held
+ * (a field a later section draws) is not a change.
+ *
+ * @param baseline the values the form started with
+ * @param values the values as they stand
+ */
+export function valuesChanged(baseline: Readonly<Record<string, unknown>>, values: Readonly<Record<string, unknown>>): boolean {
+  return Object.keys(values).some((key) => key in baseline && JSON.stringify(values[key]) !== JSON.stringify(baseline[key]));
 }
 
 /**
@@ -172,6 +184,11 @@ export function RecordForm({ title, sections, notices, note, submitLabel, onSubm
   const progress = requiredProgress(sections, form.values);
   const [refusal, setRefusal] = useState<SubmitRefusal | undefined>(undefined);
   const [pending, setPending] = useState(false);
+  // Leaving with typed input asks first, whether by the cancel button or the panel's close, and
+  // closing the tab warns too. A save in flight is not unsaved, so it never asks.
+  const [baseline] = useState(() => initialValues(sections));
+  const { guardedNavigate, dialog } = useUnsavedChanges({ isDirty: valuesChanged(baseline, form.values) && !pending });
+  const leave = onCancel ? () => guardedNavigate(onCancel) : undefined;
   const fieldKeys = sections.flatMap((section) => section.fields.map((field) => field.key));
   const submit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -190,46 +207,49 @@ export function RecordForm({ title, sections, notices, note, submitLabel, onSubm
   return (
     // The form checks its own values and says why in the field and the summary, in the reader's
     // language; the browser's constraint bubble would stop the submit first, in its own.
-    <CrudForm
-      variant="panel"
-      noValidate
-      onSubmit={submit}
-      onClose={onCancel}
-      header={
-        // How many required fields are answered, so a reader who sees the first few fields of a long
-        // form knows how much is still below.
-        <Stack gap="none" minSize>
-          <Heading level={4}>{title}</Heading>
-          {progress.total > 0 ? (
-            <Text as="span" size="caption" tone="muted" aria-live="polite" data-form-progress>
-              {t("recordForm.progress", { total: progress.total, filled: progress.filled })}
-            </Text>
-          ) : null}
-        </Stack>
-      }
-      footer={
-        <CrudForm.Actions spread={Boolean(onCancel)}>
-          {onCancel ? (
-            <Button type="button" size="sm" variant="outline" onClick={onCancel}>
-              {tUi("common.cancel")}
+    <>
+      <CrudForm
+        variant="panel"
+        noValidate
+        onSubmit={submit}
+        onClose={leave}
+        header={
+          // How many required fields are answered, so a reader who sees the first few fields of a long
+          // form knows how much is still below.
+          <Stack gap="none" minSize>
+            <Heading level={4}>{title}</Heading>
+            {progress.total > 0 ? (
+              <Text as="span" size="caption" tone="muted" aria-live="polite" data-form-progress>
+                {t("recordForm.progress", { total: progress.total, filled: progress.filled })}
+              </Text>
+            ) : null}
+          </Stack>
+        }
+        footer={
+          <CrudForm.Actions spread={Boolean(onCancel)}>
+            {onCancel ? (
+              <Button type="button" size="sm" variant="outline" onClick={leave}>
+                {tUi("common.cancel")}
+              </Button>
+            ) : null}
+            {actions.map((action) => (
+              <RecordVerbButton key={action.label} verb={action} />
+            ))}
+            <Button type="submit" size="sm" loading={pending} loadingText={submitLabel} disabled={pending}>
+              {submitLabel}
             </Button>
-          ) : null}
-          {actions.map((action) => (
-            <RecordVerbButton key={action.label} verb={action} />
-          ))}
-          <Button type="submit" size="sm" loading={pending} loadingText={submitLabel} disabled={pending}>
-            {submitLabel}
-          </Button>
-        </CrudForm.Actions>
-      }
-    >
-      {/* Notices come first: a reason the form cannot go through is read before any field is filled. */}
-      <RecordNotices notices={refusal ? [{ key: "submit-refused", tone: "danger", title: t("recordForm.refused"), body: refusal.message }, ...(notices ?? [])] : notices} />
-      <RecordFormSections sections={sections} form={form} refusal={refusal} fieldNotices={fieldNotices} />
-      {children}
-      <RecordNote text={note} />
-      <FormMore />
-    </CrudForm>
+          </CrudForm.Actions>
+        }
+      >
+        {/* Notices come first: a reason the form cannot go through is read before any field is filled. */}
+        <RecordNotices notices={refusal ? [{ key: "submit-refused", tone: "danger", title: t("recordForm.refused"), body: refusal.message }, ...(notices ?? [])] : notices} />
+        <RecordFormSections sections={sections} form={form} refusal={refusal} fieldNotices={fieldNotices} />
+        {children}
+        <RecordNote text={note} />
+        <FormMore />
+      </CrudForm>
+      {dialog}
+    </>
   );
 }
 
