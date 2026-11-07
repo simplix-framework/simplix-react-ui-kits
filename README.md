@@ -73,6 +73,44 @@ One standard holds for every card list. A list drawn as cards (`presentation="ca
 
 The generator turns the entity's searchable fields into the list's filters (`ContractFilter`): an enum is a `choice`, a boolean a `toggle`, a moment or a day a `dateRange`, a figure a `number` (a `money` field also carries its currency and scale), and a key of another record a `reference` filtered by that record's name. A text field is left to the keyword search, because a free-text box per field is rarely the question. A screen whose question is asked by a text field (per provider, per plan code) names it in its design and scaffolds with `--text-filter <field,field>`; the list then declares `{ kind: "text", field, operators }`, where `operators` are the ones the endpoint accepts on the field, first one the default (`["equals"]` for a field the server matches only whole, which the filter bar then offers without a `contains` the server would answer with an empty page). The flag is recorded in the origin, so a regeneration offers the same filters, and a name that is not a searchable text field of the entity stops the run.
 
+## List filters in the address
+
+A generated list keeps its committed filters in its page's address, so a link can open a list already filtered (a tile reading "4 failed jobs" opens those four), a reload keeps the filters, and Back leaves the screen in one step instead of stepping through every filter the reader tried. On the wire a filter is one bracketed parameter per key, `?filters[status.in]=FAILED`.
+
+How a screen passes the address. `use<Entity>List(params?, address?)` takes the address as `{ value, onChange }`. The generated `crud-page.tsx` builds it from its own props and nothing else:
+
+```tsx
+const list = useJobList(blocks.listParams, {
+  value: search.filters,
+  onChange: (next) => onNavigate({ ...search, filters: next }, { replace: true }),
+});
+```
+
+`onNavigate` takes the router's navigation options as its second argument (`PageBlocksContext`, the page's props and the route all carry it), and the route passes `replace: options?.replace` to `navigate`, so a filter change replaces the history entry and opening a record still pushes one. A list called with no address keeps its filters to itself. After a delete the page returns to `{ tab: search.tab, filters: search.filters }`, never to a bare address, and every other move between views keeps both.
+
+What the list reads from the address. The list file declares its address once beside its filters and exports it as `<Entity>ListAddress` (from the widget index too):
+
+| Member | Use |
+| --- | --- |
+| `narrow(filters)` | the filters a list will accept: only the keys its controls commit |
+| `controls` | the field and kind of each control, so a toggle's `true` and a number's text read back as the value the control commits; hand it to `filtersToRequestParams` |
+| `keys` | the filter keys the controls commit |
+| `addressed(address, forced)` | the `addressedFilters` option the hook gives `useCrudList` |
+
+Narrowing keeps a key only when the list has a control that commits it: a choice and a reference filter carry `<field>.in`, a toggle `<field>.equals`, a text filter the operators it declares (contains and equals when it declares none the bar knows), a number filter equals and its two bounds, a period `greaterThanOrEqualTo` and `lessThanOrEqualTo`. A reference filter the list supplies no facet for draws no control, so its key is dropped (the list names the fields it has facets for when it declares its address). A stale or hand-typed key therefore never reaches a request the server would refuse, and an address left with no declared key opens the list on its defaults. `declareListAddress`, `narrowAddressedFilters` and `filterControlsOf` in `console-core/src/entity/list-address.ts` hold the rule, and the operator lists are the ones the filter bar draws, so the two cannot drift.
+
+A screen that links to a list runs its keys through that same declaration, so a count and the list it opens read one set of filters:
+
+```tsx
+const filters = JobListAddress.narrow({ "status.in": ["FAILED"] });
+const count = useListCount(useListJobs, filtersToRequestParams(filters, { controls: JobListAddress.controls }));
+const href = { to: "/jobs", search: { filters } };
+```
+
+A key a screen writes through something other than the filter bar (a pressed tile, a chip row, the time range) reaches the address like any other, and is read back only where the entity declares a filter for that field. A link to a field the list has no control for is dropped whole.
+
+Tabs. A tab that pins a field passes its request as the list's `params` (`listParams` in the page's blocks). A filter over a field `params` pins with `equals` is not applied and the bar draws no control for it, because the pinned value wins in every request and the control would change no row. The key stays in the address until the reader's next filter change writes it out, and it applies again on a tab that does not pin the field. The pinned request rides on the list controller (`withForced`), which is how `RecordList` knows which controls to leave out. A tile that means a tab's set links to `?tab=<key>`, never to a filter over the field the tab pins. Moving between tabs keeps the address's filters.
+
 ## Row actions
 
 `RecordList` and `RecordTree` draw `actions` as an icon strip in the row and as the same strip on a card; a row the action cannot run on shows it disabled with the reason. The kit names the verbs a framework type has no glyph for (`retry`, `reset`, `test`, `reprocess`, `enable`, `disable`, `suspend`, `reinstate`, `cancel`, `revoke`, `upload`, `grant`), each with a glyph of its own, so a screen never borrows `duplicate` for a retry.
