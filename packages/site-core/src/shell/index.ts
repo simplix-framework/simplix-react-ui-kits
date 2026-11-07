@@ -1,5 +1,5 @@
-export { pageHeading, SiteBand, SiteWindow } from "./site-window";
-export type { SiteBandProps, SiteWindowProps } from "./site-window";
+export { followHeading, pageHeading, SiteBand, SiteWindow, useHeadingTitle } from "./site-window";
+export type { HeadingObserver, SiteBandProps, SiteWindowProps } from "./site-window";
 export { avatarInitial, barMenuActions, menuKeyTarget, SiteBar, SiteBarMenuItems } from "./site-bar";
 export type { SiteBarAccount, SiteBarAction, SiteBarLink, SiteBarProps } from "./site-bar";
 export { SiteFooter } from "./site-footer";

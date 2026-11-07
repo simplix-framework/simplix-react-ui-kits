@@ -7,7 +7,7 @@ import { avatarInitial, barMenuActions, menuKeyTarget, SiteBar, SiteBarMenuItems
 import { siteActionStyle } from "../action/site-action.style";
 import { siteBarAccountNameStyle, siteBarMenuStyle, siteBarMoreStyle, siteBarNavStyle, siteBarStyle, siteFooterStyle, siteWindowStyle } from "./site-shell.style";
 import { SiteFooter } from "./site-footer";
-import { pageHeading, SiteBand, SiteWindow } from "./site-window";
+import { followHeading, pageHeading, SiteBand, SiteWindow, type HeadingObserver } from "./site-window";
 import {
   applySiteScheme,
   followSystemScheme,
@@ -471,5 +471,54 @@ describe("pageHeading", () => {
   it("answers empty for a page without a heading and for a window not drawn yet", () => {
     expect(pageHeading(root(null))).toBe("");
     expect(pageHeading(null)).toBe("");
+  });
+});
+
+
+describe("followHeading", () => {
+  /** A page box whose heading text can change, and an observer the test fires by hand. */
+  function page(first: string) {
+    const heading = { innerText: first };
+    const root = { querySelector: (selector: string) => (selector === "h1" ? heading : null) } as unknown as Parameters<typeof followHeading>[0];
+    let fire = () => undefined as void;
+    let watched = false;
+    let stopped = false;
+    const watch = (onChange: () => void): HeadingObserver => {
+      fire = onChange;
+      return { observe: () => void (watched = true), disconnect: () => void (stopped = true) };
+    };
+    return { heading, root, watch, fire: () => fire(), state: () => ({ watched, stopped }) };
+  }
+
+  it("rewrites the title when the page's own heading changes, without the window drawing again", () => {
+    const shown = page("Confirming your payment");
+    const sink = { title: "StageVoice" };
+    followHeading(shown.root, () => (heading) => `${heading} - StageVoice`, sink, shown.watch);
+    expect(shown.state().watched).toBe(true);
+    shown.heading.innerText = "Payment received";
+    shown.fire();
+    expect(sink.title).toBe("Payment received - StageVoice");
+    shown.heading.innerText = "Receipt";
+    shown.fire();
+    expect(sink.title).toBe("Receipt - StageVoice");
+  });
+
+  it("reads the latest title function at each change and leaves the title alone while there is none", () => {
+    const shown = page("One");
+    const sink = { title: "Untouched" };
+    let named: ((heading: string) => string) | undefined;
+    followHeading(shown.root, () => named, sink, shown.watch);
+    shown.fire();
+    expect(sink.title).toBe("Untouched");
+    named = (heading) => `[${heading}]`;
+    shown.fire();
+    expect(sink.title).toBe("[One]");
+  });
+
+  it("stops watching when disposed", () => {
+    const shown = page("One");
+    const stop = followHeading(shown.root, () => undefined, { title: "" }, shown.watch);
+    stop();
+    expect(shown.state().stopped).toBe(true);
   });
 });
