@@ -26,7 +26,7 @@ export interface ConsoleContentColumnProps {
  * <p><b>The room is a spacer and not padding.</b> Neither a scroll container's own bottom padding
  * nor an overflowing flex item's is counted in what there is to scroll, so a long page ends flush
  * against the window and reads as cut off. An element is counted — and it takes no press, because
- * standing over the last row of a screen whose content reaches the fold it swallowed the 쪽 크기
+ * standing over the last row of a screen whose content reaches the fold it swallowed the page-size
  * control on the role list: the element is there, reads correctly and cannot be clicked, which is
  * the one kind of defect a screenshot cannot show.
  *

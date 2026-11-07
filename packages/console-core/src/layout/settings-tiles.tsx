@@ -61,8 +61,8 @@ export type TileTrendDirection = "up" | "flat" | "down";
 /**
  * How a figure has moved, and against what.
  *
- * <p><b>The direction is not the verdict.</b> 기한 임박 의무 rising is bad and 교육 이수율 rising
- * is good, so the arrow says which way the number went and {@link SettingsTile.tone} says whether
+ * <p><b>The direction is not the verdict.</b> A count of overdue duties rising is bad and a training completion rate
+ * rising is good, so the arrow says which way the number went and {@link SettingsTile.tone} says whether
  * that is something to act on. The framework's own `trend` prop cannot carry this — it renders the
  * number as a percentage and paints anything non-negative green, which would tell an operator that
  * two more overdue duties is good news.
@@ -137,7 +137,7 @@ interface SettingsTileShape {
    * the figures beside it that do not follow them keep what they show.
    */
   readonly loading?: boolean;
-  /** Appended to the value — 개 · 명 · 일 · %. */
+  /** Appended to the value: a counter word or a symbol (a unit of count, a percent sign). */
   readonly unit?: string;
   /**
    * The one line under the figure saying what it was read from.
@@ -861,7 +861,7 @@ function TileGrid({
   return (
     <Grid ref={grid} template={`repeat(${perRow}, minmax(0, 1fr))`} gap="md" className={className}>
       {ordered.map((tile) => {
-        // The board stacks value → 추이 → 근거, so the comparison takes the card's first line under
+        // The board stacks the value, the movement and the basis in that order, so the comparison takes the card's first line under
         // the value and the basis moves below it. With no comparison the basis keeps that line and
         // nothing moves, which is why nineteen screens that pass no trend look exactly as before.
         const trendLine = tile.trend

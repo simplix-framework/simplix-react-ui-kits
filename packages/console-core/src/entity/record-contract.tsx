@@ -377,8 +377,8 @@ export function proseExcerpt(text: string, limit: number = PROSE_CHARS): string 
 }
 
 /**
- * A language code as the language's name in the reader's language (`ko` as 한국어 for a Korean
- * reader). A code the runtime does not know, or that is not a language tag, is drawn as it came.
+ * A language code as the language's name in the reader's language (`ko` as the language's own
+ * name for a Korean reader). A code the runtime does not know, or that is not a language tag, is drawn as it came.
  *
  * @param code the stored code (`en`, `pt-BR`, `ko_KR`)
  * @param locale the reader's language

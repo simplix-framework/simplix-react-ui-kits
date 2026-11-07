@@ -286,7 +286,7 @@ export interface SettingsFormProps {
   readonly notices?: readonly RecordNotice[];
   readonly note?: string;
   /**
-   * Saves the settings; with it the form carries 취소 and 저장 once a value has changed. A promise
+   * Saves the settings; with it the form carries a cancel and a save once a value has changed. A promise
    * keeps the form dirty until it resolves, so a refused save leaves the edits in place to retry.
    */
   readonly onSave?: (values: Readonly<Record<string, unknown>>) => void | Promise<void>;
