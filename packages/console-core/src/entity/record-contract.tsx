@@ -12,7 +12,7 @@ import { PACKAGE_NAMESPACE } from "./locales";
 import type { PeekTarget } from "../peek";
 import type { RecordFormField } from "./record-form-types";
 import type { RecordFilter } from "./record-list";
-import { bytesText, durationText, figureSign, signedText } from "./record-figure";
+import { bytesText, durationText, figureSign, signedText, withoutByteUnit } from "./record-figure";
 import { pickFields } from "./contract-pick";
 import { groupedNumber } from "./grouped-number";
 import type { RecordBadge, RecordValue } from "./record-value";
@@ -528,6 +528,8 @@ export function moneyText(field: Pick<ContractField, "currency" | "scale">, raw:
  */
 export function useRecordContract(entity: string, overrides: ContractOverrides = {}) {
   const { fieldLabel, enumLabel } = useEntityTranslation(entity);
+  // A size is written in the largest unit that fits its value, so its label never names a unit of its own.
+  const labelOf = useCallback((field: ContractField): string => (field.kind === "bytes" ? withoutByteUnit(fieldLabel(field.name)) : fieldLabel(field.name)), [fieldLabel]);
   const { t } = useTranslation(PACKAGE_NAMESPACE + "/features");
   // The entity's own words for a boolean's two values (`values.<field>.true`), beside its field labels.
   const { t: entityWord, exists: entityHasWord } = useTranslation(`entity/${entity}`);
@@ -608,7 +610,7 @@ export function useRecordContract(entity: string, overrides: ContractOverrides =
   const formField = useCallback(
     (field: ContractField, record: Row | undefined): RecordFormField => {
       const raw = startingValue(field, record);
-      const common = { key: field.name, label: fieldLabel(field.name), required: field.required };
+      const common = { key: field.name, label: labelOf(field), required: field.required };
       switch (field.kind) {
         case "enum":
           return {
@@ -662,7 +664,7 @@ export function useRecordContract(entity: string, overrides: ContractOverrides =
           return { ...common, kind: "text", value: raw == null ? "" : String(raw) };
       }
     },
-    [enumLabel, fieldLabel, languages, searches, t, zone],
+    [enumLabel, fieldLabel, labelOf, languages, searches, t, zone],
   );
 
   /**
@@ -690,7 +692,7 @@ export function useRecordContract(entity: string, overrides: ContractOverrides =
   const column = useCallback(
     <R,>(field: ContractField) => ({
       key: field.name,
-      header: fieldLabel(field.name),
+      header: labelOf(field),
       field: (sortFieldOf(field, locale) ?? field.sortField ?? field.name) as keyof R & string,
       ...CONTRACT_COLUMN_SIZE[field.kind],
       // An enum column is as wide as its longest label needs, so no badge is cut.
@@ -700,10 +702,13 @@ export function useRecordContract(entity: string, overrides: ContractOverrides =
       ...(sortFieldOf(field, locale) !== undefined ? { sortable: true } : field.sortable === undefined ? {} : { sortable: field.sortable }),
       // A mark drawn only on the rows it is true of leaves no empty cell on the cards that lack it.
       ...(field.kind === "boolean" && field.markWhenTrue ? { cardKeep: false } : {}),
+      // A boolean the entity words in neither value reads only 「Yes」 or 「No」, which says nothing
+      // without its name, so a card draws it as a labelled line instead of in the unlabelled badge row.
+      ...(field.kind === "boolean" && !field.markWhenTrue && !(entityHasWord(`values.${field.name}.true`) && entityHasWord(`values.${field.name}.false`)) ? { cardPlace: "lines" as const } : {}),
       ...(field.keep ? { keep: true } : {}),
       value: (row: R) => value(field, row as unknown as Row),
     }),
-    [enumLabel, fieldLabel, value, locale],
+    [entityHasWord, enumLabel, labelOf, value, locale],
   );
 
   /**
@@ -731,25 +736,25 @@ export function useRecordContract(entity: string, overrides: ContractOverrides =
       if (field.kind === "excerpt") {
         const raw = row?.[field.name];
         const text = raw == null || raw === "" ? undefined : String(raw);
-        return { label: fieldLabel(field.name), value: text ? { text, code: true, block: true } : null, wide: true, copy: text !== undefined };
+        return { label: labelOf(field), value: text ? { text, code: true, block: true } : null, wide: true, copy: text !== undefined };
       }
       return {
-        label: fieldLabel(field.name),
+        label: labelOf(field),
         // A detail draws the whole text and a yes or no, where a list draws the start and a mark.
         value: value(field.kind === "prose" ? { ...field, kind: "longText" } : field.markWhenTrue ? { ...field, markWhenTrue: false } : field, row),
         wide: detailFieldIsWide(field),
         copy: field.identifier === true,
       };
     },
-    [fieldLabel, value],
+    [labelOf, value],
   );
 
   // A figure in a record's head is named by the field it draws, as the list's column and the page's
   // tile are, so one value has one name in every language and a screen writes no catalogue key for it.
   const headFigures = useCallback(
     (fields: readonly ContractField[], row: Row | undefined): ContractHeadFigure[] =>
-      fields.map((field) => ({ key: field.name, label: fieldLabel(field.name), value: value(field, row) })),
-    [fieldLabel, value],
+      fields.map((field) => ({ key: field.name, label: labelOf(field), value: value(field, row) })),
+    [labelOf, value],
   );
 
   // A record's name as one line of text: each name field drawn as its kind draws it (an enum by

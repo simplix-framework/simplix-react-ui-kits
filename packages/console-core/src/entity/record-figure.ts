@@ -32,7 +32,38 @@ export function bytesText(raw: unknown, locale: string): string {
     unit += 1;
   }
   const format = new Intl.NumberFormat(locale, { style: "unit", unit: BYTE_UNITS[unit], unitDisplay: "short", maximumFractionDigits: unit === 0 ? 0 : 1 });
-  return format.format(Math.sign(bytes) * amount);
+  return spacedUnit(format.formatToParts(Math.sign(bytes) * amount));
+}
+
+/**
+ * A formatted unit amount with a space between the figure and its unit in every language: some
+ * locales write the short unit against the figure (Korean `244byte`), which reads as one word.
+ */
+function spacedUnit(parts: readonly Intl.NumberFormatPart[]): string {
+  let text = "";
+  let previous: Intl.NumberFormatPartTypes | undefined;
+  for (const part of parts) {
+    const meets = previous !== undefined && previous !== "literal" && part.type !== "literal" && (previous === "unit") !== (part.type === "unit");
+    text += (meets ? " " : "") + part.value;
+    previous = part.type;
+  }
+  return text;
+}
+
+/** A trailing parenthetical that names the unit of a size (`Size (bytes)`, `크기(바이트)`). */
+const BYTE_UNIT_SUFFIX = /\s*[(\uFF08]\s*(?:bytes?|바이트|[kmgt]?b)\s*[)\uFF09]\s*$/i;
+
+/**
+ * A size field's label without the unit it names in parentheses: the value is written in the
+ * largest unit that keeps it at 1 or more ({@link bytesText}), so a label saying bytes next to
+ * `1.5 MB` contradicts the value it labels.
+ *
+ * @param label the field's label as the catalog states it
+ * @returns the label without a trailing unit, or the label itself where it names none
+ */
+export function withoutByteUnit(label: string): string {
+  const stripped = label.replace(BYTE_UNIT_SUFFIX, "");
+  return stripped === "" ? label : stripped;
 }
 
 /**

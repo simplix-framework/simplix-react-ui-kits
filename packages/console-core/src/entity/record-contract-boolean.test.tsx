@@ -23,7 +23,7 @@ async function probe<T>(read: (contract: Contract) => T, entity = "catalogVoice"
     resources: {
       en: {
         "console-entity-ui/features": features as Record<string, unknown>,
-        "entity/catalogVoice": { fields: { active: "Offered" }, values: { active: { true: "Offered", false: "Withdrawn" } } },
+        "entity/catalogVoice": { fields: { active: "Offered", sizeBytes: "Size (bytes)", count: "Count (bytes)" }, values: { active: { true: "Offered", false: "Withdrawn" } } },
       },
     },
   });
@@ -63,5 +63,30 @@ describe("booleanBadge", () => {
 
   it("falls back per value: a word the entity names for one value only leaves the other yes or no", () => {
     expect(booleanBadge(true, active, undefined, words)).toEqual({ label: "Yes", tone: "success" });
+  });
+});
+
+describe("a boolean column on a card", () => {
+  const worded: ContractField = { name: "active", kind: "boolean" };
+  const generic: ContractField = { name: "featured", kind: "boolean" };
+  const mark: ContractField = { name: "recommended", kind: "boolean", markWhenTrue: true };
+
+  it("is a labelled line where the badge says only yes or no, and a badge where the entity words both values", async () => {
+    const places = await probe((contract) => [contract.column(worded).cardPlace ?? null, contract.column(generic).cardPlace ?? null, contract.column(mark).cardPlace ?? null]);
+    expect(places).toEqual([null, "lines", null]);
+  });
+});
+
+describe("a size field's label", () => {
+  const size: ContractField = { name: "sizeBytes", kind: "bytes" };
+  const count: ContractField = { name: "count", kind: "number" };
+
+  it("names no unit of its own, since the value is written in the unit that fits it", async () => {
+    const labels = await probe((contract) => [contract.column(size).header, contract.detailField(size, { sizeBytes: 10 }).label, contract.headFigures([size], { sizeBytes: 10 })[0]?.label]);
+    expect(labels).toEqual(["Size", "Size", "Size"]);
+  });
+
+  it("keeps the label of a field that is not a size as the catalog states it", async () => {
+    expect(await probe((contract) => contract.column(count).header)).toBe("Count (bytes)");
   });
 });

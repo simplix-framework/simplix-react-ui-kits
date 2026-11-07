@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 
 import { figureValue } from "./record-contract";
 import { excerptLine } from "./record-excerpt";
-import { bytesText, durationText, figureSign, ratioText, signedText } from "./record-figure";
+import { bytesText, durationText, figureSign, ratioText, signedText, withoutByteUnit } from "./record-figure";
 import { RecordValueView } from "./record-value";
 
 describe("bytesText", () => {
@@ -16,6 +16,27 @@ describe("bytesText", () => {
   });
   it("reads a stored string", () => {
     expect(bytesText("2048", "en")).toBe("2 kB");
+  });
+  it("keeps a space between the figure and its unit in Korean", () => {
+    expect(bytesText(244, "ko")).toBe("244 byte");
+    expect(bytesText(1536 * 1024, "ko")).toBe("1.5 MB");
+  });
+  it("keeps the sign of a negative size in front of the figure", () => {
+    expect(bytesText(-512, "en")).toBe("-512 byte");
+  });
+});
+
+describe("withoutByteUnit", () => {
+  it("drops the unit a size label names in parentheses", () => {
+    expect(withoutByteUnit("Size (bytes)")).toBe("Size");
+    expect(withoutByteUnit("크기(바이트)")).toBe("크기");
+    expect(withoutByteUnit("Payload size (KB)")).toBe("Payload size");
+  });
+  it("leaves a label that names no unit, or names another, as it is", () => {
+    expect(withoutByteUnit("Size")).toBe("Size");
+    expect(withoutByteUnit("Duration (ms)")).toBe("Duration (ms)");
+    expect(withoutByteUnit("Bytes sent")).toBe("Bytes sent");
+    expect(withoutByteUnit("(bytes)")).toBe("(bytes)");
   });
 });
 
