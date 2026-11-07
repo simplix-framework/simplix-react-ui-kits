@@ -466,13 +466,18 @@ export interface ConsoleMenuInactiveRowProps extends ComponentPropsWithoutRef<"s
  *
  * <p><b>It forwards its ref and its props</b> so a tooltip can hang the reason off it: a
  * `TooltipTrigger asChild` needs a single element that takes the pointer, and a disabled control
- * swallows the events the trigger reads.
+ * swallows the events the trigger reads. <b>It is focusable</b>: the reason it cannot be opened is
+ * read on focus as well as on hover, so a keyboard reader is told as a pointer reader is.
  */
 export const ConsoleMenuInactiveRow = forwardRef<HTMLSpanElement, ConsoleMenuInactiveRowProps>(
   ({ icon, label, mark, className, ...rest }, ref) => (
     <span
       ref={ref}
       aria-disabled="true"
+      // A tab stop, so the reason a destination cannot be opened (a tooltip on focus, the row's
+      // description to a screen reader) reaches a reader who has no pointer; a disabled item keeps
+      // its place in the keyboard's path.
+      tabIndex={0}
       {...rest}
       // Merged rather than overwritten. `TooltipTrigger asChild` clones this element with props of
       // its own, and a class written after the spread takes the last value for the attribute, so
