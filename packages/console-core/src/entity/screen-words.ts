@@ -72,8 +72,8 @@ export function useScreenWords(entity: string): ScreenWords {
       save: t("screen.save"),
       add: t("screen.add", { entity: label }),
       editTitle: t("screen.editTitle", { entity: label }),
-      emptyTitle: t("screen.emptyTitle", { entities: plural }),
-      emptyTitleRecorded: t("screen.emptyTitleRecorded", { entities: plural }),
+      emptyTitle: t("screen.emptyTitle", { entities: inSentence(plural) }),
+      emptyTitleRecorded: t("screen.emptyTitleRecorded", { entities: inSentence(plural) }),
       emptyDescription: t("screen.emptyDescription"),
       emptyDescriptionRecorded: t("screen.emptyDescriptionRecorded"),
       delete: t("screen.delete"),
@@ -90,4 +90,20 @@ export function useScreenWords(entity: string): ScreenWords {
 export function statedOrNothing(text: string, key: string): string | undefined {
   const trimmed = text.trim();
   return trimmed === "" || trimmed === key || trimmed.endsWith(`.${key}`) || trimmed.endsWith(`:${key}`) ? undefined : text;
+}
+
+/**
+ * A name as it reads inside a sentence: its first letter lowered when the first word is merely
+ * capitalised as a title (「Usage events」 reads 「No usage events yet」), and kept when the word is
+ * a name or an acronym, whose second letter is not lower case (「AI provider connections」). A script
+ * without letter case (Korean, Japanese) is returned as it is.
+ *
+ * @param name the entity's name as a label states it
+ * @returns the name to set inside a sentence
+ */
+export function inSentence(name: string): string {
+  const [first, second] = [...name];
+  if (first === undefined || second === undefined) return name;
+  const lowered = first.toLocaleLowerCase();
+  return lowered !== first && second === second.toLocaleLowerCase() && second !== second.toLocaleUpperCase() ? lowered + name.slice(first.length) : name;
 }
