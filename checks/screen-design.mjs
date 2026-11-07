@@ -74,7 +74,7 @@ const base = (path) => {
   }
   return undefined;
 };
-const problems = manifestProblems(manifest, routed, blocks, { primaryKey: settings.primaryKey }, base);
+const problems = manifestProblems(manifest, routed, blocks, { primaryKey: settings.primaryKey, companion: (path) => blocks(join(dirname(path), "page.blocks.tsx")) }, base);
 if (settings.descriptionCatalog) problems.push(...descriptionCatalogProblems(manifest, settings.descriptionCatalog, (path) => (existsSync(at(path)) ? JSON.parse(readFileSync(at(path), "utf8")) : undefined), blocks));
 // The list decision (table or cards, the view switch, the card title) is compared with every file that
 // draws the list: the screen's list widget and its board frame.
