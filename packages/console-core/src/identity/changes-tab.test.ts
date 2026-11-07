@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
-import { CHANGES_TAB_KEY, changesTabOf, type ChangeHistoryRead } from "./change-history";
+import { CONTRACT_COLUMN_SIZE } from "../entity/record-contract";
+import { CHANGE_HISTORY_COLUMNS, CHANGES_TAB_KEY, changesTabOf, type ChangeHistoryRead } from "./change-history";
 
 const read = (readable: boolean, total: number | undefined) => ({ readable, total }) as unknown as ChangeHistoryRead;
 
@@ -12,5 +13,17 @@ describe("changesTabOf", () => {
 
   it("is no tab at all for a reader who may not read the audit log, so nobody opens a tab onto a refusal", () => {
     expect(changesTabOf(read(false, undefined), "Changes")).toEqual([]);
+  });
+});
+
+describe("the changes tab's date and person columns", () => {
+  it("are as wide as a generated list draws an instant and a reference, so neither is cut", () => {
+    expect(CHANGE_HISTORY_COLUMNS.when.width).toBe(CONTRACT_COLUMN_SIZE.instant.width);
+    expect(CHANGE_HISTORY_COLUMNS.who.width).toBe(CONTRACT_COLUMN_SIZE.reference.minWidth);
+  });
+
+  it("are not narrower than a datetime and a person's name take in a list", () => {
+    expect(CHANGE_HISTORY_COLUMNS.when.width).toBeGreaterThanOrEqual(176);
+    expect(CHANGE_HISTORY_COLUMNS.who.width).toBeGreaterThanOrEqual(160);
   });
 });

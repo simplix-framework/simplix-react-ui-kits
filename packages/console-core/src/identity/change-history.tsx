@@ -20,11 +20,12 @@ import type { OrvalListHookLike } from "@simplix-react/ui";
 import { EnumBadge } from "../badge";
 import { useChangeHistorySource, useOptionalChangeHistorySource, type ChangeHistoryEvent } from "./change-history-source";
 import { createContext, useContext } from "react";
-import { EllipsisText, PanelList, StrongText, useWideList, WIDE_LIST_WIDTH } from "../layout";
+import { EllipsisText, FREE_TEXT_MIN_WIDTH, PanelList, StrongText, useWideList, WIDE_LIST_WIDTH } from "../layout";
 import { useAppTimeZone, zoneDateTimeText } from "../datetime";
 
 import { useConsoleSubject } from "./console-product";
 import { PACKAGE_NAMESPACE as ENTITY_NAMESPACE } from "../entity/locales";
+import { CONTRACT_COLUMN_SIZE } from "../entity/record-contract";
 
 /** How many events one page of a history tab carries. */
 const PAGE_SIZE = 20;
@@ -269,6 +270,20 @@ export function useChangeHistoryRead(
   };
   return history;
 }
+
+/**
+ * The sizing of the two columns a reader must always be able to read whole: when a change happened
+ * and who made it. Both widths come from the table every generated list sizes its columns by, so an
+ * instant is as wide here as in any list that shows one and a person as wide as a reference, and no
+ * number is written for this table alone. Narrower, a date or a name is cut by an ellipsis while the
+ * table scrolls sideways anyway, which hides the two facts an audit trail exists to show.
+ *
+ * <p>The columns spread these objects, so the definition a test reads is the one the table draws.
+ */
+export const CHANGE_HISTORY_COLUMNS = {
+  when: { width: CONTRACT_COLUMN_SIZE.instant.width ?? FREE_TEXT_MIN_WIDTH },
+  who: { width: CONTRACT_COLUMN_SIZE.reference.minWidth ?? FREE_TEXT_MIN_WIDTH },
+} as const;
 
 /** What a value reads as when the row has none: never blank, so a gap is a gap and not a bug. */
 const NOTHING = EMPTY_VALUE_TEXT;
@@ -527,23 +542,23 @@ export function ChangeHistoryTable({
       <CrudList.Column<ChangeHistoryEvent>
         field="occurredAt"
         header={t("history.occurredAt")}
-        width={150}
+        {...CHANGE_HISTORY_COLUMNS.when}
         sortable
       >
         {({ row }) => <InstantText value={row.occurredAt} displayZone={zone} format="datetime" />}
       </CrudList.Column>
 
-      {/* A width rather than a floor: an address is as long as somebody's account name and this
-          column ellipsizes it, so the room it would take from "Changed values" shows the reader nothing
-          they cannot get from the row. A declared width caps the cell too, so a long address
-          truncates inside the column instead of setting it. */}
+      {/* A width rather than a floor, so the remainder still goes to "Changed values". It is the
+          width a reference takes in every generated list (CHANGE_HISTORY_COLUMNS), enough for a
+          person's name; a longer address truncates inside the column instead of setting it, with the
+          full text on the element. */}
       <CrudList.Column<ChangeHistoryEvent>
         field="actor"
         header={t("history.actor")}
-        width={110}
+        {...CHANGE_HISTORY_COLUMNS.who}
         sortable
       >
-        {({ row }) => <EllipsisText>{row.actor || NOTHING}</EllipsisText>}
+        {({ row }) => <EllipsisText title={row.actor ?? ""}>{row.actor || NOTHING}</EllipsisText>}
       </CrudList.Column>
 
       {/* As wide as the audit log's own action column: the same badges, and a narrower column cuts
@@ -564,9 +579,10 @@ export function ChangeHistoryTable({
           the PAGE counts events, so opening them out into rows would make the pager lie. They are
           lines inside the row that owns them. */}
       {/* **The table's only floor, so the whole remainder comes here.** 256 is what one value pair
-          takes on a single line; below it the pair wraps over four. The four fixed columns take
-          150 + 150 + 120 + 180, so under about 850px of host the table cannot hold all five and
-          its own `overflow-x: auto` carries the difference: "Reason" leaves first, at
+          takes on a single line; below it the pair wraps over four. The three fixed columns before it
+          take 176 + 160 + 180, so under about 770px of host the table cannot hold them and this
+          floor, and its own `overflow-x: auto` carries the difference (the date and the person stay
+          whole while it scrolls): "Reason" leaves first, at
           WIDE_LIST_WIDTH, rather than being pushed past the edge with nothing to say it went.
 
           It also has to be able to shrink: a pair of values can be any length, and a cell that
@@ -607,7 +623,7 @@ export function ChangeHistoryTable({
       </CrudList.Column>
 
       {/* Dropped on a narrow table rather than pushed past its edge. Five columns take at least
-          150 + 110 + 120 + 256 + 140 = 776px and a detail panel is 572px wide with no horizontal
+          176 + 160 + 180 + 256 + 140 = 912px and a detail panel is 572px wide with no horizontal
           scrollbar, so this column left no sign it existed: a reader did not know there was a
           reason to look for, which is worse than a value they can see is cut. Where it goes, the row
           below carries it.
