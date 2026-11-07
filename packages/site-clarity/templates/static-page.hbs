@@ -8,7 +8,7 @@
  * `{{nameCamel}}.lede`.
  */
 import type { ReactNode } from "react";
-import { useTranslation } from "@simplix-react/i18n/react";
+import { useOptionalTranslation } from "@simplix-react/i18n/react";
 import { SitePage, SitePageHead } from "@simplix-react-ui-kits/site-clarity/page";
 
 /** Props for {@link {{NamePascal}}Page}. */
@@ -19,10 +19,9 @@ export interface {{NamePascal}}PageProps {
 
 /** {{NamePascal}}: one page of the site. */
 export function {{NamePascal}}Page({ children }: {{NamePascal}}PageProps = {}) {
-  const { t } = useTranslation("{{namespace}}");
-  // A key the catalog holds empty comes back as the key itself, and draws no line either.
-  const line = t("{{nameCamel}}.lede");
-  const lede = line && line !== "{{nameCamel}}.lede" ? line : undefined;
+  const { t, tOr } = useOptionalTranslation("{{namespace}}");
+  // A lede the catalog holds empty draws no line.
+  const lede = tOr("{{nameCamel}}.lede", "") || undefined;
   return (
     <SitePage>
       <SitePageHead title={t("{{nameCamel}}.title")} lede={lede} />

@@ -8,7 +8,7 @@
  * `{{nameCamel}}.title` and `{{nameCamel}}.lede`.
  */
 import type { ReactNode } from "react";
-import { useTranslation } from "@simplix-react/i18n/react";
+import { useOptionalTranslation } from "@simplix-react/i18n/react";
 import { SitePage } from "@simplix-react-ui-kits/site-clarity/page";
 import { PackSection } from "@simplix-react-ui-kits/site-clarity/pricing";
 
@@ -22,10 +22,9 @@ export interface {{NamePascal}}PageProps {
 
 /** {{NamePascal}}: the packs bought once, beside the plans. */
 export function {{NamePascal}}Page({ children, note }: {{NamePascal}}PageProps = {}) {
-  const { t } = useTranslation("{{namespace}}");
-  // A key the catalog holds empty comes back as the key itself, and draws no line either.
-  const line = t("{{nameCamel}}.lede");
-  const lede = line && line !== "{{nameCamel}}.lede" ? line : undefined;
+  const { t, tOr } = useOptionalTranslation("{{namespace}}");
+  // A lede the catalog holds empty draws no line.
+  const lede = tOr("{{nameCamel}}.lede", "") || undefined;
   return (
     <SitePage>
       <PackSection heading={t("{{nameCamel}}.title")} lede={lede} note={note}>

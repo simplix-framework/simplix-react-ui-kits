@@ -51,6 +51,8 @@ describe("the generated site shell", () => {
   it("hands every site part a link that moves the router on a plain press and keeps the real address", () => {
     expect(source).toContain("linkComponent={RouterLink}");
     expect(source).toContain("void router.navigate({ href });");
+    // Another origin's address, a download and a new window are the browser's (routesInPage).
+    expect(source).toContain("if (!routesInPage(event, href, anchor)) return;");
     expect(source).toContain("href={href}");
   });
 
@@ -80,8 +82,9 @@ describe("the generated site page", () => {
     expect(source).toContain("export function PricingPage(");
     expect(source).toContain("<SitePage>");
     expect(source).toContain('title={t("pricing.title")}');
-    expect(source).toContain('const line = t("pricing.lede");');
-    expect(source).toContain('line !== "pricing.lede"');
+    // A lede the catalog holds empty reads as no words through tOr, never compared with its own key.
+    expect(source).toContain('const lede = tOr("pricing.lede", "") || undefined;');
+    expect(source).not.toContain('!== "pricing.lede"');
     expect(source).not.toMatch(/console-(clarity|core)/);
   });
 });
@@ -187,7 +190,27 @@ describe("the generated packs page", () => {
     expect(source).toContain("export function PacksPage(");
     expect(source).toContain("<SitePage>");
     expect(source).toContain('<PackSection heading={t("packs.title")} lede={lede} note={note}>');
-    expect(source).toContain('line !== "packs.lede"');
+    expect(source).toContain('const lede = tOr("packs.lede", "") || undefined;');
+    expect(source).not.toMatch(/console-(clarity|core)/);
+  });
+});
+
+describe("the generated document page", () => {
+  const source = render("static-page.doc.hbs", { namespace: "legal", nameKebab: "terms", NamePascal: "Terms", nameCamel: "terms" });
+  const docFile = join(virtualRoot, "apps", "app", "src", "pages", "terms", "page.tsx");
+
+  it("compiles alone", () => {
+    expect(typecheck({ [docFile]: source }, [docFile])).toEqual([]);
+  });
+
+  it("lays the document on the kit's document layout with the kit's jump, its words from the page's catalog, and nothing of the console", () => {
+    expect(source).toContain("export function TermsPage(");
+    expect(source).toContain("<DocLayout");
+    expect(source).toContain("const { current, jump } = useDocJump();");
+    expect(source).toContain('tocTitle={t("terms.toc")}');
+    expect(source).toContain('const lede = tOr("terms.lede", "");');
+    // The layout draws its own jump select from the contents; the page hands none.
+    expect(source).not.toContain("jump={");
     expect(source).not.toMatch(/console-(clarity|core)/);
   });
 });
