@@ -35,7 +35,8 @@ describe("a holder that names the record by another field than its key", () => {
     const out = render("detail.hbs", { ...voice, holders: [{ ...holder, matchField: "voiceCode" }], holderColumnsHooks: [{ hook: "useSpeechResultColumns", from: "@test/speech-widgets", field: "voiceCode" }] });
     expect(out).toContain("?.voiceCode;");
     expect(out).not.toContain('"voiceCode.equals": props.catalogVoiceId');
-    expect(out).toContain('enabled: holder0Allowed && holder0Forced["voiceCode.equals"] !== ""');
+    expect(out).toContain('const holder0Enabled = holder0Allowed && holder0Forced["voiceCode.equals"] !== "";');
+    expect(out).toContain("queryOptions: { enabled: holder0Enabled }");
   });
 
   it("is forced to the record's key otherwise", () => {
