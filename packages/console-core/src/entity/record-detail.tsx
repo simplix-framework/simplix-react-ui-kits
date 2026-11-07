@@ -1,4 +1,5 @@
 import { useId, useState, type ReactNode } from "react";
+import { useTranslation } from "@simplix-react/i18n/react";
 import {
   CrudDetail,
   DetailFieldWrapper,
@@ -30,6 +31,7 @@ import { BoundedDialogContent } from "../layout/bounded-dialog-content";
 import { recordHeadFigureLabelStyle, recordHeadFigureStyle, recordHeadFigureValueStyle, recordHeadFiguresStyle, recordHeadStyle, recordHeadSubtitleStyle, recordSublistStyle } from "./record-detail.style";
 import { actionLabelFor, actionTypeFor, RecordList, RecordListNestingContext, type RecordAction, type RecordColumn, type RecordListProps } from "./record-list";
 import { TileSpark } from "../layout/tile-spark";
+import { PACKAGE_NAMESPACE } from "./locales";
 import { copyTextOf, RecordValueView, type RecordBadge, type RecordValue } from "./record-value";
 import { StageGate, type StageGateProps } from "./stage-gate";
 import { EvidenceGrid, type EvidenceGridProps } from "../attachment/evidence-grid";
@@ -272,38 +274,76 @@ function rowTitle<Row>(columns: readonly RecordColumn<Row>[], row: Row): string 
 
 const DESTRUCTIVE_ACTIONS = new Set(["delete", "cancel"]);
 
+/** Where a row opened over a record leads: the name of the control and what it does with the row. */
+export interface RecordRowOpen<Row> {
+  readonly label: string;
+  readonly onOpen: (row: Row) => void;
+}
+
+/**
+ * The verbs of a row opened over its record, split into the destructive ones (at the start) and the
+ * rest (at the end): the list's row actions, and, where the list says where its rows lead, a verb
+ * that goes there, first among the rest.
+ *
+ * @param row the opened row
+ * @param actions the list's row actions
+ * @param open where the row leads, when the list's screen names it
+ * @param onClose closes the dialog, which every verb does after it runs
+ */
+export function rowDialogVerbs<Row>(
+  row: Row,
+  actions: readonly RecordAction<Row>[],
+  open: RecordRowOpen<Row> | undefined,
+  onClose: () => void,
+): { readonly danger: RecordVerb[]; readonly plain: RecordVerb[] } {
+  const verbs = (danger: boolean): RecordVerb[] =>
+    actions
+      .filter((action) => DESTRUCTIVE_ACTIONS.has(actionTypeFor(action, row)) === danger)
+      .map((action) => ({
+        label: actionLabelFor(action, row),
+        kind: danger ? "danger" : "plain",
+        disabled: action.disabled?.(row) || undefined,
+        onClick: () => {
+          action.onClick?.(row);
+          onClose();
+        },
+      }));
+  const leads: RecordVerb[] = open
+    ? [
+        {
+          label: open.label,
+          kind: "plain",
+          onClick: () => {
+            open.onOpen(row);
+            onClose();
+          },
+        },
+      ]
+    : [];
+  return { danger: verbs(true), plain: [...leads, ...verbs(false)] };
+}
+
 /**
  * One row of an in-detail list, opened over the record: its first column as the title, every
- * column as a labelled value, the list's row actions as the dialog's buttons. A row click inside a
- * detail opens this rather than replacing the panel or leaving the page.
+ * column as a labelled value, the list's row actions as the dialog's buttons, and the way to the
+ * row's own record where the list's screen names it. A row click inside a detail opens this rather
+ * than replacing the panel or leaving the page, so without that way the dialog is read-only with a
+ * close button and nothing leads on from it.
  */
 function RecordRowDialog<Row>({
   row,
   columns,
   actions,
+  open,
   onClose,
 }: {
   readonly row: Row | null;
   readonly columns: readonly RecordColumn<Row>[];
   readonly actions: readonly RecordAction<Row>[];
+  readonly open?: RecordRowOpen<Row>;
   readonly onClose: () => void;
 }) {
-  const verbs = (danger: boolean): RecordVerb[] =>
-    row === null
-      ? []
-      : actions
-          .filter((action) => DESTRUCTIVE_ACTIONS.has(actionTypeFor(action, row)) === danger)
-          .map((action) => ({
-            label: actionLabelFor(action, row),
-            kind: danger ? "danger" : "plain",
-            disabled: action.disabled?.(row) || undefined,
-            onClick: () => {
-              action.onClick?.(row);
-              onClose();
-            },
-          }));
-  const danger = verbs(true);
-  const plain = verbs(false);
+  const { danger, plain } = row === null ? { danger: [], plain: [] } : rowDialogVerbs(row, actions, open, onClose);
   return (
     <Dialog open={row !== null} onOpenChange={(open) => (open ? undefined : onClose())}>
       {row !== null ? (
@@ -334,9 +374,10 @@ function RecordRowDialog<Row>({
 
 /**
  * A tab's sub-list in one of its two forms (see {@link sublistKind}). Both open a row in
- * {@link RecordRowDialog}; a screen's own `onRowClick` is not used inside a detail.
+ * {@link RecordRowDialog}; a screen's own `onRowClick` is the dialog's way on to the row's record.
  */
 function SubList({ list, count }: { readonly list: RecordListProps<any>; readonly count: number | undefined }) {
+  const { t } = useTranslation(PACKAGE_NAMESPACE + "/features");
   const [opened, setOpened] = useState<unknown | null>(null);
   // A cursor window grows as it is read, so it is the main table from its first page: its shape does
   // not change under the reader when a press brings the row count past the compact limit.
@@ -355,7 +396,14 @@ function SubList({ list, count }: { readonly list: RecordListProps<any>; readonl
       <RecordListNestingContext.Provider value={true}>
         <RecordList {...list} features={features} onRowClick={(row) => setOpened(row)} />
       </RecordListNestingContext.Provider>
-      <RecordRowDialog row={opened} columns={list.columns} actions={list.actions ?? []} onClose={() => setOpened(null)} />
+      <RecordRowDialog
+        row={opened}
+        columns={list.columns}
+        actions={list.actions ?? []}
+        // The screen's own row click is where the row's record is; inside a detail it is the dialog's verb.
+        open={list.onRowClick ? { label: t("recordList.openRow"), onOpen: list.onRowClick } : undefined}
+        onClose={() => setOpened(null)}
+      />
     </div>
   );
 }

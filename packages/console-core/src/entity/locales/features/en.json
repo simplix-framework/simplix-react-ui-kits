@@ -66,7 +66,8 @@
     "more": "Show more",
     "loadingMore": "Loading…",
     "chipCount": "{{label}} · {{count}}",
-    "ungrouped": "Not set"
+    "ungrouped": "Not set",
+    "openRow": "Open"
   },
   "stageGate": {
     "title": "Left before {{command}}",
