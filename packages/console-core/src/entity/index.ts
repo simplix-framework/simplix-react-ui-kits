@@ -37,7 +37,9 @@ export { figureTiles, listRequestParams, statusFieldOf, useFigureTiles, withList
 export type { FigureQuery, FigureTilesSpec, FigureWords, ListRequestOptions, WithListRequest } from "./figure-tiles";
 export type { AggregateOp, StatusCountsOptions, StatusTilesInput } from "./status-counts";
 export { RecordValueView } from "./record-value";
-export { RecordMeter, meterShare, meterTone } from "./record-meter";
+export { METER_WARN_SHARE, RecordMeter, meterShare, meterTone } from "./record-meter";
+export { moneyMeter } from "./money-meter";
+export type { MoneyMeterContract } from "./money-meter";
 export { lifecycleNodes } from "./record-lifecycle";
 export type { LifecycleOptions, LifecycleStep } from "./record-lifecycle";
 export type { MeterTone, RecordMeterValue } from "./record-meter";

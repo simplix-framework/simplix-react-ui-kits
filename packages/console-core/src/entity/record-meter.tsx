@@ -15,9 +15,12 @@ export interface RecordMeterValue {
   readonly total: number;
   /** The two figures as the reader reads them (`₩12,000 / ₩50,000`); the plain numbers otherwise. */
   readonly text?: string;
-  /** The share from which the bar turns amber; 0.8 when absent. Red is at the limit. */
+  /** The share from which the bar turns amber; {@link METER_WARN_SHARE} when absent. Red is at the limit. */
   readonly warnAt?: number;
 }
+
+/** The share of a limit from which a reading is called nearly spent and drawn amber. */
+export const METER_WARN_SHARE = 0.8;
 
 /**
  * The share of the limit spent, from 0 to 100 and capped at 100, or `undefined` with no limit.
@@ -39,7 +42,7 @@ export function meterTone(meter: RecordMeterValue): MeterTone {
   if (!(meter.total > 0)) return "neutral";
   const share = meter.value / meter.total;
   if (share >= 1) return "danger";
-  if (share >= (meter.warnAt ?? 0.8)) return "warning";
+  if (share >= (meter.warnAt ?? METER_WARN_SHARE)) return "warning";
   return "neutral";
 }
 
