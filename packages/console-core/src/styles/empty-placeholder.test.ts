@@ -11,10 +11,10 @@ describe("the placeholder an absent value is drawn with", () => {
   });
 
   it("is what a tile nobody counted shows", () => {
-    expect(tileFigure({ key: "open", label: "Open", value: undefined, counted: true, href: "/open" })).toBe(EMPTY_VALUE_TEXT);
+    expect(tileFigure({ key: "open", label: "Open", value: undefined, counted: true, href: "/open" }, "en")).toBe(EMPTY_VALUE_TEXT);
   });
 
   it("is not what a counted tile shows", () => {
-    expect(tileFigure({ key: "open", label: "Open", value: 0, counted: true, href: "/open" })).toBe(0);
+    expect(tileFigure({ key: "open", label: "Open", value: 0, counted: true, href: "/open" }, "en")).toBe("0");
   });
 });

@@ -14,6 +14,7 @@ import type { RecordFormField } from "./record-form-types";
 import type { RecordFilter } from "./record-list";
 import { bytesText, durationText, figureSign, signedText } from "./record-figure";
 import { pickFields } from "./contract-pick";
+import { groupedNumber } from "./grouped-number";
 import type { RecordBadge, RecordValue } from "./record-value";
 import { useReferenceValue } from "./reference-value";
 
@@ -433,13 +434,6 @@ export function sortFieldOf(field: Pick<ContractField, "sortAlias">, locale: str
   const alias = field.sortAlias;
   if (!alias) return undefined;
   return alias[locale] ?? alias[locale.split("-")[0] ?? locale];
-}
-
-/** Text with digit grouping in the reader's locale; a non-number is drawn as it came. */
-export function groupedNumber(raw: unknown, locale: string): string {
-  if (raw === null || raw === undefined || raw === "") return "";
-  const value = typeof raw === "number" ? raw : Number(raw);
-  return Number.isFinite(value) ? new Intl.NumberFormat(locale).format(value) : String(raw);
 }
 
 /**

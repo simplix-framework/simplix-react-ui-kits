@@ -1,5 +1,5 @@
 import { type CSSProperties, type DragEvent, type KeyboardEvent, useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
-import { useTranslation } from "@simplix-react/i18n/react";
+import { useLocale, useTranslation } from "@simplix-react/i18n/react";
 import {
   cn,
   EMPTY_VALUE_TEXT,
@@ -50,6 +50,7 @@ import { NumericText } from "./numeric-text";
 import { MAX_TILE_COLUMNS, useTileColumns, type TileColumns } from "./tile-columns";
 import { useTileOrder } from "./tile-order";
 import { useTilesCollapse } from "./tiles-collapse";
+import { groupedNumber } from "../entity/grouped-number";
 import { narrowedValues, pressedTileKeys, pressedValues, type TileFilter } from "../entity/tile-filter";
 import { PHONE_WINDOW, REDUCED_MOTION } from "./window-size";
 import { partAttributes, slotAttributes } from "@simplix-react/ui/design";
@@ -293,12 +294,18 @@ const ABSENT = EMPTY_VALUE_TEXT;
  * row folds into — and a second copy of this arithmetic is how the strip ends up saying 「2」 where
  * the card says 「2건」.
  *
+ * <p>A counted number is grouped in the UI language, as the list's total badge groups its own, so
+ * a tile and the badge beside it read 「1,188」 alike. A figure that arrives as text (a rate, a sum
+ * the screen already worded) is drawn as it is.
+ *
  * @param tile the figure
+ * @param locale the UI language
  * @returns what to render
  */
-export function tileFigure(tile: SettingsTile): string | number {
+export function tileFigure(tile: SettingsTile, locale: string): string {
   if (tile.value === undefined) return ABSENT;
-  return tile.unit ? `${tile.value}${tile.unit}` : tile.value;
+  const figure = typeof tile.value === "number" ? groupedNumber(tile.value, locale) : tile.value;
+  return tile.unit ? `${figure}${tile.unit}` : figure;
 }
 
 
@@ -635,6 +642,7 @@ function TileChips({
   readonly active: boolean;
   readonly filters?: TileFilters;
 }) {
+  const locale = useLocale();
   const pressedKeys = pressedTileKeys(tiles, filters?.committedValues ?? {});
   return (
     <div className="flex items-center overflow-x-auto" {...slotAttributes(tileChipsStyle, {})}>
@@ -647,7 +655,7 @@ function TileChips({
               className={toneIconClass(tile)}
               {...partAttributes(tileChipFigureStyle, { tone: shownTone(tile) ?? "none" })}
             >
-              {tileFigure(tile)}
+              {tileFigure(tile, locale)}
             </NumericText>
           </>
         );
@@ -711,6 +719,7 @@ function TileStrip({
   readonly onPress: () => void;
   readonly onHold: (held: boolean) => void;
 }) {
+  const locale = useLocale();
   const tile = tiles[showing] as SettingsTile;
   const trendLine = tile.trend
     ? `${TREND_ARROW[tile.trend.direction]} ${tile.trend.text}`
@@ -737,7 +746,7 @@ function TileStrip({
           figure at once, in the order the cards are in. A strip that flips is a convenience for the
           eye and a nuisance to anything reading aloud. */}
       <span className="sr-only">
-        {tiles.map((each) => `${each.label} ${tileFigure(each)}`).join(", ")}
+        {tiles.map((each) => `${each.label} ${tileFigure(each, locale)}`).join(", ")}
       </span>
 
       {/* Which of them is showing, and how many there are — at the head of the line, where the eye
@@ -777,7 +786,7 @@ function TileStrip({
           weight="semibold"
           className={cn("shrink-0", toneIconClass(tile))}
         >
-          {tileFigure(tile)}
+          {tileFigure(tile, locale)}
         </NumericText>
         {/* The sentence under the figure on the card, kept: it is what says where the number came
             from, and a number without it is the half a reader cannot use. First to be clipped when
@@ -825,6 +834,7 @@ function TileGrid({
 }) {
   const keys = useMemo(() => tiles.map((t) => t.key), [tiles]);
   const committed = filters?.committedValues ?? {};
+  const locale = useLocale();
   const pressedKeys = pressedTileKeys(tiles, committed);
   const { order, moveTo, step, enabled } = useTileOrder(reorderKey, keys);
   const [dragging, setDragging] = useState<string | null>(null);
@@ -853,7 +863,7 @@ function TileGrid({
         // a smaller size.
         const figure =
           typeof tile.value === "number" ? (
-            <DigitRoll value={tile.value} format={String} />
+            <DigitRoll value={tile.value} format={(count) => groupedNumber(count, locale)} />
           ) : (
             tile.value ?? ABSENT
           );
