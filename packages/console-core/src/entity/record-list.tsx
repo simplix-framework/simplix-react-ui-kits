@@ -262,9 +262,11 @@ export interface RecordListProps<Row> {
   };
   /**
    * Group headings by one field, in this order. An enum field groups by its constant, whatever
-   * shape the server sends it in, and `label` names a heading (the enum's translated label).
+   * shape the server sends it in, and `label` names a heading (the enum's translated label). A row
+   * whose field holds no value sits last under `ungrouped`, which reads "Not set" where the screen
+   * names none.
    */
-  readonly groupBy?: { readonly field: keyof Row & string; readonly order?: readonly string[]; readonly label?: (key: string) => string };
+  readonly groupBy?: { readonly field: keyof Row & string; readonly order?: readonly string[]; readonly label?: (key: string) => string; readonly ungrouped?: string };
   readonly actions?: readonly RecordAction<Row>[];
   readonly searchPlaceholder?: string;
   readonly pageSize?: number;
@@ -863,7 +865,13 @@ export function RecordList<Row>({
         }
         groupBy={
           on("groups") && groupBy && !arranged
-            ? { of: (row: Row) => enumValueOf((row as Record<string, unknown>)[groupBy.field]), order: groupBy.order, label: groupBy.label }
+            ? {
+                // An empty constant is no group: handed on as a key it is labelled as an enum value that does not exist.
+                of: (row: Row) => enumValueOf((row as Record<string, unknown>)[groupBy.field]) || null,
+                order: groupBy.order,
+                label: groupBy.label,
+                ungrouped: groupBy.ungrouped ?? t("recordList.ungrouped"),
+              }
             : undefined
         }
         actions={rowActions.length > 0 ? rowActions : undefined}

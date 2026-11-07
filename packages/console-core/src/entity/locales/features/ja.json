@@ -60,7 +60,8 @@
     "reorderDone": "完了",
     "more": "さらに表示",
     "loadingMore": "読み込み中…",
-    "chipCount": "{{label}} · {{count}}"
+    "chipCount": "{{label}} · {{count}}",
+    "ungrouped": "未設定"
   },
   "stageGate": {
     "title": "{{command}}の前に残る条件",
