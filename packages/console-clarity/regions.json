@@ -286,7 +286,7 @@
       "required": [
         "rowActions"
       ],
-      "$comment": "rows open a detail, so every row with rows on screen carries the action strip",
+      "$comment": "rows open a detail, so every row with rows on screen carries the action strip; a tab whose panel is free content instead of the list (a settings group's form, a change table) draws it in the body region, which holds any control",
       "regions": [
         "header",
         "figures",
@@ -294,6 +294,7 @@
         "help",
         "timeRange",
         "tabs",
+        "body",
         "toolbar",
         "columnHeads",
         "rowActions",
