@@ -77,6 +77,12 @@ export const glyph = {
       <path d="m5 12 5 5L20 7" />
     </svg>
   ),
+  error: (
+    <svg {...stroke}>
+      <circle cx="12" cy="12" r="9" />
+      <path d="m9 9 6 6m0-6-6 6" />
+    </svg>
+  ),
   pause: (
     <svg {...stroke}>
       <path d="M8 5v14M16 5v14" />

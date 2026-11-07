@@ -1,5 +1,5 @@
 {
- "$comment": "The computed look of the reference product introduction, read with scripts/site-regions-rendered.mjs probe() at the page-root widths listed, in English and Korean, at rest and with a sample playing. scripts/site-demo.mjs --measure renders tests/fixtures/marketing-page.tsx with each entry props at that width and holds its signature to this one with compare(). Entries at the narrow tier hold the footer link at the 24px pointer target size (WCAG 2.2) ahead of the reference story, which draws 16px: their footer and frame heights are the build's until the story draws the same.",
+ "$comment": "The computed look of the reference product introduction, read with scripts/site-regions-rendered.mjs probe() at the page-root widths listed, in English and Korean, at rest and with a sample playing. scripts/site-demo.mjs --measure renders tests/fixtures/marketing-page.tsx with each entry props at that width and holds its signature to this one with compare(). Entries at the narrow tier hold the footer link at the 24px pointer target size (WCAG 2.2), which the reference story draws too.",
  "measuredOn": "2026-11-03",
  "pages": {
   "marketing-1440": {

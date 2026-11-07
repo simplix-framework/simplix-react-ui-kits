@@ -59,7 +59,7 @@ function AuthBlock({ block }: { block: Block }): ReactNode {
         </AuthText>
       );
     case "alert":
-      return <AuthAlert>{b.text as string}</AuthAlert>;
+      return <AuthAlert mark={glyph.error}>{b.text as string}</AuthAlert>;
     case "links":
       if (b.layout === "prose")
         return (

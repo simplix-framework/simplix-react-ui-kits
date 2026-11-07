@@ -1,5 +1,5 @@
 {
- "$comment": "The computed look of the reference help centre, read with scripts/site-regions-rendered.mjs probe() at the page-root widths listed, in English and Korean, as a signed-in reader: at rest, with matches and with none for what is typed, and with the question to support closed, open as a form and sent. scripts/site-demo.mjs --measure renders tests/fixtures/help-page.tsx with each entry props at that width and holds its signature to this one with compare(). Entries at the narrow tier hold the footer link at the 24px pointer target size (WCAG 2.2) ahead of the reference story, which draws 16px: their footer and frame heights are the build's until the story draws the same.",
+ "$comment": "The computed look of the reference help centre, read with scripts/site-regions-rendered.mjs probe() at the page-root widths listed, in English and Korean, as a signed-in reader: at rest, with matches and with none for what is typed, and with the question to support closed, open as a form and sent. scripts/site-demo.mjs --measure renders tests/fixtures/help-page.tsx with each entry props at that width and holds its signature to this one with compare(). Entries at the narrow tier hold the footer link at the 24px pointer target size (WCAG 2.2), which the reference story draws too.",
  "measuredOn": "2026-11-05",
  "pages": {
   "help-1440": {
