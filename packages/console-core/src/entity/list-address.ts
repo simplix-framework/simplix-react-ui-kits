@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import { makeFilterKey } from "@simplix-react/headless";
 import { SearchOperator, type AddressedFilters, type CrudSearchFilters, type FilterControl } from "@simplix-react/ui";
 
@@ -94,6 +95,13 @@ export function declaredFilterKeys(defs: readonly ContractFilter[], options?: Li
   return new Set(drawnFilters(defs, options).flatMap((drawn) => drawn.keys));
 }
 
+/** The filters whose key `keep` accepts, or `undefined` when none is left, as an address that names none. */
+function keepKeys(filters: CrudSearchFilters | undefined, keep: (key: string) => boolean): CrudSearchFilters | undefined {
+  if (filters === undefined) return undefined;
+  const kept = Object.entries(filters).filter(([key]) => keep(key));
+  return kept.length === 0 ? undefined : Object.fromEntries(kept);
+}
+
 /**
  * The part of an address's filters a list draws a control for, and nothing else.
  *
@@ -117,10 +125,8 @@ export function narrowAddressedFilters(
   filters: CrudSearchFilters | undefined,
   options?: ListAddressOptions,
 ): CrudSearchFilters | undefined {
-  if (filters === undefined) return undefined;
   const keys = declaredFilterKeys(defs, options);
-  const kept = Object.entries(filters).filter(([key]) => keys.has(key));
-  return kept.length === 0 ? undefined : Object.fromEntries(kept);
+  return keepKeys(filters, (key) => keys.has(key));
 }
 
 /** What a list declares about its address: the controls it draws, the keys they commit, and how to read an address. */
@@ -129,21 +135,32 @@ export interface ListAddressDeclaration {
   readonly controls: readonly FilterControl[];
   /** The filter keys the controls commit. */
   readonly keys: ReadonlySet<string>;
-  /** The address's filters narrowed to {@link keys}, as {@link narrowAddressedFilters}. */
+  /** The address's filters narrowed to {@link keys}, as {@link narrowAddressedFilters}: what a link may carry. */
   narrow(filters: CrudSearchFilters | undefined): CrudSearchFilters | undefined;
   /**
    * The `addressedFilters` option of `useCrudList` for a page's address, or `undefined` for a list
    * with no address. `forced` is the request the page imposes (a tab's), so a filter over a field it
-   * pins is not applied.
+   * pins is not applied. A hook: it remembers the keys the list has written (see below).
+   *
+   * <p><b>What the list reads back is {@link narrow} and the keys it wrote itself.</b> Something other
+   * than the filter bar can commit a key the declaration does not know (a time range over a stamp,
+   * a pressed tile, a chip row). That key is in the list's state and goes into the address, and the
+   * framework keeps the two equal by comparing them: an address read back without the key would look
+   * like somebody else's change, and the list would drop the key at the reader's next filter change.
+   * So a key the list wrote stays in what it reads back while it is in the address. A key that
+   * arrives from outside (a link, a typed address, a reload) is read through the declaration alone.
    */
-  addressed(address: ListAddress | undefined, forced?: Readonly<Record<string, unknown>>): AddressedFilters | undefined;
+  useAddressed(address: ListAddress | undefined, forced?: Readonly<Record<string, unknown>>): AddressedFilters | undefined;
 }
+
+/** No key: what a list has written before it has written anything. */
+const NO_KEYS: ReadonlySet<string> = new Set();
 
 /**
  * Declares once what a list's address may carry, from its declared filters.
  *
  * <p>The generated list keeps the result in a module constant, exported beside its hook: the hook
- * hands {@link ListAddressDeclaration.addressed} to `useCrudList`, and a screen that links to the
+ * hands {@link ListAddressDeclaration.useAddressed} to `useCrudList`, and a screen that links to the
  * list (a tile on a home page) reads {@link ListAddressDeclaration.narrow} and
  * {@link ListAddressDeclaration.controls} off the same constant, so the link and the list cannot
  * disagree about a key.
@@ -154,12 +171,25 @@ export interface ListAddressDeclaration {
 export function declareListAddress(defs: readonly ContractFilter[], options?: ListAddressOptions): ListAddressDeclaration {
   const controls = filterControlsOf(defs, options);
   const keys = declaredFilterKeys(defs, options);
-  const narrow = (filters: CrudSearchFilters | undefined) => narrowAddressedFilters(defs, filters, options);
   return {
     controls,
     keys,
-    narrow,
-    addressed: (address, forced) =>
-      address === undefined ? undefined : { value: narrow(address.value), onChange: address.onChange, controls, forced },
+    narrow: (filters) => keepKeys(filters, (key) => keys.has(key)),
+    useAddressed(address, forced) {
+      // The keys outside the declaration that the list last wrote. Set when it writes, read when the
+      // address comes back, so what it wrote is read back whole.
+      const written = useRef<ReadonlySet<string>>(NO_KEYS);
+      if (address === undefined) return undefined;
+      const own = written.current;
+      return {
+        value: keepKeys(address.value, (key) => keys.has(key) || own.has(key)),
+        onChange: (next) => {
+          written.current = new Set(Object.keys(next ?? {}).filter((key) => !keys.has(key)));
+          address.onChange(next);
+        },
+        controls,
+        forced,
+      };
+    },
   };
 }

@@ -22,7 +22,17 @@ const alias = (name: string) => [
 // `react` import from its own location and a hook rendered under the aliased React has no dispatcher.
 // Only `*.test.*` files are tests: the design specs under `src/styles/designs` end in `.spec.ts`
 // and hold a design, not a suite.
+//
+// A test that needs a DOM (an effect, a re-render, an event) is named `*.dom.test.tsx` and runs in the
+// second project, whose environment is the framework checkout's `jsdom` (`vitest-jsdom.mjs`: the kit
+// installs no DOM of its own). Every other test runs as a plain node test.
 export default defineConfig({
   resolve: { dedupe: ["react", "react-dom"], alias: [...alias("react"), ...alias("react-dom"), ...alias("lucide-react")] },
-  test: { include: ["src/**/*.test.{ts,tsx}"], server: { deps: { inline: [/@simplix-react\//, /@tanstack\/react-query/, /zustand/] } } },
+  test: {
+    server: { deps: { inline: [/@simplix-react\//, /@tanstack\/react-query/, /zustand/] } },
+    projects: [
+      { extends: true, test: { name: "node", include: ["src/**/*.test.{ts,tsx}"], exclude: ["src/**/*.dom.test.{ts,tsx}"] } },
+      { extends: true, test: { name: "dom", include: ["src/**/*.dom.test.{ts,tsx}"], environment: "./vitest-jsdom.mjs" } },
+    ],
+  },
 });

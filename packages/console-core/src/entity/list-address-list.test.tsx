@@ -47,7 +47,7 @@ function firstRender(value: ListAddress["value"], forced?: Record<string, unknow
       stateMode: "server",
       filterMode: "immediate",
       scopeKey: forced ? forcedScope(forced) : undefined,
-      addressedFilters: declaration.addressed(address(value), forced),
+      addressedFilters: declaration.useAddressed(address(value), forced),
     });
     return null;
   }

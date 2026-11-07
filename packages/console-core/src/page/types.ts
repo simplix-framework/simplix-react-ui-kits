@@ -1,4 +1,4 @@
-import type { ComponentType, ReactNode } from "react";
+import type { ReactNode } from "react";
 import type { CrudListFilters, CrudNavigateOptions, CrudSearch } from "@simplix-react/ui";
 import type { PageTimeRangeSlot } from "../datetime/page-time-range";
 
@@ -23,7 +23,7 @@ export interface PageBlocks {
  * What the generated page hands its blocks file.
  *
  * <p>The address and nothing else. It is what every page has, so the generated side calls the
- * blocks hook the same way on all of them — and a block that needs more state reads it the way any
+ * blocks hook the same way on all of them; a block that needs more state reads it the way any
  * component does, with its own hooks, rather than by widening this.
  */
 export interface PageBlocksContext<S extends ConsoleSearch = ConsoleSearch> {

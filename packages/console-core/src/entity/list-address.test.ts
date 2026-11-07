@@ -1,9 +1,11 @@
-import { SearchOperator, type EntityFacet, type FilterDef } from "@simplix-react/ui";
+import { createElement } from "react";
+import { renderToStaticMarkup } from "react-dom/server";
+import { SearchOperator, type AddressedFilters, type EntityFacet, type FilterDef } from "@simplix-react/ui";
 import { describe, expect, it, vi } from "vitest";
 
 import { filterDef, type RecordFilter } from "./record-list";
 import { recordFilterOf, type ContractFilter } from "./record-contract";
-import { declareListAddress, declaredFilterKeys, filterControlsOf, narrowAddressedFilters } from "./list-address";
+import { declareListAddress, declaredFilterKeys, filterControlsOf, narrowAddressedFilters, type ListAddress } from "./list-address";
 
 /** A declaration of every kind, as a generated list states its filters. */
 const DEFS: readonly ContractFilter[] = [
@@ -147,6 +149,17 @@ describe("the narrowing against the controls the list draws", () => {
 describe("a list's declared address", () => {
   const declaration = declareListAddress(DEFS, FACETED);
 
+  /** What the declaration hands `useCrudList` for an address, read in one render, since it is a hook. */
+  function addressedBy(address: ListAddress | undefined, forced?: Readonly<Record<string, unknown>>): AddressedFilters | undefined {
+    let handed: AddressedFilters | undefined;
+    function Probe() {
+      handed = declaration.useAddressed(address, forced);
+      return null;
+    }
+    renderToStaticMarkup(createElement(Probe));
+    return handed;
+  }
+
   it("offers the controls and keys the functions above answer, and narrows as they do", () => {
     expect(declaration.controls).toEqual(filterControlsOf(DEFS, FACETED));
     expect(declaration.keys).toEqual(declaredFilterKeys(DEFS, FACETED));
@@ -154,19 +167,23 @@ describe("a list's declared address", () => {
     expect(declaration.narrow(undefined)).toBeUndefined();
   });
 
-  it("hands the list the narrowed address, the page's write-back, the controls and the forced request", () => {
-    const onChange = vi.fn();
+  it("hands the list the narrowed address, the controls and the forced request", () => {
     const forced = { "standing.equals": "ACTIVE" };
-    const addressed = declaration.addressed({ value: { "status.in": "FAILED", "gone.in": "x" }, onChange }, forced);
-    expect(addressed).toEqual({ value: { "status.in": "FAILED" }, onChange, controls: declaration.controls, forced });
-    expect(addressed?.onChange).toBe(onChange);
+    const addressed = addressedBy({ value: { "status.in": "FAILED", "gone.in": "x" }, onChange: vi.fn() }, forced);
+    expect(addressed).toMatchObject({ value: { "status.in": "FAILED" }, controls: declaration.controls, forced });
+  });
+
+  it("passes the list's write on to the page's address", () => {
+    const onChange = vi.fn();
+    addressedBy({ value: undefined, onChange })?.onChange({ "status.in": ["PAUSED"] });
+    expect(onChange).toHaveBeenCalledWith({ "status.in": ["PAUSED"] });
   });
 
   it("hands nothing to a list that has no address, which then keeps its filters to itself", () => {
-    expect(declaration.addressed(undefined, { "standing.equals": "ACTIVE" })).toBeUndefined();
+    expect(addressedBy(undefined, { "standing.equals": "ACTIVE" })).toBeUndefined();
   });
 
   it("answers an address that names no declared key as one that names none, so the list's defaults apply", () => {
-    expect(declaration.addressed({ value: { "gone.in": "x" }, onChange: vi.fn() })?.value).toBeUndefined();
+    expect(addressedBy({ value: { "gone.in": "x" }, onChange: vi.fn() })?.value).toBeUndefined();
   });
 });
