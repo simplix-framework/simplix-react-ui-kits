@@ -2,6 +2,7 @@ import { type CSSProperties } from "react";
 import { slotAttributes } from "@simplix-react/ui/design";
 
 import { type MarkTone, markColor } from "./chart-tip";
+import { seriesTone } from "./mark-tone";
 import { useDrawn } from "./stage-flow-bar";
 import {
   chartEmptyStyle,
@@ -21,6 +22,7 @@ export interface MeterEntry {
   readonly sub?: string;
   readonly value: number;
   readonly total: number;
+  /** The bar's colour; absent, the series colours in turn by the row's place ({@link seriesTone}). */
   readonly tone?: MarkTone;
   /** Opens the record behind the row. */
   readonly onClick?: () => void;
@@ -47,7 +49,7 @@ export function MeterList({ label, entries, emptyLabel, unit = "", format = (n) 
   if (entries.length === 0) return <p {...slotAttributes(chartEmptyStyle, {})}>{emptyLabel}</p>;
   return (
     <ul aria-label={label} className="flex flex-col">
-      {entries.map((e) => {
+      {entries.map((e, index) => {
         const share = e.total > 0 ? Math.min(100, Math.round((e.value / e.total) * 100)) : 0;
         const reading = `${e.label} ${share}% · ${format(e.value)}${unit} / ${format(e.total)}${unit}`;
         const body = (
@@ -65,7 +67,7 @@ export function MeterList({ label, entries, emptyLabel, unit = "", format = (n) 
               </span>
             </span>
             <span aria-hidden {...slotAttributes(meterTrackStyle, {})}>
-              <span style={{ width: drawn ? `${share}%` : "0%", "--mark": markColor(e.tone ?? "accent") } as CSSProperties} {...slotAttributes(meterFillStyle, {})} />
+              <span style={{ width: drawn ? `${share}%` : "0%", "--mark": markColor(e.tone ?? seriesTone(index)) } as CSSProperties} {...slotAttributes(meterFillStyle, {})} />
             </span>
           </>
         );

@@ -46,6 +46,7 @@ import type {
   VerdictChoice,
   VerdictValue,
 } from "./record-form-types";
+import { joinParts } from "../layout/join-parts";
 
 /** Props for {@link RecordFieldView}. */
 export interface RecordFieldViewProps {
@@ -509,7 +510,7 @@ function SignatureField({ field, common, value, onChange }: { readonly field: Fi
   const { t } = useTranslation(PACKAGE_NAMESPACE + "/features");
   const [round, setRound] = useState(0);
   const given = value && !value.dataUrl ? value : null;
-  const signer = [field.signerName, field.role].filter(Boolean).join(" · ");
+  const signer = joinParts(field.signerName, field.role);
   return (
     <FieldWrapper {...common}>
       <Stack gap="xs">

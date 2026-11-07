@@ -1,6 +1,7 @@
 import { Text } from "@simplix-react/ui";
 import { useTranslation } from "@simplix-react/i18n/react";
 
+import { joinParts } from "../layout/join-parts";
 import { PACKAGE_NAMESPACE } from "./locales";
 import { formErrorCardStyle, formErrorFieldsStyle } from "./form-error-summary.style";
 import { partAttributes, slotAttributes } from "@simplix-react/ui/design";
@@ -82,7 +83,7 @@ export function FormErrorSummary({
         {t("formErrors.title", { count: names.length })}
       </Text>
       <Text as="p" size="caption" {...partAttributes(formErrorFieldsStyle, {})}>
-        {names.join(" · ")}
+        {joinParts(...names)}
       </Text>
     </div>
   );

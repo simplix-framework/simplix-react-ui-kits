@@ -45,6 +45,7 @@ import {
   tileTitleStyle,
   tilePressStyle,
 } from "./settings-tiles.style";
+import { joinParts } from "./join-parts";
 import { NumericText } from "./numeric-text";
 import { MAX_TILE_COLUMNS, useTileColumns, type TileColumns } from "./tile-columns";
 import { useTileOrder } from "./tile-order";
@@ -788,7 +789,7 @@ function TileStrip({
               {...slotAttributes(tileStripDividerStyle, {})}
             />
             <Text size="caption" tone="muted" className="min-w-0 truncate">
-              {[trendLine, tile.basis].filter(Boolean).join(" · ")}
+              {joinParts(trendLine, tile.basis)}
             </Text>
           </>
         )}

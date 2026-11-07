@@ -9,3 +9,4 @@ export {
   writeManualWidth,
 } from "./manual-width";
 export { HelpCard } from "./help-card";
+export { HelpTable, type HelpTableColumn, type HelpTableProps, type HelpTableRow } from "./help-table";

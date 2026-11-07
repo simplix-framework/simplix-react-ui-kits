@@ -48,6 +48,7 @@ export { Sparkline, type SparklineProps } from "./sparkline";
 export { ObligationMatrix, type ObligationCell, type ObligationMatrixProps, type ObligationRow, type ObligationState } from "./obligation-matrix";
 export { MeterList, type MeterEntry, type MeterListProps } from "./meter-list";
 export { markColor, type MarkTone } from "./chart-tip";
+export { markToneOf, seriesTone } from "./mark-tone";
 export {
   DigitRoll,
   LegendToggle,

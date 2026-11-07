@@ -2,6 +2,7 @@ import type { CSSProperties } from "react";
 import { slotAttributes } from "@simplix-react/ui/design";
 
 import { type MarkTone, markColor } from "./chart-tip";
+import { seriesTone } from "./mark-tone";
 import { segmentBarStyle, segmentEntryStyle, segmentFigureStyle, segmentLegendStyle, segmentPartStyle, segmentSwatchStyle, segmentTrackStyle } from "./figure-parts.style";
 
 /** One part of a whole: what is granted, held or spent of a balance. */
@@ -50,7 +51,7 @@ export function SegmentBar({ label, segments, total }: SegmentBarProps) {
         {segments.map((one, index) => (
           <span
             key={one.key}
-            style={{ width: `${shares[index] ?? 0}%`, "--mark": markColor(one.tone ?? (`series-${(index % 3) + 1}` as MarkTone)) } as CSSProperties}
+            style={{ width: `${shares[index] ?? 0}%`, "--mark": markColor(one.tone ?? seriesTone(index)) } as CSSProperties}
             {...slotAttributes(segmentPartStyle, {})}
           />
         ))}
@@ -58,7 +59,7 @@ export function SegmentBar({ label, segments, total }: SegmentBarProps) {
       <ul aria-hidden {...slotAttributes(segmentLegendStyle, {})}>
         {segments.map((one, index) => (
           <li key={one.key} {...slotAttributes(segmentEntryStyle, {})}>
-            <span style={{ "--mark": markColor(one.tone ?? (`series-${(index % 3) + 1}` as MarkTone)) } as CSSProperties} {...slotAttributes(segmentSwatchStyle, {})} />
+            <span style={{ "--mark": markColor(one.tone ?? seriesTone(index)) } as CSSProperties} {...slotAttributes(segmentSwatchStyle, {})} />
             {one.label}
             <span {...slotAttributes(segmentFigureStyle, {})}>{one.text ?? one.value.toLocaleString()}</span>
           </li>

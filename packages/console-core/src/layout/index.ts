@@ -3,6 +3,7 @@
 import "./locales";
 
 export { ContentLanguageStrip } from "./content-language-strip";
+export { joinParts, PARTS_SEPARATOR } from "./join-parts";
 export type { ContentLanguageStripProps, ContentLanguageStripPlacement } from "./content-language-strip";
 export { FREE_TEXT_MIN_WIDTH, WIDE_LIST_WIDTH, actionColumnWidth, useWideList } from "./list-column-widths";
 export type { WideList } from "./list-column-widths";
