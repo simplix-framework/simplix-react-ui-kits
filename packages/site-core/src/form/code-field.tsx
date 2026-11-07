@@ -1,3 +1,4 @@
+import { useEffect, useId } from "react";
 import { CodeInput } from "@simplix-react/ui";
 import { partAttributes } from "@simplix-react/ui/design";
 
@@ -19,15 +20,32 @@ export interface CodeFieldProps {
   readonly disabled?: boolean;
   /** One cell's accessible name in the product's words; the framework's catalogue otherwise. */
   readonly cellLabel?: (position: number, length: number) => string;
+  /** The id of the line that says why the code was refused, read with the group while it is refused. */
+  readonly describedBy?: string;
+  /** The first cell takes the focus when the field mounts, for a page whose one task is the code. */
+  readonly autoFocus?: boolean;
+}
+
+/** Moves the focus into the first cell of a drawn code row; a row with no cell is left alone. */
+export function focusFirstCell(group: Pick<ParentNode, "querySelector"> | null): void {
+  group?.querySelector<HTMLInputElement>("input")?.focus();
 }
 
 /**
  * A one-time code entered one digit per square cell. Typing, Backspace, the arrows, a paste and an
  * autofill are the framework `CodeInput`'s; the kit draws the row and the cells.
  */
-export function CodeField({ value, onValueChange, onComplete, label, length, invalid = false, disabled, cellLabel }: CodeFieldProps) {
+export function CodeField({ value, onValueChange, onComplete, label, length, invalid = false, disabled, cellLabel, describedBy, autoFocus = false }: CodeFieldProps) {
+  // The framework input takes no ref; the group is found again by its own id.
+  const groupId = useId();
+  // On mount, as a native autofocus does; a render with the same flag never pulls the focus back.
+  useEffect(() => {
+    if (autoFocus) focusFirstCell(document.getElementById(groupId));
+  }, [autoFocus, groupId]);
   return (
     <CodeInput
+      id={groupId}
+      aria-describedby={describedBy}
       {...partAttributes(siteCodeStyle, {})}
       value={value}
       onValueChange={onValueChange}

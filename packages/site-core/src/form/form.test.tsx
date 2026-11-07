@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 
 import { bySlot, silentRefusals, tabStops, tagsOf, unmarked } from "../testing/markup";
 import { RadioCards, SiteCheckbox, SiteSwitch } from "./choices";
-import { CodeField } from "./code-field";
+import { CodeField, focusFirstCell } from "./code-field";
 import { ConfirmByTyping, typedConfirms } from "./confirm-by-typing";
 import { SiteDialogFrame } from "./dialog";
 import { FieldNote, FormField, SiteInput, SiteTextarea } from "./fields";
@@ -141,6 +141,21 @@ describe("CodeField", () => {
     expect(cells.every((cell) => cell.attributes["data-part-invalid"] === "true" && cell.attributes["aria-invalid"] === "true")).toBe(true);
     expect(cells[0]?.attributes.value).toBe("1");
     expect(cells[0]?.attributes["aria-label"]).toBe("1/6");
+  });
+
+  it("is described by the refusal line it names, and by nothing without one", () => {
+    const refused = renderToStaticMarkup(<CodeField label="Code" value="" onValueChange={() => {}} invalid describedBy="code-error" />);
+    expect(byPart(refused, "site-code")[0]?.attributes["aria-describedby"]).toBe("code-error");
+    const plain = renderToStaticMarkup(<CodeField label="Code" value="" onValueChange={() => {}} />);
+    expect(byPart(plain, "site-code")[0]?.attributes["aria-describedby"]).toBeUndefined();
+  });
+
+  it("puts the focus in the first cell of the row, and does nothing for a row with no cell", () => {
+    const focused: string[] = [];
+    focusFirstCell({ querySelector: ((selector: string) => (selector === "input" ? { focus: () => focused.push("first") } : null)) as ParentNode["querySelector"] });
+    expect(focused).toEqual(["first"]);
+    expect(() => focusFirstCell({ querySelector: (() => null) as ParentNode["querySelector"] })).not.toThrow();
+    expect(() => focusFirstCell(null)).not.toThrow();
   });
 });
 
