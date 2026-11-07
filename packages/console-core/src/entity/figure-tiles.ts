@@ -1,15 +1,20 @@
 import { buildSearchableParams } from "@simplix-react/headless";
+import { useTranslation } from "@simplix-react/i18n/react";
 import type { CrudListFilters, StatusTone } from "@simplix-react/ui";
 
 import { useRecordContract, recordValueText, type ContractField } from "./record-contract";
 import { aggregateValue, statusTiles, useStatusCounts } from "./status-counts";
 import type { SettingsTile } from "../layout/settings-tiles";
+import type { CrudPageNotice } from "../page/crud-page";
+import { PACKAGE_NAMESPACE } from "./locales";
 import type { TileFilter } from "./tile-filter";
 
 /** A read the tiles are counted from: the generated query's result. */
 export interface FigureQuery {
   readonly data?: unknown;
   readonly isLoading?: boolean;
+  /** Whether the read failed, so the page can say its figures are unread. */
+  readonly isError?: boolean;
 }
 
 /** What a list page counts and sums by default, as its entity's SimpliX Meta states it. */
@@ -188,20 +193,34 @@ export function statusFieldOf(status: NonNullable<FigureTilesSpec["status"]>): {
  * each sum tile carries its own loading state (`SettingsTile.loading`), so the status counts, which
  * stay over every row, do not blink with them.
  *
+ * <p><b>A figure that could not be read says so on the page.</b> The tile draws a dash, which alone
+ * reads as "nothing to count"; when either read failed, `notices` holds the warning that the figures
+ * are unread, for the page to draw beside its own. The reads carry `RECORD_READ_META`, so the
+ * console's error dialog does not also land over the page.
+ *
  * @param entity the entity the labels are read for
  * @param spec what the page counts and sums, with the reads that answer it
- * @returns the tiles, the loading state, and the count of every value (`undefined` until answered)
+ * @returns the tiles, the loading state, the count of every value (`undefined` until answered), and
+ *   the notices the figures raise
  */
 export function useFigureTiles(
   entity: string,
   spec: FigureTilesSpec,
-): { readonly tiles: SettingsTile[]; readonly loading: boolean; readonly counts: Readonly<Record<string, number>> | undefined } {
+): {
+  readonly tiles: SettingsTile[];
+  readonly loading: boolean;
+  readonly counts: Readonly<Record<string, number>> | undefined;
+  readonly notices: readonly CrudPageNotice[];
+} {
   const contract = useRecordContract(entity);
+  const { t } = useTranslation(PACKAGE_NAMESPACE + "/features");
   // Every declared value is present in the answer, a value no row counts as 0.
   const counts = useStatusCounts(spec.status?.query ?? {}, { options: spec.status ? statusFieldOf(spec.status).values : [] });
+  const unread = Boolean(spec.status?.query.isError || spec.aggregates?.query.isError);
   return {
     tiles: figureTiles(spec, contract, counts),
     loading: Boolean(spec.status?.query.isLoading),
     counts,
+    notices: unread ? [{ key: "figures-unread", kind: "warning", when: true, title: t("figureTiles.unreadTitle"), hint: t("figureTiles.unreadHint") }] : [],
   };
 }

@@ -26,4 +26,17 @@ describe("countNotice", () => {
     countNotice({ key: "server", kind: "danger", count: 1, narrow: { values: { "occurredAt.greaterThanOrEqualTo": "x", "httpStatus.greaterThanOrEqualTo": 500 } }, words: { t, prefix: "n" } }, filters).onAction?.();
     expect(filters.commitValues).toHaveBeenCalledWith({ "occurredAt.greaterThanOrEqualTo": "x", "httpStatus.greaterThanOrEqualTo": 500 });
   });
+
+  it("raises an unread warning, under a key of its own and with no action, where the count could not be read", () => {
+    const filters = { commitValue: vi.fn(), commitValues: vi.fn() };
+    const notice = countNotice({ key: "failed", kind: "danger", count: undefined, unread: true, narrow: { field: "status.in", value: ["FAILED"] }, words: { t, prefix: "failedNotice" } }, filters);
+    expect(notice).toEqual({ key: "failed-unread", kind: "warning", when: true, title: "failedNotice.unreadTitle", hint: "failedNotice.unreadHint" });
+  });
+
+  it("raises the count notice, not the unread one, where the read answered", () => {
+    const filters = { commitValue: vi.fn(), commitValues: vi.fn() };
+    const notice = countNotice({ key: "failed", kind: "danger", count: 2, unread: false, narrow: { field: "status.in", value: ["FAILED"] }, words: { t, prefix: "failedNotice" } }, filters);
+    expect(notice.key).toBe("failed");
+    expect(notice.when).toBe(true);
+  });
 });

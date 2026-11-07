@@ -56,4 +56,29 @@ describe("useFigureTiles", () => {
     const html = renderToStaticMarkup(createElement(UIProvider, { children: createElement(Probe) }));
     expect(JSON.parse((/<pre>([\s\S]*)<\/pre>/.exec(html)?.[1] ?? "null").replace(/&quot;/g, '"'))).toEqual({ QUEUED: 0, FAILED: 3 });
   });
+
+  /** The notices `useFigureTiles` raises for a spec, as the probe's JSON. */
+  function noticesFor(spec: Parameters<typeof useFigureTiles>[1]): readonly { key: string; kind: string; when: boolean; title: string; hint?: string }[] {
+    function Probe() {
+      return createElement("pre", null, JSON.stringify(useFigureTiles("job", spec).notices));
+    }
+    const html = renderToStaticMarkup(createElement(UIProvider, { children: createElement(Probe) }));
+    return JSON.parse((/<pre>([\s\S]*)<\/pre>/.exec(html)?.[1] ?? "null").replace(/&quot;/g, '"'));
+  }
+
+  it("raises the unread warning when the status counts could not be read, and none while they answered", () => {
+    const failed = noticesFor({ status: { query: { isError: true }, field: status }, rowsLabel: "Jobs" });
+    expect(failed).toHaveLength(1);
+    expect(failed[0]).toMatchObject({ key: "figures-unread", kind: "warning", when: true, title: "figureTiles.unreadTitle", hint: "figureTiles.unreadHint" });
+    expect(noticesFor({ status: { query: { data: [] }, field: status }, rowsLabel: "Jobs" })).toEqual([]);
+  });
+
+  it("raises it for a failed sums read too, once", () => {
+    const failed = noticesFor({
+      status: { query: { data: [] }, field: status },
+      aggregates: { query: { isError: true }, figures: [{ field: { name: "failedCount", kind: "number" }, op: "sum" }] },
+      rowsLabel: "Jobs",
+    });
+    expect(failed.map((notice) => notice.key)).toEqual(["figures-unread"]);
+  });
 });

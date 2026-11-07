@@ -16,7 +16,7 @@ import type { ReactNode } from "react";
 {{/if}}
 import { useTranslation } from "@simplix-react/i18n/react";
 import { CrudPage, {{#if hasCreate}}PageAction, {{/if}}type ConsoleSearch, type CrudPageBlocks, useDetailPresentationSetting } from "@simplix-react-ui-kits/console-clarity/page";
-import { {{#if (or hasCreate hasUpdate hasDelete)}}useAllowed, {{/if}}{{#if hasDelete}}{{#if displayNameField}}useRecordContract, {{/if}}{{/if}}{{#if figureTiles}}useFigureTiles, {{/if}}useScreenWords{{#if hasDelete}}{{#if displayNameField}}, type ContractField{{/if}}{{/if}} } from "@simplix-react-ui-kits/console-clarity/entity";
+import { {{#if (or hasCreate hasUpdate hasDelete)}}useAllowed, {{/if}}{{#if hasDelete}}{{#if displayNameField}}useRecordContract, {{/if}}{{/if}}{{#if figureTiles}}RECORD_READ_META, useFigureTiles, {{/if}}useScreenWords{{#if hasDelete}}{{#if displayNameField}}, type ContractField{{/if}}{{/if}} } from "@simplix-react-ui-kits/console-clarity/entity";
 {{#if figureTiles}}
 import { {{#if figureTiles.status}}{{figureTiles.status.hook}}{{/if}}{{#if figureTiles.status}}{{#if figureTiles.aggregates}}, {{/if}}{{/if}}{{#if figureTiles.aggregates}}{{figureTiles.aggregates.hook}}{{/if}} } from "{{packageName}}";
 {{/if}}
@@ -83,14 +83,15 @@ export function {{EntityPascal}}CrudPage({ search, onNavigate }: {{EntityPascal}
   const presentation = useDetailPresentationSetting();
 {{#if figureTiles}}
   // The figures the entity's SimpliX Meta says it counts and sums, drawn as the page's figure row.
+  // A failed read is told by the page's own notice (`figures.notices`), so the error dialog leaves both reads alone.
   const figures = useFigureTiles("{{entity}}", {
 {{#if figureTiles.status}}
-    status: { query: {{figureTiles.status.hook}}({ field: "{{figureTiles.status.field}}" }), field: "{{figureTiles.status.field}}", enumName: "{{figureTiles.status.enumName}}", values: [{{#each figureTiles.status.options}}"{{this}}"{{#unless @last}}, {{/unless}}{{/each}}]{{#if figureTiles.status.tones}}, tones: { {{#each figureTiles.status.tones}}"{{@key}}": "{{this}}"{{#unless @last}}, {{/unless}}{{/each}} }{{/if}} },
+    status: { query: {{figureTiles.status.hook}}({ field: "{{figureTiles.status.field}}" }, { query: { meta: RECORD_READ_META } }), field: "{{figureTiles.status.field}}", enumName: "{{figureTiles.status.enumName}}", values: [{{#each figureTiles.status.options}}"{{this}}"{{#unless @last}}, {{/unless}}{{/each}}]{{#if figureTiles.status.tones}}, tones: { {{#each figureTiles.status.tones}}"{{@key}}": "{{this}}"{{#unless @last}}, {{/unless}}{{/each}} }{{/if}} },
 {{/if}}
 {{#if figureTiles.aggregates}}
     aggregates: {
       // The sums are read over the rows the list is showing: its filters, search text and forced scope.
-      query: {{figureTiles.aggregates.hook}}(list.requestParams as Parameters<typeof {{figureTiles.aggregates.hook}}>[0]),
+      query: {{figureTiles.aggregates.hook}}(list.requestParams as Parameters<typeof {{figureTiles.aggregates.hook}}>[0], { query: { meta: RECORD_READ_META } }),
       figures: [
 {{#each figureTiles.aggregates.figures}}
         { field: { name: "{{this.field}}", kind: "{{this.kind}}"{{#if this.money}}, currency: "{{this.money.currency}}", scale: {{this.money.scale}}{{/if}}{{#if this.signed}}, signed: true{{/if}} }, op: "{{this.op}}"{{#if this.isRowCount}}, rowCount: true{{/if}} },
@@ -168,7 +169,11 @@ export function {{EntityPascal}}CrudPage({ search, onNavigate }: {{EntityPascal}
         {...presentation}
         // The figures (`spec.tiles`) narrow the list through its own filter state.
         tileFilters={list.filters}
+{{#if figureTiles}}
+        notices={[...(blocks.notices?.(list) ?? []), ...figures.notices]}
+{{else}}
         notices={blocks.notices?.(list)}
+{{/if}}
         detailWidth={blocks.detailWidth}
         renderList={(nav) => (
           <{{EntityPascal}}List

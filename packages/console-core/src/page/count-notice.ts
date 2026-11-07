@@ -17,6 +17,13 @@ export interface CountNoticeSpec {
   /** How many rows are in the state the notice is about; `undefined` while it is being read. */
   readonly count: number | undefined;
   /**
+   * Whether the read of the count failed. The page then raises a warning that it cannot say whether
+   * any row is in the state, instead of drawing no notice, which would read as none being there.
+   * The words come from the same prefix as `unreadTitle` and `unreadHint`, and the notice is
+   * remembered under its own key, so putting the count notice away does not hide it.
+   */
+  readonly unread?: boolean;
+  /**
    * The list narrowing the notice's action writes, in the filter bar's own keys (`status.in`,
    * `signatureVerified.equals`), so the list lands on exactly the rows the notice counts
    * (frontend invariant #48).
@@ -24,14 +31,15 @@ export interface CountNoticeSpec {
   readonly narrow: CountNoticeNarrowing;
   /**
    * Where the words are: the catalog's `t` and the key prefix holding `title` (pluralised by
-   * `count`), `hint` and `action`.
+   * `count`), `hint` and `action`, and `unreadTitle` and `unreadHint` for the unread form.
    */
   readonly words: { readonly t: TranslateFunction; readonly prefix: string };
 }
 
 /**
  * A page notice raised while a count is above zero, whose action narrows the list to the rows it
- * counts: the "N payments failed, show them" shape, written once.
+ * counts: the "N payments failed, show them" shape, written once. Where the read of the count
+ * failed it is the unread warning instead, which names no count and offers no action.
  *
  * @param spec the count, the narrowing and the words
  * @param filters the list's filter state the action commits to
@@ -39,6 +47,9 @@ export interface CountNoticeSpec {
  */
 export function countNotice(spec: CountNoticeSpec, filters: Pick<CrudListFilters, "commitValue" | "commitValues">): CrudPageNotice {
   const { t, prefix } = spec.words;
+  if (spec.unread) {
+    return { key: `${spec.key}-unread`, kind: "warning", when: true, title: t(`${prefix}.unreadTitle`), hint: t(`${prefix}.unreadHint`) };
+  }
   const count = spec.count ?? 0;
   const narrow = spec.narrow;
   return {

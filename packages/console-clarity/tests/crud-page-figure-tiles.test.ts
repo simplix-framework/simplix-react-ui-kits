@@ -26,7 +26,7 @@ describe("crud-page.hbs default figure tiles", () => {
   it("reads the counts and sums Meta names and draws them as the page's figures", () => {
     const text = render("crud-page.hbs", { ...base, figureTiles });
     expect(text).toContain('import { useGetJobStatusCounts, useGetJobAggregates } from "@test/domain-job";');
-    expect(text).toContain('status: { query: useGetJobStatusCounts({ field: "status" }), field: "status", enumName: "JobStatus", values: ["QUEUED", "FAILED"] },');
+    expect(text).toContain('status: { query: useGetJobStatusCounts({ field: "status" }, { query: { meta: RECORD_READ_META } }), field: "status", enumName: "JobStatus", values: ["QUEUED", "FAILED"] },');
     expect(text).toContain('{ field: { name: "costMicros", kind: "money", currency: "USD", scale: 6 }, op: "sum" },');
     expect(text).toContain('{ field: { name: "jobId", kind: "number" }, op: "count", rowCount: true },');
     expect(text).toContain("tiles: figures.tiles,\n          tilesLoading: figures.loading,");
@@ -34,15 +34,24 @@ describe("crud-page.hbs default figure tiles", () => {
 
   it("reads the sums under the list's own conditions and the status counts over every row", () => {
     const text = render("crud-page.hbs", { ...base, figureTiles });
-    expect(text).toContain("query: useGetJobAggregates(list.requestParams as Parameters<typeof useGetJobAggregates>[0]),");
+    expect(text).toContain("query: useGetJobAggregates(list.requestParams as Parameters<typeof useGetJobAggregates>[0], { query: { meta: RECORD_READ_META } }),");
     expect(text).not.toContain("useGetJobAggregates({})");
-    expect(text).toContain('query: useGetJobStatusCounts({ field: "status" })');
+    expect(text).toContain('query: useGetJobStatusCounts({ field: "status" }, ');
+  });
+
+  it("tells a failed figure read on the page and leaves the error dialog to that notice", () => {
+    const text = render("crud-page.hbs", { ...base, figureTiles });
+    expect(text).toContain("RECORD_READ_META, useFigureTiles");
+    expect(text).toContain("notices={[...(blocks.notices?.(list) ?? []), ...figures.notices]}");
+    expect(text.match(/meta: RECORD_READ_META/g)).toHaveLength(2);
   });
 
   it("draws no figures where Meta names none", () => {
     const text = render("crud-page.hbs", base);
     expect(text).not.toContain("useFigureTiles");
     expect(text).not.toContain("figures.tiles");
+    expect(text).not.toContain("figures.notices");
+    expect(text).toContain("notices={blocks.notices?.(list)}");
   });
 
   it("passes the tones a context states for the status tiles, and none where it states none", () => {

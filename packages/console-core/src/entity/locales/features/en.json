@@ -53,6 +53,10 @@
     "refused": "The server did not accept this. Change what it names and save again.",
     "secretKeep": "Leave blank to keep the stored value"
   },
+  "figureTiles": {
+    "unreadTitle": "Some figures on this page could not be read",
+    "unreadHint": "Reload the page to read them again. A figure that could not be read is drawn empty, which does not mean there is nothing to count."
+  },
   "recordList": {
     "selected": "selected",
     "clearSelection": "Clear selection",
