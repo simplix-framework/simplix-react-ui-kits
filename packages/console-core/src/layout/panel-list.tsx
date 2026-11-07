@@ -8,6 +8,7 @@ import {
 } from "@simplix-react/ui";
 
 import { filteredEmptySlots } from "../entity/filtered-empty-slots";
+import { listTotal } from "../entity/list-total";
 
 /** Props for {@link PanelList}. */
 export interface PanelListProps<T> {
@@ -94,7 +95,8 @@ export function PanelList<T>({
     <CrudList ref={rootRef}>
       <CrudList.FilterBar
         maxBadges={3}
-        count={list.pagination.total}
+        count={listTotal(list)}
+        countLoading={listTotal(list) === undefined}
         filters={filters}
         state={list.filters}
         trailing={toolbar}
@@ -134,7 +136,7 @@ export function PanelList<T>({
         <CrudList.Pagination
           page={list.pagination.page}
           pageSize={list.pagination.pageSize}
-          total={list.pagination.total}
+          total={listTotal(list)}
           totalPages={list.pagination.totalPages}
           onPageChange={list.pagination.setPage}
           onPageSizeChange={list.pagination.setPageSize}

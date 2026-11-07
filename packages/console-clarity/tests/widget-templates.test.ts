@@ -66,3 +66,12 @@ describe("the generated detail's changes tab", () => {
     expect(check("detail", source)).toEqual([]);
   });
 });
+
+describe("the generated detail's read", () => {
+  it("carries the record-read meta, since the record draws its own failed read", () => {
+    const source = render("detail.hbs", context);
+    expect(source).toContain("useGetProduct(props.productId, { query: { meta: RECORD_READ_META } })");
+    expect(source).toMatch(/notices=\{isError \?/);
+  });
+});
+

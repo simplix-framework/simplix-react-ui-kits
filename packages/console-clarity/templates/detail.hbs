@@ -5,7 +5,7 @@
  * matches. It is the record's start: its tabs, verbs, notices and fields are customised here, in
  * this file, and a later template change is merged into it three ways.
  */
-import { {{#if (or statusBadgeField statusField)}}badgeOf, {{/if}}fieldEnumsOf, RecordDetail, {{#if holders.length}}useAllowed, {{/if}}useRecordContract, useScreenWords, type ContractField, type RecordField{{#if holders.length}}, type RecordTab{{/if}} } from "@simplix-react-ui-kits/console-clarity/entity";
+import { {{#if (or statusBadgeField statusField)}}badgeOf, {{/if}}fieldEnumsOf, RECORD_READ_META, RecordDetail, {{#if holders.length}}listTotal, useAllowed, {{/if}}useRecordContract, useScreenWords, type ContractField, type RecordField{{#if holders.length}}, type RecordTab{{/if}} } from "@simplix-react-ui-kits/console-clarity/entity";
 {{#if holders.length}}
 import { adaptForcedList, forcedScope, {{#if holdersKeywordSearch}}SEARCHABLE_KEYWORD_PARAM, {{/if}}useCrudList } from "@simplix-react/ui";
 {{/if}}
@@ -73,7 +73,8 @@ const NAME_FIELDS: readonly ContractField[] = [
 {{/if}}
 export function {{EntityPascal}}Detail(props: {{EntityPascal}}DetailProps) {
   const words = useScreenWords("{{entity}}");
-  const { data, isLoading, isError } = {{hookGet}}(props.{{entity}}Id);
+  // The record draws a failed read as its own notice, so the error dialog leaves this read alone.
+  const { data, isLoading, isError } = {{hookGet}}(props.{{entity}}Id, { query: { meta: RECORD_READ_META } });
   const record = data ?? undefined;
   const contract = useRecordContract("{{entity}}");
   const row = record as Readonly<Record<string, unknown>> | undefined;
@@ -120,7 +121,7 @@ export function {{EntityPascal}}Detail(props: {{EntityPascal}}DetailProps) {
     ...(holder{{@index}}Allowed ? [{
       key: "{{this.key}}",
       label: holder{{@index}}Words.plural,
-      count: holder{{@index}}List.pagination.total,
+      count: listTotal(holder{{@index}}List),
       list: {
         list: holder{{@index}}List,
         rowId: (one: Holder{{@index}}Row) => String(one.{{this.rowIdField}}),

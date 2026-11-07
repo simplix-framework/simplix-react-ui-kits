@@ -34,6 +34,7 @@ import { enumValueOf } from "./record-contract";
 import { missingTileFacets, useTileFacets } from "./tile-facets";
 import { FLUID_COLUMN_MIN, tableColumnsOf } from "./column-priority";
 import { useRememberedView } from "./list-view-memory";
+import { listTotal } from "./list-total";
 
 /** One column of a {@link RecordList}. */
 export interface RecordColumn<Row> {
@@ -682,6 +683,8 @@ export function RecordList<Row>({
   ) : null;
 
   const counted = features.count === "filtered" ? isNarrowed(list, rows.length, serverList !== undefined) : on("count");
+  // The total is drawn as unknown until the read has answered, by the badge and the pager alike.
+  const total = listTotal(list);
 
   const rowActions: RowActionDef<Row>[] = on("rowActions") ? actions.map(toRowAction) : [];
 
@@ -803,7 +806,8 @@ export function RecordList<Row>({
         <CrudList.FilterBar
           filters={filterDefs}
           state={list.filters}
-          count={counted ? list.pagination.total : undefined}
+          count={counted ? total : undefined}
+          countLoading={counted && total === undefined}
           leading={
             leading || chipRow || arrangeControl ? (
               <>
@@ -824,7 +828,7 @@ export function RecordList<Row>({
         // first-column text whatever the toolbar holds.
         <Flex align="center" gap="sm" wrap justify="between" {...partAttributes(recordListToolbarStyle, {})}>
           <Flex align="center" gap="sm" wrap>
-            {counted ? <ListTotalBadge count={list.pagination.total} /> : null}
+            {counted ? <ListTotalBadge count={total} /> : null}
             {leading}
             {chipRow}
             {arrangeControl}
@@ -960,7 +964,7 @@ export function RecordList<Row>({
         <CrudList.Pagination
           page={list.pagination.page}
           pageSize={list.pagination.pageSize}
-          total={list.pagination.total}
+          total={total}
           totalPages={list.pagination.totalPages}
           onPageChange={list.pagination.setPage}
           onPageSizeChange={list.pagination.setPageSize}
