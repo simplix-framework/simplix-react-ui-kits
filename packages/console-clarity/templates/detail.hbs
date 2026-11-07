@@ -100,7 +100,9 @@ export function {{EntityPascal}}Detail(props: {{EntityPascal}}DetailProps) {
 {{/if}}
   // Asked only of a reader the holder's list rule admits, so nobody meets a refused read (frontend invariant #61).
   const holder{{@index}}Allowed = useAllowed({{this.accessList}});
-  const holder{{@index}}List = useCrudList<Holder{{@index}}Row>(adaptForcedList<Holder{{@index}}Row>({{this.hookList}}, holder{{@index}}Forced, { {{#if this.hasKeywordSearch}}searchKey: SEARCHABLE_KEYWORD_PARAM, {{/if}}queryOptions: { enabled: holder{{@index}}Allowed{{#if this.matchField}} && holder{{@index}}Forced["{{this.filterKey}}"] !== ""{{/if}} } }), {
+  // The list is read only for a reader the rule admits{{#if this.matchField}} and once the record has answered{{/if}}; a list that is not read has no total to count, which is not zero.
+  const holder{{@index}}Enabled = holder{{@index}}Allowed{{#if this.matchField}} && holder{{@index}}Forced["{{this.filterKey}}"] !== ""{{/if}};
+  const holder{{@index}}List = useCrudList<Holder{{@index}}Row>(adaptForcedList<Holder{{@index}}Row>({{this.hookList}}, holder{{@index}}Forced, { {{#if this.hasKeywordSearch}}searchKey: SEARCHABLE_KEYWORD_PARAM, {{/if}}queryOptions: { enabled: holder{{@index}}Enabled } }), {
     scopeKey: forcedScope(holder{{@index}}Forced),
     stateMode: "server",
     defaultPageSize: 20,
@@ -122,7 +124,7 @@ export function {{EntityPascal}}Detail(props: {{EntityPascal}}DetailProps) {
     ...(holder{{@index}}Allowed ? [{
       key: "{{this.key}}",
       label: holder{{@index}}Words.plural,
-      count: listTotal(holder{{@index}}List),
+      count: listTotal(holder{{@index}}List, { enabled: holder{{@index}}Enabled }),
       list: {
         list: holder{{@index}}List,
         rowId: (one: Holder{{@index}}Row) => String(one.{{this.rowIdField}}),

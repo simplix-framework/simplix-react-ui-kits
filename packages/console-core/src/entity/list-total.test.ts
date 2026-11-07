@@ -34,4 +34,14 @@ describe("listTotal", () => {
   it("keeps a known total through a refetch that already has rows", () => {
     expect(listTotal(answered({ data: [{}], failureCount: 1, pagination: { ...answered().pagination, total: 3 } }))).toBe(3);
   });
+
+  it("knows no total for a list the screen holds back, whatever the idle state reports", () => {
+    expect(listTotal(answered(), { enabled: false })).toBeUndefined();
+    expect(listTotal(answered({ data: [{}], pagination: { ...answered().pagination, total: 5 } }), { enabled: false })).toBeUndefined();
+  });
+
+  it("states the total of a list the screen reads", () => {
+    expect(listTotal(answered(), { enabled: true })).toBe(0);
+    expect(listTotal(answered())).toBe(0);
+  });
 });
