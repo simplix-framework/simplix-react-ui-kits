@@ -139,6 +139,15 @@ export function copyTextOf(value: RecordValue): string | undefined {
   return undefined;
 }
 
+/**
+ * A value's text inside the flex rows that hold it: the text takes the width the row leaves it
+ * and ends in an ellipsis where its container keeps one line (`white-space` is inherited, so a
+ * wrapping container still wraps it). A text node that is a flex item is blockified, so the
+ * `text-overflow` of the cell around it never reaches it and a long value is cut mid-word without
+ * a mark.
+ */
+const TEXT_FITS = "min-w-0 overflow-clip text-ellipsis";
+
 /** Draws a {@link RecordValue}. */
 export function RecordValueView({ value }: { readonly value: RecordValue }): ReactNode {
   if (value === null || value === undefined || value === "") return <EmptyValue />;
@@ -252,16 +261,16 @@ export function RecordValueView({ value }: { readonly value: RecordValue }): Rea
       <Flex direction="column" gap="none" minSize>
         <Flex align="center" gap="xs">
           {value.code ? (
-            <Text as="code" font="mono">
+            <Text as="code" font="mono" className={TEXT_FITS}>
               {value.text}
             </Text>
           ) : (
-            <span>{value.text}</span>
+            <span className={TEXT_FITS}>{value.text}</span>
           )}
           {value.badge ? <StatusBadge tone={value.badge.tone ?? "neutral"} label={value.badge.label} /> : null}
         </Flex>
         {value.sub ? (
-          <Text size="caption" tone="muted">
+          <Text size="caption" tone="muted" className={TEXT_FITS}>
             {value.sub}
           </Text>
         ) : null}

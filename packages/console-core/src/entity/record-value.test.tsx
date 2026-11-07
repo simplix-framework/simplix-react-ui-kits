@@ -13,7 +13,23 @@ describe("a RecordValue marked as code", () => {
   it("leaves plain text as plain text", () => {
     const html = renderToStaticMarkup(createElement(RecordValueView, { value: { text: "Head office" } }));
     expect(html).not.toContain("<code");
-    expect(html).toContain("<span>Head office</span>");
+    expect(html).toMatch(/<span class="[^"]*">Head office<\/span>/);
+  });
+});
+
+describe("a RecordValue's text in a cell that keeps one line", () => {
+  // The text is a flex item, so the cell's own `text-overflow` never reaches it: without a clip and
+  // an ellipsis of its own a long address is cut mid-word with no mark.
+  const fits = (html: string, text: string) => new RegExp(`class="[^"]*\\bmin-w-0\\b[^"]*\\boverflow-clip\\b[^"]*\\btext-ellipsis\\b[^"]*"[^>]*>${text}<`).test(html);
+
+  it("takes the width its row leaves it and ends in an ellipsis", () => {
+    expect(fits(renderToStaticMarkup(createElement(RecordValueView, { value: { text: "alex.kim@example.com" } })), "alex.kim@example.com")).toBe(true);
+    expect(fits(renderToStaticMarkup(createElement(RecordValueView, { value: { text: "baseline.key", code: true } })), "baseline.key")).toBe(true);
+    expect(fits(renderToStaticMarkup(createElement(RecordValueView, { value: { text: "Alex", sub: "Head of finance" } })), "Head of finance")).toBe(true);
+  });
+
+  it("leaves a plain string, which the cell around it already ellipsizes, as it is", () => {
+    expect(renderToStaticMarkup(createElement(RecordValueView, { value: "alex.kim@example.com" }))).toBe("alex.kim@example.com");
   });
 });
 
