@@ -123,6 +123,22 @@ function CheckedReference({ value }: { readonly value: Extract<RecordValue, { li
   return <RecordValueView value={link} />;
 }
 
+/**
+ * The text a copy control puts on the clipboard for a value, or `undefined` where the value has no
+ * text to carry: a string or a number as written, the text of a value drawn as text or code, and a
+ * machine message whole. A badge, a figure and a meter are read, not carried.
+ *
+ * @param value what a detail field draws
+ */
+export function copyTextOf(value: RecordValue): string | undefined {
+  if (typeof value === "string") return value === "" ? undefined : value;
+  if (typeof value === "number") return String(value);
+  if (value === null || value === undefined) return undefined;
+  if ("text" in value) return value.text === "" ? undefined : value.text;
+  if ("excerpt" in value) return value.excerpt === "" ? undefined : value.excerpt;
+  return undefined;
+}
+
 /** Draws a {@link RecordValue}. */
 export function RecordValueView({ value }: { readonly value: RecordValue }): ReactNode {
   if (value === null || value === undefined || value === "") return <EmptyValue />;

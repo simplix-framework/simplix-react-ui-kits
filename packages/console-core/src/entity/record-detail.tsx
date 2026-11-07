@@ -30,7 +30,7 @@ import { BoundedDialogContent } from "../layout/bounded-dialog-content";
 import { recordHeadFigureLabelStyle, recordHeadFigureStyle, recordHeadFigureValueStyle, recordHeadFiguresStyle, recordHeadStyle, recordHeadSubtitleStyle, recordSublistStyle } from "./record-detail.style";
 import { actionLabelFor, actionTypeFor, RecordList, RecordListNestingContext, type RecordAction, type RecordColumn, type RecordListProps } from "./record-list";
 import { TileSpark } from "../layout/tile-spark";
-import { RecordValueView, type RecordBadge, type RecordValue } from "./record-value";
+import { copyTextOf, RecordValueView, type RecordBadge, type RecordValue } from "./record-value";
 import { StageGate, type StageGateProps } from "./stage-gate";
 import { EvidenceGrid, type EvidenceGridProps } from "../attachment/evidence-grid";
 import { ApprovalFlow, type ApprovalFlowProps } from "../layout/approval-flow";
@@ -217,8 +217,12 @@ function Sections({ sections }: { readonly sections?: readonly RecordSection[] }
           {section.fields.map((field, index) =>
             // The position is part of the key: two rows may carry the same label (one per session
             // of the same application), and a repeated key draws neither of them reliably.
-            field.copy && typeof field.value === "string" ? (
-              <CopyableDetailField key={`${index}:${field.label}`} label={field.label} layout="inline" value={field.value} className={field.wide ? WIDE_FIELD : undefined} />
+            // A value the contract draws as an object (an excerpt, a code, a block) carries its text
+            // inside it, and the copy control takes that text while the row draws the object.
+            field.copy && copyTextOf(field.value) !== undefined ? (
+              <CopyableDetailField key={`${index}:${field.label}`} label={field.label} layout="inline" value={copyTextOf(field.value)} className={field.wide ? WIDE_FIELD : undefined}>
+                {typeof field.value === "string" ? undefined : <RecordValueView value={field.value} />}
+              </CopyableDetailField>
             ) : (
               <DetailFieldWrapper key={`${index}:${field.label}`} label={field.label} layout="inline" className={field.wide ? WIDE_FIELD : undefined}>
                 <RecordValueView value={field.value} />

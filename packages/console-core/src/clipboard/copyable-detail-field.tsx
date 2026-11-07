@@ -1,4 +1,4 @@
-import type { ComponentProps } from "react";
+import type { ComponentProps, ReactNode } from "react";
 import { Button, DetailFieldWrapper, EmptyValue } from "@simplix-react/ui";
 import { useTranslation } from "@simplix-react/i18n/react";
 import { Copy } from "lucide-react";
@@ -12,8 +12,14 @@ type WrapperProps = ComponentProps<typeof DetailFieldWrapper>;
 
 /** A detail row whose value the reader is expected to carry somewhere else. */
 export interface CopyableDetailFieldProps extends Omit<WrapperProps, "children"> {
-  /** The value to show, and to put on the clipboard. */
+  /** The value to put on the clipboard, and to show unless `children` draws it. */
   value: string | null | undefined;
+  /**
+   * What the row draws in place of the value's plain text: a value the clipboard takes as text but
+   * the row draws in its own form (a machine message in a monospaced block). The copy control
+   * still copies `value`.
+   */
+  children?: ReactNode;
   /** What stands in when there is no value. */
   fallback?: string;
 }
@@ -44,7 +50,7 @@ export interface CopyableDetailFieldProps extends Omit<WrapperProps, "children">
  *
  * @param props the value, plus whatever {@link DetailFieldWrapper} takes
  */
-export function CopyableDetailField({ value, fallback, ...wrapper }: CopyableDetailFieldProps) {
+export function CopyableDetailField({ value, fallback, children, ...wrapper }: CopyableDetailFieldProps) {
   const { t } = useTranslation(PACKAGE_NAMESPACE + "/features");
   const copy = useCopyToClipboard();
 
@@ -54,7 +60,7 @@ export function CopyableDetailField({ value, fallback, ...wrapper }: CopyableDet
     <DetailFieldWrapper {...wrapper}>
       <span className="inline-flex min-w-0 items-start" {...slotAttributes(copyableFieldStyle, {})}>
         <span className="min-w-0 break-words">
-          {hasValue ? value : <EmptyValue>{fallback}</EmptyValue>}
+          {hasValue ? (children ?? value) : <EmptyValue>{fallback}</EmptyValue>}
         </span>
         {hasValue && (
           <Button
