@@ -142,10 +142,14 @@ export function {{EntityPascal}}Detail(props: {{EntityPascal}}DetailProps) {
   const tabs = undefined;
 {{/if}}
   const recordName = record ? {{#if displayNameField}}contract.recordName(NAME_FIELDS, row){{else}}String(record.{{rowIdField}} ?? ""){{/if}} : "";
-  const generatedActions = [
-    ...(props.onDelete ? [{ label: words.delete, kind: "danger" as const, onClick: () => props.onDelete?.(recordName) }] : []),
-    ...(props.onEdit ? [{ label: words.edit, onClick: props.onEdit }] : []),
-  ];
+  // Verbs are drawn once the record has answered: pressed while the read is held or has failed, Delete would
+  // name a record nobody can see and skip any delete lock that reads the record.
+  const generatedActions = record
+    ? [
+        ...(props.onDelete ? [{ label: words.delete, kind: "danger" as const, onClick: () => props.onDelete?.(recordName) }] : []),
+        ...(props.onEdit ? [{ label: words.edit, onClick: props.onEdit }] : []),
+      ]
+    : [];
   // A read that failed says so in a notice, rather than drawing a record with nothing in it.
   // A panel is titled by what people call the record, never by its key (frontend invariant #36).
   return (

@@ -1,4 +1,5 @@
 import { join } from "node:path";
+import ts from "typescript";
 import { describe, expect, it } from "vitest";
 
 import { render, typecheck, virtualRoot } from "./template-typecheck";
@@ -110,6 +111,32 @@ describe("a holder whose list exports no column hook", () => {
     });
     expect(source).not.toMatch(/useHolder0Columns|holder0List|HolderFields_/);
     expect(source).toContain('{ key: "overview", label: words.overview');
+  });
+});
+
+/** Runs the rendered `generatedActions` statement the way the screen does, with the three values it reads. */
+function drawnVerbs(source: string, scope: { record: object | undefined; onDelete?: boolean; onEdit?: boolean }): string[] {
+  const statement = source.match(/const generatedActions =[\s\S]*?;\n/)?.[0];
+  if (!statement) throw new Error("the rendered detail has no generatedActions statement");
+  const js = ts.transpileModule(`${statement}\nreturn generatedActions;`, { compilerOptions: { target: ts.ScriptTarget.ES2022 }, reportDiagnostics: false }).outputText;
+  const props = { onDelete: scope.onDelete ? () => undefined : undefined, onEdit: scope.onEdit ? () => undefined : undefined };
+  const run = new Function("record", "props", "words", "recordName", js) as (...args: unknown[]) => { label: string }[];
+  return run(scope.record, props, { delete: "Delete", edit: "Edit" }, "Name").map((verb) => verb.label);
+}
+
+describe("a detail's footer verbs", () => {
+  const source = render("detail.hbs", context);
+
+  it("are drawn once the record has answered", () => {
+    expect(drawnVerbs(source, { record: { productId: "p1" }, onDelete: true, onEdit: true })).toEqual(["Delete", "Edit"]);
+  });
+
+  it("are not drawn while the read is held or has failed, so Delete never names a record nobody can see", () => {
+    expect(drawnVerbs(source, { record: undefined, onDelete: true, onEdit: true })).toEqual([]);
+  });
+
+  it("still withholds a verb the screen passes no handler for", () => {
+    expect(drawnVerbs(source, { record: { productId: "p1" }, onEdit: true })).toEqual(["Edit"]);
   });
 });
 
