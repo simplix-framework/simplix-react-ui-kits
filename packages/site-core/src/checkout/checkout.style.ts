@@ -53,6 +53,14 @@ export const siteStepDiscStyle = defineSlotStyle({
   defaultVariants: { state: "next" },
 });
 
+/** The page's title where the steps are its only visible heading: read by a screen reader and by the tab, not drawn. */
+export const siteStepHeadingStyle = defineSlotStyle({
+  slot: "site-stepper-heading",
+  base: "sr-only",
+  variants: {},
+  defaultVariants: {},
+});
+
 /** The line under the steps saying what the step asks for, centred and muted; it keeps its height when empty. */
 export const siteStepCaptionStyle = defineSlotStyle({
   slot: "site-stepper-caption",

@@ -126,7 +126,8 @@ describe("the generated account section", () => {
 
   it("draws the section's heading from its catalog key and its parts under it, with no page column of its own", () => {
     expect(source).toContain("export function AccountCreditsPage(");
-    expect(source).toContain('<SectionHead>{t("accountCredits.title")}</SectionHead>');
+    // The account page has no title above its section, so the section's heading is the page's h1.
+    expect(source).toContain('<SectionHead level={1}>{t("accountCredits.title")}</SectionHead>');
     expect(source).not.toContain("<SitePage");
     expect(source).not.toMatch(/console-(clarity|core)/);
   });
@@ -146,6 +147,8 @@ describe("the generated checkout page", () => {
     expect(source).toContain('label={t("checkout.stepsLabel")}');
     expect(source).toContain("label: t(`checkout.steps.${key}`)");
     expect(source).toContain("current={STEPS.indexOf(step)}");
+    // The steps are the visible heading, so the page's h1 for the tab names the step it is on.
+    expect(source).toContain("heading={t(`checkout.steps.${step}`)}");
     expect(source).toContain("<CheckoutLayout");
     expect(source).toContain("<ProviderFrame label={frame.label} owner={frame.owner}>");
     expect(source).not.toMatch(/console-(clarity|core)/);
@@ -189,7 +192,8 @@ describe("the generated packs page", () => {
   it("draws the packs' heading and lede from the page's catalog keys on the page column, and nothing of the console", () => {
     expect(source).toContain("export function PacksPage(");
     expect(source).toContain("<SitePage>");
-    expect(source).toContain('<PackSection heading={t("packs.title")} lede={lede} note={note}>');
+    // The packs are a page of their own, so their heading is the page's h1.
+    expect(source).toContain('<PackSection level={1} heading={t("packs.title")} lede={lede} note={note}>');
     expect(source).toContain('const lede = tOr("packs.lede", "") || undefined;');
     expect(source).not.toMatch(/console-(clarity|core)/);
   });

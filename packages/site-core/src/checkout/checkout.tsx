@@ -55,6 +55,7 @@ import {
   siteProviderWaitingTextStyle,
   siteSavingStyle,
   siteStepCaptionStyle,
+  siteStepHeadingStyle,
   siteStepDiscStyle,
   siteStepLineStyle,
   siteStepperStyle,
@@ -73,12 +74,19 @@ export interface StepperProps {
   readonly doneMark?: ReactNode;
   /** The line under the steps saying what this step asks for; the line keeps its height when empty. */
   readonly caption?: ReactNode;
+  /**
+   * The page's title, drawn for a screen reader and the tab only: the steps are the page's visible
+   * heading, and a purchase page that names its step (「Details」) gives the page the h1 it would
+   * otherwise lack.
+   */
+  readonly heading?: ReactNode;
 }
 
 /** The steps of a purchase: numbered discs joined by lines, the current one marked as the step. */
-export function Stepper({ label, steps, current, doneMark, caption }: StepperProps) {
+export function Stepper({ label, steps, current, doneMark, caption, heading }: StepperProps) {
   return (
     <>
+      {heading !== undefined ? <h1 {...slotAttributes(siteStepHeadingStyle, {})}>{heading}</h1> : null}
       <ol {...slotAttributes(siteStepperStyle, {})} aria-label={label}>
         {steps.map((step, index) => {
           const state = index < current ? "done" : index === current ? "current" : "next";

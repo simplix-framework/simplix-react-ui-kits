@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest";
 import { PlainSiteLink, SiteLinkProvider, type SiteLinkProps } from "../link/site-link";
 import { bySlot, silentRefusals, tabStops, unmarked } from "../testing/markup";
 import { SiteAction, type SiteActionSpec } from "./site-action";
+import { siteActionStyle } from "./site-action.style";
 
 describe("SiteAction", () => {
   it("draws an action with an address as a link and one without as a button", () => {
@@ -58,6 +59,17 @@ describe("SiteAction", () => {
     expect(set?.attributes["data-size"]).toBe("sm");
     expect(set?.attributes["data-block"]).toBe("true");
     expect(set?.attributes["data-action"]).toBe("a");
+  });
+
+  it("lets a block action wrap a label too long for its column, and keeps every other action on one line at least as tall as its size", () => {
+    expect(siteActionStyle.base).toContain("whitespace-nowrap");
+    expect(siteActionStyle.variants.block.true).toContain("whitespace-normal");
+    expect(siteActionStyle.variants.block.true).toContain("[overflow-wrap:anywhere]");
+    expect(siteActionStyle.variants.block.false).toBe("");
+    for (const size of ["md", "sm", "lg"] as const) {
+      expect(siteActionStyle.variants.size[size]).toMatch(/(?:^|\s)min-h-\(--site-control/);
+      expect(siteActionStyle.variants.size[size]).not.toMatch(/(?:^|\s)h-\(--site-control/);
+    }
   });
 
   it("is described by the line it names, as a link and as a disabled button", () => {

@@ -33,6 +33,15 @@ describe("PackSection", () => {
     expect(bySlot(html, "site-section-heading")[0]?.attributes["data-size"]).toBe("lg");
   });
 
+  it("is a section titled by an h2 under a page title, and the page's own h1 where the packs are the page", () => {
+    const under = bySlot(renderToStaticMarkup(<PackSection heading="Packs">{null}</PackSection>), "site-section-heading")[0];
+    expect(under?.name).toBe("h2");
+    const alone = renderToStaticMarkup(<PackSection level={1} heading="Packs">{null}</PackSection>);
+    const page = bySlot(alone, "site-section-heading")[0];
+    expect(page?.name).toBe("h1");
+    expect(bySlot(alone, "site-pack-section")[0]?.attributes["aria-labelledby"]).toBe(page?.attributes.id);
+  });
+
   it("leaves out the lede and the closing line it is not handed", () => {
     const html = renderToStaticMarkup(<PackSection heading="Packs">{null}</PackSection>);
     expect(bySlot(html, "site-section-lede")).toEqual([]);

@@ -27,7 +27,7 @@ export function {{NamePascal}}Page({ children, note }: {{NamePascal}}PageProps =
   const lede = tOr("{{nameCamel}}.lede", "") || undefined;
   return (
     <SitePage>
-      <PackSection heading={t("{{nameCamel}}.title")} lede={lede} note={note}>
+      <PackSection level={1} heading={t("{{nameCamel}}.title")} lede={lede} note={note}>
         {children}
       </PackSection>
     </SitePage>

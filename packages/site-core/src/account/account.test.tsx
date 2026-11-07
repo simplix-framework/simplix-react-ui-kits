@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 
 import { bySlot, tabStops, tagsOf, unmarked } from "../testing/markup";
 import { AccountLayout, SectionHead, SectionNav } from "./account-layout";
+import { siteSectionHeadStyle } from "./account.style";
 import { dayHeight, DaySeries, PanelLine, QuotaMeter, shareWidth, SitePanel, TableActions, TableCard } from "./figures";
 import { IdentityRow, SettingsActions, SettingsBox, SettingsRow, SettingsRows, SettingsText } from "./settings";
 
@@ -57,6 +58,15 @@ describe("AccountLayout", () => {
     expect(sub?.name).toBe("h3");
     expect(sub?.attributes["data-level"]).toBe("3");
     expect(sub?.attributes.tabindex).toBeUndefined();
+  });
+
+  it("draws the section title as the page's h1 where nothing stands above it, looking as it does at level 2", () => {
+    const page = bySlot(renderToStaticMarkup(<SectionHead level={1}>Credits</SectionHead>), "site-section-head")[0];
+    expect(page?.name).toBe("h1");
+    expect(page?.attributes["data-level"]).toBe("1");
+    // It takes the focus a part of the section dropped, as the level 2 title does.
+    expect(page?.attributes.tabindex).toBe("-1");
+    expect(siteSectionHeadStyle.variants.level["1"]).toBe(siteSectionHeadStyle.variants.level["2"]);
   });
 });
 

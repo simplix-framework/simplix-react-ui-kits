@@ -88,7 +88,7 @@ export function AccountLayout({ nav, standing, children }: AccountLayoutProps) {
       if (focused === null || focused.isConnected) return;
       focused = null;
       if (doc.activeElement !== null && doc.activeElement !== doc.body) return;
-      const heading = node.querySelector<HTMLElement>("h2");
+      const heading = node.querySelector<HTMLElement>("h1, h2");
       if (heading !== null) holdDroppedFocus(heading);
     });
     doc.addEventListener("focusin", track);
@@ -111,17 +111,21 @@ export function AccountLayout({ nav, standing, children }: AccountLayoutProps) {
 
 /** Props for {@link SectionHead}. */
 export interface SectionHeadProps {
-  /** `2` is the section's title; `3` a part's title inside it. */
-  readonly level?: 2 | 3;
+  /**
+   * `1` is the section's title where it is the page's heading (the account page has no title above
+   * it, and its h1 names the tab); `2` is the section's title where a page title stands above it, or
+   * a part's title under a level 1 section; `3` a part's title inside a level 2 section.
+   */
+  readonly level?: 1 | 2 | 3;
   readonly children: ReactNode;
 }
 
 /** A heading inside My account, in the display family. */
 export function SectionHead({ level = 2, children }: SectionHeadProps) {
-  const Tag = level === 2 ? "h2" : "h3";
+  const Tag = level === 1 ? "h1" : level === 2 ? "h2" : "h3";
   // The section's title takes the focus a part of the section dropped (AccountLayout); never a Tab stop.
   return (
-    <Tag tabIndex={level === 2 ? -1 : undefined} {...slotAttributes(siteSectionHeadStyle, { level: String(level) })}>
+    <Tag tabIndex={level === 3 ? undefined : -1} {...slotAttributes(siteSectionHeadStyle, { level: String(level) })}>
       {children}
     </Tag>
   );

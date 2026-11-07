@@ -5,7 +5,7 @@ import type { SiteLinkProps } from "../link/site-link";
 import { bySlot, tabStops, unmarked } from "../testing/markup";
 import { avatarInitial, barMenuActions, menuKeyTarget, SiteBar, SiteBarMenuItems, type SiteBarProps } from "./site-bar";
 import { siteActionStyle } from "../action/site-action.style";
-import { siteBarAccountNameStyle, siteBarMenuStyle, siteBarMoreStyle, siteBarNavStyle, siteBarStyle, siteFooterStyle, siteWindowStyle } from "./site-shell.style";
+import { siteFooterLinkStyle, siteBarAccountNameStyle, siteBarMenuStyle, siteBarMoreStyle, siteBarNavStyle, siteBarStyle, siteFooterStyle, siteWindowStyle } from "./site-shell.style";
 import { SiteFooter } from "./site-footer";
 import { followHeading, pageHeading, SiteBand, SiteWindow, type HeadingObserver } from "./site-window";
 import {
@@ -520,5 +520,14 @@ describe("followHeading", () => {
     const stop = followHeading(shown.root, () => undefined, { title: "" }, shown.watch);
     stop();
     expect(shown.state().stopped).toBe(true);
+  });
+});
+
+
+describe("a footer link", () => {
+  it("is at least 24px tall, centring its words, so the line of small print is a target a thumb can hit (WCAG 2.2)", () => {
+    expect(siteFooterLinkStyle.base).toMatch(/(?:^|\s)inline-flex(?:\s|$)/);
+    expect(siteFooterLinkStyle.base).toMatch(/(?:^|\s)min-h-6(?:\s|$)/);
+    expect(siteFooterLinkStyle.base).toMatch(/(?:^|\s)items-center(?:\s|$)/);
   });
 });

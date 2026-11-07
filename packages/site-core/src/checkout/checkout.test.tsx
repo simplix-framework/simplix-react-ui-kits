@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 import { bySlot, tabStops, tagsOf, unmarked } from "../testing/markup";
 import { CheckoutHead, CheckoutLayout, ConsentAgain, ConsentChecklist, DonePanel, MethodGrid, OrderSummary, ProgressChain, ProviderFrame, ProviderTarget, ProviderWaiting, Stepper } from "./checkout";
 import { ChoiceCards } from "./choice-cards";
-import { siteStepperStyle } from "./checkout.style";
+import { siteStepHeadingStyle, siteStepperStyle } from "./checkout.style";
 
 const byPart = (html: string, part: string) => tagsOf(html).filter((tag) => tag.attributes["data-part"] === part);
 const frameworkOwned = (html: string) => new Set(tagsOf(html).filter((tag) => tag.name === "svg" || (tag.name === "input" && tag.attributes["aria-hidden"] === "true")).map((tag) => `<${tag.name}>`));
@@ -31,6 +31,17 @@ describe("Stepper", () => {
     expect(bySlot(html, "site-stepper-line").map((line) => line.attributes["data-reached"])).toEqual(["true", "false"]);
     expect(bySlot(html, "site-stepper-caption")).toHaveLength(1);
     expect(unmarked(html)).toEqual([]);
+  });
+
+  it("draws the page's title before the steps for a screen reader and the tab, only where it is handed one", () => {
+    const steps = [{ key: "plan", label: "Plan" }, { key: "details", label: "Your details" }];
+    const titled = renderToStaticMarkup(<Stepper label="Checkout steps" current={1} steps={steps} heading="Your details" />);
+    const heading = bySlot(titled, "site-stepper-heading")[0];
+    expect(heading?.name).toBe("h1");
+    expect(titled.indexOf("site-stepper-heading")).toBeLessThan(titled.indexOf("site-stepper\""));
+    expect(siteStepHeadingStyle.base).toBe("sr-only");
+    expect(bySlot(renderToStaticMarkup(<Stepper label="Checkout steps" current={1} steps={steps} />), "site-stepper-heading")).toEqual([]);
+    expect(unmarked(titled)).toEqual([]);
   });
 
   it("gives every step a column of the row, however many there are", () => {

@@ -42,6 +42,8 @@ export function {{NamePascal}}Page({ step, caption = "", doneMark, main, frame }
         current={STEPS.indexOf(step)}
         doneMark={doneMark}
         caption={caption}
+        // The page's title for the tab and a screen reader: the step it is on.
+        heading={t(`{{nameCamel}}.steps.${step}`)}
       />
       <CheckoutLayout
         main={main}

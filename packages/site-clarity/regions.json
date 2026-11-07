@@ -1410,7 +1410,7 @@
         "accountSection",
         "footer"
       ],
-      "$comment": "My account: the section list beside one section (stacked below the medium tier). A state that holds over every section (a failed renewal) is a NoticeBanner at the top of the section; there is no page head, the section's h2 names it."
+      "$comment": "My account: the section list beside one section (stacked below the medium tier). A state that holds over every section (a failed renewal) is a NoticeBanner at the top of the section; there is no page head, the section's h1 names it and the tab."
     },
     "checkout": {
       "status": "ready",

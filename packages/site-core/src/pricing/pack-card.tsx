@@ -25,6 +25,11 @@ import {
 export interface PackSectionProps {
   /** The view's heading, in the display family; the section is named by it. */
   readonly heading: ReactNode;
+  /**
+   * The heading's level: `2` where a page title stands above the section (the plans page), `1` where
+   * the packs are a page of their own and this heading is its title, which names the tab.
+   */
+  readonly level?: 1 | 2;
   readonly lede?: ReactNode;
   /** A line under the packs, such as how a plan compares for someone who buys often. */
   readonly note?: ReactNode;
@@ -37,14 +42,15 @@ export interface PackSectionProps {
  * the heading and lede, the packs side by side (one under the other below the medium tier), then
  * the closing line.
  */
-export function PackSection({ heading, lede, note, children }: PackSectionProps) {
+export function PackSection({ heading, level = 2, lede, note, children }: PackSectionProps) {
   const id = useId();
+  const Heading = level === 1 ? "h1" : "h2";
   return (
     <section {...slotAttributes(sitePackSectionStyle, {})} aria-labelledby={id}>
       <div {...slotAttributes(sitePackHeadStyle, {})}>
-        <h2 {...slotAttributes(siteSectionHeadingStyle, { size: "lg" })} id={id}>
+        <Heading {...slotAttributes(siteSectionHeadingStyle, { size: "lg" })} id={id}>
           {heading}
-        </h2>
+        </Heading>
         {lede !== undefined ? <p {...slotAttributes(siteSectionLedeStyle, {})}>{lede}</p> : null}
       </div>
       <div {...slotAttributes(sitePackGridStyle, {})}>{children}</div>

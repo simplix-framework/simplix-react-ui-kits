@@ -23,7 +23,7 @@ export function {{NamePascal}}Page({ children }: {{NamePascal}}PageProps = {}) {
   const { t } = useTranslation("{{namespace}}");
   return (
     <>
-      <SectionHead>{t("{{nameCamel}}.title")}</SectionHead>
+      <SectionHead level={1}>{t("{{nameCamel}}.title")}</SectionHead>
       {children}
     </>
   );

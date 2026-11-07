@@ -55,6 +55,8 @@ export const siteSectionHeadStyle = defineSlotStyle({
   base: "m-0 outline-none font-(family-name:--site-font-display) tracking-(--site-tracking-display) text-(--site-ink)",
   variants: {
     level: {
+      // The level is the heading's place in the outline; the section's title looks the same at 1 and 2.
+      "1": "text-(length:--site-fs-headline) leading-(--site-lh-headline) font-(--site-fw-title)",
       "2": "text-(length:--site-fs-headline) leading-(--site-lh-headline) font-(--site-fw-title)",
       "3": "mt-1.5 text-(length:--site-fs-heading) leading-(--site-lh-heading) font-(--site-fw-strong)",
     },

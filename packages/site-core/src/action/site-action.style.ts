@@ -4,7 +4,8 @@ import { defineSlotStyle } from "@simplix-react/ui/design";
  * A site action: a link or a button drawn as a pressable box. `tone` says how strongly it asks to be
  * pressed (one primary per region), `size` follows the region it stands in (`sm` inside a row, `lg` in a
  * hero), and
- * `block` stretches it over its column, as a plan card's actions are.
+ * `block` stretches it over its column, as a plan card's actions are, and lets a long label wrap there.
+ * `size` sets the least height, so a wrapped label grows the box instead of overflowing it.
  *
  * <p>The variants are written in declaration order at one specificity. `pad` comes last: a quiet
  * action draws no ground, so it takes narrower side room than the size gives, and how much narrower
@@ -22,9 +23,9 @@ export const siteActionStyle = defineSlotStyle({
     "inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-(--site-radius-md) border border-transparent font-(family-name:--site-font-sans) font-(--site-fw-strong) no-underline outline-none transition-colors duration-(--site-duration-fast) ease-(--site-ease) focus-visible:shadow-[var(--site-focus-ring)] disabled:cursor-not-allowed disabled:not-aria-busy:border-transparent disabled:not-aria-busy:bg-(--site-control-disabled) disabled:not-aria-busy:text-(--site-ink-disabled) aria-disabled:cursor-not-allowed aria-disabled:not-aria-busy:border-transparent aria-disabled:not-aria-busy:bg-(--site-control-disabled) aria-disabled:not-aria-busy:text-(--site-ink-disabled) aria-busy:opacity-(--site-recede) [&_svg]:size-4 [&_svg]:shrink-0",
   variants: {
     size: {
-      md: "h-(--site-control) px-3.5 text-(length:--site-fs-body-pane) leading-(--site-lh-body-pane)",
-      sm: "h-(--site-control-sm) px-2.5 text-(length:--site-fs-caption) leading-(--site-lh-caption)",
-      lg: "h-(--site-control-lg) rounded-(--site-radius-lg) px-4.5 text-(length:--site-fs-body-pane) leading-(--site-lh-body-pane)",
+      md: "min-h-(--site-control) px-3.5 text-(length:--site-fs-body-pane) leading-(--site-lh-body-pane)",
+      sm: "min-h-(--site-control-sm) px-2.5 text-(length:--site-fs-caption) leading-(--site-lh-caption)",
+      lg: "min-h-(--site-control-lg) rounded-(--site-radius-lg) px-4.5 text-(length:--site-fs-body-pane) leading-(--site-lh-body-pane)",
     },
     tone: {
       primary: "bg-(--site-accent) text-(--site-on-accent) hover:bg-(--site-accent-strong)",
@@ -33,8 +34,10 @@ export const siteActionStyle = defineSlotStyle({
       subtle: "bg-transparent text-(--site-ink-muted) hover:bg-(--site-accent-soft)",
       danger: "border-(--site-bad) bg-transparent text-(--site-bad) hover:bg-(--site-bad-soft)",
     },
+    // A block action fills its column, and a label too long for it wraps inside the box (a sign-in
+    // provider with a long name) instead of running past it; the box grows by the lines it needs.
     block: {
-      true: "w-full",
+      true: "w-full whitespace-normal py-1 text-center [overflow-wrap:anywhere]",
       false: "",
     },
     pad: {
