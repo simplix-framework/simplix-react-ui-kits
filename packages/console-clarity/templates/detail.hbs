@@ -5,7 +5,7 @@
  * matches. It is the record's start: its tabs, verbs, notices and fields are customised here, in
  * this file, and a later template change is merged into it three ways.
  */
-import { fieldEnumsOf, RecordDetail, {{#if holders.length}}useAllowed, {{/if}}useRecordContract, useScreenWords, type ContractField, {{#if statusField}}type RecordBadge, {{/if}}type RecordField{{#if holders.length}}, type RecordTab{{/if}}{{#if statusField}}, type RecordValue{{/if}} } from "@simplix-react-ui-kits/console-clarity/entity";
+import { {{#if (or statusBadgeField statusField)}}badgeOf, {{/if}}fieldEnumsOf, RecordDetail, {{#if holders.length}}useAllowed, {{/if}}useRecordContract, useScreenWords, type ContractField, type RecordField{{#if holders.length}}, type RecordTab{{/if}} } from "@simplix-react-ui-kits/console-clarity/entity";
 {{#if holders.length}}
 import { adaptForcedList, forcedScope, {{#if holdersKeywordSearch}}SEARCHABLE_KEYWORD_PARAM, {{/if}}useCrudList } from "@simplix-react/ui";
 {{/if}}
@@ -13,6 +13,12 @@ import { adaptForcedList, forcedScope, {{#if holdersKeywordSearch}}SEARCHABLE_KE
 import { {{hookGet}} } from "{{packageName}}";
 {{#each holderImports}}
 import { {{this.names}} } from "{{this.packageName}}";
+{{/each}}
+{{#each holders}}
+{{#with (lookup ../holderColumnsHooks @index)}}
+// The {{../entity}} records are drawn with their own list's columns, from that list's hook.
+import { {{this.hook}} as useHolder{{@index}}Columns, type {{../EntityPascal}}Row as Holder{{@index}}Row } from "{{this.from}}";
+{{/with}}
 {{/each}}
 
 /** The fields the contract gives this record, each drawn by its kind. */
@@ -25,7 +31,7 @@ const {{EntityPascal}}DetailFields: readonly ContractField[] = [
 {{#unless this.isAuditField}}
 {{#unless this.isUnmasked}}
 {{#unless this.isOpaqueId}}
-  { name: "{{this.name}}", kind: "{{this.contractKind}}"{{#if this.money}}, currency: "{{this.money.currency}}", scale: {{this.money.scale}}{{/if}}{{#if this.enumTypeName}}, enumName: "{{this.enumTypeName}}"{{/if}}{{#if this.options.length}}, options: [{{#each this.options}}"{{this}}"{{#unless @last}}, {{/unless}}{{/each}}]{{/if}}{{#if this.peekKind}}, peekKind: "{{this.peekKind}}"{{/if}}{{#if this.peekKinds}}, peekKinds: { field: "{{this.peekKinds.field}}", kinds: { {{#each this.peekKinds.kinds}}{{this.value}}: "{{this.peekKind}}"{{#unless @last}}, {{/unless}}{{/each}} } }{{/if}}{{#if this.nameField}}, nameField: "{{this.nameField}}"{{/if}}{{#if this.peekBy}}, peekBy: "{{this.peekBy}}"{{/if}}{{#if (eq this.sortable true)}}, sortable: true{{/if}}{{#if (eq this.sortable false)}}, sortable: false{{/if}}{{#if this.isIdentifier}}, identifier: true{{/if}}{{#if this.isCode}}, code: true{{/if}} },
+  { name: "{{this.name}}", kind: "{{this.contractKind}}"{{#if this.money}}, currency: "{{this.money.currency}}", scale: {{this.money.scale}}{{/if}}{{#if this.enumTypeName}}, enumName: "{{this.enumTypeName}}"{{/if}}{{#if this.options.length}}, options: [{{#each this.options}}"{{this}}"{{#unless @last}}, {{/unless}}{{/each}}]{{/if}}{{#if this.peekKind}}, peekKind: "{{this.peekKind}}"{{/if}}{{#if this.peekKinds}}, peekKinds: { field: "{{this.peekKinds.field}}", kinds: { {{#each this.peekKinds.kinds}}{{this.value}}: "{{this.peekKind}}"{{#unless @last}}, {{/unless}}{{/each}} } }{{/if}}{{#if this.nameField}}, nameField: "{{this.nameField}}"{{/if}}{{#if this.peekBy}}, peekBy: "{{this.peekBy}}"{{/if}}{{#if (eq this.sortable true)}}, sortable: true{{/if}}{{#if (eq this.sortable false)}}, sortable: false{{/if}}{{#if this.isIdentifier}}, identifier: true{{/if}}{{#if this.isCode}}, code: true{{/if}}{{#if this.signed}}, signed: true{{/if}}{{#if this.tones}}, tones: { {{#each this.tones}}"{{@key}}": "{{this}}"{{#unless @last}}, {{/unless}}{{/each}} }{{/if}} },
 {{/unless}}
 {{/unless}}
 {{/unless}}
@@ -36,38 +42,12 @@ const {{EntityPascal}}DetailFields: readonly ContractField[] = [
 {{/each}}
 ];
 
-{{#each holders}}
-/** The {{this.entity}} records that point at this one through `{{this.filterKey}}`, as their list draws them. */
-const {{this.EntityPascal}}HolderFields_{{@index}}: readonly ContractField[] = [
-{{#each this.fields}}
-{{#unless this.isI18nPair}}
-{{#unless this.baseFieldName}}
-{{#unless this.isSystemField}}
-{{#unless this.isReferenceName}}
-{{#unless this.isAuditField}}
-{{#unless this.isUnmasked}}
-{{#unless this.isOpaqueId}}
-{{#unless this.isIdentifier}}
-  { name: "{{this.name}}", kind: "{{this.contractKind}}"{{#if this.money}}, currency: "{{this.money.currency}}", scale: {{this.money.scale}}{{/if}}{{#if this.enumTypeName}}, enumName: "{{this.enumTypeName}}"{{/if}}{{#if this.options.length}}, options: [{{#each this.options}}"{{this}}"{{#unless @last}}, {{/unless}}{{/each}}]{{/if}}{{#if this.peekKind}}, peekKind: "{{this.peekKind}}"{{/if}}{{#if this.peekKinds}}, peekKinds: { field: "{{this.peekKinds.field}}", kinds: { {{#each this.peekKinds.kinds}}{{this.value}}: "{{this.peekKind}}"{{#unless @last}}, {{/unless}}{{/each}} } }{{/if}}{{#if this.nameField}}, nameField: "{{this.nameField}}"{{/if}}{{#if this.peekBy}}, peekBy: "{{this.peekBy}}"{{/if}}{{#if (eq this.sortable true)}}, sortable: true{{/if}}{{#if (eq this.sortable false)}}, sortable: false{{/if}}{{#if this.isCode}}, code: true{{/if}} },
-{{/unless}}
-{{/unless}}
-{{/unless}}
-{{/unless}}
-{{/unless}}
-{{/unless}}
-{{/unless}}
-{{/unless}}
-{{/each}}
-];
-
-{{/each}}
-{{#if statusField}}
-/** The record's standing, drawn in the header as the badge its field is drawn as. */
-const STATUS_FIELD = {{EntityPascal}}DetailFields.find((field) => field.name === "{{statusField}}");
-
-function statusBadge(value: RecordValue): RecordBadge | undefined {
-  return value && typeof value === "object" && "badge" in value ? value.badge : undefined;
-}
+{{#if (or statusBadgeField statusField)}}
+/**
+ * The field the header's badge is drawn from (a status, a type, a kind), as its list draws it: any
+ * enum field the screen's entry names, else the entity's status field.
+ */
+const BADGE_FIELD = {{EntityPascal}}DetailFields.find((field) => field.name === "{{#if statusBadgeField}}{{statusBadgeField}}{{else}}{{statusField}}{{/if}}");
 
 {{/if}}
 export interface {{EntityPascal}}DetailProps {
@@ -99,8 +79,8 @@ export function {{EntityPascal}}Detail(props: {{EntityPascal}}DetailProps) {
   const generated: RecordField[] = record
     ? {{EntityPascal}}DetailFields.map((field) => contract.detailField(field, row))
     : [];
-{{#if statusField}}
-  const headerStatus = STATUS_FIELD ? statusBadge(contract.value(STATUS_FIELD, row)) : undefined;
+{{#if (or statusBadgeField statusField)}}
+  const headerStatus = BADGE_FIELD ? badgeOf(contract.value(BADGE_FIELD, row)) : undefined;
 {{else}}
   const headerStatus = undefined;
 {{/if}}
@@ -116,7 +96,7 @@ export function {{EntityPascal}}Detail(props: {{EntityPascal}}DetailProps) {
 {{/if}}
   // Asked only of a reader the holder's list rule admits, so nobody meets a refused read (frontend invariant #61).
   const holder{{@index}}Allowed = useAllowed({{this.accessList}});
-  const holder{{@index}}List = useCrudList<Readonly<Record<string, unknown>>>(adaptForcedList({{this.hookList}}, holder{{@index}}Forced, { {{#if this.hasKeywordSearch}}searchKey: SEARCHABLE_KEYWORD_PARAM, {{/if}}queryOptions: { enabled: holder{{@index}}Allowed{{#if this.matchField}} && holder{{@index}}Forced["{{this.filterKey}}"] !== ""{{/if}} } }), {
+  const holder{{@index}}List = useCrudList<Holder{{@index}}Row>(adaptForcedList<Holder{{@index}}Row>({{this.hookList}}, holder{{@index}}Forced, { {{#if this.hasKeywordSearch}}searchKey: SEARCHABLE_KEYWORD_PARAM, {{/if}}queryOptions: { enabled: holder{{@index}}Allowed{{#if this.matchField}} && holder{{@index}}Forced["{{this.filterKey}}"] !== ""{{/if}} } }), {
     scopeKey: forcedScope(holder{{@index}}Forced),
     stateMode: "server",
     defaultPageSize: 20,
@@ -125,7 +105,10 @@ export function {{EntityPascal}}Detail(props: {{EntityPascal}}DetailProps) {
     defaultSort: { field: "{{this.defaultSort.field}}", direction: "{{this.defaultSort.direction}}" },
 {{/if}}
   });
-  const holder{{@index}}Contract = useRecordContract("{{this.entity}}");
+{{#with (lookup ../holderColumnsHooks @index)}}
+  // The holder's own list columns, less the key that only repeats this record.
+  const holder{{@index}}Columns = useHolder{{@index}}Columns(undefined, { omit: ["{{this.field}}"] });
+{{/with}}
   const holder{{@index}}Words = useScreenWords("{{this.entity}}");
 {{/each}}
 {{#if holders.length}}
@@ -138,8 +121,8 @@ export function {{EntityPascal}}Detail(props: {{EntityPascal}}DetailProps) {
       count: holder{{@index}}List.pagination.total,
       list: {
         list: holder{{@index}}List,
-        rowId: (one: Readonly<Record<string, unknown>>) => String(one.{{this.rowIdField}}),
-        columns: holder{{@index}}Contract.columns<Readonly<Record<string, unknown>>>({{this.EntityPascal}}HolderFields_{{@index}}),
+        rowId: (one: Holder{{@index}}Row) => String(one.{{this.rowIdField}}),
+        columns: holder{{@index}}Columns,
         empty: { title: holder{{@index}}Words.emptyTitle },
 {{#unless this.hasKeywordSearch}}
         // The holder's route declares no keyword field, so there is nothing for a search box to send.

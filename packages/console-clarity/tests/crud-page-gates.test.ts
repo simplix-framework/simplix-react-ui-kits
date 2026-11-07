@@ -38,20 +38,23 @@ describe("crud-page.hbs permission gates", () => {
 describe("crud-page.hbs header and time range", () => {
   it("lays down the gated create action as the header's verb", () => {
     const text = page({ hasCreate: true, hasUpdate: false, hasDelete: false });
-    expect(text).toContain('actions: canCreate ? <PageAction kind="add"');
+    expect(text).toContain('actions: headerActions(canCreate ? <PageAction kind="add"');
+    expect(text).toContain("blocks.headerActions?.(list)),");
   });
 
   it("offers the time range over the field the Meta names, counted by the list's counts read", () => {
     const text = page({ hasCreate: false, hasUpdate: false, hasDelete: false, timeBuckets: { field: "runAt", fetch: "getJobCounts" } });
     expect(text).toContain('field: "runAt",');
     expect(text).toContain("readCounts(getJobCounts(");
-    expect(text).toContain("          timeRange,");
+    expect(text).toContain("          timeRange: blocks.timeRange ? { ...blocks.timeRange, filters: list.filters } : timeRange,");
   });
 
-  it("draws no time range and no header verb where the entity has neither", () => {
+  it("draws no time range and no header verb of its own where the entity has neither, and leaves both to the blocks", () => {
     const text = page({ hasCreate: false, hasUpdate: false, hasDelete: false });
-    expect(text).not.toContain("timeRange");
-    expect(text).not.toContain("actions:");
+    expect(text).not.toContain("readCounts");
+    expect(text).not.toContain("PageAction");
+    expect(text).toContain("          actions: blocks.headerActions?.(list),");
+    expect(text).toContain("          timeRange: blocks.timeRange ? { ...blocks.timeRange, filters: list.filters } : undefined,");
   });
 });
 

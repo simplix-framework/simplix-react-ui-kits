@@ -6,9 +6,9 @@
  * here, in this file, and a later template change is merged into it three ways.
  */
 import { adaptForcedList, adaptOrvalList{{#if hasKeywordSearch}}, SEARCHABLE_KEYWORD_PARAM{{/if}}, useCrudList{{#if hookOrder}}{{#if orderField}}, useInvalidateEntity{{/if}}{{/if}} } from "@simplix-react/ui";
-import { {{#if hasMoneyFilter}}moneyFilterTransform, {{/if}}RecordList, {{#if figureTiles.aggregates}}withListRequest, {{/if}}{{#if hookOrder}}{{#if orderField}}useAllowed, {{/if}}{{/if}}useRecordContract, useScreenWords, type ContractField, type ContractFilter, type ContractOverrides, type RecordAction, type RecordColumn, type RecordFilter, type RecordListProps } from "@simplix-react-ui-kits/console-clarity/entity";
+import { {{#if hasMoneyFilter}}moneyFilterTransform, {{/if}}RecordList, {{#if figureTiles.aggregates}}withListRequest, {{/if}}{{#if hookOrder}}{{#if orderField}}useAllowed, {{/if}}{{/if}}pickFields, useRecordContract, useScreenWords, type ContractField, type ContractFilter, type ContractOverrides, type RecordAction, type RecordColumn, type RecordFilter, type RecordListProps } from "@simplix-react-ui-kits/console-clarity/entity";
 
-import { {{hookList}}, {{#if hookOrder}}{{#if orderField}}{{hookOrder}}, {{#if accessOrder}}{{accessOrder}}, {{/if}}{{/if}}{{/if}}type {{listRowType}} } from "{{packageName}}";
+import { {{hookList}}, {{#if hookOrder}}{{#if orderField}}{{hookOrder}}, {{#if accessOrder}}{{accessOrder}}, {{/if}}{{#if entityPathExport}}{{entityPathExport}}, {{/if}}{{/if}}{{/if}}type {{listRowType}} } from "{{packageName}}";
 {{#each listFacetImports}}
 import { {{{this.hooks}}} } from "{{this.from}}";
 {{/each}}
@@ -81,7 +81,7 @@ const {{EntityPascal}}ColumnFields: readonly ContractField[] = [
 {{#unless this.isOpaqueId}}
 {{#unless this.hideInList}}
 {{#unless this.isIdentifier}}
-  { name: "{{this.name}}", kind: "{{this.contractKind}}"{{#if this.money}}, currency: "{{this.money.currency}}", scale: {{this.money.scale}}{{/if}}{{#if this.enumTypeName}}, enumName: "{{this.enumTypeName}}"{{/if}}{{#if this.options.length}}, options: [{{#each this.options}}"{{this}}"{{#unless @last}}, {{/unless}}{{/each}}]{{/if}}{{#if this.peekKind}}, peekKind: "{{this.peekKind}}"{{/if}}{{#if this.peekKinds}}, peekKinds: { field: "{{this.peekKinds.field}}", kinds: { {{#each this.peekKinds.kinds}}{{this.value}}: "{{this.peekKind}}"{{#unless @last}}, {{/unless}}{{/each}} } }{{/if}}{{#if this.nameField}}, nameField: "{{this.nameField}}"{{/if}}{{#if this.peekBy}}, peekBy: "{{this.peekBy}}"{{/if}}{{#if (eq this.sortable true)}}, sortable: true{{/if}}{{#if (eq this.sortable false)}}, sortable: false{{/if}}{{#if this.isIdentifier}}, identifier: true{{/if}}{{#if this.isCode}}, code: true{{/if}}{{#if this.sortAlias}}, sortAlias: { {{#each this.sortAlias}}{{@key}}: "{{this}}"{{#unless @last}}, {{/unless}}{{/each}} }{{/if}} },
+  { name: "{{this.name}}", kind: "{{this.contractKind}}"{{#if this.money}}, currency: "{{this.money.currency}}", scale: {{this.money.scale}}{{/if}}{{#if this.enumTypeName}}, enumName: "{{this.enumTypeName}}"{{/if}}{{#if this.options.length}}, options: [{{#each this.options}}"{{this}}"{{#unless @last}}, {{/unless}}{{/each}}]{{/if}}{{#if this.peekKind}}, peekKind: "{{this.peekKind}}"{{/if}}{{#if this.peekKinds}}, peekKinds: { field: "{{this.peekKinds.field}}", kinds: { {{#each this.peekKinds.kinds}}{{this.value}}: "{{this.peekKind}}"{{#unless @last}}, {{/unless}}{{/each}} } }{{/if}}{{#if this.nameField}}, nameField: "{{this.nameField}}"{{/if}}{{#if this.peekBy}}, peekBy: "{{this.peekBy}}"{{/if}}{{#if (eq this.sortable true)}}, sortable: true{{/if}}{{#if (eq this.sortable false)}}, sortable: false{{/if}}{{#if this.isIdentifier}}, identifier: true{{/if}}{{#if this.isCode}}, code: true{{/if}}{{#if this.sortAlias}}, sortAlias: { {{#each this.sortAlias}}{{@key}}: "{{this}}"{{#unless @last}}, {{/unless}}{{/each}} }{{/if}}{{#if this.signed}}, signed: true{{/if}}{{#if this.tones}}, tones: { {{#each this.tones}}"{{@key}}": "{{this}}"{{#unless @last}}, {{/unless}}{{/each}} }{{/if}} },
 {{/unless}}
 {{/unless}}
 {{/unless}}
@@ -101,10 +101,50 @@ const {{EntityPascal}}Filters: readonly ContractFilter[] = [
 {{/each}}
 ];
 
-/** The generated columns, in the order the fields arrive. */
-export function use{{EntityPascal}}Columns(overrides?: ContractOverrides): RecordColumn<{{EntityPascal}}Row>[] {
+/**
+ * The columns the list draws, in the order it draws them: the generator writes every field in the
+ * order it arrives, and the screen reorders or trims this list by hand. A name the table lacks is
+ * skipped, so a field the backend drops leaves the list instead of breaking it.
+ */
+const COLUMNS: readonly string[] = [
+{{#if columns}}
+{{#each columns}}
+  "{{this}}",
+{{/each}}
+{{else}}
+{{#each listFields}}
+{{#unless this.isI18nPair}}
+{{#unless this.baseFieldName}}
+{{#unless this.isSystemField}}
+{{#unless this.isReferenceName}}
+{{#unless this.isAuditField}}
+{{#unless this.isUnmasked}}
+{{#unless this.isOpaqueId}}
+{{#unless this.hideInList}}
+{{#unless this.isIdentifier}}
+  "{{this.name}}",
+{{/unless}}
+{{/unless}}
+{{/unless}}
+{{/unless}}
+{{/unless}}
+{{/unless}}
+{{/unless}}
+{{/unless}}
+{{/unless}}
+{{/each}}
+{{/if}}
+];
+
+/**
+ * The list's columns, in the order {@link COLUMNS} names them. Another screen that lists these
+ * records (a holder tab on a record that owns them) draws the same columns through this hook,
+ * leaving out with `omit` the field that only repeats the record it stands on.
+ */
+export function use{{EntityPascal}}Columns(overrides?: ContractOverrides, options: { readonly omit?: readonly string[] } = {}): RecordColumn<{{EntityPascal}}Row>[] {
   const contract = useRecordContract("{{entity}}", overrides);
-  return contract.columns<{{EntityPascal}}Row>({{EntityPascal}}ColumnFields);
+  const omit = options.omit ?? [];
+  return contract.columns<{{EntityPascal}}Row>(pickFields({{EntityPascal}}ColumnFields, COLUMNS.filter((name) => !omit.includes(name))));
 }
 
 /** The {{entity}} records, drawn by the kit's list. */
@@ -121,7 +161,7 @@ export function {{EntityPascal}}List({ list, activeRowId, onRowClick, actions, n
 {{#if orderField}}
   // The contract has a reorder, so a reader its rule admits can drag the rows into order.
   const canOrder = useAllowed({{#if accessOrder}}{{accessOrder}}{{else}}undefined{{/if}});
-  const invalidate = useInvalidateEntity("{{entityPath}}");
+  const invalidate = useInvalidateEntity({{#if entityPathExport}}{{entityPathExport}}{{else}}"{{entityPath}}"{{/if}});
   const order = {{hookOrder}}({ mutation: { onSettled: invalidate } });
 {{/if}}
 {{/if}}

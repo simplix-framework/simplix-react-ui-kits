@@ -55,6 +55,8 @@ export function typecheck(files: Readonly<Record<string, string>>, roots: readon
     paths: {
       "@simplix-react-ui-kits/console-clarity/*": [join(packageDir, "src", "*")],
       "@test/domain-product": [join(virtualRoot, "domain-product.ts")],
+      "@test/domain-member": [join(virtualRoot, "domain-member.ts")],
+      "@test/member-widgets": [join(virtualRoot, "modules", "other", "src", "widgets", "index.ts")],
     },
   };
   const present = new Map(Object.entries(files));

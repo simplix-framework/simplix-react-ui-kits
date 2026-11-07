@@ -82,7 +82,7 @@ describe("a detail's holder tab", () => {
 
   it("sends its search as the holder route's keyword search where that route declares keyword fields", () => {
     const source = detail(true);
-    expect(source).toContain("adaptForcedList(useListMembers, holder0Forced, { searchKey: SEARCHABLE_KEYWORD_PARAM, queryOptions:");
+    expect(source).toContain("adaptForcedList<Holder0Row>(useListMembers, holder0Forced, { searchKey: SEARCHABLE_KEYWORD_PARAM, queryOptions:");
     expect(source).toMatch(/import \{ adaptForcedList, forcedScope, SEARCHABLE_KEYWORD_PARAM, useCrudList \}/);
     expect(source).not.toContain("features: { search: false }");
   });
