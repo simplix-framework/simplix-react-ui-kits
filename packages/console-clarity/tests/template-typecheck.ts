@@ -43,8 +43,11 @@ export function render(templateFile: string, context: Record<string, unknown>): 
 // Nothing is written: the files the tests hand in exist only for the compiler's host.
 export const virtualRoot = join(packageDir, ".template-check");
 
-/** The compiler's messages for `roots`, with `files` present in memory; `domain-product.ts` under {@link virtualRoot} stands for the domain package. */
-export function typecheck(files: Readonly<Record<string, string>>, roots: readonly string[]): string[] {
+/**
+ * The compiler's messages for `roots`, with `files` present in memory; `domain-product.ts` under {@link virtualRoot} stands for the domain package.
+ * `extraPaths` adds module mappings of the test's own (a module's `pages` entry, a stand-in for the router).
+ */
+export function typecheck(files: Readonly<Record<string, string>>, roots: readonly string[], extraPaths: Readonly<Record<string, readonly string[]>> = {}): string[] {
   const config = ts.readConfigFile(join(packageDir, "tsconfig.json"), ts.sys.readFile);
   const parsed = ts.parseJsonConfigFileContent(config.config, ts.sys, packageDir);
   const options: ts.CompilerOptions = {
@@ -57,6 +60,7 @@ export function typecheck(files: Readonly<Record<string, string>>, roots: readon
       "@test/domain-product": [join(virtualRoot, "domain-product.ts")],
       "@test/domain-member": [join(virtualRoot, "domain-member.ts")],
       "@test/member-widgets": [join(virtualRoot, "modules", "other", "src", "widgets", "index.ts")],
+      ...extraPaths,
     },
   };
   const present = new Map(Object.entries(files));

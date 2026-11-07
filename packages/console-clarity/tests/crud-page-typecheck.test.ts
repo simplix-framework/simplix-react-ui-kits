@@ -1,80 +1,13 @@
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 
+import { context, domainStub, pageDir, widgetsDir, widgetsStub } from "./crud-page-fixture";
 import { render, typecheck, virtualRoot } from "./template-typecheck";
 
 /**
  * The generated CRUD page is the screen's whole start: it compiles against the kit's own sources with
  * the empty blocks file the kit lays down beside it, and with a blocks file that states every key.
  */
-
-/** The context the CLI hands the page templates for an entity with every operation. */
-const context = {
-  entity: "product",
-  EntityPascal: "Product",
-  entityKebab: "product",
-  entityPath: "/api/v1/product",
-  packageName: "@test/domain-product",
-  rowIdField: "productId",
-  displayNameField: "name",
-  displayNameFields: ["name"],
-  nameContractFields: [{ name: "name", contractKind: "text" }],
-  hookDelete: "useDeleteProduct",
-  accessCreate: "createProductAccess",
-  accessUpdate: "updateProductAccess",
-  accessDelete: "deleteProductAccess",
-  hasCreate: true,
-  hasUpdate: true,
-  hasDelete: true,
-  hasForm: true,
-};
-
-const pageDir = join(virtualRoot, "modules", "mymod", "src", "pages", "product");
-const widgetsDir = join(virtualRoot, "modules", "mymod", "src", "widgets", "product");
-
-const widgetsStub = `
-import type { ReactNode } from "react";
-import type { CrudListFilters } from "@simplix-react/ui";
-import type { ListAddress, RecordAction } from "@simplix-react-ui-kits/console-clarity/entity";
-
-export interface ProductRow { readonly productId: string; readonly name?: string }
-export interface ProductListProps {
-  readonly list: ReturnType<typeof useProductList>;
-  readonly activeRowId?: string;
-  readonly onRowClick?: (row: ProductRow) => void;
-  readonly actions?: readonly RecordAction<ProductRow>[];
-}
-export interface ProductDetailProps {
-  readonly productId: string;
-  readonly onClose?: () => void;
-  readonly onEdit?: () => void;
-  readonly onDelete?: (name: string) => void;
-  readonly onDeleted?: () => void;
-}
-export interface ProductFormProps {
-  readonly productId?: string;
-  readonly onClose?: () => void;
-  readonly onSuccess?: () => void;
-  readonly onCancel?: () => void;
-}
-export declare function useProductList(params?: Readonly<Record<string, unknown>>, address?: ListAddress): { readonly rows: readonly ProductRow[]; readonly filters: CrudListFilters; readonly requestParams: Readonly<Record<string, unknown>> };
-export declare function ProductList(props: ProductListProps): ReactNode;
-export declare function ProductDetail(props: ProductDetailProps): ReactNode;
-export declare function ProductForm(props: ProductFormProps): ReactNode;
-`;
-
-const domainStub = `
-import type { OrvalMutationLike } from "@simplix-react/ui";
-import type { useAllowed } from "@simplix-react-ui-kits/console-clarity/entity";
-
-type Rule = Parameters<typeof useAllowed>[0];
-export declare function useDeleteProduct(): OrvalMutationLike;
-export declare const createProductAccess: Rule;
-export declare const updateProductAccess: Rule;
-export declare const deleteProductAccess: Rule;
-export declare function useGetProductStatusCounts(params: { field: string }, options?: { query?: { meta?: Record<string, unknown> } }): { data?: unknown; isLoading: boolean; isError?: boolean };
-export declare function useGetProductAggregates(params?: { keyword?: string; "status.in"?: string[] }, options?: { query?: { meta?: Record<string, unknown> } }): { data?: unknown; isLoading: boolean; isError?: boolean };
-`;
 
 /** A blocks file stating every key the kit's `CrudPageBlocks` lists. */
 const everyKeyBlocks = `
