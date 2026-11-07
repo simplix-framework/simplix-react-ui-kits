@@ -1929,9 +1929,6 @@
   :where([data-slot="console-preview-live-pulse"])[data-s-console-preview-live-pulse] {
     @apply motion-reduce:animate-none;
   }
-  :where([data-slot="console-preview-segment"][data-tone="warn"])[data-s-console-preview-segment] {
-    @apply dark:text-amber-400;
-  }
   :where([data-slot="console-preview-unbuilt"])[data-s-console-preview-unbuilt] {
     @apply focus-visible:outline-none focus-visible:shadow-[var(--focus-halo)] has-[[data-slot=console-bar-search]]:opacity-100;
   }
