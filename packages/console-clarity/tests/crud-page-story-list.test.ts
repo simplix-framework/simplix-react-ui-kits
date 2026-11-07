@@ -63,18 +63,18 @@ describe("the generated board frame's list", () => {
 
   it("draws the header standing and the audit strip the generated detail draws", () => {
     const full = render("crud-page.stories.hbs", { ...context, statusField: "status", hasAuditFields: true });
-    expect(full).toContain('const STATUS_FIELD = DETAIL_FIELDS.find((field) => field.name === "status");');
-    expect(full).toContain("status={row && STATUS_FIELD ? statusBadge(contract.value(STATUS_FIELD, row)) : undefined}");
+    expect(full).toContain('const BADGE_FIELD = DETAIL_FIELDS.find((field) => field.name === "status");');
+    expect(full).toContain("status={row && BADGE_FIELD ? badgeOf(contract.value(BADGE_FIELD, row)) : undefined}");
     expect(full).toContain("audit={row ? { id: row.productId == null ? undefined : String(row.productId)");
-    expect(full).toContain("type RecordBadge, type RecordValue }");
+    expect(full).toContain("import { badgeOf, ");
     const plain = render("crud-page.stories.hbs", { ...context });
-    expect(plain).not.toContain("STATUS_FIELD");
+    expect(plain).not.toContain("BADGE_FIELD");
     expect(plain).not.toContain("audit=");
   });
 
   it("draws a tab for each list of the records that hold this one, as the generated detail does", () => {
     const holder = { entity: "member", EntityPascal: "Member", key: "memberByProductId", rowIdField: "memberId", fields: [{ name: "name", contractKind: "text" }], hasKeywordSearch: false };
-    const held = render("crud-page.stories.hbs", { ...context, holders: [holder] });
+    const held = render("crud-page.stories.hbs", { ...context, holders: [holder], holderColumnsHooks: [{ hook: "useMemberColumns", from: "../member", field: "productId" }] });
     expect(held).toContain("const MemberHolderFields_0: readonly ContractField[] = [");
     expect(held).toContain('const holder0Contract = useRecordContract("member");');
     expect(held).toContain('key: "memberByProductId",');
@@ -83,5 +83,35 @@ describe("the generated board frame's list", () => {
     const alone = render("crud-page.stories.hbs", { ...context, holders: [] });
     expect(alone).not.toContain("tabs={[");
     expect(alone).toContain("            sections={[");
+  });
+
+  it("mirrors the generated screen's tones, signs, header badge and holder tabs", () => {
+    const toned = { name: "state", contractKind: "enum", enumTypeName: "ProductState", options: ["ON", "OFF"], tones: { ON: "success", OFF: "danger" } };
+    const signed = { name: "amount", contractKind: "credits", signed: true };
+    const holderField = { name: "label", contractKind: "text" };
+    const holders = [
+      { entity: "productNote", EntityPascal: "ProductNote", key: "notes", filterKey: "productId", rowIdField: "noteId", fields: [holderField] },
+      { entity: "productTag", EntityPascal: "ProductTag", key: "tags", filterKey: "productId", rowIdField: "tagId", fields: [holderField] },
+    ];
+    const source = render("crud-page.stories.hbs", {
+      ...context,
+      listFields: [field, toned, signed],
+      detailFields: [field, toned, signed],
+      statusBadgeField: "state",
+      statusField: "other",
+      holders,
+      holderColumnsHooks: [{ hook: "useProductNoteColumns", from: "../product-note", field: "productId" }, null],
+    });
+    expect(source).toContain('tones: { "ON": "success", "OFF": "danger" } },');
+    expect(source).toContain('{ name: "amount", kind: "credits", signed: true },');
+    expect(source).toContain('const BADGE_FIELD = DETAIL_FIELDS.find((field) => field.name === "state");');
+    expect(source).toContain("badgeOf(contract.value(BADGE_FIELD, row))");
+    expect(source).toContain('key: "notes"');
+    expect(source).not.toContain('key: "tags"');
+    expect(source).not.toContain("ProductTagHolderFields");
+    expect(source).not.toContain("../product-note");
+    const plain = render("crud-page.stories.hbs", { ...context });
+    expect(plain).not.toContain("BADGE_FIELD");
+    expect(plain).not.toContain("signed: true");
   });
 });
