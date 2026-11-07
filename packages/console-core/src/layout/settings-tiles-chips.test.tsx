@@ -103,3 +103,15 @@ describe("folds that are out of the keyboard's path", () => {
     expect(chipsFold).toContain('aria-hidden="true"');
   });
 });
+
+describe("the folded row's scroller", () => {
+  it("leaves the keyboard halo of a chip room beside it, with a margin that keeps the row in place", () => {
+    const html = renderToStaticMarkup(
+      createElement(UIProvider, { children: createElement(SettingsTiles, { tiles, folded: true, title: "Summary", filters }) }),
+    );
+    const scroller = /<div class="([^"]*)"[^>]*data-slot="console-tile-chips"/.exec(html)?.[1] ?? "";
+    expect(scroller).toContain("overflow-x-auto");
+    expect(scroller).toContain("p-[var(--focus-gutter)]");
+    expect(scroller).toContain("-m-[var(--focus-gutter)]");
+  });
+});

@@ -654,7 +654,10 @@ function TileChips({
   const locale = useLocale();
   const pressedKeys = pressedTileKeys(tiles, filters?.committedValues ?? {});
   return (
-    <div className="flex items-center overflow-x-auto" {...slotAttributes(tileChipsStyle, {})}>
+    // The row scrolls sideways, and `overflow-x` makes the other axis clip too, so the keyboard halo
+    // of a chip (3px past its edge) would be cut. The gutter gives the halo its room and the equal
+    // negative margin keeps the row where it was.
+    <div className="flex items-center overflow-x-auto -m-[var(--focus-gutter)] p-[var(--focus-gutter)]" {...slotAttributes(tileChipsStyle, {})}>
       {tiles.map((tile, index) => {
         const content = (
           <>
