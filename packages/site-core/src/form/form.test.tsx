@@ -150,6 +150,28 @@ describe("CodeField", () => {
     expect(byPart(plain, "site-code")[0]?.attributes["aria-describedby"]).toBeUndefined();
   });
 
+  it("is named by the visible title it points at, in place of its own label, and by the label without one", () => {
+    const titled = renderToStaticMarkup(
+      <>
+        <span id="code-title">Authenticator code</span>
+        <CodeField label="Code" labelledBy="code-title" value="" onValueChange={() => {}} />
+      </>,
+    );
+    const group = byPart(titled, "site-code")[0];
+    expect(group?.attributes["aria-labelledby"]).toBe("code-title");
+    expect(group?.attributes["aria-label"]).toBeUndefined();
+    const plain = renderToStaticMarkup(<CodeField label="Code" value="" onValueChange={() => {}} />);
+    expect(byPart(plain, "site-code")[0]?.attributes["aria-label"]).toBe("Code");
+    expect(byPart(plain, "site-code")[0]?.attributes["aria-labelledby"]).toBeUndefined();
+  });
+
+  it("takes the group's id from the caller, and generates one otherwise", () => {
+    const named = renderToStaticMarkup(<CodeField label="Code" id="otp-row" value="" onValueChange={() => {}} />);
+    expect(byPart(named, "site-code")[0]?.attributes.id).toBe("otp-row");
+    const generated = renderToStaticMarkup(<CodeField label="Code" value="" onValueChange={() => {}} />);
+    expect(byPart(generated, "site-code")[0]?.attributes.id).toBeTruthy();
+  });
+
   it("puts the focus in the first cell of the row, and does nothing for a row with no cell", () => {
     const focused: string[] = [];
     focusFirstCell({ querySelector: ((selector: string) => (selector === "input" ? { focus: () => focused.push("first") } : null)) as ParentNode["querySelector"] });

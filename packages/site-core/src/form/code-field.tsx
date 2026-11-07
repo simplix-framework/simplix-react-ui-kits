@@ -11,8 +11,19 @@ export interface CodeFieldProps {
   readonly onValueChange: (value: string) => void;
   /** Called once with the code when the last cell is filled. */
   readonly onComplete?: (code: string) => void;
-  /** The code's name, read for the group of cells. */
+  /**
+   * The code's name, read for the group of cells. Used as the group's name only while no visible
+   * title is named with `labelledBy`.
+   */
   readonly label: string;
+  /**
+   * The id of the visible title that names the code, so the group's accessible name is that title and
+   * the words a reader sees are the words a screen reader says. A `<label for>` cannot name a group of
+   * cells (it names one control), so the title is linked by this id instead. It replaces `label`.
+   */
+  readonly labelledBy?: string;
+  /** The group's own id, for a caller that points at the whole row (a hint, a scroll target); generated when absent. */
+  readonly id?: string;
   /** How many digits the code has; six by default. */
   readonly length?: number;
   /** The code was refused: every cell draws the heavier bad border. */
@@ -35,9 +46,10 @@ export function focusFirstCell(group: Pick<ParentNode, "querySelector"> | null):
  * A one-time code entered one digit per square cell. Typing, Backspace, the arrows, a paste and an
  * autofill are the framework `CodeInput`'s; the kit draws the row and the cells.
  */
-export function CodeField({ value, onValueChange, onComplete, label, length, invalid = false, disabled, cellLabel, describedBy, autoFocus = false }: CodeFieldProps) {
+export function CodeField({ value, onValueChange, onComplete, label, labelledBy, id, length, invalid = false, disabled, cellLabel, describedBy, autoFocus = false }: CodeFieldProps) {
   // The framework input takes no ref; the group is found again by its own id.
-  const groupId = useId();
+  const generatedId = useId();
+  const groupId = id ?? generatedId;
   // On mount, as a native autofocus does; a render with the same flag never pulls the focus back.
   useEffect(() => {
     if (autoFocus) focusFirstCell(document.getElementById(groupId));
@@ -46,6 +58,9 @@ export function CodeField({ value, onValueChange, onComplete, label, length, inv
     <CodeInput
       id={groupId}
       aria-describedby={describedBy}
+      aria-labelledby={labelledBy}
+      // The visible title names the group alone; the framework's `aria-label` is dropped, not repeated beside it.
+      {...(labelledBy ? { "aria-label": undefined } : {})}
       {...partAttributes(siteCodeStyle, {})}
       value={value}
       onValueChange={onValueChange}
