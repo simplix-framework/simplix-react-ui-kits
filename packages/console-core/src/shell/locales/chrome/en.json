@@ -96,6 +96,11 @@
     "close": "Close",
     "list": "This list"
   },
+  "selfAccess": {
+    "title": "Your permissions could not be read",
+    "hint": "Screens that depend on them may be empty or missing controls until they are read. Reload the page to try again.",
+    "reload": "Reload"
+  },
   "link": {
     "newTab": "(opens in a new tab)"
   }

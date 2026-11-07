@@ -3,6 +3,7 @@ import { Stack } from "@simplix-react/ui";
 
 import { useScrollEndRoom } from "../layout";
 import { ConsolePageHeader } from "./page-header";
+import { SelfAccessNotice } from "./self-access-notice";
 import { contentColumnBodyStyle, contentColumnStyle } from "./content-column.style";
 import { partAttributes, slotAttributes } from "@simplix-react/ui/design";
 
@@ -60,6 +61,8 @@ export function ConsoleContentColumn({ children }: ConsoleContentColumnProps) {
         {...partAttributes(contentColumnBodyStyle, {})}
       >
         <ConsolePageHeader />
+        {/* The permissions every gated control depends on: a failed read is told above the screen it empties. */}
+        <SelfAccessNotice />
         {children}
         <div aria-hidden className={`${room} shrink-0 pointer-events-none`} />
       </Stack>
