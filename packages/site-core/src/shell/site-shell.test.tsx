@@ -108,6 +108,21 @@ describe("SiteBar", () => {
     expect(unmarked(html)).toEqual([]);
   });
 
+  it("draws no page landmark and no more menu when the site has no pages and no menu action", () => {
+    const html = renderToStaticMarkup(bar({ links: [], actions: [{ id: "start", label: "Start free", href: "/signup" }] }));
+    expect(html).not.toContain("<nav");
+    expect(bySlot(html, "site-bar-nav")).toEqual([]);
+    expect(bySlot(html, "site-bar-more")).toEqual([]);
+    expect(bySlot(html, "site-action")).toHaveLength(1);
+    expect(unmarked(html)).toEqual([]);
+  });
+
+  it("keeps the more menu for a menu action when there are no pages", () => {
+    const html = renderToStaticMarkup(bar({ links: [], actions: [{ id: "start", label: "Start free", href: "/signup", narrow: "menu" }] }));
+    expect(bySlot(html, "site-bar-nav")).toEqual([]);
+    expect(bySlot(html, "site-bar-more")).toHaveLength(1);
+  });
+
   it("draws the visitor's actions in reading order, each in its own tone, the first without one as the primary", () => {
     const html = renderToStaticMarkup(
       bar({
@@ -283,6 +298,13 @@ describe("SiteFooter", () => {
       ["a", "false", "false"],
     ]);
     expect(tabStops(html).map((tag) => tag.attributes.href)).toEqual(["/business"]);
+  });
+
+  it("draws no legal landmark when the site has no legal links", () => {
+    const html = renderToStaticMarkup(<SiteFooter owner="©" links={[]} linksLabel="Legal" />);
+    expect(html).not.toContain("<nav");
+    expect(bySlot(html, "site-footer-links")).toEqual([]);
+    expect(bySlot(html, "site-footer-owner")).toHaveLength(1);
   });
 
   it("draws no language place when the product hands no picker", () => {

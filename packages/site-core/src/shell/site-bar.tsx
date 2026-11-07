@@ -108,25 +108,28 @@ export function SiteBar({ brand, brandHref, brandLabel, onBrandSelect, links, na
       <SiteLink {...slotAttributes(siteBarBrandStyle, {})} href={brandHref} aria-label={brandLabel} onClick={onBrandSelect}>
         {brand}
       </SiteLink>
-      <nav {...slotAttributes(siteBarNavStyle, {})} aria-label={navLabel}>
-        {links.map((link) =>
-          link.href === undefined ? (
-            <span key={link.key} {...slotAttributes(siteBarLinkStyle, { current: link.current === true, pending: true })}>
-              {link.label}
-            </span>
-          ) : (
-            <SiteLink
-              key={link.key}
-              {...slotAttributes(siteBarLinkStyle, { current: link.current === true })}
-              href={link.href}
-              aria-current={link.current ? "page" : undefined}
-              onClick={link.onSelect}
-            >
-              {link.label}
-            </SiteLink>
-          ),
-        )}
-      </nav>
+      {/* A landmark with nothing in it is announced and found by a reader of the page's structure, so an operator realm with no pages draws none. */}
+      {links.length > 0 ? (
+        <nav {...slotAttributes(siteBarNavStyle, {})} aria-label={navLabel}>
+          {links.map((link) =>
+            link.href === undefined ? (
+              <span key={link.key} {...slotAttributes(siteBarLinkStyle, { current: link.current === true, pending: true })}>
+                {link.label}
+              </span>
+            ) : (
+              <SiteLink
+                key={link.key}
+                {...slotAttributes(siteBarLinkStyle, { current: link.current === true })}
+                href={link.href}
+                aria-current={link.current ? "page" : undefined}
+                onClick={link.onSelect}
+              >
+                {link.label}
+              </SiteLink>
+            ),
+          )}
+        </nav>
+      ) : null}
       <span {...slotAttributes(siteSpacerStyle, {})} aria-hidden="true" />
       {account ? (
         <SiteLink
@@ -172,6 +175,8 @@ function SiteBarMore({ label, links, actions }: { label: string; links: readonly
   const id = useId();
   const trigger = useRef<HTMLButtonElement>(null);
   const menu = useRef<HTMLDivElement>(null);
+  // A menu with nothing to hold is no control: its button would open an empty panel.
+  const empty = links.length === 0 && actions.length === 0;
 
   useEffect(() => {
     if (!open) return;
@@ -199,6 +204,7 @@ function SiteBarMore({ label, links, actions }: { label: string; links: readonly
     requestAnimationFrame(() => items()[target]?.focus());
   };
 
+  if (empty) return null;
   return (
     <>
       <button

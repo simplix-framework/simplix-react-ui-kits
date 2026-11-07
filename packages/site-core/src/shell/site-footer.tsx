@@ -47,25 +47,28 @@ export function SiteFooter({ owner, links, linksLabel, language, theme }: SiteFo
     <footer {...slotAttributes(siteFooterStyle, {})}>
       <span {...slotAttributes(siteFooterOwnerStyle, {})}>{owner}</span>
       <span {...slotAttributes(siteSpacerStyle, {})} aria-hidden="true" />
-      <nav {...slotAttributes(siteFooterLinksStyle, {})} aria-label={linksLabel}>
-        {links.map((link) =>
-          link.href === undefined ? (
-            <span key={link.key} {...slotAttributes(siteFooterLinkStyle, { emphasis: link.emphasis === true, pending: true })}>
-              {link.label}
-            </span>
-          ) : (
-            <SiteLink
-              key={link.key}
-              {...slotAttributes(siteFooterLinkStyle, { emphasis: link.emphasis === true })}
-              href={link.href}
-              aria-current={link.current ? "page" : undefined}
-              onClick={link.onSelect}
-            >
-              {link.label}
-            </SiteLink>
-          ),
-        )}
-      </nav>
+      {/* No legal pages (the operator realm) means no landmark: an empty one is announced with nothing behind it. */}
+      {links.length > 0 ? (
+        <nav {...slotAttributes(siteFooterLinksStyle, {})} aria-label={linksLabel}>
+          {links.map((link) =>
+            link.href === undefined ? (
+              <span key={link.key} {...slotAttributes(siteFooterLinkStyle, { emphasis: link.emphasis === true, pending: true })}>
+                {link.label}
+              </span>
+            ) : (
+              <SiteLink
+                key={link.key}
+                {...slotAttributes(siteFooterLinkStyle, { emphasis: link.emphasis === true })}
+                href={link.href}
+                aria-current={link.current ? "page" : undefined}
+                onClick={link.onSelect}
+              >
+                {link.label}
+              </SiteLink>
+            ),
+          )}
+        </nav>
+      ) : null}
       {language !== undefined ? <div {...slotAttributes(siteFooterLanguageStyle, {})}>{language}</div> : null}
       {theme !== undefined ? <div {...slotAttributes(siteFooterThemeStyle, {})}>{theme}</div> : null}
     </footer>
