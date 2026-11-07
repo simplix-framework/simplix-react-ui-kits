@@ -24,6 +24,30 @@ describe("a required field disabled with a reason", () => {
   });
 });
 
+describe("a row field disabled with a reason", () => {
+  const row = {
+    key: "reading",
+    label: "Reading",
+    kind: "row",
+    columns: [{ key: "value", label: "Value" }],
+    hint: "One value per line.",
+    disabled: "The reading is closed once the round is signed.",
+  } as RecordFormField;
+  const draw = (field: RecordFormField) => renderToStaticMarkup(createElement(UIProvider, { children: createElement(RecordFieldView, { field, value: {}, onChange: () => undefined }) }));
+
+  it("draws its reason, then its hint, under the cells like every other kind", () => {
+    const out = draw(row);
+    expect(out).toContain("The reading is closed once the round is signed. One value per line.");
+    expect(out.indexOf("<input")).toBeLessThan(out.indexOf("The reading is closed"));
+    expect(out).toContain("disabled");
+  });
+
+  it("draws no reason for a row that is only disabled, and none for an open one", () => {
+    expect(draw({ ...row, disabled: true })).not.toContain("is closed once");
+    expect(draw({ ...row, disabled: undefined })).not.toContain("is closed once");
+  });
+});
+
 describe("fieldDescription", () => {
   it("leads with the reason a field is locked and keeps what it says otherwise", () => {
     expect(fieldDescription("Fixed.", "Pick the month.")).toBe("Fixed. Pick the month.");

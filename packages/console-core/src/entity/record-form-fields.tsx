@@ -146,7 +146,12 @@ function FieldBody({ field, value, onChange, error, errorsShown, serverError }: 
     case "range":
       return <RangeField field={field} common={common} value={(value ?? {}) as RangeValue} onChange={onChange} />;
     case "row":
-      return <RowCells columns={field.columns} value={(value ?? {}) as Readonly<Record<string, string>>} disabled={Boolean(field.disabled)} label={field.label} onChange={onChange} />;
+      // Wrapped like every other kind, so a reason the field is locked (and its hint and error) is drawn under it.
+      return (
+        <FieldWrapper {...common}>
+          <RowCells columns={field.columns} value={(value ?? {}) as Readonly<Record<string, string>>} disabled={disabled} label={field.label} onChange={onChange} />
+        </FieldWrapper>
+      );
     case "tick":
       return <FormFields.CheckboxField {...common} value={value === true} onChange={(next) => onChange(next)} />;
     case "check":
