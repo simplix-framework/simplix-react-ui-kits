@@ -106,7 +106,7 @@ function verdictOf(tone: StatusTone | undefined, direction: TileTrendDirection):
   return "neutral";
 }
 
-/** Keeps a tile figure's unit (「크레딧」, "credits") in one piece where the figure itself breaks anywhere. */
+/** Keeps a tile figure's unit ("credits", or its Korean counterpart) in one piece where the figure itself breaks anywhere. */
 const TILE_UNIT_UNBREAKABLE = "[&_[data-slot=stat-card-unit]]:whitespace-nowrap";
 
 /** The arrow each direction is drawn with. */

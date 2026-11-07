@@ -44,7 +44,7 @@ export interface ActionDialogProps {
     readonly kind?: "primary" | "danger";
     /** Why the decision cannot be made yet, beyond an empty required field; drawn under the button. */
     readonly disabled?: string;
-    /** The word on the button while a returned promise is pending; the default is the common 「처리하는 중」. */
+    /** The word on the button while a returned promise is pending; the default is the kit's own running word. */
     readonly runningLabel?: string;
     /**
      * Runs the decision. A returned promise holds the dialog open, with the button busy and nothing

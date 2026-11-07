@@ -50,8 +50,8 @@ function spacedUnit(parts: readonly Intl.NumberFormatPart[]): string {
   return text;
 }
 
-/** A trailing parenthetical that names the unit of a size (`Size (bytes)`, `크기(바이트)`). */
-const BYTE_UNIT_SUFFIX = /\s*[(\uFF08]\s*(?:bytes?|바이트|[kmgt]?b)\s*[)\uFF09]\s*$/i;
+/** A trailing parenthetical that names the unit of a size (`Size (bytes)`, and its Korean counterpart). */
+const BYTE_UNIT_SUFFIX = /\s*[(\uFF08]\s*(?:bytes?|\uBC14\uC774\uD2B8|[kmgt]?b)\s*[)\uFF09]\s*$/i;
 
 /**
  * A size field's label without the unit it names in parentheses: the value is written in the
