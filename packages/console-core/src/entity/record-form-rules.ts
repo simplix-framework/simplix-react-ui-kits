@@ -179,15 +179,16 @@ export function formFieldErrors(sections: readonly RecordFormSection[], values: 
 /**
  * How many of the required fields hold an answer, for the count at the head of a form.
  *
- * <p>A switch or a tick is always answered, so neither is counted; a disabled field cannot be
- * filled by the reader, so it is not counted either.
+ * <p>A switch or a tick is always answered, so neither is counted. A disabled field is counted like
+ * any other: it carries the required mark and is validated before sending, so the count states the
+ * same set the marks do (a locked field holding its value counts as filled).
  */
 export function requiredProgress(sections: readonly RecordFormSection[], values: Readonly<Record<string, unknown>>): { readonly total: number; readonly filled: number } {
   let total = 0;
   let filled = 0;
   for (const section of sections)
     for (const field of section.fields) {
-      if (!field.required || field.disabled || field.kind === "switch" || field.kind === "tick" || !fieldShown(field, values)) continue;
+      if (!field.required || field.kind === "switch" || field.kind === "tick" || !fieldShown(field, values)) continue;
       total += 1;
       if (validateField(field, values[field.key]) === null) filled += 1;
     }
@@ -207,4 +208,17 @@ export function fieldShown(field: Pick<RecordFormField, "shownWhen">, values: Re
 /** The reason a field is disabled, when it was given as a string. */
 export function disabledReason(disabled: boolean | string | undefined): string | undefined {
   return typeof disabled === "string" && disabled !== "" ? disabled : undefined;
+}
+
+/**
+ * The sentence drawn under a field: why it is locked, when it was disabled with a reason, then what
+ * else it says (its hint, or the chosen option's meaning). A reader facing a locked field reads what
+ * would unlock it without having to find a tooltip on a control that takes no pointer.
+ *
+ * @param disabled the field's `disabled`
+ * @param own what the field says under itself otherwise
+ */
+export function fieldDescription(disabled: boolean | string | undefined, own: string | undefined): string | undefined {
+  const said = [disabledReason(disabled), own].filter((part): part is string => part !== undefined && part !== "");
+  return said.length > 0 ? said.join(" ") : undefined;
 }

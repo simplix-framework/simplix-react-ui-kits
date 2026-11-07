@@ -75,7 +75,7 @@ export { stageGateVerdict } from "./stage-gate-verdict";
 export type { StageConditionState, StageGateVerdict } from "./stage-gate-verdict";
 export { RecordFieldView, RowCells, RowColumnInput, signerLabel } from "./record-form-fields";
 export type { RecordFieldViewProps } from "./record-form-fields";
-export { disabledReason, emptyRow, formFieldErrors, initialFieldValue, isRangeOutOfOrder, validateField } from "./record-form-rules";
+export { disabledReason, emptyRow, fieldDescription, formFieldErrors, initialFieldValue, isRangeOutOfOrder, validateField } from "./record-form-rules";
 export type { FieldErrorCode } from "./record-form-rules";
 export type { CheckPairValue, ChoiceDetailValue, FieldCommon, FieldEvidence, RangeValue, RecordFormFieldKind, RecordRowColumn, SignatureActing, SignatureValue, VerdictChoice, VerdictValue } from "./record-form-types";
 export { ALWAYS_DRAWN_COLUMNS, badgeOf, CONTRACT_COLUMN_SIZE, detailFieldIsWide, enumColumnWidth, enumValueOf, fieldEnumsOf, groupedNumber, isBlankSecret, languageName, moneyAmount, moneyFilterTransform, moneyStored, moneyText, PROSE_CHARS, proseExcerpt, secretFormField, ladderColumns, recordNameIsCode, recordNameOf, recordValueText, useRecordContract, valueAtPath } from "./record-contract";

@@ -18,9 +18,6 @@ import {
   SignaturePad,
   Stack,
   Text,
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
   type LanguageSelectorPlacement,
   type TimeValue,
 } from "@simplix-react/ui";
@@ -34,7 +31,7 @@ import { EntitySearchCombobox } from "./entity-search-combobox";
 import { PACKAGE_NAMESPACE } from "./locales";
 import { attachmentDropStyle, otpDigitStyle, otpGroupStyle, repeatRowStyle } from "./record-form.style";
 import { otpBackspace, otpInsert, otpMove } from "./record-form-otp";
-import { disabledReason, emptyRow, validateField, type FieldErrorCode } from "./record-form-rules";
+import { emptyRow, fieldDescription, validateField, type FieldErrorCode } from "./record-form-rules";
 import type {
   CheckPairValue,
   ChoiceDetailValue,
@@ -90,21 +87,13 @@ function encodeInstant(date: Date | null): string {
  * Draws one {@link RecordFormField} against its value, in every surface that renders field kinds:
  * a record form, a settings form, an action dialog, and the rows of a repeat field.
  *
- * <p>A field disabled with a reason carries that reason as its tooltip.
+ * <p>A field disabled with a reason draws that reason under itself, in the field's own description.
  */
 export function RecordFieldView(props: RecordFieldViewProps) {
-  const reason = disabledReason(props.field.disabled);
-  const body = (
+  return (
     <Stack gap="none" data-record-field={props.field.key}>
       <FieldBody {...props} />
     </Stack>
-  );
-  if (!reason) return body;
-  return (
-    <Tooltip>
-      <TooltipTrigger asChild>{body}</TooltipTrigger>
-      <TooltipContent>{reason}</TooltipContent>
-    </Tooltip>
   );
 }
 
@@ -118,7 +107,7 @@ function FieldBody({ field, value, onChange, error, errorsShown, serverError }: 
   const { t } = useTranslation(PACKAGE_NAMESPACE + "/features");
   const message = error ? t(`recordForm.errors.${error}`) : serverError;
   const disabled = Boolean(field.disabled);
-  const common = { label: field.label, description: field.hint, required: field.required, disabled, error: message, ...(field.labelHidden ? { layout: "hidden" as const } : {}) };
+  const common = { label: field.label, description: fieldDescription(field.disabled, field.hint), required: field.required, disabled, error: message, ...(field.labelHidden ? { layout: "hidden" as const } : {}) };
   switch (field.kind) {
     case "number":
       return <FormFields.NumberField {...common} value={(value as number | null) ?? null} onChange={onChange} suffix={field.unit} min={field.min} max={field.max} placeholder={field.placeholder} />;
@@ -126,7 +115,7 @@ function FieldBody({ field, value, onChange, error, errorsShown, serverError }: 
       // The chosen option's meaning reads under the field; before a choice the field's own hint does.
       const chosen = field.options.find((option) => option.value === value)?.description;
       const options = field.options.map(({ value: optionValue, label }) => ({ value: optionValue, label }));
-      return <FormFields.SelectField {...common} description={chosen ?? common.description} value={value as string} onChange={onChange} options={options} clearable={field.clearable} clearLabel={field.clearLabel} placeholder={field.placeholder ?? choicePrompt(t, field.options)} />;
+      return <FormFields.SelectField {...common} description={fieldDescription(field.disabled, chosen ?? field.hint)} value={value as string} onChange={onChange} options={options} clearable={field.clearable} clearLabel={field.clearLabel} placeholder={field.placeholder ?? choicePrompt(t, field.options)} />;
     }
     case "radio":
       return <FormFields.RadioGroupField {...common} direction="row" value={(value as string) ?? ""} onChange={onChange} options={[...field.options]} />;
