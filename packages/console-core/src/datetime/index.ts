@@ -39,6 +39,8 @@ export type { PageTimeRangeSlot } from "./page-time-range";
 export type { ListTimeRangeProps, TimeRangeCountQuery } from "./list-time-range";
 export { daysAgoText } from "./days-ago-text";
 export { usePageOpenedAt, useZoneRange } from "./page-time";
+// Today and a rolling window, each held by the framework and moved on as the clock turns.
+export { useRollingWindow, useZoneToday } from "@simplix-react/headless";
 export type { ZoneRangeKind } from "./page-time";
 export { RemainingText } from "./remaining-text";
 export type { RemainingTextProps } from "./remaining-text";

@@ -37,3 +37,12 @@ describe("useZoneRange", () => {
     expect(week?.to).toBe(today?.to);
   });
 });
+
+describe("the datetime barrel", () => {
+  it("hands on the framework's today and rolling-window hooks beside the kit's own", async () => {
+    const barrel = await import("./index");
+    expect(typeof barrel.useZoneToday).toBe("function");
+    expect(typeof barrel.useRollingWindow).toBe("function");
+    expect(typeof barrel.useZoneRange).toBe("function");
+  });
+});
