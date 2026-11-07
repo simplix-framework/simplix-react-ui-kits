@@ -97,7 +97,11 @@ export interface ShellMenuGroup {
 export interface ShellParts {
   /** The name the shell keeps its own preferences under (the menu's fold). */
   readonly namespace: string;
-  readonly brand: { readonly mark?: ReactNode; readonly title: string; readonly badge?: ReactNode };
+  /**
+   * The product's mark, the console's name and its badge, at the head of the top bar and the phone
+   * bar; `home` is where pressing the mark leads and what that link is called for a screen reader.
+   */
+  readonly brand: { readonly mark?: ReactNode; readonly title: string; readonly badge?: ReactNode; readonly home?: { readonly href: string; readonly label: string } };
   readonly menuTitle?: ReactNode;
   readonly menu: readonly ShellMenuGroup[];
   /**
@@ -166,7 +170,7 @@ export function useShellParts(): ShellParts {
   const { t } = useTranslation("{{namespace}}");
   return {
     namespace: "{{nameKebab}}",
-    brand: { title: t("shell.title") },
+    brand: { title: t("shell.title"), home: { href: "/", label: t("shell.title") } },
     menu: [],
     topBar: {
       areas: [{ key: "main", label: t("shell.area") }],
@@ -283,7 +287,7 @@ function WindowShell({ parts, route, collapse, children }: ShellProps & { readon
   const { collapsed, toggle } = collapse;
   return (
     <ConsoleWindow>
-      <ConsoleTopBar {...parts.topBar} mark={parts.brand.mark} title={parts.brand.title} badge={parts.brand.badge} account={parts.account} />
+      <ConsoleTopBar {...parts.topBar} mark={parts.brand.mark} title={parts.brand.title} badge={parts.brand.badge} home={parts.brand.home} account={parts.account} />
       <Flex gap="none" flex overflow="hidden">
         <ConsoleMenuSlot>
           {collapsed ? (
@@ -409,6 +413,7 @@ function PhoneShell({ parts, route, onSearch, children }: ShellProps & { readonl
   return (
     <ConsolePhoneShell
       brand={parts.brand.mark}
+      home={parts.brand.home}
       title={header.title ?? parts.brand.title}
       actions={<ConsolePhoneSearchButton onOpen={onSearch} />}
       tabs={tabs}

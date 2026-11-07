@@ -1,5 +1,5 @@
 import { ConsoleProductProvider, type ConsoleProduct } from "../identity/console-product";
-import type { ReactNode } from "react";
+import { useEffect, type ReactNode } from "react";
 import { I18nProvider } from "@simplix-react/i18n/react";
 import { AuthProvider } from "@simplix-react/auth/react";
 import { AccessProvider } from "@simplix-react/access/react";
@@ -62,8 +62,37 @@ export interface ConsoleProvidersProps {
    * apps leave it at its default and keep the dialog.
    */
   readonly drawErrors?: boolean;
+  /**
+   * Whether a change of the interface language reads every cached query and the signed-in reader's
+   * own access read again. On by default: text the server localizes (a product's name, a role's)
+   * is chosen by the request's language, so without it a name stays in the old language.
+   */
+  readonly refreshOnLocaleChange?: boolean;
   /** Whatever the app mounts inside its own providers — a router, a shell. */
   readonly children: ReactNode;
+}
+
+/** What {@link refreshOnLocaleChange} reads again and listens on. */
+export interface LocaleRefreshTargets {
+  readonly i18nAdapter: { onLocaleChange(handler: (locale: string) => void): () => void };
+  readonly queryClient: Pick<QueryClient, "invalidateQueries">;
+  readonly auth: { isAuthenticated(): boolean; getAccessToken(): string | null };
+  readonly accessPolicy: { update(authData: unknown): Promise<void> };
+}
+
+/**
+ * Reads the localized text again whenever the interface language changes: every cached query, whose
+ * answers the server wrote in the language just left, and, while someone is signed in, the access
+ * policy's own read of them, which carries their role and position names.
+ *
+ * @param targets the locale adapter listened on and what is read again
+ * @returns the function that stops listening
+ */
+export function refreshOnLocaleChange({ i18nAdapter, queryClient, auth, accessPolicy }: LocaleRefreshTargets): () => void {
+  return i18nAdapter.onLocaleChange(() => {
+    void queryClient.invalidateQueries();
+    if (auth.isAuthenticated()) void accessPolicy.update(auth.getAccessToken());
+  });
 }
 
 /** The defaults `UIProvider` takes. */
@@ -103,8 +132,14 @@ export function ConsoleProviders({
   defaults: installationDefaults,
   drawToasts = true,
   drawErrors = true,
+  refreshOnLocaleChange: refreshesOnLocaleChange = true,
   children,
 }: ConsoleProvidersProps) {
+  // Registered once per stack and removed with it, so a remount (StrictMode mounts twice) leaves one listener.
+  useEffect(
+    () => (refreshesOnLocaleChange ? refreshOnLocaleChange({ i18nAdapter, queryClient, auth, accessPolicy }) : undefined),
+    [refreshesOnLocaleChange, i18nAdapter, queryClient, auth, accessPolicy],
+  );
   const { prefs } = useDisplayPreferences();
   const chosen = CONSOLE_DESIGNS.find((d) => d.id === prefs.design) ?? design;
   const defaults =

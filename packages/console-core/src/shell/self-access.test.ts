@@ -29,3 +29,13 @@ describe("currentSelfAccessRefusal", () => {
     expect(currentSelfAccessRefusal()).toEqual({ status: 409, errorCode: "CODE_B" });
   });
 });
+
+describe("the kit's self access exports", () => {
+  it("are the framework's own, so the shell reads the one refusal store the policy writes", async () => {
+    const framework = await import("@simplix-react-ext/simplix-boot-access");
+    const kit = await import("./self-access");
+    expect(kit.createSelfAccessPolicy).toBe(framework.createSelfAccessPolicy);
+    expect(kit.currentSelfAccessRefusal).toBe(framework.currentSelfAccessRefusal);
+    expect(kit.useSelfAccessRefusal).toBe(framework.useSelfAccessRefusal);
+  });
+});

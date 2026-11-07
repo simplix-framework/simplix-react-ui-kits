@@ -143,7 +143,7 @@ export {
   type PlainConsoleShellProps,
 } from "./plain-shell";
 export { ShellReadyHome } from "./shell-ready-home";
-export { ConsoleProviders, type ConsoleProvidersProps, type UIDefaults } from "./console-providers";
+export { ConsoleProviders, refreshOnLocaleChange, type ConsoleProvidersProps, type LocaleRefreshTargets, type UIDefaults } from "./console-providers";
 export { createConsoleQueryClient, isSessionExpiry } from "./query-client";
 export { guarded, guardedBy } from "./guarded-route";
 export { RouteErrorFallback } from "./route-error";
