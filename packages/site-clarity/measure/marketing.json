@@ -1,5 +1,5 @@
 {
- "$comment": "The computed look of the reference product introduction, read with scripts/site-regions-rendered.mjs probe() at the page-root widths listed, in English and Korean, at rest and with a sample playing. scripts/site-demo.mjs --measure renders tests/fixtures/marketing-page.tsx with each entry props at that width and holds its signature to this one with compare().",
+ "$comment": "The computed look of the reference product introduction, read with scripts/site-regions-rendered.mjs probe() at the page-root widths listed, in English and Korean, at rest and with a sample playing. scripts/site-demo.mjs --measure renders tests/fixtures/marketing-page.tsx with each entry props at that width and holds its signature to this one with compare(). Entries at the narrow tier hold the footer link at the 24px pointer target size (WCAG 2.2) ahead of the reference story, which draws 16px: their footer and frame heights are the build's until the story draws the same.",
  "measuredOn": "2026-11-03",
  "pages": {
   "marketing-1440": {
@@ -4318,7 +4318,7 @@
       "opacity": "1",
       "maxWidth": "none",
       "columns": 0,
-      "height": 2000,
+      "height": 2008,
       "width": 379
      },
      "main": {
@@ -5582,7 +5582,7 @@
        "opacity": "1",
        "maxWidth": "none",
        "columns": 0,
-       "height": 117,
+       "height": 125,
        "width": 379
       },
       "parts": {
@@ -5627,7 +5627,7 @@
         "opacity": "1",
         "maxWidth": "none",
         "columns": 0,
-        "height": 16,
+        "height": 24,
         "width": 74
        },
        "emphasis": {
@@ -5649,7 +5649,7 @@
         "opacity": "1",
         "maxWidth": "none",
         "columns": 0,
-        "height": 16,
+        "height": 24,
         "width": 82
        },
        "language": {
@@ -7239,7 +7239,7 @@
       "opacity": "1",
       "maxWidth": "none",
       "columns": 0,
-      "height": 2000,
+      "height": 2008,
       "width": 379
      },
      "main": {
@@ -8610,7 +8610,7 @@
        "opacity": "1",
        "maxWidth": "none",
        "columns": 0,
-       "height": 117,
+       "height": 125,
        "width": 379
       },
       "parts": {
@@ -8655,7 +8655,7 @@
         "opacity": "1",
         "maxWidth": "none",
         "columns": 0,
-        "height": 16,
+        "height": 24,
         "width": 74
        },
        "emphasis": {
@@ -8677,7 +8677,7 @@
         "opacity": "1",
         "maxWidth": "none",
         "columns": 0,
-        "height": 16,
+        "height": 24,
         "width": 82
        },
        "language": {
@@ -11624,7 +11624,7 @@
       "opacity": "1",
       "maxWidth": "none",
       "columns": 0,
-      "height": 1844,
+      "height": 1852,
       "width": 379
      },
      "main": {
@@ -12888,7 +12888,7 @@
        "opacity": "1",
        "maxWidth": "none",
        "columns": 0,
-       "height": 117,
+       "height": 125,
        "width": 379
       },
       "parts": {
@@ -12933,7 +12933,7 @@
         "opacity": "1",
         "maxWidth": "none",
         "columns": 0,
-        "height": 16,
+        "height": 24,
         "width": 42
        },
        "emphasis": {
@@ -12955,7 +12955,7 @@
         "opacity": "1",
         "maxWidth": "none",
         "columns": 0,
-        "height": 16,
+        "height": 24,
         "width": 86
        },
        "language": {

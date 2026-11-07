@@ -198,16 +198,19 @@ export const siteFooterLinksStyle = defineSlotStyle({
 });
 
 /**
- * One legal link, at least 24 CSS px tall (WCAG 2.2, target size): in a line of small print the
- * link's own line is 16px, so the box takes the minimum and centres the words in it.
- * `emphasis` draws the one a law asks to stand out (a privacy policy) in full ink. A
+ * One legal link; `emphasis` draws the one a law asks to stand out (a privacy policy) in full ink. A
  * page that is not open yet (`pending`) is the same words as plain text, with no underline under the
  * pointer and no press.
+ *
+ * <p>Below the narrow page tier the small print wraps onto rows 4px apart, where a 16px line is
+ * under the 24 CSS px a pointer target needs (WCAG 2.2, target size): the link takes that least
+ * height there and centres its words in it. In one row the links stand 16px apart, which the
+ * criterion's spacing exception covers, so the line keeps its own height.
  */
 export const siteFooterLinkStyle = defineSlotStyle({
   slot: "site-footer-link",
   base:
-    "inline-flex min-h-6 cursor-pointer items-center rounded-(--site-radius-xs) text-inherit no-underline underline-offset-2 outline-none hover:underline focus-visible:shadow-[var(--site-focus-ring)]",
+    "cursor-pointer rounded-(--site-radius-xs) text-inherit no-underline underline-offset-2 outline-none hover:underline focus-visible:shadow-[var(--site-focus-ring)] @max-page-narrow/page:inline-flex @max-page-narrow/page:min-h-6 @max-page-narrow/page:items-center",
   variants: {
     emphasis: {
       true: "font-(--site-fw-strong) text-(--site-ink)",

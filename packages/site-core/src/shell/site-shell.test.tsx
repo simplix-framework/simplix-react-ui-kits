@@ -525,9 +525,15 @@ describe("followHeading", () => {
 
 
 describe("a footer link", () => {
-  it("is at least 24px tall, centring its words, so the line of small print is a target a thumb can hit (WCAG 2.2)", () => {
-    expect(siteFooterLinkStyle.base).toMatch(/(?:^|\s)inline-flex(?:\s|$)/);
-    expect(siteFooterLinkStyle.base).toMatch(/(?:^|\s)min-h-6(?:\s|$)/);
-    expect(siteFooterLinkStyle.base).toMatch(/(?:^|\s)items-center(?:\s|$)/);
+  it("is at least 24px tall below the narrow tier, centring its words, where the small print wraps onto rows a thumb must tell apart (WCAG 2.2)", () => {
+    const below = (utility: string) => siteFooterLinkStyle.base.split(/\s+/).includes(`@max-page-narrow/page:${utility}`);
+    expect(below("inline-flex")).toBe(true);
+    expect(below("min-h-6")).toBe(true);
+    expect(below("items-center")).toBe(true);
+  });
+
+  it("keeps the line's own height in one row, where the criterion's spacing exception holds", () => {
+    expect(siteFooterLinkStyle.base.split(/\s+/)).not.toContain("min-h-6");
+    expect(siteFooterLinkStyle.base.split(/\s+/)).not.toContain("inline-flex");
   });
 });

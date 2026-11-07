@@ -37,7 +37,7 @@ export const siteActionStyle = defineSlotStyle({
     // A block action fills its column, and a label too long for it wraps inside the box (a sign-in
     // provider with a long name) instead of running past it; the box grows by the lines it needs.
     block: {
-      true: "w-full whitespace-normal py-1 text-center [overflow-wrap:anywhere]",
+      true: "w-full whitespace-normal text-center [overflow-wrap:anywhere]",
       false: "",
     },
     pad: {
