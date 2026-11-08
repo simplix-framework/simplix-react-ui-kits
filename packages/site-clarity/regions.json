@@ -999,10 +999,10 @@
         "link",
         "button"
       ],
-      "$comment": "The section beside the list: the standing notice over every section, the heading, then the section's parts in reading order (settings rows, questions on a card, tables, panels with a meter or a run of days, typed confirmations, notes).",
+      "$comment": "The section beside the list: the standing notice over every section, the heading, then the section's parts in reading order (settings rows, questions on a card, tables, panels with a meter or a run of days, typed confirmations, notes). The heading is level 1 where it names the page (My account has no page head, so the section's h1 is the page's h1) and level 2 where a page head stands above it; a part's title inside the section is the subhead, level 3.",
       "parts": {
         "standing": "site-banner",
-        "head": "site-section-head[data-level=\"2\"]",
+        "head": "site-section-head:is([data-level=\"1\"], [data-level=\"2\"])",
         "subhead": "site-section-head[data-level=\"3\"]",
         "rows": "site-settings-rows",
         "row": "site-settings-row",
