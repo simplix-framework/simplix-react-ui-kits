@@ -3,6 +3,8 @@ import { AlertBanner, Button, Flex, type StatusTone } from "@simplix-react/ui";
 import { CircleAlertIcon, CircleCheckIcon, InfoIcon, TriangleAlertIcon } from "lucide-react";
 import { slotAttributes } from "@simplix-react/ui/design";
 
+import { NoticeCard } from "../notice/notice-card";
+import type { DismissibleNoticeKind } from "../notice/notice-kind";
 import { recordNoteIconStyle, recordNoteStyle, verbBlockedReasonStyle, verbBlockedStyle } from "./record-blocks.style";
 
 /** A message inside a panel, a form or a dialog: it stays as long as what it explains is on screen. */
@@ -13,6 +15,22 @@ export interface RecordNotice {
   readonly body?: string;
   /** An action the message offers, such as opening the list it is about. */
   readonly action?: { readonly label: string; readonly onClick?: () => void };
+  /**
+   * The constant the reader's put-away choice is kept under, which makes the notice a standing
+   * message: the state it describes holds for as long as the record is in it, whether or not the
+   * reader does anything. It is drawn as a notice card with a close, remembered per operator, and
+   * listed on the header's control for its tone, so closing it moves the message rather than
+   * losing it (frontend invariant #73).
+   *
+   * <p>Namespaced by the screen that owns it (`speech.userVoice.suspended`) and written at the
+   * definition site: the key is per state, not per record, because a key built from a record id
+   * is one more entry in the operator's set for every record they ever opened. Absent, the notice
+   * is a banner, which is right only for the answer to something the reader just did (a failed
+   * read, a refused submit). A `success` tone has no card kind and is always a banner. Inside a
+   * dialog a card is not mounted while the dialog is closed, so its owner also declares it with
+   * `NoticeDeclaration`.
+   */
+  readonly noticeKey?: string;
   /**
    * Whether the state the notice is about holds (`when: record?.standing === "SUSPENDED"`). A
    * notice whose `when` is false is not drawn, so a detail declares every notice it can raise in
@@ -52,29 +70,55 @@ const NOTICE_TONE: Record<RecordNotice["tone"], StatusTone> = {
   success: "success",
 };
 
-/** Draws {@link RecordNotice}s, one under the other. */
+/** The card kind of each tone that has one; `success` confirms something done and has none. */
+const NOTICE_CARD_KIND: Partial<Record<RecordNotice["tone"], DismissibleNoticeKind>> = {
+  info: "info",
+  warning: "warning",
+  danger: "danger",
+};
+
+/**
+ * Draws {@link RecordNotice}s, one under the other: a standing one (it names a `noticeKey`) as a
+ * closable notice card, every other as a banner.
+ */
 export function RecordNotices({ notices }: { readonly notices?: readonly RecordNotice[] }) {
   const raised = raisedRecordNotices(notices);
   if (raised.length === 0) return null;
   return (
     <>
-      {raised.map((notice) => (
-        <AlertBanner
-          key={notice.key}
-          tone={NOTICE_TONE[notice.tone]}
-          icon={NOTICE_ICON[notice.tone]}
-          title={notice.title}
-          subtitle={notice.body}
-          bordered
-          trailing={
-            notice.action ? (
-              <Button size="sm" variant="outline" onClick={notice.action.onClick}>
-                {notice.action.label}
-              </Button>
-            ) : undefined
-          }
-        />
-      ))}
+      {raised.map((notice) => {
+        const kind = notice.noticeKey ? NOTICE_CARD_KIND[notice.tone] : undefined;
+        if (notice.noticeKey && kind) {
+          return (
+            <NoticeCard
+              key={notice.key}
+              noticeKey={notice.noticeKey}
+              kind={kind}
+              title={notice.title}
+              hint={notice.body}
+              actionLabel={notice.action?.onClick ? notice.action.label : undefined}
+              onAction={notice.action?.onClick}
+            />
+          );
+        }
+        return (
+          <AlertBanner
+            key={notice.key}
+            tone={NOTICE_TONE[notice.tone]}
+            icon={NOTICE_ICON[notice.tone]}
+            title={notice.title}
+            subtitle={notice.body}
+            bordered
+            trailing={
+              notice.action ? (
+                <Button size="sm" variant="outline" onClick={notice.action.onClick}>
+                  {notice.action.label}
+                </Button>
+              ) : undefined
+            }
+          />
+        );
+      })}
     </>
   );
 }
