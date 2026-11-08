@@ -16,6 +16,7 @@ import {
   figureUnitStyle,
   figureValueStyle,
 } from "./chart.style";
+import { HeadLink } from "./head-link";
 
 /** Props for {@link DashboardFigure}. */
 export interface DashboardFigureProps {
@@ -27,10 +28,12 @@ export interface DashboardFigureProps {
   readonly tone?: "neutral" | "danger" | "warning";
   /** A small chart beside the context, such as a sparkline of the last months. */
   readonly trailing?: ReactNode;
-  /** A link at the right to the screen behind the figure, such as 「입조 현황 보기」. */
-  readonly action?: { readonly label: string; readonly onClick: () => void };
+  /** A link at the right to the screen behind the figure, such as 「입조 현황 보기」; an `href` draws it as a link, as on a card's `action`. */
+  readonly action?: { readonly label: string; readonly onClick: () => void; readonly href?: string };
   /** Opens the list the figure counts. */
   readonly onClick?: () => void;
+  /** The address the figure opens: with it the figure is a link and `onClick` runs on a plain press. */
+  readonly href?: string;
   /** Words a screen reader hears for the whole figure. */
   readonly label: string;
 }
@@ -39,7 +42,7 @@ export interface DashboardFigureProps {
  * The one number a dashboard block leads with, rolling to its value, with its context beside it.
  * A zero is drawn muted so a quiet block reads as quiet; the figure opens the list it counts.
  */
-export function DashboardFigure({ value, unit = "건", context, tone = "neutral", trailing, action, onClick, label }: DashboardFigureProps) {
+export function DashboardFigure({ value, unit = "건", context, tone = "neutral", trailing, action, onClick, href, label }: DashboardFigureProps) {
   const body = (
     <>
       <span className="inline-flex items-baseline" {...slotAttributes(figureReadingStyle, {})}>
@@ -54,9 +57,9 @@ export function DashboardFigure({ value, unit = "건", context, tone = "neutral"
   return (
     <div className="flex flex-wrap items-center justify-between" {...slotAttributes(figureRowStyle, {})}>
       {onClick ? (
-        <button type="button" onClick={onClick} aria-label={label} className="inline-flex flex-wrap items-baseline" {...slotAttributes(figureButtonStyle, {})}>
+        <HeadLink href={href} onClick={onClick} label={label} className="inline-flex flex-wrap items-baseline" attributes={slotAttributes(figureButtonStyle, {})}>
           {body}
-        </button>
+        </HeadLink>
       ) : (
         <span aria-label={label} className="inline-flex flex-wrap items-baseline" {...slotAttributes(figureStaticStyle, {})}>
           {body}
@@ -64,9 +67,9 @@ export function DashboardFigure({ value, unit = "건", context, tone = "neutral"
       )}
       {trailing}
       {action ? (
-        <button type="button" onClick={action.onClick} {...slotAttributes(figureActionStyle, {})}>
+        <HeadLink href={action.href} onClick={action.onClick} className="inline-block" attributes={slotAttributes(figureActionStyle, {})}>
           {action.label}
-        </button>
+        </HeadLink>
       ) : null}
     </div>
   );

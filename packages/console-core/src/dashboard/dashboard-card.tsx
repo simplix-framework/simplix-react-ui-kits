@@ -6,6 +6,7 @@ import { useReflowFlip } from "../layout/use-reflow-flip";
 import { type DashboardSpan, spanAt, useDashboardGridColumns } from "./dashboard-grid";
 
 import { figureActionStyle } from "./chart.style";
+import { HeadLink } from "./head-link";
 import {
   dashboardCardBodyStyle,
   dashboardCardEndStyle,
@@ -32,8 +33,12 @@ export interface DashboardCardProps {
   readonly span?: "half" | "full" | DashboardSpan;
   /** Words a screen reader hears for the card, when the title alone does not say whose figures they are. */
   readonly description?: string;
-  /** The link at the heading's end to the list the card reads, such as 「Open the audit log」. */
-  readonly action?: { readonly label: string; readonly onClick: () => void };
+  /**
+   * The link at the heading's end to the list the card reads, such as 「Open the audit log」. With an
+   * `href` it is drawn as a link (keyboard, middle click and a new tab work) and a plain press runs
+   * `onClick`; without one it is a button that runs `onClick`.
+   */
+  readonly action?: { readonly label: string; readonly onClick: () => void; readonly href?: string };
   readonly children: ReactNode;
 }
 
@@ -56,9 +61,9 @@ export function DashboardCard({ title, trailing, kind = "chart", span = "half", 
           // The context and the link sit together at the heading's end, one group, so the row breaks in one place.
           <span {...slotAttributes(dashboardCardEndStyle, {})}>
             {meta}
-            <button type="button" onClick={action.onClick} {...slotAttributes(figureActionStyle, {})}>
+            <HeadLink href={action.href} onClick={action.onClick} className="inline-block" attributes={slotAttributes(figureActionStyle, {})}>
               {action.label}
-            </button>
+            </HeadLink>
           </span>
         ) : (
           meta
