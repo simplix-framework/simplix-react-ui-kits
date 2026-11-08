@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { committedWindow, conditionsWithoutWindow, windowCommit, windowKeysOf } from "./list-time-range";
+import { committedWindow, conditionsWithoutWindow, windowClear, windowCommit, windowKeysOf } from "./list-time-range";
 
 const NOW = new Date("2026-11-02T12:00:00.000Z");
 const at = (iso: string) => new Date(iso);
@@ -67,5 +67,22 @@ describe("what the strip commits and counts under", () => {
       "occurredAt.greaterThanOrEqualTo": "2026-11-02T06:00:00.000Z",
     };
     expect(conditionsWithoutWindow(committed, "createdAt")).toEqual({ "status.in": ["FAILED"], "occurredAt.greaterThanOrEqualTo": "2026-11-02T06:00:00.000Z" });
+  });
+});
+
+describe("windowClear", () => {
+  it("commits every bound of the field as undefined, the strip's pair and the filter bar's bounds alike", () => {
+    const written = windowClear("createdAt");
+    expect(Object.keys(written).sort()).toEqual(windowKeysOf("createdAt").sort());
+    expect(Object.values(written).every((value) => value === undefined)).toBe(true);
+  });
+
+  it("names the same keys as a selection does, so a cleared strip and a selected one touch the same set", () => {
+    const at = (iso: string) => new Date(iso);
+    expect(Object.keys(windowClear("createdAt")).sort()).toEqual(Object.keys(windowCommit("createdAt", at("2026-11-01T00:00:00.000Z"), at("2026-11-02T00:00:00.000Z"))).sort());
+  });
+
+  it("leaves another field's keys alone", () => {
+    expect(Object.keys(windowClear("createdAt")).some((key) => key.startsWith("updatedAt"))).toBe(false);
   });
 });

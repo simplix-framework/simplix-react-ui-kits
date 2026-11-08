@@ -142,6 +142,17 @@ export function windowCommit(field: string, from: Date, to: Date): Record<string
 }
 
 /**
+ * What turning the strip off commits: every bound of the field cleared, the strip's own pair and the
+ * filter bar's bounds alike. Left standing, a bound of the filter bar would keep narrowing the rows
+ * while the strip drew nothing selected, and the address and the request would still carry a window.
+ *
+ * @param field the field the list is read by in time
+ */
+export function windowClear(field: string): Record<string, undefined> {
+  return Object.fromEntries(windowKeysOf(field).map((key) => [key, undefined]));
+}
+
+/**
  * The list's committed conditions without any bound of the strip's field, empty values dropped.
  * Counting under the window would flatten the strip to the shape of what is already selected, and
  * a cleared filter is still a key whose `undefined` reaches the server as an operator with no value.
@@ -179,6 +190,9 @@ export interface ListTimeRangeProps {
    * the strip paints the slice, the request keeps the forced window, and the count beside the
    * strip disagrees with the total under it. A screen in that shape holds the effective window
    * itself and forces it, so there is one value rather than two.
+   *
+   * <p>Not told when the reader turns the selection off: there is no range to hand over, and a
+   * screen that holds a forced window drops it by watching the list's committed values.
    */
   onRangeChange?: (range: TimeRange) => void;
   /** The heatmap's colours: the theme's own ramp by default, so no screen picks a palette. @defaultValue "tokens" */
@@ -196,7 +210,8 @@ export interface ListTimeRangeProps {
  * clears the filter bar's bounds on the same field, so one window is in force. The strip draws the
  * window the list is committed to ({@link committedWindow}), whichever control committed it: a
  * notice that commits a start instant moves the strip to that window instead of leaving it on its
- * own default.
+ * own default. A second press on the lit window, the clear control and Escape take the window off
+ * again ({@link windowClear}), so a list can return to no window at all.
  */
 export function ListTimeRange({
   filters,
@@ -245,10 +260,16 @@ export function ListTimeRange({
     [field, filters, onRangeChange],
   );
 
+  // A second press on the lit preset, the clear action, Escape on the strip and the narrow bar's
+  // "Clear selection" all arrive here: the range leaves the address and the request, so a range that
+  // is the only condition on the list can be turned off.
+  const clear = useCallback(() => filters.commitValues(windowClear(field)), [field, filters]);
+
   return (
     <TimeRangeSelector
       value={range}
       onChange={select}
+      onClear={clear}
       fetchCounts={counts}
       presets={presets}
       defaultWindow={defaultWindow}

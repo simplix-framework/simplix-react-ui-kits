@@ -33,7 +33,7 @@ export {
   zoneWeekRange,
 } from "@simplix-react/headless";
 export type { CalendarDayStyle } from "@simplix-react/headless";
-export { committedWindow, conditionsWithoutWindow, ListTimeRange, readCounts, useTimeWindowPresets, windowCommit, windowKeysOf } from "./list-time-range";
+export { committedWindow, conditionsWithoutWindow, ListTimeRange, readCounts, useTimeWindowPresets, windowClear, windowCommit, windowKeysOf } from "./list-time-range";
 export { PageTimeRange } from "./page-time-range";
 export type { PageTimeRangeSlot } from "./page-time-range";
 export type { ListTimeRangeProps, TimeRangeCountQuery } from "./list-time-range";
