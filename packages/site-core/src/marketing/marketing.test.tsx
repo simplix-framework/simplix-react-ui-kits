@@ -36,6 +36,14 @@ describe("HeroBand", () => {
     expect(unmarked(html.replace(/<span data-slot="product-media">player<\/span>/, ""))).toEqual([]);
   });
 
+  it("reads its title and accent as two words in the h1's text, since the line break between them is no space to a reader of the text", () => {
+    const h1 = /<h1[^>]*>([\s\S]*?)<\/h1>/.exec(hero())?.[1] ?? "";
+    // The text a screen reader or a copy takes: tags dropped, entities left as written.
+    expect(h1.replace(/<[^>]*>/g, "")).toBe("Speaker notes in your own voice");
+    const bare = /<h1[^>]*>([\s\S]*?)<\/h1>/.exec(hero({ accent: undefined }))?.[1] ?? "";
+    expect(bare.replace(/<[^>]*>/g, "")).toBe("Speaker notes");
+  });
+
   it("is its own dark band when asked, and draws its actions large, the strongest first", () => {
     const html = hero();
     expect(bySlot(html, "site-hero")[0]?.attributes["data-band"]).toBe("dark");

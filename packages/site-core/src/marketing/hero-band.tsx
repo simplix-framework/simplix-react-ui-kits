@@ -49,6 +49,8 @@ export function HeroBand({ tone = "light", eyebrow, title, accent, lede, actions
             {title}
             {accent !== undefined ? (
               <>
+                {/* The break is no space to a reader of the text: the space folds away on screen. */}
+                {" "}
                 <br />
                 <em {...slotAttributes(siteHeroAccentStyle, {})}>{accent}</em>
               </>
