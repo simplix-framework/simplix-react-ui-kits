@@ -55,8 +55,9 @@ export function probe(regions, root = "main") {
     }
   }
   const signature = Object.fromEntries(Object.entries(out).map(([k, v]) => [k, { kinds: [...v.kinds].sort(), perCard: v.perCard }]));
-  // Rows drawn, so a required region is judged only where there are rows to carry it.
-  signature.rows = scope.querySelectorAll("tbody tr, [data-slot=crud-card]").length;
+  // Rows drawn by the page's list, so a required region is judged only where a list has rows to carry it.
+  // A table in a tab's free content or a panel is not a list row: it has no action strip to require.
+  signature.rows = scope.querySelectorAll("[data-slot=console-record-list] tbody tr, [data-slot=console-record-list] [data-slot=crud-card]").length;
   // The cards of the grid view are separate boxes: a border on every side and a radius. The stacked
   // fallback inside a list frame is ruled rows and is not judged here.
   signature.unboxedCards = [...scope.querySelectorAll("[data-slot=crud-list-view][data-grid=true] [data-slot=crud-card]")].filter((card) => {
