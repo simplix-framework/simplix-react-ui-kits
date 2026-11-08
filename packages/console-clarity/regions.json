@@ -85,13 +85,14 @@
       ],
       "controls": [
         "crud-filter-bar-trigger",
+        "crud-filter-bar-chip-remove",
         "crud-filter-bar-clear-button",
         "crud-filter-bar-columns-button",
         "crud-filter-bar-view-button",
         "crud-chip-filter-chip",
         "button"
       ],
-      "$comment": "crud-filter-bar-view-button is the list/grid switch of a list that offers both presentations (RecordList viewToggle); it stands in the filter bar's leading group or, on a list with no filters, in the record list toolbar."
+      "$comment": "crud-filter-bar-chip-remove is the remove button inside each active filter chip. crud-filter-bar-view-button is the list/grid switch of a list that offers both presentations (RecordList viewToggle); it stands in the filter bar's leading group or, on a list with no filters, in the record list toolbar."
     },
     "columnHeads": {
       "part": "RecordList header",
