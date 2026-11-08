@@ -26,6 +26,8 @@ const DEFS: readonly ContractFilter[] = [
   { kind: "toggle", field: "retried" },
 ];
 const declaration = declareListAddress(DEFS);
+/** The same list on a page that draws a time range over `startedAt`. */
+const withRange = declareListAddress(DEFS, { timeRangeField: "startedAt" });
 
 const read = vi.fn((_params: Record<string, unknown>, _options: unknown) => ({ data: { content: [] as Row[], totalElements: 0 }, isLoading: false, error: null }));
 const useJobs = adaptOrvalList<Row>(read);
@@ -34,13 +36,13 @@ const useJobs = adaptOrvalList<Row>(read);
 const held: { list?: UseCrudListResult<Row>; address?: CrudSearchFilters; move?: (next: CrudSearchFilters | undefined) => void } = {};
 
 /** A page with no router: the address is a state, written the way a route's `navigate` writes it. */
-function Harness({ initial, forced }: { initial?: CrudSearchFilters; forced?: Record<string, unknown> }): ReactNode {
+function Harness({ initial, forced, declared = declaration }: { initial?: CrudSearchFilters; forced?: Record<string, unknown>; declared?: typeof declaration }): ReactNode {
   const [address, setAddress] = useState<CrudSearchFilters | undefined>(initial);
   const where: ListAddress = { value: address, onChange: setAddress };
   const list = useCrudList<Row>(useJobs, {
     stateMode: "server",
     filterMode: "immediate",
-    addressedFilters: declaration.useAddressed(where, forced),
+    addressedFilters: declared.useAddressed(where, forced),
   });
   held.list = list;
   held.address = address;
@@ -62,7 +64,7 @@ afterEach(() => {
   read.mockClear();
 });
 
-function mount(props: { initial?: CrudSearchFilters; forced?: Record<string, unknown> } = {}): void {
+function mount(props: { initial?: CrudSearchFilters; forced?: Record<string, unknown>; declared?: typeof declaration } = {}): void {
   root = createRoot(document.createElement("div"));
   act(() => root?.render(createElement(Harness, props)));
 }
@@ -98,5 +100,32 @@ describe("a list opened or moved by an address it did not write", () => {
     mount();
     act(() => held.move?.({ "retried.equals": "true", "ghost.in": "x" }));
     expect(committed()).toEqual({ "retried.equals": true });
+  });
+});
+
+describe("a list opened on a window of the field its page draws a time range over", () => {
+  const WINDOW = "2026-11-01T00:00:00Z,2026-11-02T00:00:00Z";
+
+  it("applies the window the address carries, though no filter control is drawn for the field", () => {
+    mount({ initial: { "startedAt.between": WINDOW, "ghost.in": "x" }, declared: withRange });
+    expect(committed()).toEqual({ "startedAt.between": WINDOW });
+  });
+
+  it("keeps that window when the reader then changes a filter", () => {
+    mount({ initial: { "startedAt.between": WINDOW }, declared: withRange });
+    act(() => held.list?.filters.commitValue("status.in", ["FAILED"]));
+    expect(committed()).toEqual({ "startedAt.between": WINDOW, "status.in": ["FAILED"] });
+    expect(held.address).toEqual({ "startedAt.between": WINDOW, "status.in": ["FAILED"] });
+  });
+
+  it("adopts a window that arrives later", () => {
+    mount({ declared: withRange });
+    act(() => held.move?.({ "startedAt.between": WINDOW }));
+    expect(committed()).toEqual({ "startedAt.between": WINDOW });
+  });
+
+  it("drops the same window where the page draws no time range, so no key narrows with nothing to show it", () => {
+    mount({ initial: { "startedAt.between": WINDOW } });
+    expect(committed()).toEqual({});
   });
 });
