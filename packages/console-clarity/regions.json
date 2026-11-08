@@ -62,6 +62,8 @@
         "time-range-action",
         "time-range-nav-button",
         "time-range-preset",
+        "time-range-custom-chip",
+        "time-range-retry",
         "button"
       ]
     },
