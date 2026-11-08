@@ -94,8 +94,10 @@ export const tileChipStyle = defineSlotStyle({
   variants: {
     /** Whether pressing the chip does anything; a chip for a plain figure says so with its cursor and does not react. */
     pressable: { true: "", false: "cursor-not-allowed hover:bg-card active:scale-100" },
+    /** Whether the list stands on this chip's figure: ringed the way the card's press is, so a chosen chip reads as chosen. */
+    pressed: { true: "border-ring ring-2 ring-ring", false: "" },
   },
-  defaultVariants: { pressable: true },
+  defaultVariants: { pressable: true, pressed: false },
 });
 
 /**

@@ -672,7 +672,7 @@ function TileChips({
         const common = {
           className: "inline-flex shrink-0 items-center",
           style: { "--i": index } as CSSProperties,
-          ...slotAttributes(tileChipStyle, { pressable }),
+          ...slotAttributes(tileChipStyle, { pressable, pressed: Boolean(tile.filter && filters) && pressedKeys.has(tile.key) }),
         };
         if (tile.filter && filters) {
           return (

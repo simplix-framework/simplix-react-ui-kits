@@ -688,6 +688,9 @@
   [data-slot="console-tile-chip"][data-pressable="false"][data-s-console-tile-chip] {
     @apply cursor-not-allowed;
   }
+  [data-slot="console-tile-chip"][data-pressed="true"][data-s-console-tile-chip] {
+    @apply border-ring ring-2 ring-ring;
+  }
   [data-slot="console-tile-chips"][data-slot][data-s-console-tile-chips] {
     @apply -m-[var(--focus-gutter)] gap-1.5 p-[var(--focus-gutter)] [scrollbar-width:none];
   }
@@ -1811,6 +1814,9 @@
   }
   :where([data-slot="console-tile-chip"][data-pressable="false"])[data-s-console-tile-chip] {
     @apply hover:bg-card hover:border-[var(--border)] active:scale-100;
+  }
+  :where([data-slot="console-tile-chip"][data-pressed="true"])[data-s-console-tile-chip] {
+    @apply focus-visible:ring-2;
   }
   :where([data-slot="console-tile-go"])[data-s-console-tile-go] {
     @apply group-hover:text-foreground group-focus-visible:text-foreground group-hover:translate-x-0 group-focus-visible:translate-x-0;

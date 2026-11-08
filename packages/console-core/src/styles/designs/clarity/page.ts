@@ -30,6 +30,8 @@ export const pageSlots: Record<string, string> = {
     "gap-2 rounded-[var(--radius-badge)] border-[var(--border)] px-[11px] text-(length:--fs-control) leading-(--lh-control) transition-[opacity,translate,border-color,background-color] delay-[calc(var(--i)*35ms+80ms)] duration-[var(--dur-base)] ease-[var(--ease-spring)] hover:border-[var(--muted-2)] hover:bg-card active:scale-[0.98] focus-visible:outline-none focus-visible:ring-0 focus-visible:shadow-[var(--focus-halo)] [[data-open=false]_&]:translate-y-1 [[data-open=false]_&]:opacity-0 [[data-open=false]_&]:delay-0",
   // A chip for a plain figure does nothing when pressed, so it neither lights nor sinks.
   "console-tile-chip pressable=false": "cursor-not-allowed hover:border-[var(--border)] active:scale-100",
+  // A chip the list stands on keeps its ring while the keyboard is on it (the halo is drawn beside it, not instead of it).
+  "console-tile-chip pressed=true": "border-ring ring-2 ring-ring focus-visible:ring-2",
   // The tint the tile carries is a class the figure is handed at runtime, so it is outweighed.
   "console-tile-chip-figure": "text-(length:--fs-control) leading-(--lh-control)",
   // Every tone that colours words takes the design's text grade (`--*-text`); the tones with no

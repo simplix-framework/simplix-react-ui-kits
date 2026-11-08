@@ -685,6 +685,9 @@
   [data-slot="console-tile-chip"][data-pressable="false"][data-s-console-tile-chip] {
     @apply cursor-not-allowed;
   }
+  [data-slot="console-tile-chip"][data-pressed="true"][data-s-console-tile-chip] {
+    @apply border-ring ring-2 ring-ring;
+  }
   [data-slot="console-tile-chips"][data-slot][data-s-console-tile-chips] {
     @apply -m-[var(--focus-gutter)] gap-1.5 p-[var(--focus-gutter)] [scrollbar-width:none];
   }
