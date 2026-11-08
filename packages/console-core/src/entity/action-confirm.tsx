@@ -1,5 +1,9 @@
 import { useCallback, useEffect, useReducer, useRef } from "react";
+import { getErrorMessage, getValidationErrors } from "@simplix-react/api";
+import { useTranslation } from "@simplix-react/i18n/react";
 import { ConfirmDialog } from "@simplix-react/ui";
+
+import { PACKAGE_NAMESPACE } from "./locales";
 
 /**
  * A sentence the dialog draws, either fixed or written from the record it is about.
@@ -31,7 +35,11 @@ export interface ActionConfirmConfig<T> {
    * What the verb does, once somebody has said yes.
    *
    * <p><b>Return the run's promise.</b> The dialog stays open on the running label until it
-   * settles, then closes. A verb that returns nothing is followed through {@link running} instead.
+   * settles. When the promise resolves the dialog closes; when it rejects (the server refused the
+   * verb) the dialog stays open and says why, and pressing the button again tries again, so a
+   * refusal is read where the reader is looking and not in a toast that has gone by the time they
+   * look. A verb that catches its own failure and resolves is a success to the dialog, so it lets
+   * the rejection through. A verb that returns nothing is followed through {@link running} instead.
    */
   readonly onConfirm: (target: T) => void | PromiseLike<unknown>;
   /**
@@ -99,6 +107,7 @@ export interface ActionConfirm<T> {
  */
 export function useActionConfirm<T>(config: ActionConfirmConfig<T>): ActionConfirm<T> {
   const { title, description, confirmLabel, runningLabel, cancelLabel, onConfirm, running, destructive } = config;
+  const { t } = useTranslation(`${PACKAGE_NAMESPACE}/features`);
   // The target lives here rather than in the caller because every one of the eight sites would
   // otherwise hold the same piece of state, and a screen guarding two verbs would hold it twice
   // under two names.
@@ -117,8 +126,10 @@ export function useActionConfirm<T>(config: ActionConfirmConfig<T>): ActionConfi
     const outcome = onConfirm(chosen);
     if (isThenable(outcome)) {
       dispatch({ type: "sent", follows: "promise" });
-      const settle = () => dispatch({ type: "settled" });
-      outcome.then(settle, settle);
+      outcome.then(
+        () => dispatch({ type: "settled" }),
+        (error: unknown) => dispatch({ type: "refused", message: refusalSentence(error) }),
+      );
     } else {
       dispatch({ type: "sent", follows: running === undefined ? "nothing" : "running", running });
     }
@@ -142,7 +153,7 @@ export function useActionConfirm<T>(config: ActionConfirmConfig<T>): ActionConfi
       }}
       onConfirm={answer}
       title={say(title)}
-      description={say(description)}
+      description={refusedDescription(say(description), state.phase === "asking" ? state.refusal : undefined, t("actionDialog.refused"))}
       cancelLabel={cancelLabel}
       confirmLabel={say(confirmLabel)}
       pendingLabel={say(runningLabel)}
@@ -155,11 +166,36 @@ export function useActionConfirm<T>(config: ActionConfirmConfig<T>): ActionConfi
 }
 
 /**
+ * What the server said when it refused a verb, as one sentence: the messages it gave for the
+ * fields it named, or its own message.
+ *
+ * @param error what the verb's promise rejected with
+ * @returns the sentence the dialog shows
+ */
+export function refusalSentence(error: unknown): string {
+  const named = (getValidationErrors(error) ?? []).map((one) => one.message).filter((message) => message.length > 0);
+  return named.length > 0 ? named.join(" ") : getErrorMessage(error);
+}
+
+/**
+ * The description the dialog draws: the question's own, and while the server's refusal of the last
+ * press stands, the refusal first, so the reader meets why nothing happened before the question again.
+ *
+ * @param sentence what the verb says it does
+ * @param refusal the server's sentence, while a refusal stands
+ * @param lead the words that say the server refused
+ */
+export function refusedDescription(sentence: string, refusal: string | undefined, lead: string): string {
+  return refusal === undefined ? sentence : [lead, refusal, sentence].filter((part) => part.length > 0).join(" ");
+}
+
+/**
  * Where a confirmation stands: asking (open with a record, or closed with none), or sent and
- * waiting for the verb to settle by one of three signs.
+ * waiting for the verb to settle by one of three signs. An asking dialog that holds a refusal is the
+ * one whose verb rejected: it is open on the same record, ready for another press.
  */
 export type ConfirmState<T> =
-  | { readonly phase: "asking"; readonly target: T | null }
+  | { readonly phase: "asking"; readonly target: T | null; readonly refusal?: string }
   | { readonly phase: "waiting"; readonly target: T; readonly follows: "promise" | "running"; readonly started: boolean };
 
 /** What moves a confirmation. */
@@ -168,6 +204,7 @@ export type ConfirmEvent<T> =
   | { readonly type: "sent"; readonly follows: "promise" | "running" | "nothing"; readonly running?: boolean }
   | { readonly type: "running"; readonly running: boolean }
   | { readonly type: "settled" }
+  | { readonly type: "refused"; readonly message: string }
   | { readonly type: "dismiss" };
 
 const IDLE: ConfirmState<never> = { phase: "asking", target: null };
@@ -178,8 +215,10 @@ const IDLE: ConfirmState<never> = { phase: "asking", target: null };
  * <p><b>Sent, it stays open until the verb settles.</b> A promise settles it; a verb followed by
  * `running` settles on the first `false` after a `true`, because a mutation reports itself running
  * on the tick after the press and the `false` read in between is not the end of it. A verb with
- * neither has nothing to wait for and closes at once. Success and failure close alike: the verb's
- * own toast says which it was.
+ * neither has nothing to wait for and closes at once. A promise that resolves closes it; one that
+ * rejects returns it to asking on the same record with the refusal held, and the dialog stays open
+ * for another press or a dismissal. A verb followed by `running` has no failure to read, so it closes
+ * on success and failure alike and the verb's own toast says which it was.
  *
  * <p><b>While it waits, nothing else lands.</b> A second press, a request for another record and
  * the Escape key are refused, so the reader sees the running label until the answer is in. The one
@@ -199,6 +238,8 @@ export function confirmStep<T>(state: ConfirmState<T>, event: ConfirmEvent<T>): 
       return state.started ? IDLE : state;
     case "settled":
       return state.phase === "waiting" && state.follows === "promise" ? IDLE : state;
+    case "refused":
+      return state.phase === "waiting" && state.follows === "promise" ? { phase: "asking", target: state.target, refusal: event.message } : state;
     case "dismiss":
       // A verb followed by `running` that has not reported itself running may never start (it can
       // refuse before calling anything), so the way out stays open until it does.

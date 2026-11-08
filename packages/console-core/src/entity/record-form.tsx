@@ -153,6 +153,8 @@ export interface RecordFormProps {
   readonly note?: string;
   /** The verb that finishes it, such as 「초대 보내기」. */
   readonly submitLabel: string;
+  /** The word on the verb's button while a returned promise is pending; the default is the kit's own saving word. */
+  readonly runningLabel?: string;
   /**
    * Sends the values. A returned promise that rejects is the server refusing them: the form says
    * so in a banner at its top and marks the fields the refusal names, instead of the rejection
@@ -177,7 +179,7 @@ export interface RecordFormProps {
  * fields, the messages that explain them, and the finishing verbs. Required fields left empty are
  * marked when the reader tries to finish, and nothing is sent until they are filled.
  */
-export function RecordForm({ title, sections, notices, note, submitLabel, onSubmit, onCancel, actions = [], children, fieldNotices }: RecordFormProps) {
+export function RecordForm({ title, sections, notices, note, submitLabel, runningLabel, onSubmit, onCancel, actions = [], children, fieldNotices }: RecordFormProps) {
   const { t: tUi } = useTranslation("simplix/ui");
   const { t } = useTranslation(PACKAGE_NAMESPACE + "/features");
   const form = useRecordFormValues(sections);
@@ -235,7 +237,7 @@ export function RecordForm({ title, sections, notices, note, submitLabel, onSubm
             {actions.map((action) => (
               <RecordVerbButton key={action.label} verb={action} />
             ))}
-            <Button type="submit" size="sm" loading={pending} loadingText={submitLabel} disabled={pending}>
+            <Button type="submit" size="sm" loading={pending} loadingText={runningLabel ?? t("recordForm.saving")} disabled={pending}>
               {submitLabel}
             </Button>
           </CrudForm.Actions>
@@ -298,6 +300,7 @@ export interface SettingsFormProps {
  */
 export function SettingsForm({ sections, notices, note, onSave }: SettingsFormProps) {
   const { t: tUi } = useTranslation("simplix/ui");
+  const { t } = useTranslation(PACKAGE_NAMESPACE + "/features");
   const [saved, setSaved] = useState(() => initialValues(sections));
   const [saving, setSaving] = useState(false);
   const form = useRecordFormValues(sections);
@@ -316,6 +319,8 @@ export function SettingsForm({ sections, notices, note, onSave }: SettingsFormPr
           <Button
             type="button"
             size="sm"
+            loading={saving}
+            loadingText={t("recordForm.saving")}
             disabled={!changed || saving}
             onClick={() => {
               if (form.missing.length > 0) {

@@ -51,6 +51,7 @@
     "fillBeforeSubmit": "Fill in {{count, number}} required field(s) first",
     "otpDigit": "Digit {{index, number}} of {{count, number}}",
     "refused": "The server did not accept this. Change what it names and save again.",
+    "saving": "Saving…",
     "secretKeep": "Leave blank to keep the stored value"
   },
   "figureTiles": {
@@ -58,7 +59,8 @@
     "unreadHint": "Reload the page to read them again. A figure that could not be read is drawn empty, which does not mean there is nothing to count."
   },
   "actionDialog": {
-    "running": "Working…"
+    "running": "Working…",
+    "refused": "The server did not accept this."
   },
   "recordList": {
     "selected": "selected",

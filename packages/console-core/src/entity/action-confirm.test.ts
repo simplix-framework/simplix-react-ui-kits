@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { confirmDestructive, confirmSentence } from "./action-confirm";
+import { confirmDestructive, confirmSentence, refusalSentence, refusedDescription } from "./action-confirm";
 
 interface Grant {
   readonly revoked: boolean;
@@ -35,5 +35,32 @@ describe("confirmDestructive", () => {
     expect(confirmDestructive(danger, { revoked: false })).toBe(true);
     expect(confirmDestructive(danger, { revoked: true })).toBe(false);
     expect(confirmDestructive(danger, null)).toBe(false);
+  });
+});
+
+describe("refusedDescription", () => {
+  it("draws the question's own sentence while nothing was refused", () => {
+    expect(refusedDescription("Stops new uses of this voice.", undefined, "The server did not accept this.")).toBe("Stops new uses of this voice.");
+  });
+
+  it("puts the refusal before the question, so the reader meets why nothing happened first", () => {
+    expect(refusedDescription("Stops new uses of this voice.", "The voice is in use.", "The server did not accept this.")).toBe(
+      "The server did not accept this. The voice is in use. Stops new uses of this voice.",
+    );
+  });
+
+  it("leaves out a part that is empty", () => {
+    expect(refusedDescription("", "The voice is in use.", "The server did not accept this.")).toBe("The server did not accept this. The voice is in use.");
+  });
+});
+
+describe("refusalSentence", () => {
+  it("reads the server's own message from a rejection", () => {
+    expect(refusalSentence(new Error("The voice is in use"))).toBe("The voice is in use");
+  });
+
+  it("joins the messages of the fields the server named, when it named any, in place of its general sentence", () => {
+    const named = { data: { message: "Validation failed", errorDetail: [{ field: "reason", message: "Give a reason." }, { field: "until", message: "Pick a later day." }] } };
+    expect(refusalSentence(named)).toBe("Give a reason. Pick a later day.");
   });
 });

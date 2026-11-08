@@ -143,7 +143,7 @@ function ActionDialogBody({
           <DialogTitle>{title}</DialogTitle>
         </DialogHeader>
         <Stack gap="sm">
-          <RecordNotices notices={refusal ? [{ key: "submit-refused", tone: "danger", title: t("recordForm.refused"), body: refusal.message }, ...(notices ?? [])] : notices} />
+          <RecordNotices notices={refusal ? [{ key: "submit-refused", tone: "danger", title: t("actionDialog.refused"), body: refusal.message }, ...(notices ?? [])] : notices} />
           {sections?.map((section) => (
             <CrudDetail.Section key={section.key} title={section.title} variant="flat" layout="two-column">
               {section.fields.map((field) => (

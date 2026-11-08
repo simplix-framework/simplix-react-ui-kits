@@ -53,6 +53,35 @@ describe("confirmStep: a verb returning its promise", () => {
   });
 });
 
+describe("confirmStep: a verb whose promise the server refused", () => {
+  const sent = run([{ type: "sent", follows: "promise" }], asked);
+
+  it("returns to asking on the same record with the refusal held, so the dialog stays open", () => {
+    const refused = run([{ type: "refused", message: "The voice is in use" }], sent);
+    expect(refused).toEqual({ phase: "asking", target: { id: "a" }, refusal: "The voice is in use" });
+    expect(confirmBusy(refused, undefined)).toBe(false);
+  });
+
+  it("lets the reader press again, and drops the refusal while the second press runs", () => {
+    const refused = run([{ type: "refused", message: "The voice is in use" }], sent);
+    const again = run([{ type: "sent", follows: "promise" }], refused);
+    expect(again).toEqual({ phase: "waiting", target: { id: "a" }, follows: "promise", started: false });
+    expect(run([{ type: "settled" }], again)).toEqual(closed);
+  });
+
+  it("lets the reader dismiss it, and forgets the refusal for the next record asked about", () => {
+    const refused = run([{ type: "refused", message: "The voice is in use" }], sent);
+    expect(run([{ type: "dismiss" }], refused)).toEqual(closed);
+    expect(run([{ type: "request", target: { id: "b" } }], refused)).toEqual({ phase: "asking", target: { id: "b" } });
+  });
+
+  it("is read only for a promise: a verb followed by running or asked about has no refusal to hold", () => {
+    expect(run([{ type: "refused", message: "x" }], asked)).toBe(asked);
+    const running = run([{ type: "sent", follows: "running" }], asked);
+    expect(run([{ type: "refused", message: "x" }], running)).toBe(running);
+  });
+});
+
 describe("confirmStep: a verb with nothing to follow", () => {
   it("closes at once, as a synchronous verb has already happened", () => {
     expect(run([{ type: "sent", follows: "nothing" }], asked)).toEqual(closed);

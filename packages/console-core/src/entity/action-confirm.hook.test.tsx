@@ -64,10 +64,14 @@ vi.mock("react", async (original) => ({
   useEffect: harness.useEffect,
 }));
 
+// The hook reads one catalog word through the translation hook, which needs a provider this runtime has not got.
+vi.mock("@simplix-react/i18n/react", () => ({ useTranslation: () => ({ t: (key: string) => key }) }));
+
 const { useActionConfirm } = await import("./action-confirm");
 
 interface DialogProps {
   readonly open: boolean;
+  readonly description?: string;
   readonly isPending?: boolean;
   readonly onConfirm: () => void;
   readonly onOpenChange: (open: boolean) => void;
@@ -159,5 +163,51 @@ describe("useActionConfirm", () => {
     screen.rerender(undefined);
     expect(onConfirm).toHaveBeenCalledWith({ id: "a" });
     expect(screen.dialog().open).toBe(false);
+  });
+});
+
+describe("useActionConfirm: a verb the server refuses", () => {
+  /** Lets the rejection's continuation run, then draws the state it dispatched. */
+  async function settled(screen: ReturnType<typeof mount>) {
+    await Promise.resolve();
+    await Promise.resolve();
+    screen.rerender(undefined);
+  }
+
+  it("stays open on the refusal, says why before the question, and closes only on a press that succeeds", async () => {
+    const onConfirm = vi.fn().mockRejectedValueOnce(new Error("The voice is in use")).mockResolvedValueOnce(undefined);
+    const screen = mount({ onConfirm });
+    screen.request({ id: "a" });
+    screen.dialog().onConfirm();
+    screen.rerender(undefined);
+    expect(screen.dialog().isPending).toBe(true);
+
+    await settled(screen);
+    expect(screen.dialog().open).toBe(true);
+    expect(screen.dialog().isPending).toBe(false);
+    // No catalog is loaded in this runtime, so the lead reads as its key.
+    expect(screen.dialog().description).toBe("actionDialog.refused The voice is in use Resets the breaker");
+
+    screen.dialog().onConfirm();
+    screen.rerender(undefined);
+    expect(screen.dialog().description).toBe("Resets the breaker");
+    await settled(screen);
+    expect(onConfirm).toHaveBeenCalledTimes(2);
+    expect(screen.dialog().open).toBe(false);
+  });
+
+  it("lets the reader leave a refused verb, and shows no refusal the next time it is asked", async () => {
+    const screen = mount({ onConfirm: () => Promise.reject(new Error("The voice is in use")) });
+    screen.request({ id: "a" });
+    screen.dialog().onConfirm();
+    screen.rerender(undefined);
+    await settled(screen);
+    expect(screen.dialog().open).toBe(true);
+
+    screen.dialog().onOpenChange(false);
+    screen.rerender(undefined);
+    expect(screen.dialog().open).toBe(false);
+    screen.request({ id: "a" });
+    expect(screen.dialog().description).toBe("Resets the breaker");
   });
 });
