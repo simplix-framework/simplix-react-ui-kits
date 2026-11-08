@@ -1,4 +1,5 @@
 import { join } from "node:path";
+import { forcedScope } from "@simplix-react/ui";
 import { describe, expect, it } from "vitest";
 
 import { render, typecheck, virtualRoot } from "./template-typecheck";
@@ -143,10 +144,29 @@ describe("the generated list's drawn filters and address", () => {
   it("returns the list to its first page when the page forces another request or opens another tab", () => {
     const source = renderList();
     expect(source).toContain("export function useJobList(params?: Readonly<Record<string, unknown>>, address?: ListAddress, scope?: string) {");
-    expect(source).toContain("scopeKey: listScopeOf(params, scope),");
-    expect(source).toMatch(/import \{ adaptForcedList, adaptOrvalList, useCrudList \} from "@simplix-react\/ui";/);
-    expect(source).toMatch(/import \{ declareListAddress, listScopeOf, /);
+    expect(source).toContain("scopeKey: params || scope ? `${params ? forcedScope({ ...params }) : \"\"}|${scope ?? \"\"}` : undefined,");
+    expect(source).toMatch(/import \{ adaptForcedList, adaptOrvalList, forcedScope, useCrudList \} from "@simplix-react\/ui";/);
     expect(checkList(source)).toEqual([]);
+  });
+
+  it("builds a scope that moves with the open tab and with the forced request, and none for a list with neither", () => {
+    const line = renderList().match(/^\s*scopeKey: (.+),$/m)?.[1];
+    expect(line).toBeDefined();
+    const scopeOf = new Function("forcedScope", "params", "scope", `return ${line};`) as (
+      forced: typeof forcedScope,
+      params: Record<string, unknown> | undefined,
+      scope: string | undefined,
+    ) => string | undefined;
+    const of = (params: Record<string, unknown> | undefined, scope: string | undefined) => scopeOf(forcedScope, params, scope);
+    expect(of(undefined, undefined)).toBeUndefined();
+    // The page that holds one list across tabs which force nothing: only the open tab tells them apart.
+    expect(of(undefined, "keys")).not.toBe(of(undefined, "installation"));
+    expect(of(undefined, "keys")).toBe(of(undefined, "keys"));
+    // The page whose tabs force a request: the request tells them apart, as before.
+    expect(of({ "inUse.equals": "true" }, undefined)).not.toBe(of({ "inUse.equals": "false" }, undefined));
+    // Both at once, and a forced request is not mistaken for a tab of the same text.
+    expect(of({ "inUse.equals": "true" }, "used")).not.toBe(of({ "inUse.equals": "true" }, "all"));
+    expect(of({ a: "1" }, undefined)).not.toBe(of(undefined, "a=1"));
   });
 });
 

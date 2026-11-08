@@ -30,7 +30,6 @@ export { RECORD_READ_META } from "./record-read-meta";
 export type { ListTotalOptions, ListTotalSource } from "./list-total";
 export { declareListAddress, declaredFilterKeys, filterControlsOf, narrowAddressedFilters } from "./list-address";
 export type { ListAddress, ListAddressDeclaration, ListAddressOptions } from "./list-address";
-export { listScopeOf } from "./list-scope";
 export { RecordList, countedChips, openingView, orderUpdates, splitCardColumns, useAnnounceOutcome } from "./record-list";
 export { LIST_VIEW_STORAGE_PREFIX, readRememberedView, useRememberedView, writeRememberedView } from "./list-view-memory";
 export type { RememberedView } from "./list-view-memory";
