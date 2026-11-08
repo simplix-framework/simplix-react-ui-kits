@@ -16,7 +16,7 @@ vi.hoisted(() => {
 const { RecordDetail } = await import("./record-detail");
 
 /** What a copy control is drawn as: a button inside a copyable row. */
-const COPY_CONTROLS = /<button[^>]*copyAction/g;
+const COPY_CONTROLS = /<button[^>]*clipboard\.copy(?:Action|Named)/g;
 
 function html(fields: NonNullable<RecordDetailProps["sections"]>[number]["fields"]): string {
   const sections: RecordDetailProps["sections"] = [{ key: "main", title: "Main", fields }];

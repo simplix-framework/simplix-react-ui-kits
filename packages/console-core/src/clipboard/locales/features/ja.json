@@ -2,6 +2,7 @@
   "clipboard": {
     "copied": "コピーしました",
     "copyAction": "コピーする",
+    "copyNamed": "{{label}}をコピー",
     "failed": "コピーできませんでした。下の値を選択して手動でコピーしてください。",
     "unsupported": "このブラウザーではコピーボタンを使えません。アドレスを https で開くか、下の値を選択して手動でコピーしてください。",
     "value": "値: {{value}}"

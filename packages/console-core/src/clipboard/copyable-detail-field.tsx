@@ -25,6 +25,19 @@ export interface CopyableDetailFieldProps extends Omit<WrapperProps, "children">
 }
 
 /**
+ * What a copy control is called to a screen reader: the field it copies, where the row has a text
+ * label, so two copy controls of one record say which value each carries; the generic action where
+ * the row's label is not text.
+ *
+ * @param label the row's label
+ * @param generic the name that stands for any copy control
+ * @param named the name from a field's label
+ */
+export function copyControlName(label: unknown, generic: string, named: (label: string) => string): string {
+  return typeof label === "string" && label.trim() !== "" ? named(label.trim()) : generic;
+}
+
+/**
  * A read-only detail row with a copy control that works at the address this console is reached
  * at.
  *
@@ -53,6 +66,7 @@ export interface CopyableDetailFieldProps extends Omit<WrapperProps, "children">
 export function CopyableDetailField({ value, fallback, children, ...wrapper }: CopyableDetailFieldProps) {
   const { t } = useTranslation(PACKAGE_NAMESPACE + "/features");
   const copy = useCopyToClipboard();
+  const controlName = copyControlName(wrapper.label, t("clipboard.copyAction"), (label) => t("clipboard.copyNamed", { label }));
 
   const hasValue = value != null && value !== "";
 
@@ -70,7 +84,7 @@ export function CopyableDetailField({ value, fallback, children, ...wrapper }: C
             // Named rather than left to an icon. The framework's own control labels itself in
             // English whatever the console is set to, which is its own small defect; a row read
             // by a screen reader in Korean should not suddenly speak English.
-            aria-label={t("clipboard.copyAction")}
+            aria-label={controlName}
             onClick={() => void copy(value)}
           >
             <Copy />
