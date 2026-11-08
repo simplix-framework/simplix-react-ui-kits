@@ -86,6 +86,13 @@ export interface NoticeCardProps {
    * dropdown offers as well, unless {@link NoticeCardProps.actionLabel} names another.
    */
   readonly actions?: readonly NoticeCardAction[];
+  /**
+   * Keeps the card on the header's list after it has unmounted, so the control that brings it back
+   * outlives its surface. For a card drawn inside a modal (a record's drawer, a dialog), which is
+   * unmounted while closed: without it, a card put away there leaves no route back once the surface
+   * closes. See {@link NoticeEntry.retain}.
+   */
+  readonly retain?: boolean;
 }
 
 /**
@@ -126,6 +133,7 @@ export function NoticeCard({
   expanded,
   body,
   actions,
+  retain,
 }: NoticeCardProps) {
   const { t } = useTranslation("common");
   const dismissals = useNoticeDismissals();
@@ -139,6 +147,7 @@ export function NoticeCard({
     hint,
     actionLabel: actionLabel ?? first?.label,
     onAction: actionLabel ? onAction : typeof first?.onAction === "function" ? first.onAction : undefined,
+    retain,
   });
 
   // **Put away by folding, not by vanishing.** Removed on the frame of the press, every row under

@@ -60,7 +60,7 @@ export type { EntityPeekSpec } from "./entity-peek";
 export type { ReferenceTarget } from "./reference-value";
 export { RecordDetail, RecordTabBody } from "./record-detail";
 export type { RecordDetailProps, RecordField, RecordHeadFigure, RecordSection, RecordTab, RecordTabContent, RecordTabToggle } from "./record-detail";
-export { RecordNote, RecordNotices, RecordVerbButton, RecordVerbs, raisedRecordNotices } from "./record-blocks";
+export { RecordNote, RecordNoticeMenu, RecordNotices, RecordVerbButton, RecordVerbs, raisedRecordNotices, standingNoticeKeys } from "./record-blocks";
 export type { RecordNotice, RecordVerb } from "./record-blocks";
 export { RecordTree } from "./record-tree";
 export type { RecordTreeFeatures, RecordTreeProps } from "./record-tree";

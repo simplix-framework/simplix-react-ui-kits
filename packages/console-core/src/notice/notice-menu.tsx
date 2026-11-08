@@ -40,6 +40,19 @@ import { partAttributes, slotAttributes } from "@simplix-react/ui/design";
  */
 const MENU_WIDTH = "w-[32rem] max-w-[calc(100vw-2rem)]";
 
+/** Props for {@link NoticeMenu}. */
+export interface NoticeMenuProps {
+  /**
+   * The keys of the cards this control answers for, when it is not the page header's.
+   *
+   * <p>A modal surface (a record's drawer) covers the page header and its control with an overlay,
+   * so a card put away inside it needs the control inside the surface. That one lists only the
+   * cards the surface can show, never the whole screen's. Left out, the control lists every card
+   * of the screen, which is the page header's.
+   */
+  readonly only?: readonly string[];
+}
+
 /**
  * The header's controls for this screen's notice cards — one per kind with a card put away.
  *
@@ -62,15 +75,20 @@ const MENU_WIDTH = "w-[32rem] max-w-[calc(100vw-2rem)]";
  * offer 「다시 보이기」; the others are there so the reader recognises the group they put a card
  * away from rather than meeting one card out of context.
  */
-export function NoticeMenu() {
-  const entries = useNoticeEntries();
+export function NoticeMenu({ only }: NoticeMenuProps = {}) {
+  const all = useNoticeEntries();
   const dismissals = useNoticeDismissals();
+  const entries = only ? all.filter((entry) => only.includes(entry.noticeKey)) : all;
   if (entries.length === 0) return null;
   return (
     // One cluster rather than four verbs; the slot says how tight.
     <Flex align="center" {...partAttributes(noticeMenuStyle, {})}>
       {DISMISSIBLE_NOTICE_KINDS.map((kind) => {
-        const ofKind = entries.filter((entry) => entry.kind === kind);
+        // A lingering entry (its modal is closed) is listed only while it is put away: drawn nowhere
+        // and not hidden, it is nothing for the reader to come back to.
+        const ofKind = entries.filter(
+          (entry) => entry.kind === kind && (!entry.lingering || dismissals.isHidden(entry.noticeKey)),
+        );
         // `ready` as well as `isHidden`, for the same reason `NoticeCard` gates its own render on
         // it: until the operator's dismissals have arrived nothing is known to be hidden, and a
         // control that appeared and then vanished would be the header flinching on every load.

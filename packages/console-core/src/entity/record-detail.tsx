@@ -25,7 +25,7 @@ import { partAttributes, slotAttributes } from "@simplix-react/ui/design";
 import { CopyableDetailField } from "../clipboard/copyable-detail-field";
 import { InitialsAvatar } from "../identity/initials-avatar";
 import { CountedTab } from "../layout/page-tabs";
-import { RecordNote, RecordNotices, RecordVerbButton, RecordVerbs, type RecordNotice, type RecordVerb } from "./record-blocks";
+import { RecordNote, RecordNoticeMenu, RecordNotices, RecordVerbButton, RecordVerbs, standingNoticeKeys, type RecordNotice, type RecordVerb } from "./record-blocks";
 import { PermissionMatrix, type PermissionMatrixProps } from "./permission-matrix";
 import { BoundedDialogContent } from "../layout/bounded-dialog-content";
 import { recordHeadFigureLabelStyle, recordHeadFigureStyle, recordHeadFigureValueStyle, recordHeadFiguresStyle, recordHeadStyle, recordHeadSubtitleStyle, recordSublistStyle } from "./record-detail.style";
@@ -499,13 +499,19 @@ export function RecordTabBody({ content, count }: { readonly content: RecordTabC
 }
 
 
-/** The record's head with the presentation switch at its top right, when the page offers one. */
-function withPresentationSwitch(head: ReactNode, presentationSwitch: DetailPresentationSwitchProps | undefined): ReactNode {
-  if (!presentationSwitch) return head;
+/**
+ * The record's head with, at its top right, the way back to a put-away notice (a modal only) and
+ * the presentation switch, when the page offers them.
+ */
+function withHeadControls(head: ReactNode, noticeKeys: readonly string[], presentationSwitch: DetailPresentationSwitchProps | undefined): ReactNode {
+  if (noticeKeys.length === 0 && !presentationSwitch) return head;
   return (
     <Flex align="start" justify="between" gap="sm" flex minSize>
       {head}
-      <DetailPresentationSwitch {...presentationSwitch} />
+      <Flex align="center" gap="xs" shrink={false}>
+        <RecordNoticeMenu keys={noticeKeys} />
+        {presentationSwitch ? <DetailPresentationSwitch {...presentationSwitch} /> : null}
+      </Flex>
     </Flex>
   );
 }
@@ -541,12 +547,18 @@ export function RecordDetail({
   fieldEnums,
 }: RecordDetailProps) {
   const [openTab, setOpenTab] = useState(defaultTab ?? tabs?.[0]?.key ?? "");
-  const presentationSwitch = useCrudPresentation()?.presentationSwitch;
+  const crud = useCrudPresentation();
+  const presentationSwitch = crud?.presentationSwitch;
+  // A drawer and a dialog put an overlay over the page header, and its control for put-away cards
+  // with it; the record's own head carries the control for the notices it draws.
+  const modal = crud?.presentation === "drawer" || crud?.presentation === "dialog";
   const tabsTrailing = tabToggle ? <TabToggle toggle={tabToggle} /> : null;
   const verbsInFooter = tabVerbs === "footer";
   const footerTabVerbs = verbsInFooter ? tabs?.find((tab) => tab.key === openTab)?.verbs : undefined;
   // One tab is no choice: its content is drawn on its own, with no strip naming it.
   const only = tabs && tabs.length === 1 ? tabs[0] : undefined;
+  const openTabNotices = (only ?? tabs?.find((tab) => tab.key === openTab))?.notices;
+  const noticeKeys = modal ? standingNoticeKeys(notices, openTabNotices) : [];
   const body = only ? (
     <Stack gap="sm">
       {tabsTrailing ? <Flex justify="end">{tabsTrailing}</Flex> : null}
@@ -590,7 +602,7 @@ export function RecordDetail({
   return (
     <CrudDetail
       isLoading={isLoading}
-      header={withPresentationSwitch(
+      header={withHeadControls(
         head ?? <Flex align="center" gap="sm" minSize {...partAttributes(recordHeadStyle, {})}>
           {avatar !== undefined ? <InitialsAvatar name={title} seed={avatar} size="lg" /> : null}
           <Stack gap="none" minSize>
@@ -618,6 +630,7 @@ export function RecordDetail({
             ) : null}
           </Stack>
         </Flex>,
+        noticeKeys,
         presentationSwitch,
       )}
       onClose={onClose}

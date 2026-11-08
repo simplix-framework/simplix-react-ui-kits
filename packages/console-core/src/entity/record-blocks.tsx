@@ -4,6 +4,7 @@ import { CircleAlertIcon, CircleCheckIcon, InfoIcon, TriangleAlertIcon } from "l
 import { slotAttributes } from "@simplix-react/ui/design";
 
 import { NoticeCard } from "../notice/notice-card";
+import { NoticeMenu } from "../notice/notice-menu";
 import type { DismissibleNoticeKind } from "../notice/notice-kind";
 import { recordNoteIconStyle, recordNoteStyle, verbBlockedReasonStyle, verbBlockedStyle } from "./record-blocks.style";
 
@@ -78,6 +79,34 @@ const NOTICE_CARD_KIND: Partial<Record<RecordNotice["tone"], DismissibleNoticeKi
 };
 
 /**
+ * The notice keys a surface answers for: those of its raised notices that are drawn as cards.
+ *
+ * @param notices the notices the surface draws, in any number of lists
+ * @returns the keys, without repeats
+ */
+export function standingNoticeKeys(...notices: readonly (readonly RecordNotice[] | undefined)[]): string[] {
+  const keys = notices.flatMap((list) =>
+    raisedRecordNotices(list).flatMap((notice) => (notice.noticeKey && NOTICE_CARD_KIND[notice.tone] ? [notice.noticeKey] : [])),
+  );
+  return [...new Set(keys)];
+}
+
+/**
+ * The way back to a record notice the reader put away, drawn inside the modal surface (a drawer, a
+ * dialog) that holds it.
+ *
+ * <p>A modal's overlay covers the page header and the control it draws for put-away cards, so a
+ * card closed in a drawer would otherwise leave nothing the reader can press. This control sits in
+ * the surface's own head, next to its close control, and answers only for the notices the surface
+ * draws. It draws nothing while none of them is put away. The page header's control stays the way
+ * back once the surface is closed.
+ */
+export function RecordNoticeMenu({ keys }: { readonly keys: readonly string[] }) {
+  if (keys.length === 0) return null;
+  return <NoticeMenu only={keys} />;
+}
+
+/**
  * Draws {@link RecordNotice}s, one under the other: a standing one (it names a `noticeKey`) as a
  * closable notice card, every other as a banner.
  */
@@ -98,6 +127,9 @@ export function RecordNotices({ notices }: { readonly notices?: readonly RecordN
               hint={notice.body}
               actionLabel={notice.action?.onClick ? notice.action.label : undefined}
               onAction={notice.action?.onClick}
+              // A record's notices are drawn inside a surface that closes (a drawer, a dialog), and
+              // the put-away choice outlives it: the entry stays so the way back does too.
+              retain
             />
           );
         }

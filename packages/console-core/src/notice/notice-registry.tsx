@@ -33,6 +33,24 @@ export interface NoticeEntry {
    * <p>Give it a stable identity ({@link useCallback}); it is compared on every render.
    */
   readonly onAction?: () => void;
+  /**
+   * Whether the entry stays on the list after the last card or declaration that wrote it has
+   * unmounted.
+   *
+   * <p>For a card whose surface is a modal (a record's drawer, an action dialog). Its dismissal is
+   * remembered per operator and outlives the surface, so an entry that left with the surface would
+   * leave the header's control with nothing to list: the reader put the card away and, with the
+   * surface closed, has no route back to it. A retained entry keeps the title and the hint, drops
+   * the action (the callback belongs to an unmounted surface) and goes when the registry does,
+   * which is when the routed screen does.
+   */
+  readonly retain?: boolean;
+  /**
+   * True while a retained entry has no card drawing it, because the surface that held the card is
+   * closed. Set by the registry, never by a caller. The header lists such an entry only while the
+   * card is put away, since a card that is not hidden and not drawn is nothing to come back to.
+   */
+  readonly lingering?: boolean;
 }
 
 /**
@@ -67,7 +85,9 @@ function same(a: NoticeEntry, b: NoticeEntry): boolean {
     && a.title === b.title
     && a.hint === b.hint
     && a.actionLabel === b.actionLabel
-    && a.onAction === b.onAction;
+    && a.onAction === b.onAction
+    && a.retain === b.retain
+    && a.lingering === b.lingering;
 }
 
 /**
@@ -143,6 +163,18 @@ function createNoticeStore(): NoticeStore {
           return;
         }
         owners.delete(noticeKey);
+      }
+      const at = entries.findIndex((candidate) => candidate.noticeKey === noticeKey);
+      if (at >= 0 && entries[at].retain) {
+        // The surface that drew the card is gone, and the entry stays for the way back. Its action
+        // belonged to that surface, so it goes; the words stay so the dropdown can name the card.
+        const kept = { ...entries[at], actionLabel: undefined, onAction: undefined, lingering: true };
+        if (same(entries[at], kept)) return;
+        const next = entries.slice();
+        next[at] = kept;
+        entries = next;
+        publish();
+        return;
       }
       const next = entries.filter((candidate) => candidate.noticeKey !== noticeKey);
       if (next.length === entries.length) return;

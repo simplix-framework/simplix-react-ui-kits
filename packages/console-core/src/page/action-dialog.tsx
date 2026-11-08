@@ -3,7 +3,7 @@ import { useTranslation } from "@simplix-react/i18n/react";
 import { Button, CrudDetail, DetailFieldWrapper, Dialog, DialogFooter, DialogHeader, DialogTitle, Flex, Stack, Stepline, useUnsavedChanges } from "@simplix-react/ui";
 
 import { PACKAGE_NAMESPACE } from "../entity/locales";
-import { RecordNote, RecordNotices, RecordVerbButton, type RecordNotice, type RecordVerb } from "../entity/record-blocks";
+import { RecordNote, RecordNoticeMenu, RecordNotices, RecordVerbButton, standingNoticeKeys, type RecordNotice, type RecordVerb } from "../entity/record-blocks";
 import type { RecordSection } from "../entity/record-detail";
 import { initialValues, RecordFormSections, refusalOf, useRecordFormValues, valuesChanged, type RecordFormSection, type SubmitRefusal } from "../entity/record-form";
 import { RecordValueView } from "../entity/record-value";
@@ -146,6 +146,7 @@ function ActionDialogBody({
     };
   });
   const [refusal, setRefusal] = useState<SubmitRefusal | undefined>(undefined);
+  const noticeKeys = standingNoticeKeys(notices);
   const blocked = submit?.disabled ?? (form.missing.length > 0 ? t("recordForm.fillBeforeSubmit", { count: form.missing.length }) : undefined);
   return (
     <>
@@ -156,7 +157,16 @@ function ActionDialogBody({
         onInteractOutside={(event) => pending && event.preventDefault()}
       >
         <DialogHeader>
-          <DialogTitle>{title}</DialogTitle>
+          {noticeKeys.length > 0 ? (
+            // The overlay covers the page header's control for put-away notices, so the dialog's own
+            // head carries the way back to the ones it draws.
+            <Flex align="center" justify="between" gap="sm">
+              <DialogTitle>{title}</DialogTitle>
+              <RecordNoticeMenu keys={noticeKeys} />
+            </Flex>
+          ) : (
+            <DialogTitle>{title}</DialogTitle>
+          )}
         </DialogHeader>
         <Stack gap="sm">
           <RecordNotices notices={refusal ? [{ key: "submit-refused", tone: "danger", title: t("actionDialog.refused"), body: refusal.message }, ...(notices ?? [])] : notices} />

@@ -11,6 +11,7 @@ export type { NoticeCardAction, NoticeCardProps } from "./notice-card";
 export { DISMISSIBLE_NOTICE_KINDS, DISMISSIBLE_NOTICE_KIND_STYLE } from "./notice-kind";
 export type { DismissibleNoticeKind, DismissibleNoticeKindStyle } from "./notice-kind";
 export { NoticeMenu } from "./notice-menu";
+export type { NoticeMenuProps } from "./notice-menu";
 export { NoticeRegistryProvider, useNoticeEntries, useRegisterNotice } from "./notice-registry";
 export { LocalNoticeDismissalsProvider } from "./local-dismissals";
 export type { LocalNoticeDismissalsProviderProps } from "./local-dismissals";

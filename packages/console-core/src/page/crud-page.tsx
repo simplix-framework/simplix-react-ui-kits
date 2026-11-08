@@ -61,6 +61,12 @@ export interface CrudPresentation {
 const CrudPresentationContext = createContext<CrudPresentation | undefined>(undefined);
 
 /**
+ * Hands a record the presentation it is drawn in, for a host that mounts a record component itself
+ * (a story, a screen with its own modal) instead of through a {@link CrudPage}.
+ */
+export const CrudPresentationProvider = CrudPresentationContext.Provider;
+
+/**
  * The presentation of the record being drawn, so one record component can serve every
  * presentation of the same page. Undefined outside a {@link CrudPage}.
  */
