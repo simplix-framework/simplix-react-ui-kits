@@ -2,6 +2,8 @@ import { useRef } from "react";
 import { makeFilterKey } from "@simplix-react/headless";
 import { SearchOperator, type AddressedFilters, type CrudSearchFilters, type FilterControl } from "@simplix-react/ui";
 
+import { windowKeysOf } from "../datetime/window-keys";
+
 import { NUMBER_FILTER_OPERATORS, textFilterOperators } from "./filter-operators";
 import type { ContractFilter } from "./record-contract";
 
@@ -28,6 +30,14 @@ export interface ListAddressOptions {
    * so its key is not one the address may carry.
    */
   readonly facetFields?: readonly string[];
+  /**
+   * The field the page draws a time range over (the strip commits `<field>.between`, the filter bar
+   * its two bounds). The strip is no filter control, so its keys are not among the declared filters;
+   * naming the field makes them keys the address may carry, and a link that opens the list on a
+   * window keeps it. Leave it out for a list whose page draws no time range: a window key in such an
+   * address has no control or badge to show it and is dropped.
+   */
+  readonly timeRangeField?: string;
 }
 
 /** One declared filter as the list draws it: its control, and the filter keys that control commits. */
@@ -86,13 +96,15 @@ export function filterControlsOf(defs: readonly ContractFilter[], options?: List
 }
 
 /**
- * The filter keys the list's controls commit, which are the only keys its address may carry.
+ * The filter keys the list's controls commit, which are the only keys its address may carry, and
+ * the keys of the time range the page draws over a field, when one is named.
  *
  * @param defs the filters the entity declares
  * @param options what else decides which of them the list draws
  */
 export function declaredFilterKeys(defs: readonly ContractFilter[], options?: ListAddressOptions): ReadonlySet<string> {
-  return new Set(drawnFilters(defs, options).flatMap((drawn) => drawn.keys));
+  const windowKeys = options?.timeRangeField === undefined ? [] : windowKeysOf(options.timeRangeField);
+  return new Set([...drawnFilters(defs, options).flatMap((drawn) => drawn.keys), ...windowKeys]);
 }
 
 /** The filters whose key `keep` accepts, or `undefined` when none is left, as an address that names none. */

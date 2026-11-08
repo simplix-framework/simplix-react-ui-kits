@@ -5,6 +5,7 @@ import { describe, expect, it, vi } from "vitest";
 
 import { filterDef, type RecordFilter } from "./record-list";
 import { recordFilterOf, type ContractFilter } from "./record-contract";
+import { windowKeysOf } from "../datetime/window-keys";
 import { declareListAddress, declaredFilterKeys, filterControlsOf, narrowAddressedFilters, type ListAddress } from "./list-address";
 
 /** A declaration of every kind, as a generated list states its filters. */
@@ -185,5 +186,48 @@ describe("a list's declared address", () => {
 
   it("answers an address that names no declared key as one that names none, so the list's defaults apply", () => {
     expect(addressedBy({ value: { "gone.in": "x" }, onChange: vi.fn() })?.value).toBeUndefined();
+  });
+});
+
+describe("the time range a page draws over a field", () => {
+  const WITH_RANGE = { ...FACETED, timeRangeField: "occurredAt" };
+
+  it("makes the strip's keys and the bar's bounds keys the address may carry, and no control of them", () => {
+    const keys = declaredFilterKeys(DEFS, WITH_RANGE);
+    for (const key of windowKeysOf("occurredAt")) expect(keys.has(key)).toBe(true);
+    expect(filterControlsOf(DEFS, WITH_RANGE)).toEqual(filterControlsOf(DEFS, FACETED));
+  });
+
+  it("keeps a link's window on the field and drops the same keys where the page draws no time range", () => {
+    const link = { "occurredAt.between": "2026-11-08T00:00:00Z,2026-11-09T00:00:00Z", "status.in": "FAILED" };
+    expect(narrowAddressedFilters(DEFS, link, WITH_RANGE)).toEqual(link);
+    expect(narrowAddressedFilters(DEFS, link, FACETED)).toEqual({ "status.in": "FAILED" });
+  });
+
+  it("keeps the window of the named field only, not another field's", () => {
+    expect(narrowAddressedFilters(DEFS, { "other.between": "a,b", "occurredAt.greaterThanOrEqualTo": "2026-11-08T00:00:00Z" }, WITH_RANGE)).toEqual({
+      "occurredAt.greaterThanOrEqualTo": "2026-11-08T00:00:00Z",
+    });
+  });
+
+  it("is handed to the list through the declaration, so an arriving window is applied and not silently dropped", () => {
+    const declaration = declareListAddress(DEFS, WITH_RANGE);
+    let handed: AddressedFilters | undefined;
+    function Probe() {
+      handed = declaration.useAddressed({ value: { "occurredAt.between": "a,b", "gone.in": "x" }, onChange: vi.fn() });
+      return null;
+    }
+    renderToStaticMarkup(createElement(Probe));
+    expect(handed?.value).toEqual({ "occurredAt.between": "a,b" });
+  });
+});
+
+describe("an address declared over the set a list draws", () => {
+  const DRAWN = DEFS.filter((def) => def.field === "status");
+
+  it("carries no key of a filter the list does not draw, which a declaration over the whole contract would", () => {
+    const link = { "status.in": "FAILED", "retried.equals": "true" };
+    expect(narrowAddressedFilters(DRAWN, link)).toEqual({ "status.in": "FAILED" });
+    expect(narrowAddressedFilters(DEFS, link, FACETED)).toEqual(link);
   });
 });

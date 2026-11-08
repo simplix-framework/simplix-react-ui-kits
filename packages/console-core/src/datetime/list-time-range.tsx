@@ -5,6 +5,8 @@ import type { CrudListFilters, HeatmapColorTheme, TimeRange, TimeRangeValue, Win
 
 import { useAppTimeZone } from "@simplix-react/headless";
 
+import { WINDOW_BOUNDS as BOUNDS, windowKeysOf } from "./window-keys";
+
 /** What a strip asks its screen for: a window, a slice count, and the list's other conditions. */
 export interface TimeRangeCountQuery {
   /** The first instant in the window, inclusive, as RFC 3339. */
@@ -77,19 +79,13 @@ export function useTimeWindowPresets(only: readonly string[]): WindowPreset[] {
   });
 }
 
-/** The operators of one field that bound a window, besides the strip's own `between`. */
-const BOUNDS = { from: ["greaterThanOrEqualTo", "greaterThan"], to: ["lessThanOrEqualTo", "lessThan"] } as const;
-
 const instantOf = (value: unknown): Date | undefined => {
   if (typeof value !== "string" || value.trim() === "") return undefined;
   const at = new Date(value.trim());
   return Number.isNaN(at.getTime()) ? undefined : at;
 };
 
-/** Every filter key that bounds `field` in time: the strip's `between` and the filter bar's pair. */
-export function windowKeysOf(field: string): string[] {
-  return [`${field}.between`, ...BOUNDS.from.map((op) => `${field}.${op}`), ...BOUNDS.to.map((op) => `${field}.${op}`)];
-}
+export { windowKeysOf };
 
 /**
  * The window a list is narrowed to on `field`, read from its committed filters.
