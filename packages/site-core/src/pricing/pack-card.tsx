@@ -19,6 +19,7 @@ import {
   sitePackHeadStyle,
   sitePackNoteStyle,
   sitePackSectionStyle,
+  sitePackStatusStyle,
 } from "./packs.style";
 
 /** Props for {@link PackSection}. */
@@ -31,6 +32,13 @@ export interface PackSectionProps {
    */
   readonly level?: 1 | 2;
   readonly lede?: ReactNode;
+  /**
+   * What the view says about itself before the packs: a read that failed, a plan that could not be
+   * checked, no pack on offer. Drawn above the card grid, never inside it, so a line is not a grid
+   * cell that takes the first card's place and offsets the cards behind it. Absent or `null`, the
+   * region is not drawn.
+   */
+  readonly status?: ReactNode;
   /** A line under the packs, such as how a plan compares for someone who buys often. */
   readonly note?: ReactNode;
   /** The packs, each a {@link PackCard}. */
@@ -39,10 +47,10 @@ export interface PackSectionProps {
 
 /**
  * One-off packs offered beside the plans (a pack for one presentation, extra credits on a paid plan):
- * the heading and lede, the packs side by side (one under the other below the medium tier), then
+ * the heading and lede, the status lines where there are any, the packs side by side (one under the other below the medium tier), then
  * the closing line.
  */
-export function PackSection({ heading, level = 2, lede, note, children }: PackSectionProps) {
+export function PackSection({ heading, level = 2, lede, status, note, children }: PackSectionProps) {
   const id = useId();
   const Tag = level === 1 ? "h1" : "h2";
   return (
@@ -53,6 +61,7 @@ export function PackSection({ heading, level = 2, lede, note, children }: PackSe
         </Tag>
         {lede !== undefined ? <p {...slotAttributes(siteSectionLedeStyle, {})}>{lede}</p> : null}
       </div>
+      {status !== undefined && status !== null && status !== false ? <div {...slotAttributes(sitePackStatusStyle, {})}>{status}</div> : null}
       <div {...slotAttributes(sitePackGridStyle, {})}>{children}</div>
       {note !== undefined ? <p {...slotAttributes(sitePackNoteStyle, {})}>{note}</p> : null}
     </section>

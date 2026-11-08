@@ -193,7 +193,10 @@ describe("the generated packs page", () => {
     expect(source).toContain("export function PacksPage(");
     expect(source).toContain("<SitePage>");
     // The packs are a page of their own, so their heading is the page's h1.
-    expect(source).toContain('<PackSection level={1} heading={t("packs.title")} lede={lede} note={note}>');
+    expect(source).toContain('<PackSection level={1} heading={t("packs.title")} lede={lede} status={status} note={note}>');
+    // What the page says about itself is the section's status region above the cards, not a child among them.
+    expect(source).toContain("readonly status?: ReactNode;");
+    expect(source).toContain("({ children, status, note }: PacksPageProps = {})");
     expect(source).toContain('const lede = tOr("packs.lede", "") || undefined;');
     expect(source).not.toMatch(/console-(clarity|core)/);
   });

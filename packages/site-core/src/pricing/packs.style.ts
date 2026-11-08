@@ -21,6 +21,14 @@ export const sitePackHeadStyle = defineSlotStyle({
   defaultVariants: {},
 });
 
+/** The lines the view says about itself, one under the other, between the heading and the packs. */
+export const sitePackStatusStyle = defineSlotStyle({
+  slot: "site-pack-status",
+  base: "flex min-w-0 flex-col gap-1",
+  variants: {},
+  defaultVariants: {},
+});
+
 /** The packs side by side, one under the other below the medium tier. */
 export const sitePackGridStyle = defineSlotStyle({
   slot: "site-pack-grid",

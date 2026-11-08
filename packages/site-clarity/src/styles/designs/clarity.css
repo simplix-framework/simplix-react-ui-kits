@@ -2170,6 +2170,9 @@
   [data-slot="site-pack-section"][data-slot][data-s-site-pack-section] {
     @apply flex min-w-0 flex-col gap-3;
   }
+  [data-slot="site-pack-status"][data-slot][data-s-site-pack-status] {
+    @apply flex min-w-0 flex-col gap-1;
+  }
   [data-slot="site-feature-label"][data-slot][data-s-site-feature-label] {
     @apply min-w-0;
   }

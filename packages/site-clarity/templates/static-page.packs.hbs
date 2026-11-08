@@ -16,18 +16,20 @@ import { PackSection } from "@simplix-react-ui-kits/site-clarity/pricing";
 export interface {{NamePascal}}PageProps {
   /** The packs, each a `PackCard`. */
   readonly children?: ReactNode;
+  /** What the page says about itself before the packs: a read that failed, no pack on offer. Drawn above the cards, never among them. */
+  readonly status?: ReactNode;
   /** The line under the packs, such as how a plan compares for someone who buys often. */
   readonly note?: ReactNode;
 }
 
 /** {{NamePascal}}: the packs bought once, beside the plans. */
-export function {{NamePascal}}Page({ children, note }: {{NamePascal}}PageProps = {}) {
+export function {{NamePascal}}Page({ children, status, note }: {{NamePascal}}PageProps = {}) {
   const { t, tOr } = useOptionalTranslation("{{namespace}}");
   // A lede the catalog holds empty draws no line.
   const lede = tOr("{{nameCamel}}.lede", "") || undefined;
   return (
     <SitePage>
-      <PackSection level={1} heading={t("{{nameCamel}}.title")} lede={lede} note={note}>
+      <PackSection level={1} heading={t("{{nameCamel}}.title")} lede={lede} status={status} note={note}>
         {children}
       </PackSection>
     </SitePage>

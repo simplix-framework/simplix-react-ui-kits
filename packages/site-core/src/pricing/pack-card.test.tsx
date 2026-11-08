@@ -33,6 +33,26 @@ describe("PackSection", () => {
     expect(bySlot(html, "site-section-heading")[0]?.attributes["data-size"]).toBe("lg");
   });
 
+  it("draws the status lines above the card grid, so no line is a cell of the grid that offsets the cards", () => {
+    const html = renderToStaticMarkup(
+      <PackSection heading="Packs" status={<><p data-slot="probe-line">Plan could not be read</p><p data-slot="probe-line">Reload to try again</p></>}>
+        <i data-slot="probe-pack" />
+      </PackSection>,
+    );
+    const slots = tagsOf(html).map((tag) => tag.attributes["data-slot"]);
+    expect(slots).toEqual(["site-pack-section", "site-pack-head", "site-section-heading", "site-pack-status", "probe-line", "probe-line", "site-pack-grid", "probe-pack"]);
+    // Both lines sit inside the status region and neither inside the grid.
+    expect(html).toMatch(/data-slot="site-pack-status"[^>]*>(?:(?!<\/div>)[\s\S])*Plan could not be read(?:(?!<\/div>)[\s\S])*Reload to try again/);
+    expect(html.slice(html.indexOf('data-slot="site-pack-grid"'))).not.toContain("Plan could not be read");
+  });
+
+  it("draws no status region where it is handed nothing, so the heading and the packs keep their gap", () => {
+    for (const status of [undefined, null, false]) {
+      const html = renderToStaticMarkup(<PackSection heading="Packs" status={status}>{null}</PackSection>);
+      expect(bySlot(html, "site-pack-status")).toEqual([]);
+    }
+  });
+
   it("is a section titled by an h2 under a page title, and the page's own h1 where the packs are the page", () => {
     const under = bySlot(renderToStaticMarkup(<PackSection heading="Packs">{null}</PackSection>), "site-section-heading")[0];
     expect(under?.name).toBe("h2");

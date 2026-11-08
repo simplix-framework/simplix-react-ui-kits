@@ -270,6 +270,7 @@
         "head": "site-pack-head",
         "heading": "site-section-heading",
         "lede": "site-section-lede",
+        "status": "site-pack-status",
         "grid": "site-pack-grid",
         "card": "site-pack-card",
         "cardHead": "site-pack-card-head",
