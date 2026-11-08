@@ -116,3 +116,87 @@ describe("a decision with no input", () => {
     expect(dialog().textContent).toContain("The account is closed");
   });
 });
+
+const asking = () => document.body.querySelector('[role="alertdialog"]') as HTMLElement | null;
+const escape = () => act(() => void document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true })));
+/** The button of the discard question; no catalog is loaded here, so a label reads as its key. */
+const answerWith = (label: string) => act(() => void [...(asking()?.querySelectorAll("button") ?? [])].find((button) => button.textContent?.includes(label))?.click());
+
+describe("leaving a decision with typed input", () => {
+  it("asks before Escape closes it, keeps the typed reason on Cancel, and closes on Discard", () => {
+    const closed = mount({ fields: reasonField, submit: { label: "Revoke", onSubmit: () => undefined } });
+    type(dialog().querySelector("input") as HTMLInputElement, "Left the company");
+    escape();
+    expect(asking()?.textContent).toContain("common.unsavedTitle");
+    expect(closed).not.toHaveBeenCalled();
+    answerWith("common.cancel");
+    expect(asking()).toBeNull();
+    expect(closed).not.toHaveBeenCalled();
+    expect((dialog().querySelector("input") as HTMLInputElement).value).toBe("Left the company");
+    escape();
+    answerWith("common.discard");
+    expect(closed).toHaveBeenCalledWith(false);
+  });
+
+  it("asks before the cancel button closes it", () => {
+    const closed = mount({ fields: reasonField, submit: { label: "Revoke", onSubmit: () => undefined } });
+    type(dialog().querySelector("input") as HTMLInputElement, "x");
+    press(named("common.cancel"));
+    expect(asking()).not.toBeNull();
+    expect(closed).not.toHaveBeenCalled();
+  });
+
+  it("closes at once while nothing was typed, by Escape and by the cancel button", () => {
+    const closed = mount({ fields: reasonField, submit: { label: "Revoke", onSubmit: () => undefined } });
+    escape();
+    expect(asking()).toBeNull();
+    expect(closed).toHaveBeenCalledWith(false);
+    press(named("common.cancel"));
+    expect(closed).toHaveBeenCalledTimes(2);
+  });
+
+  it("closes at once when the typed value was typed back to the start", () => {
+    const closed = mount({ fields: reasonField, submit: { label: "Revoke", onSubmit: () => undefined } });
+    const input = dialog().querySelector("input") as HTMLInputElement;
+    type(input, "x");
+    type(input, "");
+    escape();
+    expect(asking()).toBeNull();
+    expect(closed).toHaveBeenCalledWith(false);
+  });
+
+  it("does not ask while the decision is on its way, and does not close either", () => {
+    const closed = mount({ fields: reasonField, submit: { label: "Revoke", onSubmit: () => new Promise(() => undefined) } });
+    type(dialog().querySelector("input") as HTMLInputElement, "Left the company");
+    press(named("Revoke"));
+    escape();
+    expect(asking()).toBeNull();
+    expect(closed).not.toHaveBeenCalled();
+  });
+
+  it("closes once the server accepted it without asking, though the reason was typed", async () => {
+    const closed = mount({ fields: reasonField, submit: { label: "Revoke", onSubmit: () => Promise.resolve(1) } });
+    type(dialog().querySelector("input") as HTMLInputElement, "Left the company");
+    press(named("Revoke"));
+    await settle();
+    expect(asking()).toBeNull();
+    expect(closed).toHaveBeenCalledWith(false);
+  });
+
+  it("asks again after a refusal, since the typed reason is still there", async () => {
+    const closed = mount({ fields: reasonField, submit: { label: "Revoke", onSubmit: () => Promise.reject(new Error("Already revoked")) } });
+    type(dialog().querySelector("input") as HTMLInputElement, "Left the company");
+    press(named("Revoke"));
+    await settle();
+    escape();
+    expect(asking()).not.toBeNull();
+    expect(closed).not.toHaveBeenCalled();
+  });
+
+  it("asks nothing of a decision that has no input", () => {
+    const closed = mount({ submit: { label: "Reinstate", onSubmit: () => undefined } });
+    escape();
+    expect(asking()).toBeNull();
+    expect(closed).toHaveBeenCalledWith(false);
+  });
+});

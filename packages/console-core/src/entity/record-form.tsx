@@ -16,7 +16,12 @@ export type { RecordFormField, RecordFormSection, RecordOption } from "./record-
 
 type Values = Record<string, unknown>;
 
-function initialValues(sections: readonly RecordFormSection[]): Values {
+/**
+ * The values a form starts with, by field key.
+ *
+ * @param sections the form's sections
+ */
+export function initialValues(sections: readonly RecordFormSection[]): Values {
   const values: Values = {};
   for (const section of sections) for (const field of section.fields) values[field.key] = initialFieldValue(field);
   return values;

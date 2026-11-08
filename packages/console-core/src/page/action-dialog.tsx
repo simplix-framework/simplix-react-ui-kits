@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "@simplix-react/i18n/react";
-import { Button, CrudDetail, DetailFieldWrapper, Dialog, DialogFooter, DialogHeader, DialogTitle, Flex, Stack, Stepline } from "@simplix-react/ui";
+import { Button, CrudDetail, DetailFieldWrapper, Dialog, DialogFooter, DialogHeader, DialogTitle, Flex, Stack, Stepline, useUnsavedChanges } from "@simplix-react/ui";
 
 import { PACKAGE_NAMESPACE } from "../entity/locales";
 import { RecordNote, RecordNotices, RecordVerbButton, type RecordNotice, type RecordVerb } from "../entity/record-blocks";
 import type { RecordSection } from "../entity/record-detail";
-import { RecordFormSections, refusalOf, useRecordFormValues, type RecordFormSection, type SubmitRefusal } from "../entity/record-form";
+import { initialValues, RecordFormSections, refusalOf, useRecordFormValues, valuesChanged, type RecordFormSection, type SubmitRefusal } from "../entity/record-form";
 import { RecordValueView } from "../entity/record-value";
 import { BoundedDialogContent } from "../layout/bounded-dialog-content";
 
@@ -103,11 +103,14 @@ export function ActionDialog(props: ActionDialogProps) {
   // Held here, above the body that mounts with each opening, so the root's own ways of closing
   // (its close mark) are held too while a decision is on its way to the server.
   const [pending, setPending] = useState(false);
+  // The body owns the typed values, so it says how a close is asked: leaving a form with typed input
+  // asks first, whichever way the root closes (Escape, a press outside, the close mark).
+  const requestClose = useRef<(() => void) | undefined>(undefined);
   return (
-    <Dialog open={props.open} onOpenChange={(open) => (open || !pending ? props.onOpenChange(open) : undefined)}>
+    <Dialog open={props.open} onOpenChange={(open) => (open ? props.onOpenChange(open) : pending ? undefined : requestClose.current ? requestClose.current() : props.onOpenChange(open))}>
       {/* The body mounts with each opening, so the fields start from their initial values every time
           rather than holding what the last submit or cancel left in them. */}
-      {props.open ? <ActionDialogBody {...props} pending={pending} setPending={setPending} /> : null}
+      {props.open ? <ActionDialogBody {...props} pending={pending} setPending={setPending} requestClose={requestClose} /> : null}
     </Dialog>
   );
 }
@@ -126,13 +129,26 @@ function ActionDialogBody({
   closeLabel,
   pending,
   setPending,
-}: ActionDialogProps & { readonly pending: boolean; readonly setPending: (pending: boolean) => void }) {
+  requestClose,
+}: ActionDialogProps & { readonly pending: boolean; readonly setPending: (pending: boolean) => void; readonly requestClose: { current: (() => void) | undefined } }) {
   const { t } = useTranslation(`${PACKAGE_NAMESPACE}/features`);
   const { t: tUi } = useTranslation("simplix/ui");
   const form = useRecordFormValues(fields);
+  // Leaving with typed input asks first, by the cancel button or any other way the root closes, and
+  // closing the tab warns too. A decision on its way to the server is not unsaved, so it never asks.
+  const [baseline] = useState(() => initialValues(fields));
+  const { guardedNavigate, dialog: unsavedDialog } = useUnsavedChanges({ isDirty: valuesChanged(baseline, form.values) && !pending });
+  const leave = () => guardedNavigate(() => onOpenChange(false));
+  useEffect(() => {
+    requestClose.current = leave;
+    return () => {
+      requestClose.current = undefined;
+    };
+  });
   const [refusal, setRefusal] = useState<SubmitRefusal | undefined>(undefined);
   const blocked = submit?.disabled ?? (form.missing.length > 0 ? t("recordForm.fillBeforeSubmit", { count: form.missing.length }) : undefined);
   return (
+    <>
       <BoundedDialogContent
         width="lg"
         // A decision on its way to the server is not abandoned by a stray press or the Escape key.
@@ -160,7 +176,7 @@ function ActionDialogBody({
         <DialogFooter>
           <Flex gap="sm" justify="between" className="w-full">
             <Flex gap="sm" align="start">
-              <Button size="sm" variant="outline" disabled={pending} onClick={() => onOpenChange(false)}>
+              <Button size="sm" variant="outline" disabled={pending} onClick={leave}>
                 {closeLabel ?? tUi("common.cancel")}
               </Button>
               {leading.map((verb) => (
@@ -194,5 +210,7 @@ function ActionDialogBody({
           </Flex>
         </DialogFooter>
       </BoundedDialogContent>
+      {unsavedDialog}
+    </>
   );
 }
