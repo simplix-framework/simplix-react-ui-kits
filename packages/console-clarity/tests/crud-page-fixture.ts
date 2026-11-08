@@ -57,7 +57,7 @@ export interface ProductFormProps {
   readonly onSuccess?: () => void;
   readonly onCancel?: () => void;
 }
-export declare function useProductList(params?: Readonly<Record<string, unknown>>, address?: ListAddress): { readonly rows: readonly ProductRow[]; readonly filters: CrudListFilters; readonly requestParams: Readonly<Record<string, unknown>> };
+export declare function useProductList(params?: Readonly<Record<string, unknown>>, address?: ListAddress, scope?: string): { readonly rows: readonly ProductRow[]; readonly filters: CrudListFilters; readonly requestParams: Readonly<Record<string, unknown>> };
 export declare function ProductList(props: ProductListProps): ReactNode;
 export declare function ProductDetail(props: ProductDetailProps): ReactNode;
 export declare function ProductForm(props: ProductFormProps): ReactNode;

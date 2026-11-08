@@ -85,7 +85,7 @@ export function {{EntityPascal}}CrudPage({ search, onNavigate }: {{EntityPascal}
   const list = use{{EntityPascal}}List(blocks.listParams, {
     value: search.filters,
     onChange: (next) => onNavigate({ ...search, filters: next }, { replace: true }),
-  });
+  }, search.tab);
   const presentation = useDetailPresentationSetting();
 {{#if figureTiles}}
   // The figures the entity's SimpliX Meta says it counts and sums, drawn as the page's figure row.

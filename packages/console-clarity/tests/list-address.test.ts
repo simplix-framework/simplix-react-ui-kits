@@ -72,7 +72,7 @@ export const controls: readonly { readonly field: string; readonly type: string 
 describe("the generated list's address", () => {
   it("takes the page's address as its second argument and hands the list the declaration's addressed filters", () => {
     const source = renderList();
-    expect(source).toContain("export function useJobList(params?: Readonly<Record<string, unknown>>, address?: ListAddress) {");
+    expect(source).toContain("export function useJobList(params?: Readonly<Record<string, unknown>>, address?: ListAddress, scope?: string) {");
     expect(source).toContain("addressedFilters: JobListAddress.useAddressed(address, params),");
     expect(source).toContain('filterMode: "immediate",');
   });
@@ -140,10 +140,12 @@ describe("the generated list's drawn filters and address", () => {
     expect(checkList(source)).toEqual([]);
   });
 
-  it("returns the list to its first page when the page forces another request, as a tab does", () => {
+  it("returns the list to its first page when the page forces another request or opens another tab", () => {
     const source = renderList();
-    expect(source).toContain("scopeKey: params ? forcedScope({ ...params }) : undefined,");
-    expect(source).toMatch(/import \{ adaptForcedList, adaptOrvalList, forcedScope, useCrudList \} from "@simplix-react\/ui";/);
+    expect(source).toContain("export function useJobList(params?: Readonly<Record<string, unknown>>, address?: ListAddress, scope?: string) {");
+    expect(source).toContain("scopeKey: listScopeOf(params, scope),");
+    expect(source).toMatch(/import \{ adaptForcedList, adaptOrvalList, useCrudList \} from "@simplix-react\/ui";/);
+    expect(source).toMatch(/import \{ declareListAddress, listScopeOf, /);
     expect(checkList(source)).toEqual([]);
   });
 });
@@ -180,6 +182,10 @@ describe("the generated CRUD page's address", () => {
     expect(text).toContain("const list = useJobList(blocks.listParams, {");
     expect(text).toContain("value: search.filters,");
     expect(text).toContain("onChange: (next) => onNavigate({ ...search, filters: next }, { replace: true }),");
+  });
+
+  it("hands the list the open tab as its scope, since the page holds one list across its tabs", () => {
+    expect(page()).toContain("  }, search.tab);");
   });
 
   it("takes the router's navigation options in its props, so a replace reaches the router", () => {
