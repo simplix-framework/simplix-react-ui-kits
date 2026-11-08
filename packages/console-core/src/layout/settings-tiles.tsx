@@ -106,9 +106,6 @@ function verdictOf(tone: StatusTone | undefined, direction: TileTrendDirection):
   return "neutral";
 }
 
-/** Keeps a tile figure's unit ("credits", or its Korean counterpart) in one piece where the figure itself breaks anywhere. */
-const TILE_UNIT_UNBREAKABLE = "[&_[data-slot=stat-card-unit]]:whitespace-nowrap";
-
 /** The arrow each direction is drawn with. */
 const TREND_ARROW: Readonly<Record<TileTrendDirection, string>> = {
   up: "↑",
@@ -905,9 +902,6 @@ function TileGrid({
             tone={tone}
             highlighted={tone === "warning" || tone === "danger"}
             loading={loading || Boolean(tile.loading)}
-            // The card lets its figure break anywhere, so a figure wider than the card never
-            // overflows it; the unit is a word and is never cut inside, so it wraps whole.
-            className={TILE_UNIT_UNBREAKABLE}
           />
         );
         // The card fills whatever height it is handed, so a tile that is a link needs its anchor

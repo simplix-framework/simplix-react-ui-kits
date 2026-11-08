@@ -76,13 +76,15 @@ describe("a card whose figure nobody has counted", () => {
 });
 
 describe("a card whose figure carries a unit", () => {
-  it("keeps the unit in one piece while the figure itself may break", async () => {
+  it("draws the unit in the framework's own unit slot and adds no class of its own to keep it whole", async () => {
     const withUnit: SettingsTile[] = [{ key: "credits", label: "Credits", value: 126640, unit: "credits", counted: false }];
     const adapter = new I18nextAdapter({ defaultLocale: "en", fallbackLocale: "en", locales: [{ code: "en", name: "English", englishName: "English" }], resources: { en: {} } });
     await adapter.initialize();
     const html = renderToStaticMarkup(
       createElement(I18nProvider, { adapter, children: createElement(UIProvider, { children: createElement(SettingsTiles, { tiles: withUnit, title: "Summary" }) }) }),
     );
-    expect(html).toContain("[&amp;_[data-slot=stat-card-unit]]:whitespace-nowrap");
+    // The unit stays in one piece through the framework's slot (see console-clarity/tests/stat-card-unit.test.ts).
+    expect(html).toMatch(/<span[^>]*data-slot="stat-card-unit"[^>]*>credits<\/span>/);
+    expect(html).not.toContain("stat-card-unit]]:whitespace-nowrap");
   });
 });
