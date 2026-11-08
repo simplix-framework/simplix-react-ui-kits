@@ -104,6 +104,14 @@ describe("the legal body parts", () => {
     expect(unmarked(html)).toEqual([]);
   });
 
+  it("reads its heading as words in the text a screen reader or a copy takes: number, title, previous number and tag apart", () => {
+    const html = renderToStaticMarkup(<LegalArticle id="t-ai" no="Article 7" title="Labelling AI content" was="was Article 6" tag={<span>New</span>} />);
+    const heading = /<h2[^>]*>([\s\S]*?)<\/h2>/.exec(html)?.[1] ?? "";
+    expect(heading.replace(/<[^>]*>/g, "")).toBe("Article 7 Labelling AI content was Article 6 New");
+    const bare = /<h2[^>]*>([\s\S]*?)<\/h2>/.exec(renderToStaticMarkup(<LegalArticle id="t-x" no="Article 8" title="Effective date" />))?.[1] ?? "";
+    expect(bare.replace(/<[^>]*>/g, "")).toBe("Article 8 Effective date");
+  });
+
   it("sets the closing provisions closer together", () => {
     const html = renderToStaticMarkup(<LegalArticle id="t-addendum" kind="addendum" no="Addendum" title="Effective date" />);
     expect(bySlot(html, "site-legal-article")[0]?.attributes["data-kind"]).toBe("addendum");

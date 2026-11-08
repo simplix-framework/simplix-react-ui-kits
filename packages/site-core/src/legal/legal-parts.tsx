@@ -281,10 +281,22 @@ export function LegalArticle({ id, no, title, was, tag, added = false, kind, sum
   return (
     <section {...slotAttributes(siteLegalArticleStyle, { kind, added })} id={id}>
       <h2 {...slotAttributes(siteLegalArticleHeadingStyle, {})}>
-        <span {...slotAttributes(siteLegalArticleNoStyle, {})}>{no}</span>
+        {/* The heading is a flex row, so the gap draws the separation on screen and a space between
+            the parts, which a flex row folds away, makes the text read as words. */}
+        <span {...slotAttributes(siteLegalArticleNoStyle, {})}>{no}</span>{" "}
         {title}
-        {was !== undefined ? <small {...slotAttributes(siteLegalArticleWasStyle, {})}>{was}</small> : null}
-        {tag}
+        {was !== undefined ? (
+          <>
+            {" "}
+            <small {...slotAttributes(siteLegalArticleWasStyle, {})}>{was}</small>
+          </>
+        ) : null}
+        {tag !== undefined ? (
+          <>
+            {" "}
+            {tag}
+          </>
+        ) : null}
       </h2>
       {summary}
       {children}
