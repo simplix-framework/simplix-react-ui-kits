@@ -5,7 +5,7 @@
     "clarity"
   ],
   "buttonFillScope": "[data-slot^=console-]",
-  "buttonFillExemptSelector": "[data-slot=console-menu-row], [data-part=console-menu-rail-button], [data-slot=console-phone-tab], [data-slot=tabs-scroll-arrow], [data-slot=crud-list-sort-button], [data-slot=crud-filter-bar-view-button], [data-slot=schedule-row], [data-slot=attention-row], [data-slot=legend-toggle-item]",
+  "buttonFillExemptSelector": "[data-slot=console-menu-row], [data-part=console-menu-rail-button], [data-slot=console-phone-tab], [data-slot=tabs-scroll-arrow], [data-slot=crud-list-sort-button], [data-slot=crud-filter-bar-view-button], [data-slot=schedule-row], [data-slot=attention-row], [data-slot=legend-toggle-item], [data-slot=number-input-step]",
   "recordCollectionSelector": "[data-slot=\"console-record-list\"], [data-slot=\"crud-card\"], [data-slot=\"dashboard-card\"]",
   "notAMessageSelector": "button, [role=\"button\"], a[href], input, select, textarea, [data-slot^=\"time-range-\"]"
 }
