@@ -4,6 +4,8 @@
 import { useCallback, useEffect, useSyncExternalStore } from "react";
 import { THEMES } from "@simplix-react/ui";
 
+import { drawSchemeChange } from "./scheme-switch";
+
 const COLOR_THEME_KEY = "color-theme";
 const DARK_MODE_KEY = "dark-mode";
 
@@ -58,17 +60,23 @@ function getStoredDarkMode(): boolean {
 }
 
 // Applies theme to the DOM. CSS uses [data-color-theme="..."] selectors to switch theme variables.
+// A theme that is already on is left alone; a change is drawn in one frame (see drawSchemeChange).
 function applyColorTheme(theme: string) {
   const root = document.documentElement;
-  if (theme === "default") {
-    root.removeAttribute("data-color-theme");
-  } else {
-    root.setAttribute("data-color-theme", theme);
-  }
+  if ((root.getAttribute("data-color-theme") ?? "default") === theme) return;
+  drawSchemeChange(root, () => {
+    if (theme === "default") {
+      root.removeAttribute("data-color-theme");
+    } else {
+      root.setAttribute("data-color-theme", theme);
+    }
+  });
 }
 
 function applyDarkMode(dark: boolean) {
-  document.documentElement.classList.toggle("dark", dark);
+  const root = document.documentElement;
+  if (root.classList.contains("dark") === dark) return;
+  drawSchemeChange(root, () => root.classList.toggle("dark", dark));
 }
 
 // Pub/sub pattern required by useSyncExternalStore.

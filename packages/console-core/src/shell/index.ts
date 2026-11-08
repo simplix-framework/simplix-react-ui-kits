@@ -6,6 +6,7 @@ export { DarkModeToggle, ThemeGlyph, type DarkModeToggleProps } from "./dark-mod
 export { ChromeToolButton, type ChromeToolButtonProps } from "./chrome-tool-button";
 export { LocalePicker, type LocalePickerProps } from "./locale-picker";
 export { COLOR_THEMES, type ColorThemeConfig, useTheme } from "./use-theme";
+export { drawSchemeChange, SCHEME_SWITCH_ATTRIBUTE, type SchemeSwitchTarget } from "./scheme-switch";
 export { DisplaySettings } from "./display-settings";
 export {
   applyFill,

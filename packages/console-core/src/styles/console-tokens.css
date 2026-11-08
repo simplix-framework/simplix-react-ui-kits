@@ -55,3 +55,17 @@
   --avatar-6: #3c324e;
   --avatar-6-ink: #dcd1f4;
 }
+
+/* The instant the reader's colour scheme or colour theme changes, `drawSchemeChange` marks the
+   document element (`SCHEME_SWITCH_ATTRIBUTE`) while it swaps the class or the attribute and reads
+   the styles once. A ground changes at once, and a part that eases its colours would paint the old
+   scheme's ink on the new ground for the length of its transition (light ink on a dark panel), so
+   every transition is nil under the mark. `!important` keeps the rule over a utility's duration and
+   a part's own. */
+:root[data-console-scheme-switch],
+:root[data-console-scheme-switch] *,
+:root[data-console-scheme-switch] *::before,
+:root[data-console-scheme-switch] *::after {
+  transition-duration: 0s !important;
+  transition-delay: 0s !important;
+}
