@@ -202,12 +202,12 @@
       "part": "The opened record's head (title, status, close)",
       "slot": null,
       "marks": [
-        "crud-list-detail-drawer-body"
+        "crud-detail-header"
       ],
       "controls": [
         "button"
       ],
-      "$comment": "The drawer's body holds the head, the record and its footer; a control that no nearer region claims (the record's close) is the head's."
+      "$comment": "The framework's detail header, drawn on the drawer, the panel and the dialog alike: it holds the record's title, status, view switch and close. The view switch is the recordView region, nearer, so what the head holds is the close. A control standing in no region is unassigned on every surface."
     },
     "recordView": {
       "part": "DetailPresentationSwitch",
