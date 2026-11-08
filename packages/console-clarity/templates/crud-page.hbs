@@ -97,7 +97,8 @@ export function {{EntityPascal}}CrudPage({ search, onNavigate }: {{EntityPascal}
 {{#if figureTiles.aggregates}}
     aggregates: {
       // The sums are read over the rows the list is showing: its filters, search text and forced scope.
-      query: {{figureTiles.aggregates.hook}}(list.requestParams as Parameters<typeof {{figureTiles.aggregates.hook}}>[0], { query: { meta: RECORD_READ_META } }),
+      // The previous sums stay drawn while a changed condition is read again, so a press or a typed filter does not blank the tiles.
+      query: {{figureTiles.aggregates.hook}}(list.requestParams as Parameters<typeof {{figureTiles.aggregates.hook}}>[0], { query: { meta: RECORD_READ_META, placeholderData: (previous) => previous } }),
       figures: [
 {{#each figureTiles.aggregates.figures}}
         { field: { name: "{{this.field}}", kind: "{{this.kind}}"{{#if this.money}}, currency: "{{this.money.currency}}", scale: {{this.money.scale}}{{/if}}{{#if this.signed}}, signed: true{{/if}} }, op: "{{this.op}}"{{#if this.isRowCount}}, rowCount: true{{/if}} },

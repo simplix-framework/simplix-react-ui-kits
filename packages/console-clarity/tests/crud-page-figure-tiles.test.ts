@@ -34,9 +34,17 @@ describe("crud-page.hbs default figure tiles", () => {
 
   it("reads the sums under the list's own conditions and the status counts over every row", () => {
     const text = render("crud-page.hbs", { ...base, figureTiles });
-    expect(text).toContain("query: useGetJobAggregates(list.requestParams as Parameters<typeof useGetJobAggregates>[0], { query: { meta: RECORD_READ_META } }),");
+    expect(text).toContain("query: useGetJobAggregates(list.requestParams as Parameters<typeof useGetJobAggregates>[0], { query: { meta: RECORD_READ_META, placeholderData: (previous) => previous } }),");
     expect(text).not.toContain("useGetJobAggregates({})");
     expect(text).toContain('query: useGetJobStatusCounts({ field: "status" }, ');
+  });
+
+  it("keeps the previous sums drawn while the changed conditions are read again, so a press does not blank the tiles", () => {
+    const text = render("crud-page.hbs", { ...base, figureTiles });
+    const read = text.split("\n").find((line) => line.includes("useGetJobAggregates(list.requestParams")) ?? "";
+    expect(read).toContain("placeholderData: (previous) => previous");
+    // The status counts stay over every row, so their key never changes and they need no hold.
+    expect(text.split("\n").find((line) => line.includes("useGetJobStatusCounts(")) ?? "").not.toContain("placeholderData");
   });
 
   it("tells a failed figure read on the page and leaves the error dialog to that notice", () => {

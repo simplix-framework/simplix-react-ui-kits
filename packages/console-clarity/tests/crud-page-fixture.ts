@@ -73,5 +73,5 @@ export declare const createProductAccess: Rule;
 export declare const updateProductAccess: Rule;
 export declare const deleteProductAccess: Rule;
 export declare function useGetProductStatusCounts(params: { field: string }, options?: { query?: { meta?: Record<string, unknown> } }): { data?: unknown; isLoading: boolean; isError?: boolean };
-export declare function useGetProductAggregates(params?: { keyword?: string; "status.in"?: string[] }, options?: { query?: { meta?: Record<string, unknown> } }): { data?: unknown; isLoading: boolean; isError?: boolean };
+export declare function useGetProductAggregates(params?: { keyword?: string; "status.in"?: string[] }, options?: { query?: { meta?: Record<string, unknown>; placeholderData?: (previous: unknown) => unknown } }): { data?: unknown; isLoading: boolean; isError?: boolean };
 `;
