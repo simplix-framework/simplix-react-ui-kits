@@ -27,9 +27,22 @@ export interface SchemeQuery {
  * whose `color-scheme` tells the browser to draw its own controls and scrollbars in the same scheme.
  */
 export interface SchemeTarget {
-  readonly classList: { toggle(token: string, force: boolean): boolean };
+  readonly classList: { toggle(token: string, force: boolean): boolean; contains?(token: string): boolean };
   readonly style?: { colorScheme: string };
+  /** With {@link removeAttribute} and {@link getBoundingClientRect}, lets a change of scheme draw without easing. */
+  setAttribute?(name: string, value: string): void;
+  removeAttribute?(name: string): void;
+  /** Read once to bring the document's styles up to date, as any layout read does. */
+  getBoundingClientRect?(): unknown;
 }
+
+/**
+ * The mark the document element carries for the instant its scheme changes. The design's stylesheet
+ * keys the motion durations off it (`:root[data-site-scheme-switch]`), so a part that eases its
+ * colours (an action, a switch option) takes the new scheme in the same frame as the ground it
+ * stands on.
+ */
+export const SCHEME_SWITCH_ATTRIBUTE = "data-site-scheme-switch";
 
 /**
  * The address parameter a site hands the reader's choice to another origin in (a sign-in page, an
@@ -57,10 +70,27 @@ export function pickSiteScheme(...candidates: readonly (string | null | undefine
   return "system";
 }
 
-/** Marks `target` dark or light: the class the dark values key off, and its `color-scheme`. */
+/**
+ * Marks `target` dark or light: the class the dark values key off, and its `color-scheme`.
+ *
+ * <p>A change of scheme draws in one frame. The grounds (a bar, a switch track) take the new values
+ * at once, while a part that eases its colours would still be painting the old ink for the length of
+ * its transition, so light ink stood on a dark ground for that long. The target carries
+ * {@link SCHEME_SWITCH_ATTRIBUTE} while the class and the colour scheme change, a read brings the
+ * document's styles up to date under it, and the mark is removed once the styles hold the new
+ * values; no transition starts, because the styles the mark is removed from already equal the
+ * ones it is removed to. A target that already carries the scheme is left as it is.
+ */
 export function markSiteScheme(target: SchemeTarget, dark: boolean): void {
+  const changing = target.classList.contains?.("dark") !== dark;
+  const quiet = changing && target.setAttribute !== undefined && target.removeAttribute !== undefined;
+  if (quiet) target.setAttribute?.(SCHEME_SWITCH_ATTRIBUTE, "");
   target.classList.toggle("dark", dark);
   if (target.style) target.style.colorScheme = dark ? "dark" : "light";
+  if (quiet) {
+    target.getBoundingClientRect?.();
+    target.removeAttribute?.(SCHEME_SWITCH_ATTRIBUTE);
+  }
 }
 
 /** Where the choice is stored: `localStorage`, or any store with its three calls. */

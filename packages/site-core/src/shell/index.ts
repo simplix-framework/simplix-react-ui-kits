@@ -13,6 +13,7 @@ export {
   pickSiteScheme,
   readSiteScheme,
   SCHEME_PARAM,
+  SCHEME_SWITCH_ATTRIBUTE,
   SITE_SCHEME_KEY,
   SITE_SCHEMES,
   siteSchemeBootstrap,

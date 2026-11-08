@@ -131,7 +131,7 @@ Every label is a prop: the kit ships no strings, and the product passes its own 
 | `--site-faint` | a feature an offer leaves out, a disabled switch option | `0.4` |
 | `--site-dim` | a control that cannot be used now (the comparison while the previous version shows) | `0.45` |
 | `--site-fade` | a choice that cannot be taken now (the current plan in a plan change) | `0.5` |
-| `--site-duration-fast` | hover and press transitions | `120ms` |
+| `--site-duration-fast` | hover and press transitions; nil while the scheme changes (`:root[data-site-scheme-switch]`, set by `markSiteScheme`) | `120ms` |
 | `--site-duration-base` | a switch thumb's travel | `220ms` |
 | `--site-ease` | their easing | `cubic-bezier(0.2, 0.8, 0.2, 1)` |
 | `--site-focus-ring` | the keyboard focus ring | a 2px surface gap, then a 2px accent ring |

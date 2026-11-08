@@ -164,6 +164,17 @@
   --site-dark-shadow-float: var(--site-shadow-float);
 }
 
+/* The instant the reader's scheme changes, site-core's `markSiteScheme` marks the document element
+   (`SCHEME_SWITCH_ATTRIBUTE`) while it swaps the class and reads the styles once. A ground changes
+   at once, and a part that eases its colours would paint the old scheme's ink on the new ground for
+   the length of its transition (light ink on a dark bar), so the durations are nil under the mark.
+   `!important` keeps the rule over a product's own duration values, which its theme writes after this
+   file at the same specificity. */
+:root[data-site-scheme-switch] {
+  --site-duration-fast: 0s !important;
+  --site-duration-base: 0s !important;
+}
+
 /* A band on the dark ground: every site variable a part reads takes the band's value inside it. */
 [data-band="dark"] {
   --site-canvas: var(--site-dark-canvas);
