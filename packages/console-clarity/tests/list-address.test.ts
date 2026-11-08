@@ -81,10 +81,10 @@ describe("the generated list's address", () => {
   // and nothing below the list component, so a regeneration adds it without a conflict.
   it("declares the address once, from the filters the list states, after the list it reads", () => {
     const source = renderList();
-    expect(source).toContain("export const JobListAddress = declareListAddress(JobFilters, { facetFields: [] });");
+    expect(source).toContain("export const JobListAddress = declareListAddress(JobDrawnFilters, { facetFields: [] });");
     expect(source.indexOf("const JobFilters")).toBeLessThan(source.indexOf("export const JobListAddress"));
     expect(source.indexOf("export function JobList(")).toBeLessThan(source.indexOf("export const JobListAddress"));
-    expect(source.trimEnd().endsWith("declareListAddress(JobFilters, { facetFields: [] });")).toBe(true);
+    expect(source.trimEnd().endsWith("declareListAddress(JobDrawnFilters, { facetFields: [] });")).toBe(true);
     expect(source.split("declareListAddress(").length - 1).toBe(1);
   });
 
@@ -94,7 +94,7 @@ describe("the generated list's address", () => {
       listFacets: [{ field: "ownerUserId", hook: "useOwnerUserIdFacet", factory: "createUserFacet", from: "@test/domain-product" }],
       listFacetImports: [{ from: "@test/domain-product", hooks: "createUserFacet" }],
     });
-    expect(source).toContain('declareListAddress(JobFilters, { facetFields: ["ownerUserId"] });');
+    expect(source).toContain('declareListAddress(JobDrawnFilters, { facetFields: ["ownerUserId"] });');
   });
 
   it("type-checks, and its result carries the request the page forces and its declaration to a screen that links to it", () => {
@@ -117,6 +117,34 @@ describe("the generated list's address", () => {
   it("attaches the forced request to the controller in every shape, so the filter bar can leave a pinned field out", () => {
     expect(renderList()).toContain("return withForced(list, { ...params });");
     expect(renderList({ figureTiles: { aggregates: { hook: "useGetJobAggregates", figures: [] } } })).toContain("return withForced(requested, { ...params });");
+  });
+});
+
+describe("the generated list's drawn filters and address", () => {
+  /** The set an expression names: the identifier handed to `contract.filters` and to `declareListAddress`. */
+  const drawnSet = (source: string) => /contract\.filters<\w+>\((\w+)\)/.exec(source)?.[1];
+  const declaredSet = (source: string) => /declareListAddress\((\w+),/.exec(source)?.[1];
+
+  it("builds the controls and declares the address from one set, so a key no control draws is not an address key", () => {
+    for (const source of [renderList(), renderList({ timeBuckets: { field: "startedAt", fetch: "useGetJobTimeBuckets" } })]) {
+      expect(drawnSet(source)).toBe("JobDrawnFilters");
+      expect(declaredSet(source)).toBe(drawnSet(source));
+      expect(source).toContain("const JobDrawnFilters: readonly ContractFilter[] = JobFilters;");
+    }
+  });
+
+  it("names the field the page draws a time range over, so a window in a link is kept", () => {
+    const source = renderList({ timeBuckets: { field: "startedAt", fetch: "useGetJobTimeBuckets" } });
+    expect(source).toContain('declareListAddress(JobDrawnFilters, { facetFields: [], timeRangeField: "startedAt" });');
+    expect(renderList()).not.toContain("timeRangeField");
+    expect(checkList(source)).toEqual([]);
+  });
+
+  it("returns the list to its first page when the page forces another request, as a tab does", () => {
+    const source = renderList();
+    expect(source).toContain("scopeKey: params ? forcedScope({ ...params }) : undefined,");
+    expect(source).toMatch(/import \{ adaptForcedList, adaptOrvalList, forcedScope, useCrudList \} from "@simplix-react\/ui";/);
+    expect(checkList(source)).toEqual([]);
   });
 });
 

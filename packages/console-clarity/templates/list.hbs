@@ -5,7 +5,7 @@
  * matches. It is the list's start: its columns, filters, chips and empty state are customised
  * here, in this file, and a later template change is merged into it three ways.
  */
-import { adaptForcedList, adaptOrvalList{{#if hasKeywordSearch}}, SEARCHABLE_KEYWORD_PARAM{{/if}}, useCrudList{{#if hookOrder}}{{#if orderField}}, useInvalidateEntity{{/if}}{{/if}} } from "@simplix-react/ui";
+import { adaptForcedList, adaptOrvalList, forcedScope{{#if hasKeywordSearch}}, SEARCHABLE_KEYWORD_PARAM{{/if}}, useCrudList{{#if hookOrder}}{{#if orderField}}, useInvalidateEntity{{/if}}{{/if}} } from "@simplix-react/ui";
 import { {{#if hasMoneyFilter}}moneyFilterTransform, {{/if}}declareListAddress, RecordList, {{#if figureTiles.aggregates}}withListRequest, {{/if}}{{#if hookOrder}}{{#if orderField}}useAllowed, {{/if}}{{/if}}pickFields, useRecordContract, useScreenWords, withForced, type ContractField, type ContractFilter, type ContractOverrides, type ListAddress, type RecordAction, type RecordColumn, type RecordFilter, type RecordListProps } from "@simplix-react-ui-kits/console-clarity/entity";
 
 import { {{hookList}}, {{#if hookOrder}}{{#if orderField}}{{hookOrder}}, {{#if accessOrder}}{{accessOrder}}, {{/if}}{{#if entityPathExport}}{{entityPathExport}}, {{/if}}{{/if}}{{/if}}type {{listRowType}} } from "{{packageName}}";
@@ -43,6 +43,9 @@ export function use{{EntityPascal}}List(params?: Readonly<Record<string, unknown
   const list = useCrudList<{{EntityPascal}}Row>(params ? adaptForcedList<{{EntityPascal}}Row>({{hookList}}, { ...params }{{#if (or hasKeywordSearch hasMoneyFilter)}}, options{{/if}}) : adaptOrvalList<{{EntityPascal}}Row>({{hookList}}{{#if (or hasKeywordSearch hasMoneyFilter)}}, options{{/if}}), {
     stateMode: "server",
     defaultPageSize: 20,
+    // What the page forces (a tab's request) decides which rows there are, so a change of it returns the
+    // list to its first page; the page index of the old narrowing would address rows that are not there.
+    scopeKey: params ? forcedScope({ ...params }) : undefined,
 {{#if orderField}}
     defaultSort: { field: "{{orderField}}", direction: "asc" },
 {{else if defaultSort}}
@@ -110,6 +113,13 @@ const {{EntityPascal}}Filters: readonly ContractFilter[] = [
 ];
 
 /**
+ * The filters this list draws a control for: the contract's, in this order. The list's address is
+ * declared over this same set (see the end of the file), so a key no control here commits is not one
+ * the address carries; trim the set here and the address follows, never where the controls are built.
+ */
+const {{EntityPascal}}DrawnFilters: readonly ContractFilter[] = {{EntityPascal}}Filters;
+
+/**
  * The columns the list draws, in the order it draws them: the generator writes every field in the
  * order it arrives, and the screen reorders or trims this list by hand. A name the table lacks is
  * skipped, so a field the backend drops leaves the list instead of breaking it.
@@ -164,7 +174,7 @@ export function {{EntityPascal}}List({ list, activeRowId, onRowClick, actions, n
   const {{this.field}}Facet = {{this.hook}}(list.filters);
 {{/each}}
   const contract = useRecordContract("{{entity}}"{{#if listFacets.length}}, { facets: { {{#each listFacets}}{{this.field}}: {{this.field}}Facet{{#unless @last}}, {{/unless}}{{/each}} } }{{/if}});
-  const filters: readonly RecordFilter<{{EntityPascal}}Row>[] = contract.filters<{{EntityPascal}}Row>({{EntityPascal}}Filters);
+  const filters: readonly RecordFilter<{{EntityPascal}}Row>[] = contract.filters<{{EntityPascal}}Row>({{EntityPascal}}DrawnFilters);
 {{#if hookOrder}}
 {{#if orderField}}
   // The contract has a reorder, so a reader its rule admits can drag the rows into order.
@@ -211,9 +221,10 @@ export function {{EntityPascal}}List({ list, activeRowId, onRowClick, actions, n
 }
 
 /**
- * What this list's address may carry: the filter keys the controls in `{{EntityPascal}}Filters` commit,
+ * What this list's address may carry: the filter keys the controls in `{{EntityPascal}}DrawnFilters` commit{{#if timeBuckets}},
+ * the keys of the time range the page draws over `{{timeBuckets.field}}`,{{/if}}
  * and the controls the list reads the address back with. The hook reads the address through it, and a
  * screen that links to this list (a tile counting what the list would show) narrows its keys with
  * `narrow` and reads the same `controls`, so a link and the list cannot disagree about a key.
  */
-export const {{EntityPascal}}ListAddress = declareListAddress({{EntityPascal}}Filters, { facetFields: [{{#each listFacets}}"{{this.field}}"{{#unless @last}}, {{/unless}}{{/each}}] });
+export const {{EntityPascal}}ListAddress = declareListAddress({{EntityPascal}}DrawnFilters, { facetFields: [{{#each listFacets}}"{{this.field}}"{{#unless @last}}, {{/unless}}{{/each}}]{{#if timeBuckets}}, timeRangeField: "{{timeBuckets.field}}"{{/if}} });

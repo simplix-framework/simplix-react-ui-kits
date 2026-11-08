@@ -88,7 +88,7 @@ const list = useJobList(blocks.listParams, {
 
 `onNavigate` takes the router's navigation options as its second argument (`PageBlocksContext`, the page's props and the route all carry it), and the route passes `replace: options?.replace` to `navigate`, so a filter change replaces the history entry and opening a record still pushes one. A list called with no address keeps its filters to itself. After a delete the page returns to `{ tab: search.tab, filters: search.filters }`, never to a bare address, and every other move between views keeps both.
 
-What the list reads from the address. The list file declares its address once, at its end, from the filters it states above, and exports it as `<Entity>ListAddress` (from the widget index too):
+What the list reads from the address. The list file declares its address once, at its end, over the set of filters it draws a control for (`<Entity>DrawnFilters`, the contract's filters until a screen trims them; the controls and the address are both built from that one constant, so trimming it narrows both), and exports it as `<Entity>ListAddress` (from the widget index too). A list whose page draws a time range names its field (`timeRangeField`), which makes the strip's `<field>.between` and the bar's two bounds keys the address may carry. A tab or any other request the page forces returns the list to its first page (`scopeKey`):
 
 | Member | Use |
 | --- | --- |
