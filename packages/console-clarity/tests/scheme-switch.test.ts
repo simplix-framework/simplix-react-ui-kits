@@ -5,8 +5,8 @@ import { describe, expect, it } from "vitest";
 // A part that eases its colours must take a change of scheme in the same frame as the ground it
 // stands on: console-core marks the document element for that instant and the tokens file nils every
 // transition under the mark. These checks hold the two halves to each other: the rule names the mark
-// console-core sets and covers the element, its descendants and their pseudo-elements, and nils both
-// the duration and the delay.
+// console-core sets and covers the element, its descendants and their pseudo-elements, and lists no
+// transition property (which cancels one already running) and nils both the duration and the delay.
 
 const root = join(__dirname, "../..");
 const read = (path: string) => readFileSync(join(root, path), "utf8");
@@ -29,6 +29,7 @@ function nilsEveryTransition(rules: { selectors: string[]; body: string }[], att
   return rules.some(
     (rule) =>
       covered.every((selector) => rule.selectors.includes(selector)) &&
+      /transition-property:\s*none\s*!important/.test(rule.body) &&
       /transition-duration:\s*0s\s*!important/.test(rule.body) &&
       /transition-delay:\s*0s\s*!important/.test(rule.body),
   );
@@ -47,11 +48,12 @@ describe("the scheme change in the console stylesheet", () => {
 });
 
 describe("the reader the check uses", () => {
-  const good = ":root[data-x],\n:root[data-x] *,\n:root[data-x] *::before,\n:root[data-x] *::after { transition-duration: 0s !important; transition-delay: 0s !important; }";
+  const good = ":root[data-x],\n:root[data-x] *,\n:root[data-x] *::before,\n:root[data-x] *::after { transition-property: none !important; transition-duration: 0s !important; transition-delay: 0s !important; }";
   it("finds a rule that nils every transition, and refuses one that misses a selector, the delay or the override", () => {
     expect(nilsEveryTransition(switchRules(good, "data-x"), "data-x")).toBe(true);
     expect(nilsEveryTransition(switchRules(good.replace(":root[data-x] *::after", ":root[data-x] a"), "data-x"), "data-x")).toBe(false);
     expect(nilsEveryTransition(switchRules(good.replace("transition-delay: 0s !important;", ""), "data-x"), "data-x")).toBe(false);
+    expect(nilsEveryTransition(switchRules(good.replace("transition-property: none !important;", ""), "data-x"), "data-x")).toBe(false);
     expect(nilsEveryTransition(switchRules(good.replaceAll(" !important", ""), "data-x"), "data-x")).toBe(false);
     expect(switchRules(":root { --a: 1; }", "data-x")).toEqual([]);
   });

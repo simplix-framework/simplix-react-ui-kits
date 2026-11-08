@@ -175,6 +175,17 @@
   --site-duration-base: 0s !important;
 }
 
+/* A nil duration does not stop a transition that is already running when the mark is set: a fill
+   that ends transparent in both schemes (the option a switch just left) keeps fading from the old
+   scheme's colour, because its end value did not change. A transition whose property is no longer
+   listed is cancelled and the property takes its end value, so under the mark no part lists one. */
+:root[data-site-scheme-switch],
+:root[data-site-scheme-switch] *,
+:root[data-site-scheme-switch] *::before,
+:root[data-site-scheme-switch] *::after {
+  transition-property: none !important;
+}
+
 /* A band on the dark ground: every site variable a part reads takes the band's value inside it. */
 [data-band="dark"] {
   --site-canvas: var(--site-dark-canvas);

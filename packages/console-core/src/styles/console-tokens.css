@@ -61,11 +61,14 @@
    the styles once. A ground changes at once, and a part that eases its colours would paint the old
    scheme's ink on the new ground for the length of its transition (light ink on a dark panel), so
    every transition is nil under the mark. `!important` keeps the rule over a utility's duration and
-   a part's own. */
+   a part's own. Listing no transition property also cancels one that is already running: a nil
+   duration leaves it fading when its end value is the same in both schemes (a fill that ends
+   transparent), a property that is not listed takes its end value at once. */
 :root[data-console-scheme-switch],
 :root[data-console-scheme-switch] *,
 :root[data-console-scheme-switch] *::before,
 :root[data-console-scheme-switch] *::after {
+  transition-property: none !important;
   transition-duration: 0s !important;
   transition-delay: 0s !important;
 }

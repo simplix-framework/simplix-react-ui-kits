@@ -59,6 +59,41 @@ describe("the scheme change in the site stylesheet", () => {
   });
 });
 
+/** Whether a rule under the mark lists no transition property for the element, its descendants and their pseudo-elements. */
+function cancelsEveryTransition(tokens: string, attribute: string): boolean {
+  const bare = tokens.replace(/\/\*[\s\S]*?\*\//g, "");
+  const covered = [`:root[${attribute}]`, `:root[${attribute}] *`, `:root[${attribute}] *::before`, `:root[${attribute}] *::after`];
+  return [...bare.matchAll(/([^{}]*:root\[[^\]]*\][^{}]*)\{([^}]*)\}/g)].some((m) => {
+    const selectors = (m[1] ?? "").split(",").map((one) => one.trim());
+    return covered.every((selector) => selectors.includes(selector)) && /transition-property:\s*none\s*!important/.test(m[2] ?? "");
+  });
+}
+
+describe("a transition that is already running when the scheme changes", () => {
+  const tokens = read("src/styles/site-tokens.css");
+
+  it("is cancelled under the mark, which a nil duration alone does not do for a fill whose end value is the same in both schemes", () => {
+    expect(cancelsEveryTransition(tokens, SCHEME_SWITCH_ATTRIBUTE)).toBe(true);
+  });
+
+  it("is the case of the switch option just left: it eases its fill and ink on the duration token the mark nils, and its chosen fill is one it eases", () => {
+    const option = read("../site-core/src/pricing/pricing.style.ts");
+    const declaration = /export const siteSwitchOptionStyle = defineSlotStyle\(\{[\s\S]*?\n\}\);/.exec(option)?.[0] ?? "";
+    expect(declaration).toMatch(/transition-colors duration-\(--site-duration-fast\)/);
+    expect(declaration).toMatch(/true: "bg-\(--site-surface\)/);
+    expect(zeroedDurations(switchRule(tokens) ?? "")).toContain("--site-duration-fast");
+  });
+
+  it("is found by a check that refuses a rule that only nils the duration, or leaves out a pseudo-element", () => {
+    const rule = (selectors: string, body: string) => `${selectors} { ${body} }`;
+    const all = ":root[data-x],\n:root[data-x] *,\n:root[data-x] *::before,\n:root[data-x] *::after";
+    expect(cancelsEveryTransition(rule(all, "transition-property: none !important;"), "data-x")).toBe(true);
+    expect(cancelsEveryTransition(rule(all, "transition-duration: 0s !important;"), "data-x")).toBe(false);
+    expect(cancelsEveryTransition(rule(all, "transition-property: none;"), "data-x")).toBe(false);
+    expect(cancelsEveryTransition(rule(all.replace(",\n:root[data-x] *::after", ""), "transition-property: none !important;"), "data-x")).toBe(false);
+  });
+});
+
 describe("the readers the checks use", () => {
   it("find a rule that zeroes a token without the override, and a transition with a literal duration", () => {
     expect(switchRule(":root { --a: 1; }")).toBeUndefined();
