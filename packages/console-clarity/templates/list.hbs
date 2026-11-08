@@ -73,6 +73,10 @@ export interface {{EntityPascal}}ListProps {
   readonly actions?: readonly RecordAction<{{EntityPascal}}Row>[];
   /** A narrowing of the page's own, which the list draws as a chip row before its chips. */
   readonly narrowing?: RecordListProps<{{EntityPascal}}Row>["narrowing"];
+  /** What an empty list says, from the page that knows which tab or chips narrowed it; absent, the catalog's words. */
+  readonly empty?: RecordListProps<{{EntityPascal}}Row>["empty"];
+  /** What the list says when lit chips or filters match nothing, in the page's own words; absent, the framework's card. */
+  readonly filteredEmpty?: RecordListProps<{{EntityPascal}}Row>["filteredEmpty"];
 }
 
 /**
@@ -166,7 +170,7 @@ export function use{{EntityPascal}}Columns(overrides?: ContractOverrides, option
 }
 
 /** The {{entity}} records, drawn by the kit's list. */
-export function {{EntityPascal}}List({ list, activeRowId, onRowClick, actions, narrowing }: {{EntityPascal}}ListProps) {
+export function {{EntityPascal}}List({ list, activeRowId, onRowClick, actions, narrowing, empty, filteredEmpty }: {{EntityPascal}}ListProps) {
   const words = useScreenWords("{{entity}}");
   const generated = use{{EntityPascal}}Columns();
 {{#each listFacets}}
@@ -206,7 +210,8 @@ export function {{EntityPascal}}List({ list, activeRowId, onRowClick, actions, n
 {{#if cardTitle}}
       cardTitle="{{cardTitle}}"
 {{/if}}
-      empty={ { {{#if hasCreate}}title: words.emptyTitle, description: words.emptyDescription{{else}}title: words.emptyTitleRecorded, description: words.emptyDescriptionRecorded{{/if}} }}
+      empty={empty ?? { {{#if hasCreate}}title: words.emptyTitle, description: words.emptyDescription{{else}}title: words.emptyTitleRecorded, description: words.emptyDescriptionRecorded{{/if}} }}
+      filteredEmpty={filteredEmpty}
 {{#unless hasKeywordSearch}}
       // The route declares no keyword field, so there is nothing for a search box to send.
       features={ { search: false } }

@@ -281,6 +281,12 @@ export interface RecordListProps<Row> {
   readonly searchPlaceholder?: string;
   readonly pageSize?: number;
   readonly empty?: { readonly title: string; readonly description?: string };
+  /**
+   * What the list says when lit filters or chips match nothing (the page's own words for an empty
+   * chip: what the chip means and how to widen it). Absent, the framework's "No matching items" card
+   * stays. {@link empty} says only that there is nothing yet, so a page that words both hands both.
+   */
+  readonly filteredEmpty?: { readonly title: string; readonly description?: string };
   /** Features to turn off; everything not named is on. */
   readonly features?: RecordListFeatures;
   /**
@@ -658,6 +664,7 @@ export function RecordList<Row>({
   searchPlaceholder,
   pageSize = DEFAULT_PAGE_SIZE,
   empty,
+  filteredEmpty,
   features = {},
   narrowing,
   cardBreakpoint,
@@ -894,7 +901,17 @@ export function RecordList<Row>({
         emptyReason={list.emptyReason}
         isLoading={list.isLoading}
         emptyState={empty}
-        slots={nested ? { empty: ({ reason }) => (empty && reason === "no-data" ? <EmptyState size="sm" title={empty.title} description={empty.description} /> : <CrudList.Empty reason={reason} />) } : undefined}
+        filteredEmptyState={filteredEmpty}
+        slots={
+          nested
+            ? {
+                empty: ({ reason }) => {
+                  const declared = reason === "no-data" ? empty : reason === "no-filter" ? filteredEmpty : undefined;
+                  return declared ? <EmptyState size="sm" title={declared.title} description={declared.description} /> : <CrudList.Empty reason={reason} />;
+                },
+              }
+            : undefined
+        }
         cardBreakpoint={titleColumn ? breakpoint : undefined}
         gridView={viewToggle ? true : undefined}
         // A list inside a record has no table head above its cards, so there every value carries its

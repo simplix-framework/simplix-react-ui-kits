@@ -148,6 +148,17 @@ describe("the generated list's drawn filters and address", () => {
   });
 });
 
+describe("the generated list's empty words", () => {
+  it("takes the page's words for an empty list and for lit chips that match nothing, and hands both to the kit's list", () => {
+    const source = renderList();
+    expect(source).toContain('readonly empty?: RecordListProps<JobRow>["empty"];');
+    expect(source).toContain('readonly filteredEmpty?: RecordListProps<JobRow>["filteredEmpty"];');
+    expect(source).toContain("empty={empty ?? {");
+    expect(source).toContain("filteredEmpty={filteredEmpty}");
+    expect(checkList(source)).toEqual([]);
+  });
+});
+
 describe("the generated widget index", () => {
   it("exports the list's declaration beside its hook, for a screen that links to the list", () => {
     const text = render("feature-index.hbs", { EntityPascal: "Job", hasList: true });
