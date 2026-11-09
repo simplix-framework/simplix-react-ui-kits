@@ -143,7 +143,7 @@ The list decision is compared with the files that draw the list. The root's `scr
 
 A frame's sample rows are part of its design. The frame a story template lays down cannot know sample data, so it fills every text field with its own name and a number (`roleName: "roleName 1"`), which draws a meaningless list. `screen-design` fails when a file named by `listFiles`, or, with `screenDesign.frameDir` (a directory of `*.stories.tsx` files relative to the root), any frame in that directory, holds a declared field (`name: "roleName"`) whose rows are still such a value. A frame in `frameDir` with no routed screen (a holder tab's table) is read as well.
 
-The console search is checked against the same entries. With `screenDesign.search` (`{ app, meta, sources }`: the app whose console searches, its SimpliX Meta document, and the JSON file `{ sources: [{ entity, route, sort }] }` the app builds its record search from), every routed list of that app whose entity offers keyword search in Meta (a field of its search DTO marked `keyword`) is a source of the search, or its entry decides `search: { shown: false, reason }`. A source names an entity that takes a keyword (a list that takes none ignores the text and answers every row), sits at its list's route, and sorts by the entity's default sort. A newly scaffolded list therefore fails the check, which the scaffold runs, with the line to add to the sources file, until it is added or left out with a reason.
+The console search is checked against the same entries. With `screenDesign.search` (`{ app, meta, sources, definitions? }`: the app whose console searches, its SimpliX Meta document, the JSON file `{ sources: [{ entity, route, sort }] }` the app builds its record search from, and optionally the file where the app defines how each source's rows are named, which the failure line then names beside the sources file), every routed list of that app whose entity offers keyword search in Meta (a field of its search DTO marked `keyword`) is a source of the search, or its entry decides `search: { shown: false, reason }`. A source names an entity that takes a keyword (a list that takes none ignores the text and answers every row), sits at its list's route, and sorts by the entity's default sort. A newly scaffolded list therefore fails the check, which the scaffold runs, with the line to add to the sources file, until it is added or left out with a reason.
 
 Everything specific to a product is the root's `mockup.config.json` key `screenDesign`; a root without the key is left alone:
 
@@ -155,7 +155,7 @@ Everything specific to a product is the root's `mockup.config.json` key `screenD
     "primaryKey": "{entity}Id",
     "listFiles": ["{module}/src/widgets/{entity}/list.tsx", "screens/{entity}.stories.tsx"],
     "frameDir": "screens",
-    "search": { "app": "<app>", "meta": "<path to the Meta document>", "sources": "<path to the search sources JSON>" }
+    "search": { "app": "<app>", "meta": "<path to the Meta document>", "sources": "<path to the search sources JSON>", "definitions": "<optional path to the source definitions>" }
   }
 }
 ```

@@ -94,10 +94,10 @@ if (settings.listFiles) {
 // The console search: every routed list whose entity offers keyword search in the Meta document is
 // a source of the search, or its entry decides `search.shown` false with the reason.
 if (settings.search) {
-  const { app, meta, sources } = settings.search;
+  const { app, meta, sources, definitions } = settings.search;
   const offers = entitySearchOffers(JSON.parse(readFileSync(at(meta), "utf8")));
   const declared = JSON.parse(readFileSync(at(sources), "utf8"));
-  problems.push(...searchProblems(manifest, offers, declared.sources, { app, sourcesPath: sources }));
+  problems.push(...searchProblems(manifest, offers, declared.sources, { app, sourcesPath: sources, definitionsPath: definitions }));
 }
 if (problems.length > 0) {
   console.error(`screen design is not complete:\n${problems.map((problem) => `  ${problem}`).join("\n")}`);
