@@ -1728,9 +1728,6 @@
   :where([data-part="console-service-links"][data-part-layout="column"])[data-part][data-p-console-service-links] {
     @apply border-t px-2.5 pb-3 pt-2 border-[var(--border)];
   }
-  :where([data-part="console-service-links-title"])[data-part][data-p-console-service-links-title] {
-    @apply px-2.5 text-[var(--menu-fg-muted,var(--muted-foreground))];
-  }
   :where([data-part="console-band-controls"])[data-part][data-p-console-band-controls] {
     @apply ml-auto;
   }

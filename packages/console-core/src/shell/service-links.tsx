@@ -1,13 +1,25 @@
+import { ChevronsUpDownIcon, ExternalLinkIcon } from "lucide-react";
 import type { ReactNode } from "react";
 import { useTranslation } from "@simplix-react/i18n/react";
-import { Button, Separator, Stack, Text, Tooltip, TooltipContent, TooltipTrigger } from "@simplix-react/ui";
-import { partAttributes } from "@simplix-react/ui/design";
+import {
+  Button,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  Separator,
+  Stack,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@simplix-react/ui";
+import { partAttributes, slotAttributes } from "@simplix-react/ui/design";
 
 import { PACKAGE_NAMESPACE } from "./locales";
 import { ConsoleMenuGlyph, ConsoleMenuLinkRow } from "./menu-tree";
-import { menuRailButtonStyle, menuRailRuleStyle } from "./menu-tree.style";
+import { menuLabelStyle, menuRailButtonStyle, menuRailRuleStyle, menuRowStyle } from "./menu-tree.style";
 import { ConsolePhoneMenuSection } from "./phone-shell";
-import { serviceLinksStyle, serviceLinksTitleStyle } from "./service-links.style";
+import { serviceLinksStyle } from "./service-links.style";
 
 /** One service beside the console that an operator opens in a tab of its own. */
 export interface ConsoleServiceLink {
@@ -53,15 +65,19 @@ export function configuredServiceLinks(links: readonly ConsoleServiceLink[]): Co
   });
 }
 
+/** The measure the services' menu opens at: the menu column's own width, so the rows line up with it. */
+const SERVICES_MEASURE = "w-56";
+
 /**
  * The services beside the console (a customer portal, the sign-in server's admin console, a mail
  * catcher), drawn at the foot of the navigation and opened in a new tab.
  *
- * <p>In the column they are rows under a rule and a name, each ending in the external-link mark. On
- * the rail each is a mark of its own whose name is a tooltip, shown on hover and on keyboard focus,
- * because a rail mark that opened a flyout for one row would cost a second press to leave. In the
- * phone's menu sheet they are a section of rows. A service with no configured address is left out,
- * and with none left nothing is drawn at all.
+ * <p>In the column and on the rail they are one control however many services an installation
+ * configures: a row named by `title` with a caret, which opens the services upward as a menu, and on
+ * the rail one mark with the same name as a tooltip. A menu keeps the foot one row tall where a row
+ * per service grew with the installation's configuration. In the phone's menu sheet they are a
+ * section of rows, since the sheet scrolls. A service with no configured address is left out, and with
+ * none left nothing is drawn at all.
  *
  * <p>Every link opens with no opener and no referrer, so the service cannot reach back into the
  * console's window and is not told which console page the operator was on.
@@ -70,46 +86,92 @@ export function ConsoleServiceLinks({ title, links, layout }: ConsoleServiceLink
   const shown = configuredServiceLinks(links);
   if (shown.length === 0) return null;
   if (layout === "rail") return <RailServiceLinks title={title} links={shown} />;
-  const rows = shown.map((link) => <ConsoleMenuLinkRow key={link.key} icon={link.icon} label={link.label} href={link.href} external />);
   if (layout === "sheet") {
     return (
       <Stack gap="none" role="navigation" aria-label={title} {...partAttributes(serviceLinksStyle, { layout })}>
-        <ConsolePhoneMenuSection title={title}>{rows}</ConsolePhoneMenuSection>
+        <ConsolePhoneMenuSection title={title}>
+          {shown.map((link) => (
+            <ConsoleMenuLinkRow key={link.key} icon={link.icon} label={link.label} href={link.href} external />
+          ))}
+        </ConsolePhoneMenuSection>
       </Stack>
     );
   }
   return (
-    <Stack gap="xs" shrink={false} role="navigation" aria-label={title} {...partAttributes(serviceLinksStyle, { layout })}>
-      <Text size="caption" tone="muted" {...partAttributes(serviceLinksTitleStyle, {})}>
-        {title}
-      </Text>
-      {rows}
+    <Stack gap="none" shrink={false} role="navigation" aria-label={title} {...partAttributes(serviceLinksStyle, { layout })}>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <button
+            type="button"
+            className="flex w-full items-center justify-between"
+            {...slotAttributes(menuRowStyle, { kind: "branch", strong: false, current: false })}
+          >
+            <span className="min-w-0 flex-1 truncate" {...slotAttributes(menuLabelStyle, {})}>
+              {title}
+            </span>
+            <ConsoleMenuGlyph>
+              <ChevronsUpDownIcon />
+            </ConsoleMenuGlyph>
+          </button>
+        </DropdownMenuTrigger>
+        <ServiceMenuContent links={shown} side="top" align="start" />
+      </DropdownMenu>
     </Stack>
   );
 }
 
+/** The menu the services open as: a row per service, each opening in a tab of its own. */
+function ServiceMenuContent({
+  links,
+  side,
+  align,
+}: {
+  readonly links: readonly ConfiguredServiceLink[];
+  readonly side: "top" | "right";
+  readonly align: "start" | "end";
+}) {
+  const { t } = useTranslation(`${PACKAGE_NAMESPACE}/chrome`);
+  return (
+    <DropdownMenuContent side={side} align={align} className={SERVICES_MEASURE}>
+      {links.map((link) => (
+        <DropdownMenuItem key={link.key} asChild>
+          <a href={link.href} target="_blank" rel="noopener noreferrer">
+            {link.icon}
+            <span className="min-w-0 flex-1 truncate">{link.label}</span>
+            <ExternalLinkIcon aria-hidden />
+            <span className="sr-only">{t("link.newTab")}</span>
+          </a>
+        </DropdownMenuItem>
+      ))}
+    </DropdownMenuContent>
+  );
+}
+
 /**
- * The services on the rail, each drawn as a rail mark is drawn (the same part, never current), so the
- * rail keeps one size and one look for every mark on it.
+ * The services on the rail: one mark, drawn as a rail mark is drawn (the same part, never current),
+ * whose name is a tooltip shown on hover and on keyboard focus and which opens the services as a menu
+ * to its right.
  */
 function RailServiceLinks({ title, links }: { readonly title: string; readonly links: readonly ConfiguredServiceLink[] }) {
-  const { t } = useTranslation(`${PACKAGE_NAMESPACE}/chrome`);
   return (
     <Stack gap="xs" align="center" role="navigation" aria-label={title} {...partAttributes(serviceLinksStyle, { layout: "rail" })}>
       <Separator className="w-8" {...partAttributes(menuRailRuleStyle, {})} />
-      {links.map((link) => (
-        <Tooltip key={link.key}>
+      <DropdownMenu>
+        <Tooltip>
           <TooltipTrigger asChild>
-            <Button asChild variant="ghost" size="icon-sm" {...partAttributes(menuRailButtonStyle, { active: false })}>
-              <a href={link.href} target="_blank" rel="noopener noreferrer">
-                <ConsoleMenuGlyph>{link.icon}</ConsoleMenuGlyph>
-                <span className="sr-only">{`${link.label} ${t("link.newTab")}`}</span>
-              </a>
-            </Button>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon-sm" {...partAttributes(menuRailButtonStyle, { active: false })}>
+                <ConsoleMenuGlyph>
+                  <ExternalLinkIcon />
+                </ConsoleMenuGlyph>
+                <span className="sr-only">{title}</span>
+              </Button>
+            </DropdownMenuTrigger>
           </TooltipTrigger>
-          <TooltipContent side="right">{link.label}</TooltipContent>
+          <TooltipContent side="right">{title}</TooltipContent>
         </Tooltip>
-      ))}
+        <ServiceMenuContent links={links} side="right" align="end" />
+      </DropdownMenu>
     </Stack>
   );
 }

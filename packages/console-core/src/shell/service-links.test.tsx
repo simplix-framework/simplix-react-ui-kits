@@ -36,18 +36,15 @@ describe("configuredServiceLinks", () => {
 });
 
 describe("ConsoleServiceLinks", () => {
-  it.each<ConsoleServiceLinksLayout>(["column", "rail", "sheet"])("draws only the configured services in the %s", (layout) => {
-    const markup = draw(layout);
+  it("draws the services of the phone sheet as rows, only the configured ones", () => {
+    const markup = draw("sheet");
     expect(anchors(markup)).toHaveLength(2);
     expect(markup).toContain('href="https://portal.example.test/"');
     expect(markup).toContain('href="http://localhost:8025/"');
     for (const label of ["Unset service", "Empty service", "Blank service", "Null service"]) {
       expect(markup).not.toContain(label);
     }
-  });
-
-  it.each<ConsoleServiceLinksLayout>(["column", "rail", "sheet"])("opens every service in a new tab with no opener and no referrer in the %s", (layout) => {
-    for (const anchor of anchors(draw(layout))) {
+    for (const anchor of anchors(markup)) {
       expect(anchor).toContain('target="_blank"');
       expect(anchor).toContain('rel="noopener noreferrer"');
     }
@@ -58,20 +55,27 @@ describe("ConsoleServiceLinks", () => {
     expect(draw(layout, [])).toBe("");
   });
 
-  it("names the group as a landmark and over the rows in the column", () => {
-    const markup = draw("column");
-    expect(markup).toContain('role="navigation" aria-label="Related services"');
-    expect(markup).toMatch(/data-part="console-service-links-title"[^>]*>Related services</);
+  it("draws one menu trigger named by the title in the column, however many services are configured", () => {
+    for (const links of [LINKS, [...LINKS, { key: "more", label: "More", href: "https://more.example.test/" }]]) {
+      const markup = draw("column", links);
+      expect(markup).toContain('role="navigation" aria-label="Related services"');
+      expect((markup.match(/<button\b/g) ?? []).length).toBe(1);
+      expect(markup).toMatch(/<button[^>]*aria-haspopup="menu"[^>]*>/);
+      expect(markup).toMatch(/<button[^>]*>.*Related services/);
+      // The services are in the menu, which draws when it is opened.
+      expect(anchors(markup)).toHaveLength(0);
+    }
   });
 
-  it("gives each rail mark a tooltip and a name in words, with no native title beside it", () => {
+  it("gives the rail one mark with a tooltip and a name in words, with no native title beside it", () => {
     const markup = draw("rail");
-    for (const anchor of anchors(markup)) {
-      // Radix marks a tooltip trigger with its state; the content mounts on hover or focus.
-      expect(anchor).toContain('data-state="closed"');
-      expect(anchor).not.toContain("title=");
-    }
-    expect(markup).toMatch(/<span class="sr-only">Customer portal [^<]+<\/span>/);
+    expect((markup.match(/<button\b/g) ?? []).length).toBe(1);
+    const button = markup.match(/<button\b[^>]*>/)?.[0] ?? "";
+    // Radix marks a tooltip trigger with its state; the content mounts on hover or focus.
+    expect(button).toContain("data-state=");
+    expect(button).toContain('aria-haspopup="menu"');
+    expect(button).not.toContain("title=");
+    expect(markup).toMatch(/<span class="sr-only">Related services<\/span>/);
     expect(markup).not.toContain('data-part="console-service-links-title"');
   });
 
