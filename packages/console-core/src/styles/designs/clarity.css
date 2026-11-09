@@ -1726,7 +1726,7 @@
     @apply border-b border-[var(--border)] bg-card;
   }
   :where([data-part="console-service-links"][data-part-layout="column"])[data-part][data-p-console-service-links] {
-    @apply border-t px-2.5 pb-3 pt-2 border-[var(--border)];
+    @apply border-t px-2.5 pb-3 pt-2 border-[color-mix(in_srgb,var(--menu-fg,var(--border))_16%,transparent)];
   }
   :where([data-part="console-band-controls"])[data-part][data-p-console-band-controls] {
     @apply ml-auto;

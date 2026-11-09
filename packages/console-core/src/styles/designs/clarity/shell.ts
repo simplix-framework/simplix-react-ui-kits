@@ -92,9 +92,10 @@ export const shellSlots: Record<string, string> = {
   "console-menu-ink":
     "start-1 m-0! block w-0.5 rounded-full bg-primary transition-[top,height,opacity] duration-[var(--dur-base)] ease-[var(--ease)]",
   "console-menu-caret": "text-[var(--menu-icon,var(--muted-foreground))] opacity-100 [&_svg]:size-[13px]",
-  // The services beside the console: a band under the column's rule. On the rail they are drawn by the
-  // rail mark's own part.
-  "console-service-links layout=column": "border-[var(--border)]",
+  // The services beside the console: a band under a rule. The column stands on its own ground, so the
+  // rule is a share of the column's text colour over that ground and never the page's border colour,
+  // which reads as a bright line on a dark column. On the rail they are drawn by the rail mark's own part.
+  "console-service-links layout=column": "border-[color-mix(in_srgb,var(--menu-fg,var(--border))_16%,transparent)]",
 
   // Content column: 24px over the header and 32px at the sides on a 1440px measure; under 900px the
   // sides close to 20px. The padding transitions, so the screen settles into a new width rather
