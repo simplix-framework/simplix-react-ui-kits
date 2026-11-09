@@ -1,4 +1,4 @@
-import { useId, useState, type ReactNode } from "react";
+import { useId, useRef, useState, type ReactNode } from "react";
 import { useTranslation } from "@simplix-react/i18n/react";
 import {
   CrudDetail,
@@ -249,6 +249,17 @@ export function sublistKind(rows: number, count: number | undefined): "compact" 
   return complete && rows <= COMPACT_LIMIT ? "compact" : "full";
 }
 
+/**
+ * A sub-list form that stays the main table once it has been one. The form is read from the rows the
+ * list holds and a search narrows them, so without this a list that showed its search box would fall
+ * back to the compact form, which has none, under the reader's first typed character.
+ */
+export function useStickyFull(decided: "compact" | "full"): "compact" | "full" {
+  const wasFull = useRef(false);
+  if (decided === "full") wasFull.current = true;
+  return wasFull.current ? "full" : decided;
+}
+
 /** What a compact list leaves out: everything that exists to find a row among many. */
 const COMPACT_FEATURES = { search: false, filters: false, chips: false, sort: false, count: false, pagination: false } as const;
 /** What the main table always carries, whatever the screen asked for. */
@@ -381,7 +392,11 @@ function SubList({ list, count }: { readonly list: RecordListProps<any>; readonl
   const [opened, setOpened] = useState<unknown | null>(null);
   // A cursor window grows as it is read, so it is the main table from its first page: its shape does
   // not change under the reader when a press brings the row count past the compact limit.
-  const kind = list.more ? "full" : sublistKind(list.list?.pagination.total ?? list.rows?.length ?? 0, count);
+  const decided = list.more ? "full" : sublistKind(list.list?.pagination.total ?? list.rows?.length ?? 0, count);
+  // The form is decided from the rows the list holds, and a search narrows them: a list that was the main
+  // table with its search box must not fall back to the compact form (which has none) under the reader's
+  // first typed character, so once it has been the main table it stays one.
+  const kind = useStickyFull(decided);
   // A cursor window holds only the pages read so far, so a search, a sort or a filter over it would
   // answer for those rows alone: it keeps the features the screen named rather than the main table's.
   const features = list.more
