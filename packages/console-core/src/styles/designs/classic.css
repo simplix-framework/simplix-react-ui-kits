@@ -1644,6 +1644,9 @@
   :where([data-part="console-phone-bar"])[data-part][data-p-console-phone-bar] {
     @apply border-b border-border bg-card px-2 py-1;
   }
+  :where([data-part="console-phone-bar-title"])[data-part][data-p-console-phone-bar-title] {
+    @apply font-semibold;
+  }
   :where([data-part="console-phone-empty"])[data-part][data-p-console-phone-empty] {
     @apply py-8 text-center;
   }

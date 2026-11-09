@@ -13,6 +13,7 @@ import {
   SheetTitle,
   Icon,
   MenuLink,
+  Heading,
   Text,
   Tooltip,
   TooltipContent,
@@ -31,6 +32,7 @@ import { previewBrandLinkStyle } from "./preview-chrome.style";
 import {
   phoneActionBarStyle,
   phoneBarStyle,
+  phoneBarTitleStyle,
   phoneEmptyStyle,
   phoneRowButtonStyle,
   phoneScreenBodyStyle,
@@ -140,9 +142,15 @@ export function ConsolePhoneBar({ title, brand, home, back = false, actions }: C
           {title != null && <Separator orientation="vertical" className="h-5" />}
         </>
       )}
-      <Text size={brand != null ? undefined : "lg"} weight="semibold" className="min-w-0 flex-1 truncate">
-        {title}
-      </Text>
+      {/* The page header draws no title on a phone, so this is the screen's one level-one heading. A bar with no title
+          draws a plain filler that keeps the controls at the end. */}
+      {title != null ? (
+        <Heading as="h1" level={brand != null ? 6 : 5} className="min-w-0 flex-1 truncate" {...partAttributes(phoneBarTitleStyle, {})}>
+          {title}
+        </Heading>
+      ) : (
+        <Text size={brand != null ? undefined : "lg"} weight="semibold" className="min-w-0 flex-1 truncate" />
+      )}
       {actions}
     </Flex>
   );

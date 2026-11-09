@@ -9,6 +9,15 @@ export const phoneBarStyle = defineSlotStyle({
   defaultVariants: {},
 });
 
+/** The page title in the bar at the top of a phone screen: the screen's one level-one heading, drawn at the bar's weight. */
+export const phoneBarTitleStyle = defineSlotStyle({
+  slot: "console-phone-bar-title",
+  as: "part",
+  base: "font-semibold",
+  variants: {},
+  defaultVariants: {},
+});
+
 /** The row of areas at the bottom of a phone screen. */
 export const phoneTabbarStyle = defineSlotStyle({
   slot: "console-phone-tabbar",
