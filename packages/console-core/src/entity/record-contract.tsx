@@ -473,6 +473,15 @@ export function secretFormField(
   return { ...common, kind: "password", value: "", ...(editing ? { required: false, placeholder: keepText } : {}) };
 }
 
+/**
+ * Whether a field is an optional text the reader left blank. The request carries `null` for it, so a
+ * field they did not touch stays unset and a field they cleared is unset, where an empty string would
+ * be stored for every optional text on every save (the server's checks read an empty string as a value).
+ */
+export function isBlankOptionalText(field: Pick<ContractField, "kind" | "required">, value: unknown): boolean {
+  return (field.kind === "text" || field.kind === "longText") && field.required !== true && typeof value === "string" && value.trim() === "";
+}
+
 /** Whether a `secret` entry is blank, which a request leaves out so the stored value stays. */
 export function isBlankSecret(value: unknown): boolean {
   return value === undefined || value === null || (typeof value === "string" && value.trim() === "");
@@ -678,6 +687,7 @@ export function useRecordContract(entity: string, overrides: ContractOverrides =
       for (const field of fields) {
         if (field.kind === "money" && field.name in values) body[field.name] = moneyStored(field, values[field.name]);
         if (field.kind === "secret" && isBlankSecret(values[field.name])) delete body[field.name];
+        if (isBlankOptionalText(field, values[field.name])) body[field.name] = null;
         // Text that does not parse is sent as written, so the server's refusal names the field.
         if (field.kind === "json" && typeof values[field.name] === "string") body[field.name] = parsedJson(values[field.name] as string);
         if (field.kind !== "i18nText" || !field.plainField) continue;
