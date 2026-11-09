@@ -50,6 +50,7 @@
     "fillBeforeSubmit": "필수 항목 {{count, number}}개를 입력해야 합니다",
     "otpDigit": "{{count, number}}자리 중 {{index, number}}번째 숫자",
     "refused": "서버가 이 내용을 받지 않았습니다. 표시한 항목을 고친 뒤 다시 저장해 주세요.",
+    "refusedCheck": "저장할 수 없는 값이 있습니다. 표시한 항목을 고친 뒤 다시 저장해 주세요.",
     "saving": "저장하는 중…",
     "secretKeep": "비워 두면 저장된 값을 그대로 둡니다"
   },
@@ -59,7 +60,8 @@
   },
   "actionDialog": {
     "running": "처리하는 중…",
-    "refused": "서버가 이 요청을 받지 않았습니다."
+    "refused": "서버가 이 요청을 받지 않았습니다.",
+    "refusedCheck": "받을 수 없는 값이 있습니다. 표시한 항목을 고친 뒤 다시 시도해 주세요."
   },
   "recordList": {
     "selected": "개 선택",

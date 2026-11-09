@@ -51,6 +51,7 @@
     "fillBeforeSubmit": "Fill in {{count, number}} required field(s) first",
     "otpDigit": "Digit {{index, number}} of {{count, number}}",
     "refused": "The server did not accept this. Change what it names and save again.",
+    "refusedCheck": "Some values cannot be saved yet. Change what is marked and save again.",
     "saving": "Saving…",
     "secretKeep": "Leave blank to keep the stored value"
   },
@@ -60,7 +61,8 @@
   },
   "actionDialog": {
     "running": "Working…",
-    "refused": "The server did not accept this."
+    "refused": "The server did not accept this.",
+    "refusedCheck": "Some values cannot be accepted yet. Change what is marked and try again."
   },
   "recordList": {
     "selected": "selected",

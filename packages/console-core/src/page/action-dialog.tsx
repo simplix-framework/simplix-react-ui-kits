@@ -3,7 +3,7 @@ import { useTranslation } from "@simplix-react/i18n/react";
 import { Button, CrudDetail, DetailFieldWrapper, Dialog, DialogFooter, DialogHeader, DialogTitle, Flex, Stack, Stepline, useUnsavedChanges } from "@simplix-react/ui";
 
 import { PACKAGE_NAMESPACE } from "../entity/locales";
-import { RecordNote, RecordNoticeMenu, RecordNotices, RecordVerbButton, standingNoticeKeys, type RecordNotice, type RecordVerb } from "../entity/record-blocks";
+import { RecordNote, RecordNoticeMenu, RecordNotices, RecordVerbButton, RefusalNotice, standingNoticeKeys, type RecordNotice, type RecordVerb } from "../entity/record-blocks";
 import type { RecordSection } from "../entity/record-detail";
 import { initialValues, RecordFormSections, refusalOf, useRecordFormValues, valuesChanged, type RecordFormSection, type SubmitRefusal } from "../entity/record-form";
 import { RecordValueView } from "../entity/record-value";
@@ -169,7 +169,8 @@ function ActionDialogBody({
           )}
         </DialogHeader>
         <Stack gap="sm">
-          <RecordNotices notices={refusal ? [{ key: "submit-refused", tone: "danger", title: t("actionDialog.refused"), body: refusal.message }, ...(notices ?? [])] : notices} />
+          {refusal ? <RefusalNotice refusal={refusal} title={t(refusal.source === "client" ? "actionDialog.refusedCheck" : "actionDialog.refused")} body={refusal.message} /> : null}
+          <RecordNotices notices={notices} />
           {sections?.map((section) => (
             <CrudDetail.Section key={section.key} title={section.title} variant="flat" layout="two-column">
               {section.fields.map((field) => (

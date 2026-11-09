@@ -50,6 +50,7 @@
     "fillBeforeSubmit": "必須項目を{{count, number}}件入力してください",
     "otpDigit": "{{count, number}}桁中{{index, number}}桁目",
     "refused": "サーバーがこの内容を受け付けませんでした。示した項目を直してから、もう一度保存してください。",
+    "refusedCheck": "保存できない値があります。示した項目を直してから、もう一度保存してください。",
     "saving": "保存しています…",
     "secretKeep": "空欄のままにすると保存済みの値を保持します"
   },
@@ -59,7 +60,8 @@
   },
   "actionDialog": {
     "running": "処理しています…",
-    "refused": "サーバーがこの内容を受け付けませんでした。"
+    "refused": "サーバーがこの内容を受け付けませんでした。",
+    "refusedCheck": "受け付けられない値があります。示した項目を直してから、もう一度お試しください。"
   },
   "recordList": {
     "selected": "件選択",

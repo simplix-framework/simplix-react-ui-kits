@@ -155,7 +155,15 @@ export function ConsolePage({
 
   const body = (
     tabs.length === 0 ? (
-      spec.body
+      // A settings page with no tabs has one body, and nothing else marks it: a named region lets a
+      // reader who moves by landmarks find where the page's own content starts.
+      flowing && spec.body !== undefined ? (
+        <section aria-label={spec.bodyTitle ?? spec.title} data-page-body>
+          {spec.body}
+        </section>
+      ) : (
+        spec.body
+      )
     ) : stripped ? (
       <TabSet
         value={current ?? ""}

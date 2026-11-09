@@ -4,7 +4,7 @@ import { useTranslation } from "@simplix-react/i18n/react";
 import { Button, CrudForm, Flex, Heading, Stack, Text, useUnsavedChanges } from "@simplix-react/ui";
 import { slotAttributes } from "@simplix-react/ui/design";
 
-import { RecordNote, RecordNotices, RecordVerbButton, type RecordNotice, type RecordVerb } from "./record-blocks";
+import { RecordNote, RecordNotices, RecordVerbButton, RefusalNotice, type RecordNotice, type RecordVerb } from "./record-blocks";
 import { FormErrorSummary } from "./form-error-summary";
 import { PACKAGE_NAMESPACE } from "./locales";
 import { formMoreStyle } from "./record-form.style";
@@ -54,8 +54,32 @@ function focusField(key: string | undefined): void {
   });
 }
 
-/** What the server answered when it refused a submit: its message, and the fields it named. */
+/**
+ * A refusal the page's own check raised before any request went out. It carries the refused fields
+ * in the shape of a server's validation answer (`errors`), so the form marks them the same way, and
+ * is marked as a check so the banner heads it as one and not as the server's refusal.
+ */
+export class ClientRefusal extends Error {
+  /** The marker the form reads, a property and not the class so a second copy of the package still reads it. */
+  readonly clientCheck = true as const;
+  readonly errors: readonly { readonly field: string; readonly message: string; readonly label?: string }[];
+
+  constructor(errors: readonly { readonly field: string; readonly message: string; readonly label?: string }[], message?: string) {
+    super(message ?? errors[0]?.message ?? "");
+    this.name = "ClientRefusal";
+    this.errors = errors;
+  }
+}
+
+/** Whether a refusal was raised by the page's own check rather than answered by the server. */
+export function isClientRefusal(error: unknown): boolean {
+  return typeof error === "object" && error !== null && (error as { clientCheck?: unknown }).clientCheck === true;
+}
+
+/** What a refused submit left behind: who refused it, its message, and the fields it named. */
 export interface SubmitRefusal {
+  /** Who refused: the page's own check before any request, or the server's answer. */
+  readonly source: "client" | "server";
   /** The server's own sentence, in the reader's language; absent when it named fields instead. */
   readonly message?: string;
   /** The server's message per refused field, keyed by the form field it belongs to. */
@@ -78,7 +102,7 @@ export function refusalOf(error: unknown, fieldKeys: readonly string[]): SubmitR
     if (one.label && !labels[key]) labels[key] = one.label;
   }
   const drawn = Object.keys(fields).some((key) => fieldKeys.includes(key));
-  return { message: drawn ? undefined : getErrorMessage(error), fields, labels };
+  return { source: isClientRefusal(error) ? "client" : "server", message: drawn ? undefined : getErrorMessage(error), fields, labels };
 }
 
 /** The fields of a form's sections with their values, shared by {@link RecordForm} and {@link SettingsForm}. */
@@ -249,7 +273,8 @@ export function RecordForm({ title, sections, notices, note, submitLabel, runnin
         }
       >
         {/* Notices come first: a reason the form cannot go through is read before any field is filled. */}
-        <RecordNotices notices={refusal ? [{ key: "submit-refused", tone: "danger", title: t("recordForm.refused"), body: refusal.message }, ...(notices ?? [])] : notices} />
+        {refusal ? <RefusalNotice refusal={refusal} title={t(refusal.source === "client" ? "recordForm.refusedCheck" : "recordForm.refused")} body={refusal.message} /> : null}
+        <RecordNotices notices={notices} />
         <RecordFormSections sections={sections} form={form} refusal={refusal} fieldNotices={fieldNotices} />
         {children}
         <RecordNote text={note} />

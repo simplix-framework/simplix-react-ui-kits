@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 import { AlertBanner, Button, Flex, type StatusTone } from "@simplix-react/ui";
 import { CircleAlertIcon, CircleCheckIcon, InfoIcon, TriangleAlertIcon } from "lucide-react";
 import { slotAttributes } from "@simplix-react/ui/design";
@@ -104,6 +104,31 @@ export function standingNoticeKeys(...notices: readonly (readonly RecordNotice[]
 export function RecordNoticeMenu({ keys }: { readonly keys: readonly string[] }) {
   if (keys.length === 0) return null;
   return <NoticeMenu only={keys} />;
+}
+
+/**
+ * The banner that answers a refused submit: it carries the alert role, and when a new refusal
+ * arrives the focus moves to it and it is scrolled into view, so a refusal raised above the fold of
+ * a long form is read and not missed. Drawn through {@link RecordNotices} like every other notice.
+ *
+ * @param refusal the object the refusal is held in; a new one is a new refusal and moves the focus again
+ * @param title the headline, which says who refused (a check the page made, or the server)
+ * @param body the sentence the refuser gave, when it did not name fields instead
+ */
+export function RefusalNotice({ refusal, title, body }: { readonly refusal: object; readonly title: string; readonly body?: string }) {
+  const host = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const element = host.current;
+    if (!element) return;
+    element.focus({ preventScroll: true });
+    // A host with no layout (a server render, a bare DOM) has nothing to scroll.
+    element.scrollIntoView?.({ block: "nearest" });
+  }, [refusal]);
+  return (
+    <div ref={host} tabIndex={-1} role="alert" data-record-refusal>
+      <RecordNotices notices={[{ key: "submit-refused", tone: "danger", title, body }]} />
+    </div>
+  );
 }
 
 /**
