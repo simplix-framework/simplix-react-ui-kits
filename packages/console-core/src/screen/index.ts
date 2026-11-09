@@ -42,6 +42,9 @@ export { ChipFilter, chipFilterValues, SearchOperator, Text, useFilterBarState }
 // page's rows), re-exported so a board frame reaches them through the kit; an icon is named, so a
 // frame never imports an icon library.
 export { AlertBanner, Button, Flex, FormFields, Icon, Stack, type IconName } from "@simplix-react/ui";
+// A dialog whose body is its own (a file to choose, a progress bar) rather than the kit's decision
+// fields; a frame draws it from the same parts the screen does.
+export { Dialog, DialogBody, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, Input, Label } from "@simplix-react/ui";
 export { FeatureLock } from "./feature-lock";
 export { HistoryRail, type HistoryLane, type HistoryNode, type HistoryNodeState, type HistoryRailProps } from "./history-rail";
 export { ImpactAnalysis, type ImpactGroup, type ImpactKind, type ImpactRow } from "./impact-analysis";
