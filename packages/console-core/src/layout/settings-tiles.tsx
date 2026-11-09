@@ -46,6 +46,7 @@ import {
   tilePressStyle,
 } from "./settings-tiles.style";
 import { joinParts } from "./join-parts";
+import { FitFigure } from "./fit-figure";
 import { NumericText } from "./numeric-text";
 import { MAX_TILE_COLUMNS, useTileColumns, type TileColumns } from "./tile-columns";
 import { useTileOrder } from "./tile-order";
@@ -870,6 +871,9 @@ function TileGrid({
         const figure =
           typeof tile.value === "number" ? (
             <DigitRoll value={tile.value} format={(count) => groupedNumber(count, locale)} />
+          ) : typeof tile.value === "string" && tile.value !== "" ? (
+            // One piece of text (an amount, a percentage) is shrunk to its card rather than broken in its digits.
+            <FitFigure>{tile.value}</FitFigure>
           ) : (
             tile.value ?? ABSENT
           );
