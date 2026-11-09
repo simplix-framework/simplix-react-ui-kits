@@ -52,6 +52,30 @@ describe("a RecordValue drawn as a link", () => {
   });
 });
 
+describe("a RecordValue link marked as code", () => {
+  it("draws the name of a link in the monospaced face inside the link", () => {
+    const html = renderToStaticMarkup(createElement(RecordValueView, { value: { link: "txn_01hx", code: true, href: "/payment-events/9" } }));
+    expect(html).toMatch(/<a href="\/payment-events\/9"[^>]*><code[^>]*>txn_01hx<\/code><\/a>/);
+  });
+
+  it("draws a pressable name that is no address in the monospaced face too", () => {
+    const html = renderToStaticMarkup(createElement(RecordValueView, { value: { link: "txn_01hx", code: true, onClick: () => {} } }));
+    expect(html).toMatch(/data-variant="link"[^>]*><code[^>]*>txn_01hx<\/code><\/button>/);
+  });
+
+  it("draws a link with nowhere to go as code text, and keeps the face beside a badge or a second line", () => {
+    expect(renderToStaticMarkup(createElement(RecordValueView, { value: { link: "txn_01hx", code: true } }))).toMatch(/<code[^>]*>txn_01hx<\/code>/);
+    const lined = renderToStaticMarkup(createElement(RecordValueView, { value: { link: "txn_01hx", code: true, href: "/x", sub: "Paddle" } }));
+    expect(lined).toMatch(/<code[^>]*>txn_01hx<\/code>/);
+    expect(lined).toContain("Paddle");
+  });
+
+  it("leaves a link without the mark as the plain name", () => {
+    const html = renderToStaticMarkup(createElement(RecordValueView, { value: { link: "Credits E2E", href: "/x" } }));
+    expect(html).not.toContain("<code");
+  });
+});
+
 describe("isOtherOrigin", () => {
   it("reads an absolute address on another origin as elsewhere, and a relative or same-origin one as here", () => {
     expect(isOtherOrigin("https://portal.example/terms", "https://console.example")).toBe(true);

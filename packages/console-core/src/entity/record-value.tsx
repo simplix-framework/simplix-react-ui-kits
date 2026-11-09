@@ -81,6 +81,11 @@ export type RecordValue =
        * way the name stays the link it is, and a record that is gone or unreadable is drawn as `gone`.
        */
       readonly check?: RecordReferenceCheck;
+      /**
+       * The name is an identifier the reader may type or compare (a provider's transaction), drawn in
+       * the monospaced face like a text value marked `code`, whether or not it is a link.
+       */
+      readonly code?: boolean;
     }
   /**
    * The name of another record that can no longer be opened: it was deleted, or the reader may not
@@ -230,7 +235,15 @@ export function RecordValueView({ value }: { readonly value: RecordValue }): Rea
         </Flex>
       );
     }
-    if (!value.onClick && !value.href) return <>{value.link}</>;
+    // The name as the link draws it: an identifier in the monospaced face, anything else as written.
+    const name = value.code ? (
+      <Text as="code" font="mono" className={TEXT_FITS}>
+        {value.link}
+      </Text>
+    ) : (
+      value.link
+    );
+    if (!value.onClick && !value.href) return <>{name}</>;
     const { onClick, href } = value;
     const press = (event: MouseEvent) => {
       event.stopPropagation();
@@ -239,7 +252,6 @@ export function RecordValueView({ value }: { readonly value: RecordValue }): Rea
         onClick();
       }
     };
-    const name = value.link;
     // An address on another origin (a public page of another app) opens beside the console, so the
     // record the reader came from stays where it was.
     const elsewhere = href !== undefined && isOtherOrigin(href);
