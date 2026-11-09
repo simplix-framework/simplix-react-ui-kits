@@ -30,7 +30,7 @@ import {
   type ConsoleShortcut,
 } from "./command-palette";
 import { useConsole } from "./console-context";
-import { ConsoleStatusStrip, ConsoleTopBar } from "./console-top-bar";
+import { ConsoleStatusStrip, type ConsoleStatusStripProps, ConsoleTopBar } from "./console-top-bar";
 import { useConsoleHotkeys } from "./console-hotkeys";
 import { PACKAGE_NAMESPACE } from "./locales";
 import {
@@ -147,6 +147,12 @@ export interface ConsolePreviewChrome {
   readonly notificationCount?: number;
   /** What the status strip reports. */
   readonly status?: ConsolePreviewStatus;
+  /**
+   * The strip exactly as a product draws it (its own ticker, segments and, where it has one, clock).
+   * Given, it replaces the strip composed from `status`, the workplace's zone and the ticking clock,
+   * for a product whose strip reads a service and says nothing of the workplace.
+   */
+  readonly strip?: ConsoleStatusStripProps;
   /**
    * The go-to chords: 「G」 then the letter opens the menu destination of that key. Each also heads
    * the palette's go-to list.
@@ -407,16 +413,29 @@ export function ConsolePreviewWindowChrome({
         {children}
         {manualOpen && <ManualPanel route={chrome.manualRoute ?? "/"} />}
       </Flex>
-      <ConsoleStatusStrip
-        label={labels.status}
-        ticker={{ text: chrome.status?.ticker?.text ?? labels.quiet, live: chrome.status?.ticker?.live }}
-        segments={[{ label: chrome.status?.shift ? `${zone} · ${chrome.status.shift}` : zone }, ...(chrome.status?.segments ?? [])]}
-        clock={clock}
-      />
+      <ConsoleStatusStrip {...previewStripProps(chrome, zone, clock)} />
       <ConsoleCommandPalette open={palette} onOpenChange={setPalette} commands={commands} />
       <ConsoleShortcutList open={shortcuts} onOpenChange={setShortcuts} shortcuts={shortcutRows} />
     </Flex>
   );
+}
+
+/**
+ * The strip along the preview's foot: the product's own when the chrome gives one, otherwise the
+ * ticker, the workplace's zone with its shift, the readings and the ticking clock.
+ *
+ * @param chrome what the window draws
+ * @param zone the workplace's zone reading, already worded
+ * @param clock the ticking clock's reading, absent when the chrome starts none
+ */
+export function previewStripProps(chrome: ConsolePreviewChrome, zone: string, clock: string | undefined): ConsoleStatusStripProps {
+  if (chrome.strip) return chrome.strip;
+  return {
+    label: chrome.labels.status,
+    ticker: { text: chrome.status?.ticker?.text ?? chrome.labels.quiet, live: chrome.status?.ticker?.live },
+    segments: [{ label: chrome.status?.shift ? `${zone} · ${chrome.status.shift}` : zone }, ...(chrome.status?.segments ?? [])],
+    clock,
+  };
 }
 
 /**
