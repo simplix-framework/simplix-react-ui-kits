@@ -1,0 +1,59 @@
+/**
+ * @simplix-generated page/{{@kit.id}}-account
+ *
+ * My account, laid down from the {{@kit.label}} kit's `static-page.account.hbs` as the page every
+ * section of the account opens in: the page column, the section list beside the routed section, and
+ * the state that holds over every section (a renewal that failed) above it. Each section is a page of
+ * its own (`static-page --variant account-section`) at its own address. The sections are this file's
+ * own, in `{{nameCamel}}Sections`, and are customised here; a section without an address is not open
+ * yet and keeps its place as plain words. The strings come from the `{{namespace}}` catalog:
+ * `{{nameCamel}}.title` names the list, `{{nameCamel}}.section.<key>` each section.
+ */
+import type { ReactNode } from "react";
+import { useTranslation } from "@simplix-react/i18n/react";
+import { AccountLayout, SectionNav } from "{{@kit.package}}/account";
+import { SitePage } from "{{@kit.package}}/page";
+
+/** One section of the list: its key, its address (none while it is not open) and whether it removes something. */
+export interface {{NamePascal}}Section {
+  readonly key: string;
+  readonly href?: string;
+  readonly danger?: boolean;
+}
+
+/** The sections in reading order; the first that applies is where the account opens. */
+export const {{nameCamel}}Sections: readonly {{NamePascal}}Section[] = [{ key: "overview", href: "/{{nameKebab}}/overview" }];
+
+/** Whether the address is the section or a page under it. */
+function within(route: string, href: string): boolean {
+  return route === href || route.startsWith(`${href}/`);
+}
+
+/** Props for {@link {{NamePascal}}Page}. */
+export interface {{NamePascal}}PageProps {
+  /** The address on screen, which marks the current section. */
+  readonly route: string;
+  /** Over every section: a state that holds whichever section is open, a `NoticeBanner`. */
+  readonly standing?: ReactNode;
+  /** The routed section: its heading, then its parts. */
+  readonly children?: ReactNode;
+}
+
+/** {{NamePascal}}: the section list beside the open section. */
+export function {{NamePascal}}Page({ route, standing, children }: {{NamePascal}}PageProps) {
+  const { t } = useTranslation("{{namespace}}");
+  const items = {{nameCamel}}Sections.map((section) => ({
+    key: section.key,
+    label: t(`{{nameCamel}}.section.${section.key}`),
+    href: section.href,
+    current: section.href !== undefined && within(route, section.href),
+    danger: section.danger,
+  }));
+  return (
+    <SitePage>
+      <AccountLayout nav={<SectionNav label={t("{{nameCamel}}.title")} items={items} />} standing={standing}>
+        {children}
+      </AccountLayout>
+    </SitePage>
+  );
+}

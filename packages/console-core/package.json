@@ -106,7 +106,8 @@
       "types": "./src/shell/index.ts",
       "import": "./dist/shell/index.js"
     },
-    "./styles/*": "./src/styles/*"
+    "./styles/*": "./src/styles/*",
+    "./templates/*": "./templates/*"
   },
   "bin": {
     "simplix-design-literals": "scripts/check-design-literals.mjs",
@@ -115,7 +116,8 @@
   "files": [
     "dist",
     "src",
-    "scripts"
+    "scripts",
+    "templates"
   ],
   "scripts": {
     "build": "NODE_OPTIONS=--max-old-space-size=4096 tsup",
@@ -157,5 +159,8 @@
     "tsup": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
+  },
+  "simplix": {
+    "templates": "templates"
   }
 }

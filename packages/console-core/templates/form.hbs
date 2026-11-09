@@ -1,0 +1,105 @@
+/**
+ * @simplix-generated widget/{{@kit.id}}-form
+ *
+ * Laid down from the {{@kit.label}} kit's `form.hbs` and rewritten while its fingerprint
+ * matches. It is the form's start: its sections, rules and the request it sends are customised
+ * here, in this file, and a later template change is merged into it three ways.
+ */
+import { RecordForm, useAnnounceOutcome, useRecordContract, useScreenWords, type ContractField, type RecordFormField } from "{{@kit.package}}/entity";
+import { QueryFallback, useInvalidateEntity } from "@simplix-react/ui";
+{{#each formPickerImports}}
+import { {{{this.hooks}}} } from "{{this.from}}";
+{{/each}}
+
+import { {{#if hookGetForEdit}}{{hookGetForEdit}}, {{else}}{{#if hookGet}}{{hookGet}}, {{/if}}{{/if}}{{#if hookCreate}}{{hookCreate}}{{/if}}{{#if hookUpdate}}{{#if hookCreate}}, {{/if}}{{hookUpdate}}{{/if}}{{#if entityPathExport}}, {{entityPathExport}}{{/if}} } from "{{packageName}}";
+
+/** The fields the contract lets this form write, each edited by its kind. */
+const {{EntityPascal}}FormFields: readonly ContractField[] = [
+{{#each formFields}}
+  { name: "{{this.name}}", kind: "{{this.contractKind}}"{{#if this.money}}, currency: "{{this.money.currency}}", scale: {{this.money.scale}}{{/if}}{{#if this.enumTypeName}}, enumName: "{{this.enumTypeName}}"{{/if}}{{#if this.options.length}}, options: [{{#each this.options}}"{{this}}"{{#unless @last}}, {{/unless}}{{/each}}]{{/if}}{{#if this.peekKind}}, peekKind: "{{this.peekKind}}"{{/if}}{{#if this.peekKinds}}, peekKinds: { field: "{{this.peekKinds.field}}", kinds: { {{#each this.peekKinds.kinds}}{{this.value}}: "{{this.peekKind}}"{{#unless @last}}, {{/unless}}{{/each}} } }{{/if}}{{#if this.nameField}}, nameField: "{{this.nameField}}"{{/if}}{{#if (eq this.sortable true)}}, sortable: true{{/if}}{{#if (eq this.sortable false)}}, sortable: false{{/if}}{{#if this.baseFieldName}}, plainField: "{{this.baseFieldName}}"{{/if}}{{#if (eq this.formComponent "I18nTextareaField")}}, multiline: true{{/if}}{{#if this.required}}{{#unless (eq this.contractKind "boolean")}}, required: true{{/unless}}{{/if}}{{#if this.defaultLiteral}}, defaultValue: {{{this.defaultLiteral}}}{{/if}}{{#if this.signed}}, signed: true{{/if}}{{#if this.tones}}, tones: { {{#each this.tones}}"{{@key}}": "{{this}}"{{#unless @last}}, {{/unless}}{{/each}} }{{/if}} },
+{{/each}}
+];
+
+export interface {{EntityPascal}}FormProps {
+{{#if hasUpdate}}
+  readonly {{entity}}Id?: string;
+{{/if}}
+  readonly onClose?: () => void;
+  readonly onSuccess?: () => void;
+  readonly onCancel?: () => void;
+}
+
+/** Creates or edits a {{entity}} through the kit's record form. */
+export function {{EntityPascal}}Form(props: {{EntityPascal}}FormProps) {
+  const words = useScreenWords("{{entity}}");
+  const announce = useAnnounceOutcome();
+{{#if hasUpdate}}
+  const editing = Boolean(props.{{entity}}Id);
+  // The edit read is the record as the update takes it back, so a field the form does not show
+  // goes back as it came instead of being blanked by a full-record update.
+  const { data, isLoading } = {{#if hookGetForEdit}}{{hookGetForEdit}}{{else}}{{hookGet}}{{/if}}(props.{{entity}}Id ?? "", { query: { enabled: editing, gcTime: 0 } });
+{{else}}
+  const editing = false;
+  const data = undefined;
+  const isLoading = false;
+{{/if}}
+  const invalidate = useInvalidateEntity({{#if entityPathExport}}{{entityPathExport}}{{else}}"{{entityPath}}"{{/if}});
+{{#if hookCreate}}
+  // The form shows a refusal itself (RecordForm's banner and field errors), so the app's error
+  // dialog is told not to report the same failure a second time.
+  const create = {{hookCreate}}({ mutation: { onSettled: invalidate, meta: { handledByForm: true } } });
+{{/if}}
+{{#if hookUpdate}}
+  const update = {{hookUpdate}}({ mutation: { onSettled: invalidate, meta: { handledByForm: true } } });
+{{/if}}
+  const record = editing ? data ?? undefined : undefined;
+{{#if formPickers.length}}
+  const row = record as Readonly<Record<string, unknown>> | undefined;
+{{#each formPickers}}
+  const {{this.field}}Search = {{this.hook}}(typeof row?.{{this.field}} === "string" ? row.{{this.field}} : "");
+{{/each}}
+  const contract = useRecordContract("{{entity}}", { searches: { {{#each formPickers}}{{this.field}}: {{this.field}}Search{{#unless @last}}, {{/unless}}{{/each}} } });
+{{else}}
+  const contract = useRecordContract("{{entity}}");
+  const row = record as Readonly<Record<string, unknown>> | undefined;
+{{/if}}
+  const generated: RecordFormField[] = {{EntityPascal}}FormFields.map((field) => contract.formField(field, row));
+  if (editing && (isLoading || !data)) return <QueryFallback isLoading={isLoading} />;
+  return (
+    <RecordForm
+      title={editing ? words.editTitle : words.add}
+      sections={[{ key: "main", fields: generated }]}
+      submitLabel={words.save}
+      onCancel={props.onCancel}
+      onSubmit={async (values) => {
+        const written = contract.request({{EntityPascal}}FormFields, values);
+{{#if formOrderField}}
+        // The list's drag sets the order, so a new record starts first and an edit keeps its place.
+{{/if}}
+{{#if verbOnlyCreateDefaults.length}}
+        // Only a verb moves {{#each verbOnlyCreateDefaults}}{{#unless @first}}{{#if @last}} and {{else}}, {{/if}}{{/unless}}`{{this.name}}`{{/each}} (frontend invariant #74), so the form leaves it out:
+        // a new record starts at the contract's default and an edit sends the stored value back.
+{{/if}}
+{{#if (or formOrderField verbOnlyCreateDefaults.length)}}
+        const body = editing && row ? { ...row, ...written } : { {{#if formOrderField}}{{formOrderField}}: 0, {{/if}}{{#each verbOnlyCreateDefaults}}{{this.name}}: {{{this.defaultLiteral}}}, {{/each}}...written };
+{{else}}
+        const body = editing && row ? { ...row, ...written } : written;
+{{/if}}
+{{#if hasUpdate}}
+{{#if hookCreate}}
+        if (editing && props.{{entity}}Id) await update.mutateAsync({ {{#if updatePathParam}}{{updatePathParam}}{{else}}id{{/if}}: props.{{entity}}Id, data: body } as never);
+        else await create.mutateAsync({ data: body } as never);
+{{else}}
+        // The contract has no create, so the form only ever edits a record that exists.
+        if (props.{{entity}}Id) await update.mutateAsync({ {{#if updatePathParam}}{{updatePathParam}}{{else}}id{{/if}}: props.{{entity}}Id, data: body } as never);
+{{/if}}
+{{else}}
+        await create.mutateAsync({ data: body } as never);
+{{/if}}
+        // A saved record says so where the reader is looking; the panel closing is not an answer.
+        announce({ message: editing ? words.saved : words.created });
+        props.onSuccess?.();
+      }}
+    />
+  );
+}

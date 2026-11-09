@@ -1,0 +1,14 @@
+/**
+ * What the {{entity}} page departs from its generated page in, read once by `crud-page.tsx`: its own
+ * notices, row verbs and their dialogs, header actions that read the list, the request the list reads
+ * with. Laid down once, empty, where the page has none, and written by hand from then on; every key is
+ * optional, and a key left out keeps the generated shape.
+ */
+import type { CrudPageBlocks, PageBlocksContext } from "{{@kit.package}}/page";
+
+import type { {{EntityPascal}}DetailProps, {{EntityPascal}}ListProps, {{EntityPascal}}Row, use{{EntityPascal}}List } from "../../widgets/{{entityKebab}}";
+
+/** The page's departures; called once, unconditionally, at the top of the generated page. */
+export function usePageBlocks(_page: PageBlocksContext): CrudPageBlocks<{{EntityPascal}}Row, {{EntityPascal}}ListProps, {{EntityPascal}}DetailProps, ReturnType<typeof use{{EntityPascal}}List>> {
+  return {};
+}

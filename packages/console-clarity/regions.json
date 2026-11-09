@@ -496,12 +496,12 @@
       "../console-core/src/entity/record-list.tsx": [
         "RecordListProps"
       ],
-      "templates/app-shell.hbs": [
+      "../console-core/templates/app-shell.hbs": [
         "ShellParts",
         "ShellMenuEntry",
         "ShellMenuGroup"
       ],
-      "templates/app-shell.top-bar.hbs": [
+      "../console-core/templates/app-shell.top-bar.hbs": [
         "ShellParts"
       ]
     },

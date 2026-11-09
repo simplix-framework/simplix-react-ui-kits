@@ -1,0 +1,6 @@
+{
+  "name": "@fixture/pickers",
+  "private": true,
+  "type": "module",
+  "exports": { ".": { "source": "./src/index.ts", "types": "./src/index.ts" } }
+}

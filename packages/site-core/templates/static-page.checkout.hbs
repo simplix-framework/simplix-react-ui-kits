@@ -1,0 +1,58 @@
+/**
+ * @simplix-generated page/{{@kit.id}}-checkout-page
+ *
+ * A purchase on the site, laid down from the {{@kit.label}} kit's `static-page.checkout.hbs` as the
+ * whole page: the steps and the line under them saying what the step asks for, then our side (the
+ * order, what it gives, the receipt and the consents, or the chain after payment) beside the payment
+ * provider's frame. What the page says and holds is written here, in this file; a later template
+ * change is merged into it three ways. The strings come from the `{{namespace}}` catalog:
+ * `{{nameCamel}}.stepsLabel` and `{{nameCamel}}.steps.<step>`.
+ */
+import type { ReactNode } from "react";
+import { useTranslation } from "@simplix-react/i18n/react";
+import { CheckoutLayout, ProviderFrame, Stepper } from "{{@kit.package}}/checkout";
+import { SitePage } from "{{@kit.package}}/page";
+
+/** The steps of the purchase in order; the page names the one it is on. */
+const STEPS = ["choose", "details", "payment", "done"] as const;
+export type {{NamePascal}}Step = (typeof STEPS)[number];
+
+/** Props for {@link {{NamePascal}}Page}. */
+export interface {{NamePascal}}PageProps {
+  /** The step the purchase is on; the ones before it are drawn done. */
+  readonly step: {{NamePascal}}Step;
+  /** The line under the steps saying what this step asks for; the line keeps its height when empty. */
+  readonly caption?: ReactNode;
+  /** The check a done step's disc shows. */
+  readonly doneMark?: ReactNode;
+  /** Our side: the order, what it gives, the receipt and the consents, or the chain after payment. */
+  readonly main: ReactNode;
+  /** The payment side: whose frame it is, who draws it, and what stands in it. */
+  readonly frame: { readonly label: string; readonly owner?: ReactNode; readonly body: ReactNode };
+}
+
+/** {{NamePascal}}: the steps of a purchase, our side and the payment provider's frame. */
+export function {{NamePascal}}Page({ step, caption = "", doneMark, main, frame }: {{NamePascal}}PageProps) {
+  const { t } = useTranslation("{{namespace}}");
+  return (
+    <SitePage rhythm="steps">
+      <Stepper
+        label={t("{{nameCamel}}.stepsLabel")}
+        steps={STEPS.map((key) => ({ key, label: t(`{{nameCamel}}.steps.${key}`) }))}
+        current={STEPS.indexOf(step)}
+        doneMark={doneMark}
+        caption={caption}
+        // The page's title for the tab and a screen reader: the step it is on.
+        heading={t(`{{nameCamel}}.steps.${step}`)}
+      />
+      <CheckoutLayout
+        main={main}
+        summary={
+          <ProviderFrame label={frame.label} owner={frame.owner}>
+            {frame.body}
+          </ProviderFrame>
+        }
+      />
+    </SitePage>
+  );
+}

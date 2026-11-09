@@ -1,0 +1,30 @@
+/**
+ * @simplix-generated page/{{@kit.id}}-auth-page
+ *
+ * A sign-in step outside the site window, laid down from the {{@kit.label}} kit's `auth-page.hbs` as
+ * the whole screen: the sign-in ground, the card with the product's mark, the step's title and the
+ * sentence its catalog states. The step's alert, its action and the links under it are written here,
+ * in this file; a later template change is merged into it three ways. The strings come from the
+ * `{{namespace}}` catalog: `{{nameCamel}}.title` and `{{nameCamel}}.lede`.
+ */
+import type { ReactNode } from "react";
+import { useTranslation } from "@simplix-react/i18n/react";
+import { AuthCard, AuthPage, AuthText } from "{{@kit.package}}/auth";
+
+/** Props for {@link {{NamePascal}}Page}. */
+export interface {{NamePascal}}PageProps {
+  /** The product's mark before the title. */
+  readonly mark?: ReactNode;
+}
+
+/** {{NamePascal}}: one sign-in step on its card. */
+export function {{NamePascal}}Page({ mark }: {{NamePascal}}PageProps = {}) {
+  const { t } = useTranslation("{{namespace}}");
+  return (
+    <AuthPage step="{{nameKebab}}">
+      <AuthCard title={t("{{nameCamel}}.title")} mark={mark}>
+        <AuthText>{t("{{nameCamel}}.lede")}</AuthText>
+      </AuthCard>
+    </AuthPage>
+  );
+}

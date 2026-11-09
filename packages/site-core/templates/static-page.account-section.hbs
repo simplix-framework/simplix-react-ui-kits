@@ -1,0 +1,30 @@
+/**
+ * @simplix-generated page/{{@kit.id}}-account-section
+ *
+ * One section of My account, laid down from the {{@kit.label}} kit's `static-page.account-section.hbs`:
+ * the section's heading and its parts in reading order (settings rows, questions on a card, tables,
+ * panels with a meter or a run of days, typed confirmations, notes), drawn beside the section list
+ * the account page (`static-page --variant account`) holds. What the section says and holds is
+ * written here, in this file; a later template change is merged into it three ways. The strings come
+ * from the `{{namespace}}` catalog: `{{nameCamel}}.title`.
+ */
+import type { ReactNode } from "react";
+import { useTranslation } from "@simplix-react/i18n/react";
+import { SectionHead } from "{{@kit.package}}/account";
+
+/** Props for {@link {{NamePascal}}Page}. */
+export interface {{NamePascal}}PageProps {
+  /** The section's parts under its heading, in reading order. */
+  readonly children?: ReactNode;
+}
+
+/** {{NamePascal}}: one section of My account. */
+export function {{NamePascal}}Page({ children }: {{NamePascal}}PageProps = {}) {
+  const { t } = useTranslation("{{namespace}}");
+  return (
+    <>
+      <SectionHead level={1}>{t("{{nameCamel}}.title")}</SectionHead>
+      {children}
+    </>
+  );
+}

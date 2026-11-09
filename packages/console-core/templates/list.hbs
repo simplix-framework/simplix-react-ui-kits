@@ -1,0 +1,240 @@
+/**
+ * @simplix-generated widget/{{@kit.id}}-list
+ *
+ * Laid down from the {{@kit.label}} kit's `list.hbs` and rewritten while its fingerprint
+ * matches. It is the list's start: its columns, filters, chips and empty state are customised
+ * here, in this file, and a later template change is merged into it three ways.
+ */
+import { adaptForcedList, adaptOrvalList, forcedScope{{#if hasKeywordSearch}}, SEARCHABLE_KEYWORD_PARAM{{/if}}, useCrudList{{#if hookOrder}}{{#if orderField}}, useInvalidateEntity{{/if}}{{/if}} } from "@simplix-react/ui";
+import { {{#if hasMoneyFilter}}moneyFilterTransform, {{/if}}declareListAddress, RecordList, {{#if figureTiles.aggregates}}withListRequest, {{/if}}{{#if hookOrder}}{{#if orderField}}useAllowed, {{/if}}{{/if}}pickFields, useRecordContract, useScreenWords, withForced, type ContractField, type ContractFilter, type ContractOverrides, type ListAddress, type RecordAction, type RecordColumn, type RecordFilter, type RecordListProps } from "{{@kit.package}}/entity";
+
+import { {{hookList}}, {{#if hookOrder}}{{#if orderField}}{{hookOrder}}, {{#if accessOrder}}{{accessOrder}}, {{/if}}{{#if entityPathExport}}{{entityPathExport}}, {{/if}}{{/if}}{{/if}}type {{listRowType}} } from "{{packageName}}";
+{{#each listFacetImports}}
+import { {{{this.hooks}}} } from "{{this.from}}";
+{{/each}}
+
+export type {{EntityPascal}}Row = {{listRowType}};
+{{#each listFacets}}
+{{#if this.factory}}
+
+/** The filter over `{{this.field}}` resolves the records it has picked by that column. */
+const {{this.hook}} = {{this.factory}}("{{this.field}}");
+{{/if}}
+{{/each}}
+
+/**
+ * The {{entity}} list's server-paged state; `params` are forced into every request.
+ *
+ * <p>`address` is the page's address: the filters it carries are the list's starting state, the
+ * reader's changes are written back into it, and a filter over a field `params` pins is not applied.
+ * A list opened with no address keeps its filters to itself.
+ *
+ * <p>`scope` is the page's open tab. A page with tabs holds this one list across all of them, so a tab
+ * that leaves the list and comes back would keep the page index it left on; a change of `scope`
+ * returns the list to its first page.
+ */
+export function use{{EntityPascal}}List(params?: Readonly<Record<string, unknown>>, address?: ListAddress, scope?: string) {
+{{#if hasKeywordSearch}}
+  // The search box's text goes out as the route's keyword search, matched against every field the
+  // search DTO marks as a keyword field.
+{{/if}}
+{{#if hasMoneyFilter}}
+  // A money filter is typed in the currency's units and sent as the stored whole number.
+{{/if}}
+{{#if (or hasKeywordSearch hasMoneyFilter)}}
+  const options = { {{#if hasKeywordSearch}}searchKey: SEARCHABLE_KEYWORD_PARAM{{/if}}{{#if hasMoneyFilter}}{{#if hasKeywordSearch}}, {{/if}}transformFilters: moneyFilterTransform({{EntityPascal}}Filters){{/if}} };
+{{/if}}
+  const list = useCrudList<{{EntityPascal}}Row>(params ? adaptForcedList<{{EntityPascal}}Row>({{hookList}}, { ...params }{{#if (or hasKeywordSearch hasMoneyFilter)}}, options{{/if}}) : adaptOrvalList<{{EntityPascal}}Row>({{hookList}}{{#if (or hasKeywordSearch hasMoneyFilter)}}, options{{/if}}), {
+    stateMode: "server",
+    defaultPageSize: 20,
+    // What the page forces (a tab's request) and the tab it has open decide which rows there are, so a
+    // change of either returns the list to its first page; the page index of the old narrowing would
+    // address rows that are not there.
+    scopeKey: params || scope ? `${params ? forcedScope({ ...params }) : ""}|${scope ?? ""}` : undefined,
+{{#if orderField}}
+    defaultSort: { field: "{{orderField}}", direction: "asc" },
+{{else if defaultSort}}
+    defaultSort: { field: "{{defaultSort.field}}", direction: "{{defaultSort.direction}}" },
+{{/if}}
+    filterMode: "immediate",
+    // The address's filters narrowed to the ones the controls below commit, and the keys this list
+    // wrote itself; a stale key is dropped.
+    addressedFilters: {{EntityPascal}}ListAddress.useAddressed(address, params),
+  });
+{{#if figureTiles.aggregates}}
+  // The conditions of the list's own request ride on the controller, so the page's sums are read
+  // over the rows the list is showing.
+  const requested = withListRequest(list, { forced: params{{#if (or hasKeywordSearch hasMoneyFilter)}}, ...options{{/if}} });
+{{/if}}
+  // The request the page forces rides on the controller as well: the filter bar leaves out the
+  // control of a field that request pins, since it would change no row.
+  return withForced({{#if figureTiles.aggregates}}requested{{else}}list{{/if}}, { ...params });
+}
+
+export interface {{EntityPascal}}ListProps {
+  readonly list: ReturnType<typeof use{{EntityPascal}}List>;
+  readonly activeRowId?: string | null;
+  readonly onRowClick?: (row: {{EntityPascal}}Row) => void;
+  readonly actions?: readonly RecordAction<{{EntityPascal}}Row>[];
+  /** A narrowing of the page's own, which the list draws as a chip row before its chips. */
+  readonly narrowing?: RecordListProps<{{EntityPascal}}Row>["narrowing"];
+  /** What an empty list says, from the page that knows which tab or chips narrowed it; absent, the catalog's words. */
+  readonly empty?: RecordListProps<{{EntityPascal}}Row>["empty"];
+  /** What the list says when lit chips or filters match nothing, in the page's own words; absent, the framework's card. */
+  readonly filteredEmpty?: RecordListProps<{{EntityPascal}}Row>["filteredEmpty"];
+}
+
+/**
+ * The fields a row carries, each drawn by its contract kind. Not exported: nothing but this file
+ * imported by this file, so it takes the table as the `fields` argument of its hook and imports
+ * only types back from here (a value import back is a module cycle, and a cycle turns every edit
+ * of either file into a full page reload).
+ */
+const {{EntityPascal}}ColumnFields: readonly ContractField[] = [
+{{#each listFields}}
+{{#unless this.isI18nPair}}
+{{#unless this.baseFieldName}}
+{{#unless this.isSystemField}}
+{{#unless this.isReferenceName}}
+{{#unless this.isAuditField}}
+{{#unless this.isUnmasked}}
+{{#unless this.isOpaqueId}}
+{{#unless this.hideInList}}
+{{#unless this.isIdentifier}}
+  { name: "{{this.name}}", kind: "{{this.contractKind}}"{{#if this.money}}, currency: "{{this.money.currency}}", scale: {{this.money.scale}}{{/if}}{{#if this.enumTypeName}}, enumName: "{{this.enumTypeName}}"{{/if}}{{#if this.options.length}}, options: [{{#each this.options}}"{{this}}"{{#unless @last}}, {{/unless}}{{/each}}]{{/if}}{{#if this.peekKind}}, peekKind: "{{this.peekKind}}"{{/if}}{{#if this.peekKinds}}, peekKinds: { field: "{{this.peekKinds.field}}", kinds: { {{#each this.peekKinds.kinds}}{{this.value}}: "{{this.peekKind}}"{{#unless @last}}, {{/unless}}{{/each}} } }{{/if}}{{#if this.nameField}}, nameField: "{{this.nameField}}"{{/if}}{{#if this.peekBy}}, peekBy: "{{this.peekBy}}"{{/if}}{{#if (eq this.sortable true)}}, sortable: true{{/if}}{{#if (eq this.sortable false)}}, sortable: false{{/if}}{{#if this.isIdentifier}}, identifier: true{{/if}}{{#if this.isCode}}, code: true{{/if}}{{#if this.sortAlias}}, sortAlias: { {{#each this.sortAlias}}{{@key}}: "{{this}}"{{#unless @last}}, {{/unless}}{{/each}} }{{/if}}{{#if this.signed}}, signed: true{{/if}}{{#if this.tones}}, tones: { {{#each this.tones}}"{{@key}}": "{{this}}"{{#unless @last}}, {{/unless}}{{/each}} }{{/if}} },
+{{/unless}}
+{{/unless}}
+{{/unless}}
+{{/unless}}
+{{/unless}}
+{{/unless}}
+{{/unless}}
+{{/unless}}
+{{/unless}}
+{{/each}}
+];
+
+/** The filters the contract's searchable fields give this list; not exported, for the same reason. */
+const {{EntityPascal}}Filters: readonly ContractFilter[] = [
+{{#each contractFilters}}
+  { kind: "{{this.kind}}", field: "{{this.field}}"{{#if this.enumTypeName}}, enumName: "{{this.enumTypeName}}"{{/if}}{{#if this.options}}, options: [{{#each this.options}}"{{this}}"{{#unless @last}}, {{/unless}}{{/each}}]{{/if}}{{#if (eq this.kind "dateRange")}}, dateOnly: {{#if this.dateOnly}}true{{else}}false{{/if}}{{/if}}{{#if this.money}}, currency: "{{this.money.currency}}", scale: {{this.money.scale}}{{/if}}{{#if this.operators}}, operators: [{{#each this.operators}}"{{this}}"{{#unless @last}}, {{/unless}}{{/each}}]{{/if}} },
+{{/each}}
+];
+
+/**
+ * The filters this list draws a control for: the contract's, in this order. The list's address is
+ * declared over this same set (see the end of the file), so a key no control here commits is not one
+ * the address carries; trim the set here and the address follows, never where the controls are built.
+ */
+const {{EntityPascal}}DrawnFilters: readonly ContractFilter[] = {{EntityPascal}}Filters;
+
+/**
+ * The columns the list draws, in the order it draws them: the generator writes every field in the
+ * order it arrives, and the screen reorders or trims this list by hand. A name the table lacks is
+ * skipped, so a field the backend drops leaves the list instead of breaking it.
+ */
+const COLUMNS: readonly string[] = [
+{{#if columns}}
+{{#each columns}}
+  "{{this}}",
+{{/each}}
+{{else}}
+{{#each listFields}}
+{{#unless this.isI18nPair}}
+{{#unless this.baseFieldName}}
+{{#unless this.isSystemField}}
+{{#unless this.isReferenceName}}
+{{#unless this.isAuditField}}
+{{#unless this.isUnmasked}}
+{{#unless this.isOpaqueId}}
+{{#unless this.hideInList}}
+{{#unless this.isIdentifier}}
+  "{{this.name}}",
+{{/unless}}
+{{/unless}}
+{{/unless}}
+{{/unless}}
+{{/unless}}
+{{/unless}}
+{{/unless}}
+{{/unless}}
+{{/unless}}
+{{/each}}
+{{/if}}
+];
+
+/**
+ * The list's columns, in the order {@link COLUMNS} names them. Another screen that lists these
+ * records (a holder tab on a record that owns them) draws the same columns through this hook,
+ * leaving out with `omit` the field that only repeats the record it stands on.
+ */
+export function use{{EntityPascal}}Columns(overrides?: ContractOverrides, options: { readonly omit?: readonly string[] } = {}): RecordColumn<{{EntityPascal}}Row>[] {
+  const contract = useRecordContract("{{entity}}", overrides);
+  const omit = options.omit ?? [];
+  return contract.columns<{{EntityPascal}}Row>(pickFields({{EntityPascal}}ColumnFields, COLUMNS.filter((name) => !omit.includes(name))));
+}
+
+/** The {{entity}} records, drawn by the kit's list. */
+export function {{EntityPascal}}List({ list, activeRowId, onRowClick, actions, narrowing, empty, filteredEmpty }: {{EntityPascal}}ListProps) {
+  const words = useScreenWords("{{entity}}");
+  const generated = use{{EntityPascal}}Columns();
+{{#each listFacets}}
+  // The filter over the key offers the referenced records by name, searched on the server.
+  const {{this.field}}Facet = {{this.hook}}(list.filters);
+{{/each}}
+  const contract = useRecordContract("{{entity}}"{{#if listFacets.length}}, { facets: { {{#each listFacets}}{{this.field}}: {{this.field}}Facet{{#unless @last}}, {{/unless}}{{/each}} } }{{/if}});
+  const filters: readonly RecordFilter<{{EntityPascal}}Row>[] = contract.filters<{{EntityPascal}}Row>({{EntityPascal}}DrawnFilters);
+{{#if hookOrder}}
+{{#if orderField}}
+  // The contract has a reorder, so a reader its rule admits can drag the rows into order.
+  const canOrder = useAllowed({{#if accessOrder}}{{accessOrder}}{{else}}undefined{{/if}});
+  const invalidate = useInvalidateEntity({{#if entityPathExport}}{{entityPathExport}}{{else}}"{{entityPath}}"{{/if}});
+  const order = {{hookOrder}}({ mutation: { onSettled: invalidate } });
+{{/if}}
+{{/if}}
+  return (
+    <RecordList<{{EntityPascal}}Row>
+      list={list}
+      rowId={(row) => String(row.{{rowIdField}})}
+      columns={generated}
+      filters={filters}
+      actions={actions}
+      narrowing={narrowing}
+      activeRowId={activeRowId}
+      onRowClick={onRowClick}
+{{#if listCards}}
+      presentation="cards"
+      viewToggle
+      viewKey="{{entity}}"
+{{else}}
+{{#if viewToggle}}
+      viewToggle
+      viewKey="{{entity}}"
+{{/if}}
+{{/if}}
+{{#if cardTitle}}
+      cardTitle="{{cardTitle}}"
+{{/if}}
+      empty={empty ?? { {{#if hasCreate}}title: words.emptyTitle, description: words.emptyDescription{{else}}title: words.emptyTitleRecorded, description: words.emptyDescriptionRecorded{{/if}} }}
+      filteredEmpty={filteredEmpty}
+{{#unless hasKeywordSearch}}
+      // The route declares no keyword field, so there is nothing for a search box to send.
+      features={ { search: false } }
+{{/unless}}
+{{#if hookOrder}}
+{{#if orderField}}
+      reorder={canOrder ? { orderField: "{{orderField}}", idField: "{{rowIdField}}", onReorder: (updates) => order.mutateAsync({ data: updates as never }) } : undefined}
+{{/if}}
+{{/if}}
+    />
+  );
+}
+
+/**
+ * What this list's address may carry: the filter keys the controls in `{{EntityPascal}}DrawnFilters` commit{{#if timeBuckets}},
+ * the keys of the time range the page draws over `{{timeBuckets.field}}`,{{/if}}
+ * and the controls the list reads the address back with. The hook reads the address through it, and a
+ * screen that links to this list (a tile counting what the list would show) narrows its keys with
+ * `narrow` and reads the same `controls`, so a link and the list cannot disagree about a key.
+ */
+export const {{EntityPascal}}ListAddress = declareListAddress({{EntityPascal}}DrawnFilters, { facetFields: [{{#each listFacets}}"{{this.field}}"{{#unless @last}}, {{/unless}}{{/each}}]{{#if timeBuckets}}, timeRangeField: "{{timeBuckets.field}}"{{/if}} });

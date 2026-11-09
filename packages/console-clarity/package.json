@@ -107,7 +107,6 @@
       "import": "./dist/shell/index.js"
     },
     "./styles/*": "./src/styles/*",
-    "./templates/*": "./templates/*",
     "./regions.json": "./regions.json",
     "./scripts/regions-rendered.mjs": "./scripts/regions-rendered.mjs",
     "./tile-columns.json": "./tile-columns.json",
@@ -117,7 +116,6 @@
   "files": [
     "dist",
     "src",
-    "templates",
     "regions.json",
     "tile-columns.json",
     "scripts"
@@ -127,8 +125,9 @@
     "dev": "tsup --no-clean --no-dts",
     "typecheck": "tsc --noEmit",
     "lint": "node scripts/check-regions.mjs && oxlint src",
-    "test": "node scripts/check-regions.mjs --selftest && node scripts/regions-rendered.mjs --selftest && node scripts/tile-columns-rendered.mjs --selftest && node scripts/list-columns-rendered.mjs --selftest && node scripts/focus-clip-rendered.mjs --selftest && node scripts/clip-rendered.mjs --selftest && vitest run --passWithNoTests",
-    "clean": "rm -rf dist .turbo"
+    "test": "node scripts/check-regions.mjs --selftest && node scripts/regions-rendered.mjs --selftest && node scripts/tile-columns-rendered.mjs --selftest && node scripts/list-columns-rendered.mjs --selftest && node scripts/focus-clip-rendered.mjs --selftest && node scripts/clip-rendered.mjs --selftest && vitest run --passWithNoTests && pnpm test:templates",
+    "clean": "rm -rf dist .turbo",
+    "test:templates": "node ../../testing/template-harness/harness.mjs ."
   },
   "dependencies": {
     "@simplix-react-ui-kits/console-core": "workspace:*",
@@ -160,7 +159,8 @@
     "vitest": "catalog:"
   },
   "simplix": {
-    "templates": "templates",
+    "extends": "@simplix-react-ui-kits/console-core",
+    "id": "clarity",
     "fence": [
       {
         "name": "@simplix-react/ui",

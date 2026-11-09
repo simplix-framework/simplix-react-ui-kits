@@ -4,7 +4,7 @@
 // active link profile resolves to "local" (or "auto" + the checkout is present). In
 // "registry" mode the hook is inert and packages come from the published npm versions
 // pinned by the catalog. A clean clone or CI without the checkout always falls back to the
-// registry — no edits, no broken links.
+// registry: no edits, no broken links.
 //
 // Profile + checkout PATH are resolved (first defined value wins) from:
 //   profile:        SIMPLIX_PROFILE env
@@ -19,13 +19,14 @@
 // `.simplix-react.sample`. Relative framework paths resolve against the repo root.
 //
 // Profiles:
-//   "auto"     — link IFF the configured checkout exists
-//   "local"    — always link (active co-development; requires the checkout)
-//   "registry" — never link (use the published npm version)
+//   "auto"     - link IFF the configured checkout exists
+//   "local"    - always link (active co-development; requires the checkout)
+//   "registry" - never link (use the published npm version)
 //
-// This repository commits "registry": a released (non-SNAPSHOT) framework version is
-// what the apps compile against, so a checkout sitting next to it never changes the
-// build. Reach for "local" (pnpm local:link) only while co-developing the framework.
+// This repository commits "auto": the kits' templates are read by the framework's CLI, so a
+// simplix-react checkout beside this one (the CLI included) is what the kits build and test
+// against, and a clone without it falls back to the published version. "registry"
+// (pnpm local:unlink) checks the kits against the published framework alone.
 //
 // Linking is by CONVENTION (no per-package list):
 //   @simplix-react/<x>                    → <framework>/packages/<x>

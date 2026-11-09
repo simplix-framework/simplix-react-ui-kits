@@ -1,43 +1,25 @@
-import { existsSync, readFileSync } from "node:fs";
-import { createRequire } from "node:module";
 import { dirname, join, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
+import { loadProjectTemplates, renderTemplate } from "@simplix-react/cli";
 import ts from "typescript";
 
 /**
- * Renders a kit template the way the generator does and type-checks the result against the kit's
- * own sources, with every other file the rendered one imports supplied in memory.
+ * Renders a template the way the generator does and type-checks the result against the kit's own
+ * sources, with every other file the rendered one imports supplied in memory.
+ *
+ * <p>The templates are the ones in force for a project that draws with this kit (the kit's own and
+ * the base kit's beneath them, with the kit's values written in), read and rendered by the CLI.
  */
 
 const here = dirname(fileURLToPath(import.meta.url));
 const packageDir = resolve(here, "..");
-const templatesDir = join(packageDir, "templates");
-
-interface TemplateEngine {
-  create(): {
-    registerHelper(name: string, helper: (...args: never[]) => unknown): void;
-    compile(source: string, options: { noEscape: boolean }): (context: Record<string, unknown>) => string;
-  };
-}
-
-// The template engine is the CLI's own, reached through the CLI that the `simplix-react` meta
-// package brings, so the kit renders a template exactly as the generator does.
-function cliPackageManifest(): string {
-  const lookup = createRequire(import.meta.url).resolve.paths("@simplix-react/cli") ?? [];
-  const found = lookup.map((dir) => join(dir, "@simplix-react", "cli", "package.json")).find((path) => existsSync(path));
-  if (!found) throw new Error("@simplix-react/cli is not installed; the simplix-react meta package brings it");
-  return found;
-}
-const Handlebars = createRequire(cliPackageManifest())("handlebars") as TemplateEngine;
+const templates = await loadProjectTemplates(packageDir, packageDir);
 
 export function render(templateFile: string, context: Record<string, unknown>): string {
-  const engine = Handlebars.create();
-  engine.registerHelper("ldb", () => "{{");
-  engine.registerHelper("rdb", () => "}}");
-  engine.registerHelper("eq", (a: unknown, b: unknown) => a === b);
-  // The CLI's `or`: true when any argument before Handlebars' trailing options object is.
-  engine.registerHelper("or", (...args: unknown[]) => args.slice(0, -1).some(Boolean));
-  return engine.compile(readFileSync(join(templatesDir, templateFile), "utf-8"), { noEscape: true })(context);
+  const name = templateFile.replace(/\.hbs$/, "");
+  const source = templates.get(name);
+  if (source === undefined) throw new Error(`${templateFile}: no template of that name is in force for this kit`);
+  return renderTemplate(source, context);
 }
 
 // Nothing is written: the files the tests hand in exist only for the compiler's host.

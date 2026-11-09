@@ -1,0 +1,55 @@
+/**
+ * @simplix-generated page/{{@kit.id}}-doc-page
+ *
+ * A document of the site (a legal text, a help article), laid down from the {{@kit.label}} kit's
+ * `static-page.doc.hbs` on the kit's document layout: the trail, the title with a badge beside it
+ * (a draft mark), the document's controls (its version, saving it as a PDF), the lede, then the
+ * contents rail beside the sections, which below the medium tier gives way to the layout's own jump
+ * select. The jump scrolls to a section, smoothly unless the reader asks for less motion. What the
+ * document says and holds is written here, in this file; a later template change is merged into it
+ * three ways. The strings come from the `{{namespace}}` catalog: `{{nameCamel}}.title`,
+ * `{{nameCamel}}.lede` (no line when the catalog holds it empty), `{{nameCamel}}.toc` (the rail's
+ * title) and `{{nameCamel}}.crumbsLabel`.
+ */
+import type { ReactNode } from "react";
+import { useOptionalTranslation } from "@simplix-react/i18n/react";
+import { DocText } from "{{@kit.package}}/help";
+import { DocLayout, useDocJump, type SiteTocEntry } from "{{@kit.package}}/legal";
+import type { SiteBreadcrumbStep } from "{{@kit.package}}/page";
+
+/** Props for {@link {{NamePascal}}Page}. */
+export interface {{NamePascal}}PageProps {
+  /** The trail from the site's top to the document. */
+  readonly crumbs?: readonly SiteBreadcrumbStep[];
+  /** A badge beside the title, such as the draft mark of a text still in review. */
+  readonly badge?: ReactNode;
+  /** The document's controls: its version, a comparison, saving it as a PDF. */
+  readonly controls?: ReactNode;
+  /** The document's sections in reading order, each named in the contents rail. */
+  readonly toc?: readonly SiteTocEntry[];
+  /** The sections, each with the id its contents entry jumps to. */
+  readonly children?: ReactNode;
+}
+
+/** {{NamePascal}}: one document of the site. */
+export function {{NamePascal}}Page({ crumbs = [], badge, controls, toc = [], children }: {{NamePascal}}PageProps = {}) {
+  const { t, tOr } = useOptionalTranslation("{{namespace}}");
+  const { current, jump } = useDocJump();
+  const lede = tOr("{{nameCamel}}.lede", "");
+  return (
+    <DocLayout
+      crumbs={crumbs}
+      crumbsLabel={t("{{nameCamel}}.crumbsLabel")}
+      title={t("{{nameCamel}}.title")}
+      badge={badge}
+      controls={controls}
+      notice={lede === "" ? undefined : <DocText tone="muted">{lede}</DocText>}
+      tocTitle={t("{{nameCamel}}.toc")}
+      toc={toc}
+      current={current}
+      onJump={jump}
+    >
+      {children}
+    </DocLayout>
+  );
+}

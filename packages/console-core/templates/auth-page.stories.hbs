@@ -1,0 +1,34 @@
+/**
+ * @simplix-generated story/{{@kit.id}}-auth-page
+ *
+ * The board frame for {{NamePascal}}Page, laid down from the {{@kit.label}} kit's
+ * `auth-page.stories.hbs` with the page's own context, and rewritten while its fingerprint
+ * matches. Customise it to the frame the page is measured against; once edited it is kept, and
+ * `simplix generated` lists it.
+ */
+import type { Meta, StoryObj } from "@storybook/react";
+import { useTranslation } from "{{@kit.package}}/i18n";
+import { AuthCard, AuthLayout } from "{{@kit.package}}/shell";
+
+function Screen() {
+  const { t } = useTranslation("{{namespace}}");
+  // A key the catalog holds empty comes back as the key itself, and draws no line either.
+  const line = t("{{nameCamel}}.description");
+  const description = line && line !== "{{nameCamel}}.description" ? line : undefined;
+  return (
+    <AuthLayout>
+      <AuthCard title={t("{{nameCamel}}.title")} description={description} />
+    </AuthLayout>
+  );
+}
+
+const meta: Meta<typeof Screen> = {
+  title: "Generated/{{storyTitle}}",
+  component: Screen,
+  parameters: { layout: "fullscreen", consoleFrame: false },
+};
+export default meta;
+type Story = StoryObj<typeof Screen>;
+
+/** The panel as it opens. */
+export const Page: Story = {};

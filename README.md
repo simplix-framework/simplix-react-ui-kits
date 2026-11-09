@@ -160,6 +160,27 @@ packages:
 
 Then depend on the kit with `"@simplix-react-ui-kits/console-classic": "workspace:*"` and import its entries (`/page`, `/layout`, `/notice`, `/shell`, …).
 
+## Screen templates
+
+`simplix scaffold` and `simplix add-page` draw a product's screens from the templates of the kit its `simplix.config.ts` names in `templates.from`. The templates belong to the area, so every design of it generates the same screens:
+
+| Package | Templates |
+| --- | --- |
+| `console-core` | `templates/`: the CRUD page and its widgets, the TanStack route and menu entry, every page kind and its board frame |
+| `site-core` | `templates/`: the site shell and the site page kinds and variants |
+| A design kit | none of its own: `simplix.extends` names the core kit, and `simplix.id` names the kit in the files it generates |
+
+A template writes the kit a product draws with as `{{@kit.package}}` (the package name), `{{@kit.label}}` (the name without the scope) and `{{@kit.id}}`, which the CLI fills in before it renders, so `import { RecordList } from "{{@kit.package}}/entity"` imports from `console-clarity` in one product and from `console-classic` in another.
+
+A design kit that has to draw a template differently ships that one file in its own `templates/`, sets `simplix.templates`, and names it in `simplix.overrides` with the reason. The harness refuses a kit template that replaces the core's without that entry, and a template only one kit ships.
+
+`testing/template-harness` generates a project from every template a kit has, through the CLI itself: a domain from a SimpliX Meta snapshot, the CRUD screen with its route and menu entry, and one page of every kind and variant with its board frame. It then refuses any generated import the kit's `simplix.fence` names, type-checks every generated file against the router's generated route tree, and mounts every generated board frame, page and shell in a DOM, failing on a throw or a console error. `parity.mjs` compares the projects of two kits of one area file by file, with each kit's own values put back as tokens, and compares the names each export entry carries and the imports each kit fences.
+
+```bash
+pnpm --filter @simplix-react-ui-kits/console-classic test:templates   # one kit
+pnpm test:templates                                                   # every kit, then parity
+```
+
 ## Working on the kits
 
 ```bash

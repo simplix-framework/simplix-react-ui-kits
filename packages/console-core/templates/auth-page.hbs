@@ -1,0 +1,19 @@
+/**
+ * @simplix-generated page/{{@kit.id}}-auth-page
+ *
+ * A sign-in step, laid down from the {{@kit.label}} kit's `auth-page.hbs` as the whole screen: the
+ * panel with its title and the description its catalog states. The step's banners (`notices`, as
+ * data), its form or message and the links under it are written here, in this file; a later
+ * template change is merged into it three ways.
+ */
+import { useTranslation } from "@simplix-react/i18n/react";
+import { AuthCard } from "{{@kit.package}}/shell";
+
+/** {{NamePascal}}: one sign-in panel. */
+export function {{NamePascal}}Page() {
+  const { t } = useTranslation("{{namespace}}");
+  // A key the catalog holds empty comes back as the key itself, and draws no line either.
+  const line = t("{{nameCamel}}.description");
+  const description = line && line !== "{{nameCamel}}.description" ? line : undefined;
+  return <AuthCard title={t("{{nameCamel}}.title")} description={description} />;
+}

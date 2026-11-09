@@ -1,0 +1,34 @@
+/**
+ * @simplix-generated story/{{@kit.id}}-dashboard-page
+ *
+ * The board frame for {{NamePascal}}Page, laid down from the {{@kit.label}} kit's
+ * `dashboard-page.stories.hbs` with the page's own context, and rewritten while its fingerprint matches.
+ * Customise it to the frame the page is measured against; once edited it is kept, and
+ * `simplix generated` lists it.
+ */
+import type { Meta, StoryObj } from "@storybook/react";
+import { useTranslation } from "{{@kit.package}}/i18n";
+import { DashboardGrid } from "{{@kit.package}}/dashboard";
+import { ConsolePage } from "{{@kit.package}}/page";
+
+function Screen() {
+  const { t } = useTranslation("{{namespace}}");
+  // A key the catalog holds empty comes back as the key itself, and draws no line either.
+  const line = t("{{nameCamel}}.description");
+  const description = line && line !== "{{nameCamel}}.description" ? line : undefined;
+  return (
+    <ConsolePage
+      spec={{ldb}} title: t("{{nameCamel}}.title"), description, tiles: [], layout: "flow", body: <DashboardGrid>{null}</DashboardGrid> {{rdb}}
+    />
+  );
+}
+
+const meta: Meta<typeof Screen> = {
+  title: "Generated/{{storyTitle}}",
+  component: Screen,
+};
+export default meta;
+type Story = StoryObj<typeof Screen>;
+
+/** The page as it opens. */
+export const Page: Story = {};

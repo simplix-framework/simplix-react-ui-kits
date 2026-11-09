@@ -1,0 +1,28 @@
+{
+  "name": "@simplix-react-ui-kits/template-harness",
+  "private": true,
+  "type": "module",
+  "description": "Generates a project from every template a kit ships, through the simplix CLI, and checks the generated code.",
+  "bin": {
+    "kit-template-harness": "./harness.mjs"
+  },
+  "devDependencies": {
+    "@storybook/react": "catalog:",
+    "@tanstack/react-query": "catalog:",
+    "@tanstack/react-router": "catalog:",
+    "@tanstack/router-generator": "1.168.0",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "lucide-react": "catalog:",
+    "msw": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:",
+    "zod": "catalog:"
+  },
+  "scripts": {
+    "test": "node --test \"test/*.test.mjs\"",
+    "templates": "node run-all.mjs"
+  }
+}

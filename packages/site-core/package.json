@@ -74,11 +74,13 @@
       "source": "./src/shell/index.ts",
       "types": "./src/shell/index.ts",
       "import": "./dist/shell/index.js"
-    }
+    },
+    "./templates/*": "./templates/*"
   },
   "files": [
     "dist",
-    "src"
+    "src",
+    "templates"
   ],
   "scripts": {
     "build": "tsup",
@@ -106,5 +108,8 @@
     "tsup": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
+  },
+  "simplix": {
+    "templates": "templates"
   }
 }

@@ -1,0 +1,39 @@
+/**
+ * @simplix-generated route/tanstack-crud
+ *
+ * Laid down from the {{@kit.label}} kit's `route.tanstack.hbs` and rewritten while its fingerprint
+ * matches: `/{{routePath}}`, the {{entity}} list and its detail.
+ */
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { validateConsoleSearch } from "{{@kit.package}}/page";
+import { guardedBy } from "{{@kit.package}}/shell";
+{{#if accessList}}
+import { {{accessList}} } from "{{packageName}}";
+{{/if}}
+import { {{EntityPascal}}CrudPage } from "{{modulePackage}}/pages";
+{{#if moduleLocales}}
+// The module's own words (columns, filters, sections) register with its locales entry.
+import "{{modulePackage}}/locales";
+{{/if}}
+
+/**
+ * Guarded on what the list endpoint requires, so a typed address meets the refusal up front rather
+ * than a page of chrome around a list the server empties.
+ */
+export const Route = createFileRoute("/{{routePath}}")({
+  component: guardedBy({{#if accessList}}{{accessList}}{{else}}undefined{{/if}}, {{EntityPascal}}Route),
+  validateSearch: validateConsoleSearch,
+});
+
+function {{EntityPascal}}Route() {
+  const search = Route.useSearch();
+  const navigate = useNavigate();
+
+  return (
+    <{{EntityPascal}}CrudPage
+      search={search}
+      // A change the reader makes while staying on the list (narrowing it) replaces the history entry.
+      onNavigate={(next, options) => navigate({ to: "/{{routePath}}", search: next, replace: options?.replace })}
+    />
+  );
+}

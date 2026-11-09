@@ -1,0 +1,51 @@
+/**
+ * @simplix-generated story/{{@kit.id}}-app-shell
+ *
+ * The board frame for the {{NamePascal}} shell, laid down from the {{@kit.label}} kit's
+ * `app-shell.stories.hbs`, and rewritten while its fingerprint matches: the console window with its
+ * top bar, an empty menu column and an empty content column. Customise it to the window the app
+ * draws (or to the board's own console frame, where the board's preview draws one around every
+ * screen); once edited it is kept, and `simplix generated` lists it.
+ */
+import type { Meta, StoryObj } from "@storybook/react";
+import { Flex } from "@simplix-react/ui";
+import {
+  ConsoleBandTopBar,
+  ConsoleContentColumn,
+  ConsoleMenuColumn,
+  ConsoleMenuSlot,
+  ConsoleWindow,
+  DarkModeToggle,
+  LocalePicker,
+} from "{{@kit.package}}/shell";
+
+function Screen() {
+  return (
+    <ConsoleWindow>
+      <ConsoleBandTopBar mark="{{NamePascal}}">
+        <LocalePicker />
+        <DarkModeToggle />
+      </ConsoleBandTopBar>
+      <Flex gap="none" flex overflow="hidden">
+        <ConsoleMenuSlot>
+          <ConsoleMenuColumn label="{{NamePascal}}" title="{{NamePascal}}">
+            {null}
+          </ConsoleMenuColumn>
+        </ConsoleMenuSlot>
+        <ConsoleContentColumn>{null}</ConsoleContentColumn>
+      </Flex>
+    </ConsoleWindow>
+  );
+}
+
+const meta: Meta<typeof Screen> = {
+  title: "Generated/{{storyTitle}}",
+  component: Screen,
+  // The frame is the window itself, so the board draws no second window around it.
+  parameters: { layout: "fullscreen", consoleFrame: false },
+};
+export default meta;
+type Story = StoryObj<typeof Screen>;
+
+/** The window as it opens. */
+export const Shell: Story = {};
