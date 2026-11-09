@@ -149,6 +149,12 @@ export interface ContractField {
   readonly currency?: string;
   /** For a `money` field, the decimal places the stored whole number carries: 6 stores millionths. */
   readonly scale?: number;
+  /**
+   * For a `money` field whose currency differs from row to row, the field of the same row that holds
+   * the ISO 4217 currency. The amount is then a whole number of that currency's own smallest unit
+   * (won as won, dollars as cents), and each row is written in its own currency.
+   */
+  readonly currencyField?: string;
   /** The value a new record starts the field with (SimpliX Meta's `defaultValue`). */
   readonly defaultValue?: string | number | boolean;
   /**
@@ -510,6 +516,26 @@ export function moneyFilterTransform(
   };
 }
 
+/** The decimal places a currency writes: none for won, two for dollars. */
+function currencyDigits(currency: string): number {
+  try {
+    return new Intl.NumberFormat("en", { style: "currency", currency }).resolvedOptions().maximumFractionDigits ?? 2;
+  } catch {
+    return 2;
+  }
+}
+
+/**
+ * The currency and scale a `money` field is written in for one row: its own, or, for a field whose
+ * currency is a field of the row, that currency with the decimal places it writes.
+ */
+export function moneyFieldOf(field: Pick<ContractField, "currency" | "scale" | "currencyField">, row: Row | undefined): Pick<ContractField, "currency" | "scale"> {
+  const code = field.currencyField ? valueAtPath(row, field.currencyField) : undefined;
+  if (typeof code !== "string" || code.trim() === "") return field;
+  const currency = code.trim().toUpperCase();
+  return { currency, scale: currencyDigits(currency) };
+}
+
 /**
  * A `money` value as currency in the reader's locale. It keeps as many decimal places as the
  * stored scale can hold beyond the currency's own, so a fraction of a cent is not rounded away.
@@ -577,7 +603,7 @@ export function useRecordContract(entity: string, overrides: ContractOverrides =
         case "number":
           return figureValue(field, raw, groupedNumber(raw, locale));
         case "money":
-          return figureValue(field, raw, moneyText(field, raw, locale));
+          return figureValue(field, raw, moneyText(moneyFieldOf(field, row), raw, locale));
         case "credits":
           // The plural follows the number (1 credit, 2 credits); the figure is written grouped.
           return figureValue(field, raw, t("recordValue.credits", { count: Number(raw), value: groupedNumber(raw, locale) }));
