@@ -24,7 +24,7 @@ import {
 } from "@simplix-react/ui";
 import { partAttributes, slotAttributes } from "@simplix-react/ui/design";
 import { BulkActionBar } from "@simplix-react/ui/interaction";
-import { CirclePause, CirclePlay, CircleX, FlaskConical, Power, PowerOff, RefreshCw, RotateCcw, ShieldOff, TimerReset, Upload, Wallet, WalletCards } from "lucide-react";
+import { Check, CirclePause, CirclePlay, CircleX, FlaskConical, Power, PowerOff, RefreshCw, RotateCcw, ShieldOff, TimerReset, Upload, Wallet, WalletCards, X } from "lucide-react";
 
 import { useReflowFlip } from "../layout/use-reflow-flip";
 import { PACKAGE_NAMESPACE } from "./locales";
@@ -131,7 +131,7 @@ export type RecordFilter<Row> =
  * The verbs the kit names beyond the framework's action types, each with its own glyph, so a screen
  * never borrows an unrelated type (`duplicate` for a retry) to reach the icon strip.
  */
-export type RecordVerbType = "retry" | "reset" | "test" | "reprocess" | "enable" | "disable" | "suspend" | "reinstate" | "cancel" | "revoke" | "upload" | "grant" | "adjust";
+export type RecordVerbType = "retry" | "reset" | "test" | "reprocess" | "enable" | "disable" | "suspend" | "reinstate" | "cancel" | "revoke" | "upload" | "grant" | "adjust" | "approve" | "reject";
 
 const VERB_GLYPHS: Record<RecordVerbType, { readonly type: ActionType; readonly icon: ReactNode }> = {
   retry: { type: "view", icon: <RotateCcw /> },
@@ -153,6 +153,10 @@ const VERB_GLYPHS: Record<RecordVerbType, { readonly type: ActionType; readonly 
   // `adjust` changes an account's balance by an amount the operator states: a wallet of its own
   // beside `grant`'s, since the pencil of `edit` would read as editing the account itself.
   adjust: { type: "view", icon: <WalletCards /> },
+  // `approve` and `reject` are the two answers to a request that waits for a decision (a refund, a
+  // grant): a check and a cross, so the pair reads as one choice beside `cancel`'s circled cross.
+  approve: { type: "view", icon: <Check /> },
+  reject: { type: "view", icon: <X /> },
 };
 
 /**
