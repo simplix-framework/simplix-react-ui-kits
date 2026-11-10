@@ -96,6 +96,12 @@ export const shellSlots: Record<string, string> = {
   // rule is a share of the column's text colour over that ground and never the page's border colour,
   // which reads as a bright line on a dark column. On the rail they are drawn by the rail mark's own part.
   "console-service-links layout=column": "border-[color-mix(in_srgb,var(--menu-fg,var(--border))_16%,transparent)]",
+  // The search at the column's foot is held to the same ground as the services under it: its rule is
+  // the same share of the column's text colour, and its field is a faint lift of that colour over the
+  // column, with the muted text and keycap the rows use, never the page's light field.
+  "console-menu-search-box": "border-[color-mix(in_srgb,var(--menu-fg,var(--border))_16%,transparent)]",
+  "console-menu-search":
+    "border-[color-mix(in_srgb,var(--menu-fg,var(--input))_22%,transparent)] bg-[color-mix(in_srgb,var(--menu-fg,var(--card))_7%,transparent)] text-[var(--menu-fg-muted,var(--muted-foreground))] hover:bg-[var(--menu-hover,var(--hover-bg-strong))] hover:text-[var(--menu-hover-fg,var(--foreground))] [&>kbd]:border-[color-mix(in_srgb,var(--menu-fg,var(--border-strong))_28%,transparent)] [&>kbd]:bg-transparent [&>kbd]:text-[var(--menu-fg-muted,var(--muted-foreground))]",
 
   // Content column: 24px over the header and 32px at the sides on a 1440px measure; under 900px the
   // sides close to 20px. The padding transitions, so the screen settles into a new width rather
@@ -114,7 +120,9 @@ export const shellSlots: Record<string, string> = {
   "console-preview-clock": "border-[var(--border)] text-(length:--fs-badge) leading-(--lh-badge)",
 
   // Command palette: a 640px overlay at 12vh, 52px field, grouped results, key hints under it.
-  "console-palette": "rounded-[var(--radius-overlay)] border-[var(--border)] bg-popover shadow-[var(--shadow-3)]",
+  // The field draws no ring of its own: the palette is one surface and the caret says where the reader types.
+  "console-palette":
+    "rounded-[var(--radius-overlay)] border-[var(--border)] bg-popover shadow-[var(--shadow-3)] [&_[data-slot=command-input-wrapper]:focus-within]:shadow-none",
   // Overlays share the overlay radius; focus is the shared halo.
   "console-menu-flyout": "rounded-[var(--radius-overlay)]",
   "console-display-settings-theme": "focus-visible:outline-none focus-visible:ring-0 focus-visible:shadow-[var(--focus-halo)]",

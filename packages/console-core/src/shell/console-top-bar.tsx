@@ -106,8 +106,11 @@ export interface ConsoleTopBarProps {
   readonly areas: readonly ConsoleArea[];
   readonly area: string;
   readonly onArea: (area: string) => void;
-  /** Opens the search, or {@link UNBUILT}. */
-  readonly onSearch: ActionOrUnbuilt;
+  /**
+   * Opens the search, or {@link UNBUILT}. Absent, the bar draws no search field: the console holds
+   * its search elsewhere, at the foot of the menu ({@link ConsoleMenuSearch}).
+   */
+  readonly onSearch?: ActionOrUnbuilt;
   readonly region: ConsoleTopBarRegion;
   readonly notifications: ConsoleTopBarNotifications;
   /** Opens the help, or {@link UNBUILT}. */
@@ -172,7 +175,7 @@ export function ConsoleTopBar({
   const reason = unbuiltReason ?? common("shell.nav.notBuilt");
 
   const search =
-    onSearch === UNBUILT ? (
+    onSearch === undefined ? null : onSearch === UNBUILT ? (
       <Unbuilt reason={reason}>
         {/* `inert`: the drawn search is a picture of the control, so it takes neither the pointer
             nor the focus; the wrapper carries both, with the reason. */}

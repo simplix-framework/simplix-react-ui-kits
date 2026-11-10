@@ -1240,6 +1240,12 @@
   [data-slot="console-display-settings-themes"][data-slot][data-s-console-display-settings-themes] {
     @apply gap-1.5;
   }
+  [data-slot="console-menu-search-label"][data-slot][data-s-console-menu-search-label] {
+    @apply min-w-0 flex-1 truncate text-left;
+  }
+  [data-slot="console-menu-search"][data-slot][data-s-console-menu-search] {
+    @apply flex h-8 w-full min-w-0 items-center gap-2 rounded-md border border-input bg-background pl-3 pr-1.5 text-sm text-muted-foreground transition-colors;
+  }
   [data-slot="console-menu-caret"][data-slot][data-s-console-menu-caret] {
     @apply opacity-60;
   }
@@ -1632,6 +1638,9 @@
   :where([data-part="console-display-settings"])[data-part][data-p-console-display-settings] {
     @apply w-80 gap-4 p-4;
   }
+  :where([data-part="console-menu-search-box"])[data-part][data-p-console-menu-search-box] {
+    @apply shrink-0 border-t border-border px-2.5 py-2.5;
+  }
   :where([data-part="console-menu-branch"])[data-part][data-p-console-menu-branch] {
     @apply gap-[var(--menu-branch-gap)];
   }
@@ -1876,6 +1885,9 @@
     @apply [&>h3]:text-xs [&>h3]:font-semibold [&>h3]:text-muted-foreground;
   }
   :where([data-slot="console-display-settings-theme"])[data-s-console-display-settings-theme] {
+    @apply hover:bg-accent focus-visible:outline-none focus-visible:shadow-[var(--focus-halo)];
+  }
+  :where([data-slot="console-menu-search"])[data-s-console-menu-search] {
     @apply hover:bg-accent focus-visible:outline-none focus-visible:shadow-[var(--focus-halo)];
   }
   :where([data-slot="console-menu-caret"])[data-s-console-menu-caret] {

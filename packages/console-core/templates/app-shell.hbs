@@ -43,6 +43,7 @@ import {
   ConsoleMenuLinkRow,
   ConsoleMenuRail,
   ConsoleMenuRailButton,
+  ConsoleMenuSearch,
   ConsoleMenuSlot,
   ConsolePhoneMenuSection,
   ConsolePhoneMenuSheet,
@@ -92,6 +93,11 @@ export interface ShellMenuGroup {
   readonly label: string;
   readonly icon: ComponentType<{ "aria-hidden"?: boolean }>;
   readonly entries: readonly ShellMenuEntry[];
+  /**
+   * The area the group belongs to, a key of `topBar.areas`; absent, the first area. The window draws
+   * the groups of the area the address is in and no others.
+   */
+  readonly area?: string;
 }
 
 export interface ShellParts {
@@ -107,10 +113,21 @@ export interface ShellParts {
   /**
    * Destinations outside the groups, drawn after them: a row of their own in the column, a mark of
    * their own on the rail, and a row in the phone sheet's last section (a phone tab where marked).
+   * Where the top bar has several areas the window draws none of them, since a column holds one
+   * area's destinations; they stay in the phone sheet.
    */
   readonly tail?: readonly ShellMenuEntry[];
-  /** The top bar's areas, search, region, bell, help and settings controls. */
+  /**
+   * The top bar's areas, region, bell, help and settings controls. With several `areas` the bar is
+   * the console's top menu and the column beside the screen holds the destinations of the area the
+   * address is in.
+   */
   readonly topBar: Omit<ConsoleTopBarProps, "mark" | "title" | "badge" | "account">;
+  /**
+   * Where the search field stands: in the top bar (`bar`, the default) or at the foot of the menu
+   * column and the rail (`menu`), where the bar draws none. The palette it opens is the same.
+   */
+  readonly searchIn?: "bar" | "menu";
   readonly account: ConsoleTopBarAccount;
   readonly status?: ConsoleStatusStripProps;
   /** Rows the phone's menu sheet ends with, after the `tail` entries (signing out). */
@@ -228,8 +245,8 @@ function Console({ route, onAPhone }: { readonly route: string; readonly onAPhon
   // The menu's fold is read here, so the search's fold action and the column are one state.
   const collapse = useSidebarCollapse(shell.namespace);
   const search = useShellSearch(shell, route, onAPhone ? undefined : collapse);
-  // The top bar's search field opens the window's one palette.
-  const parts: ShellParts = { ...shell, topBar: { ...shell.topBar, onSearch: search.open } };
+  // The search field, in the top bar or at the foot of the menu, opens the window's one palette.
+  const parts: ShellParts = { ...shell, topBar: { ...shell.topBar, onSearch: shell.searchIn === "menu" ? undefined : search.open } };
   return parts.wrap(
     <>
       {onAPhone ? (
@@ -237,7 +254,7 @@ function Console({ route, onAPhone }: { readonly route: string; readonly onAPhon
           <Outlet />
         </PhoneShell>
       ) : (
-        <WindowShell parts={parts} route={route} collapse={collapse}>
+        <WindowShell parts={parts} route={route} collapse={collapse} onSearch={search.open}>
           <Outlet />
         </WindowShell>
       )}
@@ -282,12 +299,61 @@ interface ShellProps {
   readonly children: ReactNode;
 }
 
-function WindowShell({ parts, route, collapse, children }: ShellProps & { readonly collapse: SidebarCollapse }) {
+/** The area a group belongs to: the one it names, or the first area when it names none. */
+function areaKeyOf(parts: ShellParts, group: ShellMenuGroup): string {
+  return group.area ?? parts.topBar.areas[0]?.key ?? "";
+}
+
+/** The area holding the destination the route is on or under, or none when no destination holds the route. */
+function areaHolding(parts: ShellParts, route: string): string | undefined {
+  const group = parts.menu.find((candidate) => candidate.entries.some((entry) => holds(entry, route)));
+  return group ? areaKeyOf(parts, group) : undefined;
+}
+
+/** Where pressing an area leads: its first destination that has a screen. */
+function firstHrefOf(parts: ShellParts, area: string): string | undefined {
+  return parts.menu
+    .filter((group) => areaKeyOf(parts, group) === area)
+    .flatMap((group) => group.entries)
+    .find((entry) => entry.href)?.href;
+}
+
+function WindowShell({ parts, route, collapse, onSearch, children }: ShellProps & { readonly collapse: SidebarCollapse; readonly onSearch: () => void }) {
   const { t } = useTranslation("{{namespace}}");
+  const router = useRouter();
   const { collapsed, toggle } = collapse;
+  const areas = parts.topBar.areas;
+  const several = areas.length > 1;
+  // The address says which area the reader is in. A route no destination holds (the account page)
+  // keeps the area they came from.
+  const holding = areaHolding(parts, route);
+  const [standing, setStanding] = useState(areas[0]?.key ?? "");
+  useEffect(() => {
+    if (holding) setStanding(holding);
+  }, [holding]);
+  const area = holding ?? standing;
+  const groups = several ? parts.menu.filter((group) => areaKeyOf(parts, group) === area) : parts.menu;
+  // An area of one group is that group's rows with no branch row over them.
+  const flat = several && groups.length === 1;
+  const menuTitle = several ? (areas.find((candidate) => candidate.key === area)?.label ?? parts.menuTitle) : parts.menuTitle;
+  const tail = several ? undefined : parts.tail;
+  const searchInMenu = parts.searchIn === "menu";
+  const goToArea = (key: string) => {
+    const href = firstHrefOf(parts, key);
+    if (href) router.history.push(href);
+  };
   return (
     <ConsoleWindow>
-      <ConsoleTopBar {...parts.topBar} mark={parts.brand.mark} title={parts.brand.title} badge={parts.brand.badge} home={parts.brand.home} account={parts.account} />
+      <ConsoleTopBar
+        {...parts.topBar}
+        area={several ? area : parts.topBar.area}
+        onArea={several ? goToArea : parts.topBar.onArea}
+        mark={parts.brand.mark}
+        title={parts.brand.title}
+        badge={parts.brand.badge}
+        home={parts.brand.home}
+        account={parts.account}
+      />
       <Flex gap="none" flex overflow="hidden">
         <ConsoleMenuSlot>
           {collapsed ? (
@@ -298,31 +364,34 @@ function WindowShell({ parts, route, collapse, children }: ShellProps & { readon
                   <PanelLeftOpenIcon />
                 </Button>
               }
+              search={searchInMenu ? <ConsoleMenuSearch layout="rail" onOpen={onSearch} /> : undefined}
               foot={parts.services ? <ConsoleServiceLinks layout="rail" {...parts.services} /> : undefined}
             >
-              {parts.menu.map((group) => (
-                <RailGroup key={group.key} group={group} route={route} />
-              ))}
+              {/* An area of one group is a mark per destination; several groups are a mark each, opening their rows. */}
+              {flat
+                ? groups[0]?.entries.map((entry) => <RailEntry key={entry.key} entry={entry} route={route} />)
+                : groups.map((group) => <RailGroup key={group.key} group={group} route={route} />)}
               {/* An entry outside the groups is a mark of its own, opening its one row. */}
-              {parts.tail?.map((entry) => (
+              {tail?.map((entry) => (
                 <RailGroup key={entry.key} group=\{{ key: entry.key, label: entry.label, icon: entry.icon, entries: [entry] }} route={route} />
               ))}
             </ConsoleMenuRail>
           ) : (
             <ConsoleMenuColumn
               label={t("shell.nav.menu")}
-              title={parts.menuTitle}
+              title={menuTitle}
               action={
                 <Button variant="ghost" size="icon-xs" onClick={toggle} aria-label={t("shell.nav.collapse")} title={t("shell.nav.collapse")}>
                   <PanelLeftCloseIcon />
                 </Button>
               }
+              search={searchInMenu ? <ConsoleMenuSearch layout="column" onOpen={onSearch} /> : undefined}
               foot={parts.services ? <ConsoleServiceLinks layout="column" {...parts.services} /> : undefined}
             >
-              {parts.menu.map((group) => (
-                <ColumnGroup key={group.key} group={group} route={route} />
-              ))}
-              {parts.tail?.map((entry) => (
+              {flat
+                ? groups[0]?.entries.map((entry) => <EntryRow key={entry.key} entry={entry} route={route} />)
+                : groups.map((group) => <ColumnGroup key={group.key} group={group} route={route} />)}
+              {tail?.map((entry) => (
                 <EntryRow key={entry.key} entry={entry} route={route} />
               ))}
             </ConsoleMenuColumn>
@@ -377,6 +446,23 @@ function RailGroup({ group, route }: { readonly group: ShellMenuGroup; readonly 
         </Stack>
       </ConsoleMenuFlyout>
     </Popover>
+  );
+}
+
+/** One destination as a mark of its own on the rail: pressing it goes there, and where the screen is not built it is drawn inactive. */
+function RailEntry({ entry, route }: { readonly entry: ShellMenuEntry; readonly route: string }) {
+  const router = useRouter();
+  const href = entry.href;
+  return (
+    <ConsoleMenuRailButton
+      active={holds(entry, route)}
+      label={entry.label}
+      disabled={href === undefined}
+      aria-description={entry.inactiveReason}
+      onClick={href ? () => router.history.push(href) : undefined}
+    >
+      <entry.icon aria-hidden />
+    </ConsoleMenuRailButton>
   );
 }
 

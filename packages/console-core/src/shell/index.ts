@@ -106,6 +106,7 @@ export {
   type ConsoleMenuLinkRowProps,
   type ConsoleMenuRailProps,
 } from "./menu-tree";
+export { ConsoleMenuSearch, type ConsoleMenuSearchProps } from "./menu-search";
 export {
   ConsoleServiceLinks,
   configuredServiceLinks,

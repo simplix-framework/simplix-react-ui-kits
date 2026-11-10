@@ -45,6 +45,7 @@ import {
   ConsoleMenuFold,
   ConsoleMenuSlot,
 } from "./menu-tree";
+import { ConsoleMenuSearch } from "./menu-search";
 import { ConsoleServiceLinks, type ConsoleServiceLink } from "./service-links";
 import { useSidebarCollapse } from "./sidebar-collapse";
 import { consoleWindowStyle } from "./console-window.style";
@@ -169,6 +170,11 @@ export interface ConsolePreviewChrome {
    * them. A service with no address is left out.
    */
   readonly services?: { readonly title: string; readonly links: readonly ConsoleServiceLink[] };
+  /**
+   * Where the search field stands: in the top bar (`bar`, the default) or at the foot of the menu
+   * (`menu`), where the top bar draws none. The palette it opens is the same.
+   */
+  readonly searchIn?: "bar" | "menu";
 }
 
 /** Whether an entry is the current destination or holds it. */
@@ -234,6 +240,7 @@ export function ConsolePreviewWindowChrome({
   useEffect(() => setArea(chrome.area), [chrome.area]);
   const { collapsed, toggle } = useSidebarCollapse(chrome.namespace);
   const menu = chrome.menuFor(area);
+  const searchInMenu = chrome.searchIn === "menu";
   const [palette, setPalette] = useState(false);
   const [shortcuts, setShortcuts] = useState(false);
   const [bell, setBell] = useState(false);
@@ -340,7 +347,7 @@ export function ConsolePreviewWindowChrome({
         areas={chrome.areas}
         area={area}
         onArea={setArea}
-        onSearch={() => setPalette(true)}
+        onSearch={searchInMenu ? undefined : () => setPalette(true)}
         region={{
           label: labels.site,
           current: site?.siteName,
@@ -381,11 +388,13 @@ export function ConsolePreviewWindowChrome({
                     <PanelLeftOpenIcon />
                   </Button>
                 }
+                search={searchInMenu ? <ConsoleMenuSearch layout="rail" onOpen={() => setPalette(true)} /> : undefined}
                 foot={chrome.services && <ConsoleServiceLinks layout="rail" {...chrome.services} />}
               >
-                {menu.groups.map((group) => (
-                  <RailGroup key={group.key} group={group} current={chrome.current} />
-                ))}
+                {/* An area of one group is a mark per destination; several groups are a mark each, opening their rows. */}
+                {menu.groups.length === 1
+                  ? menu.groups[0]?.entries.map((entry) => <RailEntry key={entry.key} entry={entry} current={chrome.current} onOpen={navigate} />)
+                  : menu.groups.map((group) => <RailGroup key={group.key} group={group} current={chrome.current} />)}
               </ConsoleMenuRail>
             ) : (
               <ConsoleMenuColumn
@@ -396,6 +405,7 @@ export function ConsolePreviewWindowChrome({
                     <PanelLeftCloseIcon />
                   </Button>
                 }
+                search={searchInMenu ? <ConsoleMenuSearch layout="column" onOpen={() => setPalette(true)} /> : undefined}
                 foot={chrome.services && <ConsoleServiceLinks layout="column" {...chrome.services} />}
               >
                 {menu.groups.map((group) => (
@@ -480,6 +490,22 @@ function MenuGroup({
         </ConsoleMenuBranch>
       </ConsoleMenuFold>
     </Stack>
+  );
+}
+
+/** One destination as a mark of its own on the rail: pressing it opens it, and one with no screen is drawn inactive. */
+function RailEntry({ entry, current, onOpen }: { readonly entry: ConsolePreviewMenuEntry; readonly current: string | undefined; readonly onOpen: (href: string) => void }) {
+  const href = entry.href;
+  return (
+    <ConsoleMenuRailButton
+      active={holds(entry, current)}
+      label={textOf(entry.label)}
+      disabled={href === undefined}
+      aria-description={entry.inactiveReason}
+      onClick={href ? () => onOpen(href) : undefined}
+    >
+      {entry.icon}
+    </ConsoleMenuRailButton>
   );
 }
 

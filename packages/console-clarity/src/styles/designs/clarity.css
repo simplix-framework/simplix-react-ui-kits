@@ -1255,6 +1255,12 @@
   [data-slot="console-display-settings-themes"][data-slot][data-s-console-display-settings-themes] {
     @apply gap-1.5;
   }
+  [data-slot="console-menu-search-label"][data-slot][data-s-console-menu-search-label] {
+    @apply min-w-0 flex-1 truncate text-left;
+  }
+  [data-slot="console-menu-search"][data-slot][data-s-console-menu-search] {
+    @apply flex h-8 w-full min-w-0 items-center gap-2 rounded-[var(--radius-control)] border pl-3 pr-1.5 text-sm transition-colors duration-[var(--dur-fast)] ease-[var(--ease)] border-[color-mix(in_srgb,var(--menu-fg,var(--input))_22%,transparent)] bg-[color-mix(in_srgb,var(--menu-fg,var(--card))_7%,transparent)] text-[var(--menu-fg-muted,var(--muted-foreground))];
+  }
   [data-slot="console-menu-caret"][data-slot][data-s-console-menu-caret] {
     @apply text-[var(--menu-icon,var(--muted-foreground))] opacity-100;
   }
@@ -1651,7 +1657,7 @@
     @apply p-1.5;
   }
   :where([data-part="console-palette"])[data-part][data-p-console-palette] {
-    @apply gap-0 overflow-hidden rounded-[var(--radius-overlay)] border-[var(--border)] bg-popover shadow-[var(--shadow-3)];
+    @apply gap-0 overflow-hidden rounded-[var(--radius-overlay)] border-[var(--border)] bg-popover shadow-[var(--shadow-3)] [&_[data-slot=command-input-wrapper]:focus-within]:shadow-none;
   }
   :where([data-part="console-window"])[data-part][data-p-console-window] {
     @apply bg-background;
@@ -1667,6 +1673,9 @@
   }
   :where([data-part="console-display-settings"])[data-part][data-p-console-display-settings] {
     @apply w-80 gap-4 p-4;
+  }
+  :where([data-part="console-menu-search-box"])[data-part][data-p-console-menu-search-box] {
+    @apply shrink-0 border-t px-2.5 py-2.5 border-[color-mix(in_srgb,var(--menu-fg,var(--border))_16%,transparent)];
   }
   :where([data-part="console-menu-branch"])[data-part][data-p-console-menu-branch] {
     @apply gap-[var(--menu-branch-gap)];
@@ -1928,6 +1937,9 @@
   }
   :where([data-slot="console-display-settings-theme"])[data-s-console-display-settings-theme] {
     @apply hover:bg-[var(--hover-bg-strong)] focus-visible:outline-none focus-visible:ring-0 focus-visible:shadow-[var(--focus-halo)];
+  }
+  :where([data-slot="console-menu-search"])[data-s-console-menu-search] {
+    @apply focus-visible:outline-none focus-visible:shadow-[var(--focus-halo)] hover:bg-[var(--menu-hover,var(--hover-bg-strong))] hover:text-[var(--menu-hover-fg,var(--foreground))] [&>kbd]:border-[color-mix(in_srgb,var(--menu-fg,var(--border-strong))_28%,transparent)] [&>kbd]:bg-transparent [&>kbd]:text-[var(--menu-fg-muted,var(--muted-foreground))];
   }
   :where([data-slot="console-menu-caret"])[data-s-console-menu-caret] {
     @apply [&>svg]:transition-transform [&>svg]:duration-[var(--dur-base)] [&>svg]:ease-[var(--ease)] [&_svg]:size-[13px];

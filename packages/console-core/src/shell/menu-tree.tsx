@@ -23,6 +23,7 @@ import {
 
 import { EllipsisText } from "../layout";
 import { PACKAGE_NAMESPACE } from "./locales";
+import { menuSearchBoxStyle } from "./menu-search.style";
 import {
   menuBranchStyle,
   menuCaretStyle,
@@ -127,6 +128,8 @@ export interface ConsoleMenuRailProps {
    * draws its own rule; absent or drawing nothing, the rail ends with its last mark.
    */
   readonly foot?: ReactNode;
+  /** The search, held above the foot at the end of the rail ({@link ConsoleMenuSearch} with `layout="rail"`). */
+  readonly search?: ReactNode;
 }
 
 /**
@@ -139,7 +142,7 @@ export interface ConsoleMenuRailProps {
  * this: one mark stands for ten or more screens, and without somewhere to show them the reader has
  * to expand the column to read a name and collapse it again.
  */
-export function ConsoleMenuRail({ label, lead, children, foot }: ConsoleMenuRailProps) {
+export function ConsoleMenuRail({ label, lead, children, foot, search }: ConsoleMenuRailProps) {
   return (
     <Flex
       direction="column"
@@ -152,8 +155,9 @@ export function ConsoleMenuRail({ label, lead, children, foot }: ConsoleMenuRail
       {lead}
       {lead != null && <Separator className="w-8" {...partAttributes(menuRailRuleStyle, {})} />}
       {children}
-      {foot != null && (
+      {(foot != null || search != null) && (
         <Stack gap="xs" align="center" {...partAttributes(menuRailFootStyle, {})}>
+          {search}
           {foot}
         </Stack>
       )}
@@ -227,6 +231,11 @@ export interface ConsoleMenuColumnProps {
    * and inset, so a foot that draws nothing leaves the column as it was.
    */
   readonly foot?: ReactNode;
+  /**
+   * The search, held between the destinations and the foot so it stays at the column's end however
+   * long the menu is ({@link ConsoleMenuSearch}). It sits in a box with its own rule and inset.
+   */
+  readonly search?: ReactNode;
 }
 
 /**
@@ -243,6 +252,7 @@ export function ConsoleMenuColumn({
   bodyRef,
   children,
   foot,
+  search,
 }: ConsoleMenuColumnProps) {
   return (
     <Flex
@@ -250,6 +260,9 @@ export function ConsoleMenuColumn({
       gap="none"
       shrink={false}
       aria-label={label}
+      // The search's own rule stands over it and the services' rule under it is left off, so the two
+      // do not stack into a double line.
+      className={search != null ? "[&_[data-part=console-service-links]]:border-t-0!" : undefined}
       {...partAttributes(menuColumnStyle, {})}
     >
       {/* The rule under the heading and its inset, neither of which `Stack` names. */}
@@ -272,6 +285,7 @@ export function ConsoleMenuColumn({
         {children}
         <MenuInk />
       </Stack>
+      {search != null && <div {...partAttributes(menuSearchBoxStyle, {})}>{search}</div>}
       {foot}
     </Flex>
   );
