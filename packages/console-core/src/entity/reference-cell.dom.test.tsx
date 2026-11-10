@@ -83,6 +83,14 @@ describe("a list cell that names a person", () => {
     expect(cell.querySelector("[data-record-gone]")?.getAttribute("data-record-gone")).toBe("deleted");
   });
 
+  it("draws the record's id where the name the column reads is null or empty, never an empty link", async () => {
+    for (const userName of [null, ""]) {
+      const { host: cell } = await draw({ name: "userId", kind: "reference", nameField: "userName" }, { userId: "u1", userName });
+      expect(cell.textContent, String(userName)).toContain("u1");
+      cell.remove();
+    }
+  });
+
   it("draws a plain name where the column names no peek kind", async () => {
     const { host: cell } = await draw({ name: "userId", kind: "reference", nameField: "userName" }, { userId: "u1", userName: "Mira Han" });
     expect(cell.querySelector('[data-variant="link"]')).toBeNull();
