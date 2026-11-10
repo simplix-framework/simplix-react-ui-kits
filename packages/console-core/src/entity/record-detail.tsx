@@ -40,6 +40,7 @@ import { CheckMatrix, type CheckMatrixProps } from "../layout/check-matrix";
 import { MeasurementGrid, type MeasurementGridProps } from "../layout/measurement-grid";
 import { FormSheet, type FormSheetProps } from "../screen/form-sheet";
 import { HistoryRail, type HistoryRailProps } from "../screen/history-rail";
+import { RecordHistoryLayout, useHistoryAside, type RecordHistory } from "./record-history-layout";
 import { ChangeHistoryTable, FieldEnumsProvider, type ChangeHistoryRead } from "../identity/change-history";
 import { ScoreSheet, type ScoreSheetProps } from "../screen/score-sheet";
 import { useCrudPresentation } from "../page/crud-page";
@@ -168,6 +169,13 @@ export interface RecordDetailProps {
    * card keeps the state the card showed.
    */
   readonly status?: RecordBadge;
+  /**
+   * The record's progress through its stages, drawn in a column beside the record while the record
+   * is wide enough to spare one and, below that, at the foot of its first tab, under its own
+   * heading. A screen declares it once and the kit places it; a history that belongs to one tab
+   * only is that tab's `history`. Progress is not audit: who changed what is the `changes` tab.
+   */
+  readonly history?: RecordHistory;
   /** The tabs; the first is open. A record with no tabs passes `sections` instead. */
   readonly tabs?: readonly RecordTab[];
   readonly sections?: readonly RecordSection[];
@@ -545,7 +553,8 @@ export function RecordDetail({
   figures,
   avatar,
   status,
-  tabs,
+  history,
+  tabs: declaredTabs,
   sections,
   notices,
   note,
@@ -561,6 +570,11 @@ export function RecordDetail({
   isLoading,
   fieldEnums,
 }: RecordDetailProps) {
+  const aside = useHistoryAside(history !== undefined);
+  // Below the width the aside needs, the history is the end of the first tab (or of the sections of a
+  // record with no tabs), headed as the sections above it are.
+  const inlineHistory = history && !aside.wide ? ({ history: { nodes: history.nodes }, historyTitle: history.title } as const) : undefined;
+  const tabs = inlineHistory && declaredTabs && declaredTabs.length > 0 ? declaredTabs.map((tab, index) => (index === 0 ? { ...tab, ...inlineHistory } : tab)) : declaredTabs;
   const [openTab, setOpenTab] = useState(defaultTab ?? tabs?.[0]?.key ?? "");
   const crud = useCrudPresentation();
   const presentationSwitch = crud?.presentationSwitch;
@@ -610,11 +624,11 @@ export function RecordDetail({
   ) : (
     <Stack gap="sm">
       {tabsTrailing ? <Flex justify="end">{tabsTrailing}</Flex> : null}
-      <RecordTabBody content={{ sections, note }} />
+      <RecordTabBody content={{ sections, note, ...inlineHistory }} />
     </Stack>
   );
 
-  return (
+  const detail = (
     <CrudDetail
       isLoading={isLoading}
       header={withHeadControls(
@@ -687,5 +701,12 @@ export function RecordDetail({
         </Flex>
       </Stack>
     </CrudDetail>
+  );
+  return history ? (
+    <RecordHistoryLayout layout={aside} history={history}>
+      {detail}
+    </RecordHistoryLayout>
+  ) : (
+    detail
   );
 }

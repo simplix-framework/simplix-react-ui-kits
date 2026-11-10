@@ -1,18 +1,21 @@
 import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { getErrorMessage, getValidationErrors } from "@simplix-react/api";
 import { useTranslation } from "@simplix-react/i18n/react";
-import { Button, CrudForm, Flex, Heading, Stack, Text, useUnsavedChanges } from "@simplix-react/ui";
-import { slotAttributes } from "@simplix-react/ui/design";
+import { Button, CrudForm, Flex, Heading, Stack, StepIndicator, Text, useUnsavedChanges } from "@simplix-react/ui";
+import { partAttributes, slotAttributes } from "@simplix-react/ui/design";
 
 import { RecordNote, RecordNotices, RecordVerbButton, RefusalNotice, type RecordNotice, type RecordVerb } from "./record-blocks";
 import { FormErrorSummary } from "./form-error-summary";
 import { PACKAGE_NAMESPACE } from "./locales";
 import { formMoreStyle } from "./record-form.style";
 import { RecordFieldView } from "./record-form-fields";
+import { RecordFormReview, type RecordFormStepOptions } from "./record-form-steps";
+import { stepFlowStyle } from "./record-form-steps.style";
 import { fieldShown, formFieldErrors, initialFieldValue, requiredProgress } from "./record-form-rules";
 import type { RecordFormSection } from "./record-form-types";
 
 export type { RecordFormField, RecordFormSection, RecordOption } from "./record-form-types";
+export type { RecordFormStepOptions } from "./record-form-steps";
 
 type Values = Record<string, unknown>;
 
@@ -118,10 +121,13 @@ export function useRecordFormValues(sections: readonly RecordFormSection[]) {
     missing,
     /** Why each refused field refuses it. */
     errors,
-    /** Marks the refused fields and moves the focus to the first of them. */
-    showErrors: () => {
+    /**
+     * Marks the refused fields and moves the focus to the first of them; `within` limits the move to
+     * the fields a stepped form is drawing, since the others are not on the screen to be focused.
+     */
+    showErrors: (within?: readonly string[]) => {
       setShown(true);
-      focusField(missing[0]);
+      focusField((within ? missing.filter((key) => within.includes(key)) : missing)[0]);
     },
     errorsShown: shown,
   };
@@ -201,6 +207,14 @@ export interface RecordFormProps {
    * something to say, so it sits where the reader is looking and leaves when the value changes.
    */
   readonly fieldNotices?: (values: Readonly<Record<string, unknown>>) => Readonly<Record<string, string | undefined>>;
+  /**
+   * Draws each section as a step of its own: a strip of the steps above the one in hand, Back and
+   * Next under it, and a final review of every answer before the submit goes out. The sections are
+   * the steps, their titles are the strip's labels, and a field hidden by an earlier choice is
+   * neither asked nor reviewed. Use it where a later step depends on an earlier choice, or where
+   * what is sent cannot be taken back, never to cut a short form in pieces.
+   */
+  readonly steps?: RecordFormStepOptions;
 }
 
 /**
@@ -208,13 +222,41 @@ export interface RecordFormProps {
  * fields, the messages that explain them, and the finishing verbs. Required fields left empty are
  * marked when the reader tries to finish, and nothing is sent until they are filled.
  */
-export function RecordForm({ title, sections, notices, note, submitLabel, runningLabel, onSubmit, onCancel, actions = [], children, fieldNotices }: RecordFormProps) {
+export function RecordForm({ title, sections, notices, note, submitLabel, runningLabel, onSubmit, onCancel, actions = [], children, fieldNotices, steps }: RecordFormProps) {
   const { t: tUi } = useTranslation("simplix/ui");
   const { t } = useTranslation(PACKAGE_NAMESPACE + "/features");
   const form = useRecordFormValues(sections);
   const progress = requiredProgress(sections, form.values);
   const [refusal, setRefusal] = useState<SubmitRefusal | undefined>(undefined);
   const [pending, setPending] = useState(false);
+  // A stepped form draws one section at a time and a review after the last; the values live above the
+  // steps, so going back finds every answer where it was left.
+  const stepped = steps !== undefined;
+  const [step, setStep] = useState(0);
+  const reviewing = stepped && step >= sections.length;
+  const active = stepped && !reviewing ? sections[step] : undefined;
+  const activeKeys = (active?.fields ?? []).filter((field) => fieldShown(field, form.values)).map((field) => field.key);
+  const drawnSections = stepped ? (active ? [active] : []) : sections;
+  // The errors of the steps that are not on the screen are not the reader's to read yet.
+  const drawnForm = stepped ? { ...form, errors: Object.fromEntries(Object.entries(form.errors).filter(([key]) => activeKeys.includes(key))), missing: form.missing.filter((key) => activeKeys.includes(key)) } : form;
+  const stepLabels = [...sections.map((section) => section.title ?? section.key), t("recordForm.stepReview")];
+  const goTo = (index: number) => {
+    setRefusal(undefined);
+    setStep(Math.max(0, Math.min(sections.length, index)));
+  };
+  // After a step changes the new step starts at its top with its first field ready, as a new page would.
+  const arrived = useRef(false);
+  useEffect(() => {
+    if (!stepped) return;
+    if (!arrived.current) {
+      arrived.current = true;
+      return;
+    }
+    document.querySelector<HTMLElement>("[data-crud-slot=body]")?.scrollTo?.({ top: 0 });
+    focusField(activeKeys[0]);
+    // The strip is selectable, so the first field is a key of the step and not a closure of the render.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [step, stepped]);
   // Leaving with typed input asks first, whether by the cancel button or the panel's close, and
   // closing the tab warns too. A save in flight is not unsaved, so it never asks.
   const [baseline] = useState(() => initialValues(sections));
@@ -223,7 +265,28 @@ export function RecordForm({ title, sections, notices, note, submitLabel, runnin
   const fieldKeys = sections.flatMap((section) => section.fields.map((field) => field.key));
   const submit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (stepped && !reviewing) {
+      // Next: the step's own required fields first, then the screen's own check of the step.
+      const own = form.missing.filter((key) => activeKeys.includes(key));
+      if (own.length > 0) {
+        form.showErrors(own);
+        return;
+      }
+      try {
+        steps.validateStep?.(activeKeys, form.values);
+      } catch (error) {
+        setRefusal(refusalOf(error, activeKeys));
+        return;
+      }
+      goTo(step + 1);
+      return;
+    }
     if (form.missing.length > 0) {
+      if (stepped) {
+        // The review found a step still unanswered (a choice changed under a later field): back to it.
+        const first = sections.findIndex((section) => section.fields.some((field) => form.missing.includes(field.key)));
+        goTo(Math.max(0, first));
+      }
       form.showErrors();
       return;
     }
@@ -249,7 +312,11 @@ export function RecordForm({ title, sections, notices, note, submitLabel, runnin
           // form knows how much is still below.
           <Stack gap="none" minSize>
             <Heading level={4}>{title}</Heading>
-            {progress.total > 0 ? (
+            {stepped ? (
+              <Text as="span" size="caption" tone="muted" aria-live="polite" data-form-progress>
+                {t("recordForm.stepProgress", { step: step + 1, total: sections.length + 1, label: stepLabels[step] })}
+              </Text>
+            ) : progress.total > 0 ? (
               <Text as="span" size="caption" tone="muted" aria-live="polite" data-form-progress>
                 {t("recordForm.progress", { total: progress.total, filled: progress.filled })}
               </Text>
@@ -257,17 +324,23 @@ export function RecordForm({ title, sections, notices, note, submitLabel, runnin
           </Stack>
         }
         footer={
-          <CrudForm.Actions spread={Boolean(onCancel)}>
-            {onCancel ? (
+          <CrudForm.Actions spread={Boolean(onCancel) || (stepped && step > 0)}>
+            {stepped && step > 0 ? (
+              <Button type="button" size="sm" variant="outline" onClick={() => goTo(step - 1)} disabled={pending}>
+                {t("recordForm.back")}
+              </Button>
+            ) : onCancel ? (
               <Button type="button" size="sm" variant="outline" onClick={leave}>
                 {tUi("common.cancel")}
               </Button>
             ) : null}
-            {actions.map((action) => (
-              <RecordVerbButton key={action.label} verb={action} />
-            ))}
+            {!stepped || reviewing
+              ? actions.map((action) => (
+                  <RecordVerbButton key={action.label} verb={action} />
+                ))
+              : null}
             <Button type="submit" size="sm" loading={pending} loadingText={runningLabel ?? t("recordForm.saving")} disabled={pending}>
-              {submitLabel}
+              {stepped && !reviewing ? t("recordForm.next") : submitLabel}
             </Button>
           </CrudForm.Actions>
         }
@@ -275,7 +348,22 @@ export function RecordForm({ title, sections, notices, note, submitLabel, runnin
         {/* Notices come first: a reason the form cannot go through is read before any field is filled. */}
         {refusal ? <RefusalNotice refusal={refusal} title={t(refusal.source === "client" ? "recordForm.refusedCheck" : "recordForm.refused")} body={refusal.message} /> : null}
         <RecordNotices notices={notices} />
-        <RecordFormSections sections={sections} form={form} refusal={refusal} fieldNotices={fieldNotices} />
+        {stepped ? (
+          <div {...partAttributes(stepFlowStyle, {})}>
+            <StepIndicator
+              variant="cells"
+              label={t("recordForm.steps")}
+              steps={stepLabels.map((label) => ({ title: label }))}
+              currentStep={step}
+              onSelect={goTo}
+              selectDisabled={pending}
+            />
+            {active?.description ? <Text tone="muted">{active.description}</Text> : null}
+            {reviewing ? <RecordFormReview sections={sections} values={form.values} options={steps} /> : <RecordFormSections sections={drawnSections} form={drawnForm} refusal={refusal} fieldNotices={fieldNotices} />}
+          </div>
+        ) : (
+          <RecordFormSections sections={sections} form={form} refusal={refusal} fieldNotices={fieldNotices} />
+        )}
         {children}
         <RecordNote text={note} />
         <FormMore />

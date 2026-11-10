@@ -205,4 +205,6 @@ export interface RecordFormSection {
   readonly fields: readonly RecordFormField[];
   /** Two columns where the fields are short; one where they are sentences. */
   readonly columns?: 1 | 2;
+  /** What the section is for, under its heading; a stepped form draws it as the lede of the step. */
+  readonly description?: string;
 }

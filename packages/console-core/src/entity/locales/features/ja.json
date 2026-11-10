@@ -52,7 +52,17 @@
     "refused": "サーバーがこの内容を受け付けませんでした。示した項目を直してから、もう一度保存してください。",
     "refusedCheck": "保存できない値があります。示した項目を直してから、もう一度保存してください。",
     "saving": "保存しています…",
-    "secretKeep": "空欄のままにすると保存済みの値を保持します"
+    "secretKeep": "空欄のままにすると保存済みの値を保持します",
+    "stepProgress": "ステップ {{step, number}} / {{total, number}} · {{label}}",
+    "steps": "ステップ",
+    "stepReview": "最終確認",
+    "next": "次のステップ",
+    "back": "前のステップ",
+    "reviewLead": "送信する内容を確認します。変更するにはそのステップに戻ります。",
+    "notSet": "未設定",
+    "entered": "入力済み",
+    "rows": "{{count, number}}行",
+    "files": "ファイル{{count, number}}件"
   },
   "figureTiles": {
     "unreadTitle": "この画面の一部の数値を読み込めませんでした",

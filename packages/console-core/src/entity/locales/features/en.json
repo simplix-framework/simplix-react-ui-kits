@@ -53,7 +53,17 @@
     "refused": "The server did not accept this. Change what it names and save again.",
     "refusedCheck": "Some values cannot be saved yet. Change what is marked and save again.",
     "saving": "Saving…",
-    "secretKeep": "Leave blank to keep the stored value"
+    "secretKeep": "Leave blank to keep the stored value",
+    "stepProgress": "Step {{step, number}} of {{total, number}} · {{label}}",
+    "steps": "Steps",
+    "stepReview": "Review",
+    "next": "Next step",
+    "back": "Back",
+    "reviewLead": "Check what will be sent. Go back to a step to change it.",
+    "notSet": "Not set",
+    "entered": "Entered",
+    "rows": "{{count, number}} rows",
+    "files": "{{count, number}} files"
   },
   "figureTiles": {
     "unreadTitle": "Some figures on this page could not be read",

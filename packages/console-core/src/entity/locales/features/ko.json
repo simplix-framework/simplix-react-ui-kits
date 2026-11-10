@@ -52,7 +52,17 @@
     "refused": "서버가 이 내용을 받지 않았습니다. 표시한 항목을 고친 뒤 다시 저장해 주세요.",
     "refusedCheck": "저장할 수 없는 값이 있습니다. 표시한 항목을 고친 뒤 다시 저장해 주세요.",
     "saving": "저장하는 중…",
-    "secretKeep": "비워 두면 저장된 값을 그대로 둡니다"
+    "secretKeep": "비워 두면 저장된 값을 그대로 둡니다",
+    "stepProgress": "{{step, number}} / {{total, number}} 단계 · {{label}}",
+    "steps": "단계",
+    "stepReview": "최종 확인",
+    "next": "다음 단계",
+    "back": "이전 단계",
+    "reviewLead": "보내기 전에 입력한 내용을 확인합니다. 바꿀 내용은 해당 단계로 돌아가 고칩니다.",
+    "notSet": "설정 안 함",
+    "entered": "입력함",
+    "rows": "{{count, number}}행",
+    "files": "파일 {{count, number}}개"
   },
   "figureTiles": {
     "unreadTitle": "이 화면의 일부 수치를 불러오지 못했습니다",
