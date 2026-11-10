@@ -83,6 +83,13 @@ const HEADING_TONE: Readonly<Record<HistoryNodeState, "default" | "muted" | "pri
 
 export interface HistoryRailProps {
   readonly nodes: readonly HistoryNode[];
+  /**
+   * Where a node's `trail` stands. `beside` (the default) lets it share the label's line while it
+   * fits and wrap under it when it does not, so a short label and a long one in the same rail place
+   * their dates differently. `below` puts it under the label on every node, for a narrow column
+   * where the dates should line up.
+   */
+  readonly trailPlacement?: "beside" | "below";
 }
 
 /**
@@ -102,7 +109,7 @@ export interface HistoryRailProps {
  * <p><b>Photographs, signatures and the reasoning behind a judgement sit in their node.</b> Moved
  * into a table below or a dialog beside, the reason nobody reads is exactly the one that mattered.
  */
-export function HistoryRail({ nodes }: HistoryRailProps) {
+export function HistoryRail({ nodes, trailPlacement = "beside" }: HistoryRailProps) {
   // Only where there is something to separate. One group, or none at all, is one run — and a
   // heading over a rail with nothing to distinguish it from is a label for the obvious.
   const groups = new Set(nodes.map((node) => node.group).filter((name) => name !== undefined));
@@ -153,8 +160,9 @@ export function HistoryRail({ nodes }: HistoryRailProps) {
               <Heading level={6} tone={HEADING_TONE[node.state]}>
                 {node.label}
               </Heading>
-              {node.trail}
+              {trailPlacement === "beside" ? node.trail : null}
             </Flex>
+            {trailPlacement === "below" ? node.trail : null}
             {node.body}
             {node.lane && (
               <Card padding="sm" {...partAttributes(historyLaneStyle, {})}>

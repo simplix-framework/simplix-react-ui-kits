@@ -1,7 +1,8 @@
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useContext, useEffect, useRef, useState, type ReactNode } from "react";
 import { Heading, Text } from "@simplix-react/ui";
 import { partAttributes, slotAttributes } from "@simplix-react/ui/design";
 
+import { PeekBodyContext } from "../layout/peek-body";
 import { HistoryRail, type HistoryNode } from "../screen/history-rail";
 import { historyAsideLeadStyle, historyAsideStyle, historyLayoutStyle, historyMainStyle } from "./record-history-layout.style";
 
@@ -56,11 +57,12 @@ export function RecordHistoryLayout({
   readonly history: RecordHistory;
   readonly children: ReactNode;
 }) {
+  const inPeek = useContext(PeekBodyContext);
   return (
     <div ref={layout.ref} {...partAttributes(historyLayoutStyle, {})}>
       <div {...partAttributes(historyMainStyle, {})}>{children}</div>
       {layout.wide ? (
-        <aside aria-label={history.title} {...slotAttributes(historyAsideStyle, {})}>
+        <aside aria-label={history.title} {...slotAttributes(historyAsideStyle, { bleed: inPeek })}>
           <div {...partAttributes(historyAsideLeadStyle, {})}>
             <Heading level={5}>{history.title}</Heading>
             {history.description ? (
@@ -69,7 +71,7 @@ export function RecordHistoryLayout({
               </Text>
             ) : null}
           </div>
-          <HistoryRail nodes={history.nodes} />
+          <HistoryRail nodes={history.nodes} trailPlacement="below" />
         </aside>
       ) : null}
     </div>

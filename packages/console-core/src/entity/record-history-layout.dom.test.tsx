@@ -3,6 +3,7 @@ import { createRoot, type Root } from "react-dom/client";
 import { UIProvider } from "@simplix-react/ui";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 
+import { PeekBodyContext } from "../layout/peek-body";
 import { RecordDetail } from "./record-detail";
 import { HISTORY_ASIDE_FROM, type RecordHistory } from "./record-history-layout";
 
@@ -45,11 +46,13 @@ const tabs = [
   { key: "other", label: "Other", sections: [] },
 ];
 
-function mount(extra: { history?: RecordHistory; tabs?: typeof tabs | undefined; sections?: unknown } = {}) {
+function mount(extra: { history?: RecordHistory; tabs?: typeof tabs | undefined; sections?: unknown; inPeek?: boolean } = {}) {
   host = document.createElement("div");
   document.body.append(host);
   root = createRoot(host);
-  act(() => root?.render(createElement(UIProvider, { children: createElement(RecordDetail, { title: "Record", tabs, history, ...extra } as never) })));
+  const { inPeek, ...props } = extra;
+  const record = createElement(RecordDetail, { title: "Record", tabs, history, ...props } as never);
+  act(() => root?.render(createElement(UIProvider, { children: inPeek ? createElement(PeekBodyContext.Provider, { value: true, children: record }) : record })));
 }
 const aside = () => host?.querySelector("aside[aria-label]") as HTMLElement | null;
 
@@ -85,5 +88,35 @@ describe("a RecordDetail with a progress history", () => {
     mount({ history: undefined });
     expect(host?.querySelector('[data-slot="console-history-layout"], [data-part="console-history-layout"]')).toBeNull();
     expect(aside()).toBeNull();
+  });
+
+  it("puts each node's date under its label, so a short label and a long one place it alike", () => {
+    width = HISTORY_ASIDE_FROM;
+    mount({
+      history: {
+        title: "Progress",
+        nodes: [
+          { key: "a", label: "Sent", state: "done", trail: createElement("time", { "data-when": "a" }, "Nov 9") },
+          { key: "b", label: "Received by the provider", state: "done", trail: createElement("time", { "data-when": "b" }, "Nov 9") },
+        ],
+      },
+    });
+    for (const when of ["a", "b"]) {
+      const date = aside()?.querySelector(`[data-when="${when}"]`) as HTMLElement;
+      const heading = date.parentElement?.querySelector("h6") as HTMLElement;
+      // The date is a sibling of the heading's line, never inside it.
+      expect(heading.parentElement?.contains(date)).toBe(false);
+    }
+  });
+
+  it("runs the column to the dialog's edge only inside a peek dialog", () => {
+    width = HISTORY_ASIDE_FROM;
+    mount();
+    const outside = aside()?.outerHTML;
+    act(() => root?.unmount());
+    host?.remove();
+    mount({ inPeek: true });
+    expect(aside()?.outerHTML).not.toBe(outside);
+    expect(aside()?.getAttribute("data-bleed")).toBe("true");
   });
 });

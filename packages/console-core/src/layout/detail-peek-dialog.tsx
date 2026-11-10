@@ -10,7 +10,9 @@ import {
   Stack,
 } from "@simplix-react/ui";
 import { ExternalLinkIcon } from "lucide-react";
+import { useDetailWidthLimits } from "../page/detail-width";
 import { BoundedDialogContent } from "./bounded-dialog-content";
+import { PeekBodyContext } from "./peek-body";
 import { peekTriggerStyle } from "./detail-peek-dialog.style";
 import { partAttributes } from "@simplix-react/ui/design";
 
@@ -194,10 +196,14 @@ export function DetailPeekDialog({
   // is opted out of by name — the key has to be absent when a description IS given, or the
   // opt-out would suppress the association it is there to make.
   const describedBy = description ? {} : { "aria-describedby": undefined };
+  // A peek is a record opened in a dialog, so it is as wide as a record opened in one: the theme's
+  // dialog width. A theme that names none keeps the class width, and a narrow window still wins.
+  const { width } = useDetailWidthLimits("dialog");
+  const widthStyle = width ? { maxWidth: `min(${width}px, calc(100% - 2rem))` } : undefined;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <BoundedDialogContent className="flex flex-col sm:max-w-3xl" {...describedBy}>
+      <BoundedDialogContent className="flex flex-col sm:max-w-3xl" style={widthStyle} {...describedBy}>
         <DialogHeader>
           {/* Some records are named by a hash or a fingerprint — wider than the dialog on
               a narrow viewport — so the title breaks rather than running under the close
@@ -206,7 +212,9 @@ export function DetailPeekDialog({
           {description ? <DialogDescription>{description}</DialogDescription> : null}
         </DialogHeader>
         {/* The dialog body scrolls between the fixed header and footer and marks its edges. */}
-        <Stack>{children}</Stack>
+        <PeekBodyContext.Provider value>
+          <Stack>{children}</Stack>
+        </PeekBodyContext.Provider>
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             {closeLabel}
