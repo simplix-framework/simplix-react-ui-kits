@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import clarity from "../styles/designs/clarity-stylesheet";
+import clarity from "../src/styles/designs/clarity-stylesheet";
 
 /** Every `selector { body }` of a compiled stylesheet, nested at-rule bodies included. */
 function rules(css: string): { selector: string; props: Map<string, string> }[] {

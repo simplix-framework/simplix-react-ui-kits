@@ -3,7 +3,7 @@ import { join, relative } from "node:path";
 
 import { describe, expect, it } from "vitest";
 
-import { installedFramework, PACKAGES } from "./installed-framework";
+import { installedFramework, PACKAGES } from "../../console-core/tests/kit/installed-framework";
 
 /**
  * The keyboard stays visible under forced colors (Windows High Contrast) in every console part.
@@ -55,7 +55,7 @@ function kitSources(): string[] {
 
 /** The clarity design as the page receives it, decoded from its generated module. */
 function compiledClarity(): string {
-  const module = readFileSync(join(PACKAGES, "console-core/src/styles/designs/clarity-stylesheet.ts"), "utf8");
+  const module = readFileSync(join(PACKAGES, "console-clarity/src/styles/designs/clarity-stylesheet.ts"), "utf8");
   const encoded = module.match(/const encoded = "([^"]+)"/)?.[1];
   if (!encoded) throw new Error("clarity-stylesheet.ts no longer holds its stylesheet as `const encoded = \"...\"`");
   return Buffer.from(encoded, "base64").toString("utf8");

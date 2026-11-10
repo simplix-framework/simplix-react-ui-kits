@@ -14,7 +14,7 @@ import {
   displaySettingsThemeStyle,
   displaySettingsThemesStyle,
 } from "./display-settings.style";
-import { CONSOLE_DESIGNS, useConsoleDesign } from "./console-design";
+import { useConsoleDesign, useConsoleDesigns } from "./console-design";
 import { useTheme } from "./use-theme";
 
 const FILLS: readonly CardFill[] = ["plain", "outline", "raised", "tint", "lead"];
@@ -53,6 +53,7 @@ function Choices<T extends string>({ value, options, label, onChange }: {
  */
 export function DisplaySettings() {
   const defaultDesign = useConsoleDesign().id;
+  const designs = useConsoleDesigns();
   const { t } = useTranslation(PACKAGE_NAMESPACE + "/chrome");
   const { colorTheme, setColorTheme, isDark, setDarkMode } = useTheme();
   const { prefs, update } = useDisplayPreferences();
@@ -94,15 +95,17 @@ export function DisplaySettings() {
             ))}
           </div>
         </section>
-        <section className="flex flex-col" {...slotAttributes(displaySettingsGroupStyle, {})}>
-          <h3>{t("display.design")}</h3>
-          <Choices
-            value={design}
-            options={CONSOLE_DESIGNS.map((d) => d.id)}
-            label={(id) => t(`display.designs.${id}`, { defaultValue: id })}
-            onChange={(id) => update({ design: id === defaultDesign ? null : id })}
-          />
-        </section>
+        {designs.length > 1 ? (
+          <section className="flex flex-col" {...slotAttributes(displaySettingsGroupStyle, {})}>
+            <h3>{t("display.design")}</h3>
+            <Choices
+              value={design}
+              options={designs.map((d) => d.id)}
+              label={(id) => t(`display.designs.${id}`, { defaultValue: id })}
+              onChange={(id) => update({ design: id === defaultDesign ? null : id })}
+            />
+          </section>
+        ) : null}
         <section className="flex flex-col" {...slotAttributes(displaySettingsGroupStyle, {})}>
           <h3>{t("display.fill")}</h3>
           <Choices value={fill} options={FILLS} label={(f) => t(`display.fills.${f}`)} onChange={(f) => update({ fill: f })} />

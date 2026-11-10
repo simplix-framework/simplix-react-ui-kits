@@ -10,7 +10,7 @@ import { describe, expect, it } from "vitest";
 // framework checkout's `jsdom`, which this package does not install.
 
 const root = join(import.meta.dirname, "..");
-const contract = JSON.parse(readFileSync(join(root, "regions.json"), "utf8")) as { regions: Record<string, { parts: Record<string, string> }> };
+const contract = JSON.parse(readFileSync(join(root, "../site-core/regions.json"), "utf8")) as { regions: Record<string, { parts: Record<string, string> }> };
 const uiDir = realpathSync(join(root, "../../node_modules/@simplix-react/ui"));
 const { JSDOM } = createRequire(join(uiDir, "package.json"))("jsdom") as { JSDOM: new (html: string) => { window: { document: Document } } };
 

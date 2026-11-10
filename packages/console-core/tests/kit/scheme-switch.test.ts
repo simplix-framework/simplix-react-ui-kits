@@ -8,7 +8,7 @@ import { describe, expect, it } from "vitest";
 // console-core sets and covers the element, its descendants and their pseudo-elements, and lists no
 // transition property (which cancels one already running) and nils both the duration and the delay.
 
-const root = join(__dirname, "../..");
+const root = join(__dirname, "../../..");
 const read = (path: string) => readFileSync(join(root, path), "utf8");
 
 /** The mark console-core sets, read from its declaration: this package's tests do not resolve console-core's exports. */

@@ -16,7 +16,7 @@ import { createRequire } from "node:module";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
-import { byRegion, compare, contract, judge, probe } from "./site-regions-rendered.mjs";
+import { byRegion, compare, contract, judge, probe } from "@simplix-react-ui-kits/site-core/scripts/site-regions-rendered.mjs";
 
 const here = dirname(dirname(fileURLToPath(import.meta.url)));
 const option = (name) => {

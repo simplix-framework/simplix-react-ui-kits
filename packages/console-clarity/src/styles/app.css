@@ -1,3 +1,4 @@
-/* The console kit with the clarity design. The shared parts' stylesheet already carries every
-   design's rules; this kit's ConsoleProviders selects clarity. */
+/* The console kit with the clarity design: the shared parts' stylesheet, whose slots draw the
+   classic design. This kit's ConsoleProviders selects clarity, whose compiled stylesheet
+   (src/styles/designs/clarity-stylesheet.ts) loads over them when it is chosen. */
 @import "@simplix-react-ui-kits/console-core/styles/app.css";

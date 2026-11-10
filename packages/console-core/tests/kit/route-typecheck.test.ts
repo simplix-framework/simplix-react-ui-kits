@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 
 import { context, domainStub, pageDir, widgetsDir, widgetsStub } from "./crud-page-fixture";
 import { render, typecheck, virtualRoot } from "./template-typecheck";
+import { KIT_NAME } from "./kit";
 
 /**
  * The generated TanStack route hands its page the router's `navigate`, so a change the page records
@@ -18,7 +19,7 @@ const routerStub = join(virtualRoot, "router-stub.ts");
 /** The part of the router the generated route uses, typed as the router types it: `replace` is a boolean. */
 const routerSource = `
 import type { ComponentType } from "react";
-import type { ConsoleSearch } from "@simplix-react-ui-kits/console-clarity/page";
+import type { ConsoleSearch } from "${KIT_NAME}/page";
 
 export declare function createFileRoute(path: string): (options: {
   readonly component: ComponentType;

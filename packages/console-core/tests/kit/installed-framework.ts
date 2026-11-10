@@ -3,7 +3,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 /** The kit's `packages` directory, found from this file rather than from the working directory. */
-export const PACKAGES = fileURLToPath(new URL("../../", import.meta.url));
+export const PACKAGES = fileURLToPath(new URL("../../../", import.meta.url));
 
 /** The installed `@simplix-react/ui`, found by walking up from the kit to the nearest install. */
 export function installedFramework(): string {

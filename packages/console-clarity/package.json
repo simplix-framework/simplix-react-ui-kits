@@ -106,38 +106,27 @@
       "types": "./src/shell/index.ts",
       "import": "./dist/shell/index.js"
     },
-    "./styles/*": "./src/styles/*",
-    "./regions.json": "./regions.json",
-    "./scripts/regions-rendered.mjs": "./scripts/regions-rendered.mjs",
-    "./tile-columns.json": "./tile-columns.json",
-    "./scripts/tile-columns-rendered.mjs": "./scripts/tile-columns-rendered.mjs",
-    "./scripts/list-columns-rendered.mjs": "./scripts/list-columns-rendered.mjs"
+    "./styles/*": "./src/styles/*"
   },
   "files": [
     "dist",
-    "src",
-    "regions.json",
-    "tile-columns.json",
-    "scripts"
+    "src"
   ],
   "scripts": {
     "build": "NODE_OPTIONS=--max-old-space-size=4096 tsup",
     "dev": "tsup --no-clean --no-dts",
     "typecheck": "tsc --noEmit",
-    "lint": "node scripts/check-regions.mjs && oxlint src",
-    "test": "node scripts/check-regions.mjs --selftest && node scripts/regions-rendered.mjs --selftest && node scripts/tile-columns-rendered.mjs --selftest && node scripts/list-columns-rendered.mjs --selftest && node scripts/focus-clip-rendered.mjs --selftest && node scripts/clip-rendered.mjs --selftest && vitest run --passWithNoTests && pnpm test:templates",
+    "lint": "oxlint src",
+    "test": "vitest run && pnpm test:kit && pnpm test:templates",
     "clean": "rm -rf dist .turbo",
-    "test:templates": "node ../../testing/template-harness/harness.mjs ."
+    "design:css": "simplix-design-css --root ../console-core --design-spec ../console-clarity/src/styles/designs/clarity.spec.ts --out ../console-clarity/src/styles/designs/clarity.css --compiled ../console-clarity/src/styles/designs/clarity-stylesheet.ts --tailwind-from ../../../simplix-react/apps/storybook --reference src/styles/utilities.css",
+    "design:check": "simplix-design-css --root ../console-core --design-spec ../console-clarity/src/styles/designs/clarity.spec.ts --out ../console-clarity/src/styles/designs/clarity.css --compiled ../console-clarity/src/styles/designs/clarity-stylesheet.ts --tailwind-from ../../../simplix-react/apps/storybook --reference src/styles/utilities.css --check && simplix-design-coverage ../console-core/src/styles/designs/classic.css src/styles/designs/clarity.css && simplix-design-literals src",
+    "test:templates": "node ../../testing/template-harness/harness.mjs .",
+    "test:kit": "KIT_DIR=. vitest run --config ../console-core/tests/kit/vitest.config.ts"
   },
   "dependencies": {
     "@simplix-react-ui-kits/console-core": "workspace:*",
-    "@fontsource/noto-sans-jp": "catalog:",
-    "@fontsource/noto-sans-kr": "catalog:",
-    "lucide-react": "catalog:",
-    "react-daum-postcode": "^3.2.0",
-    "simplix-react": "catalog:",
-    "simplix-react-ext": "catalog:",
-    "zustand": "catalog:"
+    "simplix-react": "catalog:"
   },
   "peerDependencies": {
     "react": ">=18.0.0",

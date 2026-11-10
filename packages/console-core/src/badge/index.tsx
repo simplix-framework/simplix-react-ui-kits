@@ -245,9 +245,9 @@ export function StateBadge({
 //
 // **Every table below keys by the raw string the server sends, never by a constant imported from
 // a domain package.** This kit is the product-neutral layer and does not depend on
-// `@smart-safety/domain-*`, so `[EquipmentStatus.OPERATING]` cannot be written here even where the
+// a product's domain packages (`@<scope>/domain-*`), so `[EquipmentStatus.OPERATING]` cannot be written here even where the
 // screen that first drew the table wrote it that way. Each generated enum's constant name is
-// checked against its value before its table is written — `OPERATING: 'OPERATING'` — and the plain
+// checked against its value before its table is written (`OPERATING: 'OPERATING'`), and the plain
 // key is safe only because that holds. An enum whose constants and values differ needs the value,
 // not the constant's name, and the table says so on its own row.
 //
@@ -942,9 +942,9 @@ export const NOTICE_TRANSLATION_STATE_VARIANT: Record<string, StatusVariant> = {
  */
 // **Keyed by the union rather than by `string`, because this one is the kit's own.** A table
 // keyed exhaustively refuses to compile when a fourth kind arrives without a tone, and that check
-// is worth more than the uniformity — a state nobody gave a tone to is a state drawn in whatever
+// is worth more than the uniformity: a state nobody gave a tone to is a state drawn in whatever
 // the fallback is, silently and forever. The tables below that key by `string` do so because their
-// enum lives in `@smart-safety/domain-*`, which this package cannot import; where the union is
+// enum lives in a product's domain package, which this package cannot import; where the union is
 // declared here, it is used.
 export const IMPACT_KIND_VARIANT: Record<ImpactKind, StatusVariant> = {
   automatic: "outline",

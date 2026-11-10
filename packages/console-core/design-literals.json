@@ -1,9 +1,7 @@
 {
   "$comment": "Design literals the kit still writes outside its design files. Each max only goes down, in the change that removes literals.",
   "designFiles": [
-    "src/styles/designs/clarity.css",
     "src/styles/designs/classic.css",
-    "src/styles/designs/clarity-stylesheet.ts",
     "src/styles/console-tokens.css"
   ],
   "exclude": [
@@ -14,7 +12,7 @@
   ],
   "allow": {},
   "max": {
-    "arbitrary-literal": 104,
+    "arbitrary-literal": 63,
     "arbitrary-shadow": 0,
     "arbitrary-colour": 0,
     "css-literal": 13

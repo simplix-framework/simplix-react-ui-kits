@@ -2,6 +2,7 @@ import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 
 import { render, typecheck, virtualRoot } from "./template-typecheck";
+import { KIT_NAME } from "./kit";
 
 /**
  * A board draws every screen with the UI kit and nothing else: it imports the kit, React and
@@ -12,7 +13,7 @@ import { render, typecheck, virtualRoot } from "./template-typecheck";
  * the parts the template's header names.
  */
 
-const KIT = "@simplix-react-ui-kits/console-clarity";
+const KIT = KIT_NAME;
 const allowedImport = (specifier: string) =>
   specifier === "react" || specifier.startsWith("@storybook/") || specifier === KIT || specifier.startsWith(`${KIT}/`);
 

@@ -11,7 +11,7 @@ import { afterEach, describe, expect, it } from "vitest";
 // does not install.
 
 // @ts-expect-error the script is plain JavaScript that a product's runner imports
-import { compare, contract, probe, regionsOf } from "../scripts/regions-rendered.mjs";
+import { compare, contract, probe, regionsOf } from "../../scripts/regions-rendered.mjs";
 import { installedFramework } from "./installed-framework";
 
 const framework = installedFramework();

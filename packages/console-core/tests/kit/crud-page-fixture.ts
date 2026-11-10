@@ -1,6 +1,7 @@
 import { join } from "node:path";
 
 import { virtualRoot } from "./template-typecheck";
+import { KIT_NAME } from "./kit";
 
 /**
  * What a generated CRUD page compiles against in the kit's tests: the context the CLI hands its
@@ -35,7 +36,7 @@ export const widgetsDir = join(virtualRoot, "modules", "mymod", "src", "widgets"
 export const widgetsStub = `
 import type { ReactNode } from "react";
 import type { CrudListFilters } from "@simplix-react/ui";
-import type { ListAddress, RecordAction } from "@simplix-react-ui-kits/console-clarity/entity";
+import type { ListAddress, RecordAction } from "${KIT_NAME}/entity";
 
 export interface ProductRow { readonly productId: string; readonly name?: string }
 export interface ProductListProps {
@@ -65,7 +66,7 @@ export declare function ProductForm(props: ProductFormProps): ReactNode;
 
 export const domainStub = `
 import type { OrvalMutationLike } from "@simplix-react/ui";
-import type { useAllowed } from "@simplix-react-ui-kits/console-clarity/entity";
+import type { useAllowed } from "${KIT_NAME}/entity";
 
 type Rule = Parameters<typeof useAllowed>[0];
 export declare function useDeleteProduct(): OrvalMutationLike;

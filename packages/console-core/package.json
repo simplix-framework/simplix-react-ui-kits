@@ -107,7 +107,12 @@
       "import": "./dist/shell/index.js"
     },
     "./styles/*": "./src/styles/*",
-    "./templates/*": "./templates/*"
+    "./templates/*": "./templates/*",
+    "./regions.json": "./regions.json",
+    "./scripts/regions-rendered.mjs": "./scripts/regions-rendered.mjs",
+    "./tile-columns.json": "./tile-columns.json",
+    "./scripts/tile-columns-rendered.mjs": "./scripts/tile-columns-rendered.mjs",
+    "./scripts/list-columns-rendered.mjs": "./scripts/list-columns-rendered.mjs"
   },
   "bin": {
     "simplix-design-literals": "scripts/check-design-literals.mjs",
@@ -117,17 +122,19 @@
     "dist",
     "src",
     "scripts",
-    "templates"
+    "templates",
+    "regions.json",
+    "tile-columns.json"
   ],
   "scripts": {
     "build": "NODE_OPTIONS=--max-old-space-size=4096 tsup",
     "dev": "tsup --no-clean --no-dts",
     "typecheck": "tsc --noEmit",
-    "lint": "oxlint src && node scripts/check-avatar-owner.mjs --test && node scripts/check-avatar-owner.mjs --owner 'src/identity/initials-avatar*' src ../console-clarity/src",
-    "test": "vitest run --passWithNoTests",
+    "lint": "node scripts/check-regions.mjs && oxlint src && node scripts/check-avatar-owner.mjs --test && node scripts/check-avatar-owner.mjs --owner 'src/identity/initials-avatar*' src",
+    "test": "node scripts/check-regions.mjs --selftest && node scripts/regions-rendered.mjs --selftest && node scripts/tile-columns-rendered.mjs --selftest && node scripts/list-columns-rendered.mjs --selftest && node scripts/focus-clip-rendered.mjs --selftest && node scripts/clip-rendered.mjs --selftest && vitest run --passWithNoTests",
     "clean": "rm -rf dist .turbo",
-    "design:css": "simplix-design-css --root . --out src/styles/designs/classic.css && simplix-design-css --root . --design-spec src/styles/designs/clarity.spec.ts --out src/styles/designs/clarity.css --compiled src/styles/designs/clarity-stylesheet.ts --tailwind-from ../../../simplix-react/apps/storybook --reference src/styles/utilities.css",
-    "design:check": "simplix-design-css --root . --out src/styles/designs/classic.css --check && simplix-design-css --root . --design-spec src/styles/designs/clarity.spec.ts --out src/styles/designs/clarity.css --compiled src/styles/designs/clarity-stylesheet.ts --tailwind-from ../../../simplix-react/apps/storybook --reference src/styles/utilities.css --check && simplix-design-coverage src/styles/designs/classic.css src/styles/designs/clarity.css && simplix-design-classes src && node ../../node_modules/@simplix-react/ui/scripts/check-slot-spread.mjs src && node scripts/check-design-literals.mjs --test && node scripts/check-design-literals.mjs src"
+    "design:css": "simplix-design-css --root . --out src/styles/designs/classic.css",
+    "design:check": "simplix-design-css --root . --out src/styles/designs/classic.css --check && simplix-design-classes src && node ../../node_modules/@simplix-react/ui/scripts/check-slot-spread.mjs src && node scripts/check-design-literals.mjs --test && node scripts/check-design-literals.mjs src"
   },
   "dependencies": {
     "@fontsource/noto-sans-jp": "catalog:",

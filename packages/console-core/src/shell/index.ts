@@ -17,7 +17,7 @@ export {
   type Density,
   type DisplayPreferences,
 } from "./display-preferences";
-export { CONSOLE_CLARITY_DESIGN, CONSOLE_DESIGNS, ConsoleDesignContext, useConsoleDesign } from "./console-design";
+export { ConsoleDesignContext, ConsoleDesignsContext, useConsoleDesign, useConsoleDesigns } from "./console-design";
 export { ConsoleContextProvider, useConsole } from "./console-context";
 export {
   ConsoleAreaSwitch,

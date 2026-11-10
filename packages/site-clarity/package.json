@@ -76,15 +76,12 @@
       "import": "./dist/shell/index.js"
     },
     "./styles/*": "./src/styles/*",
-    "./regions.json": "./regions.json",
     "./measure.json": "./measure.json",
-    "./measure/*": "./measure/*",
-    "./scripts/site-regions-rendered.mjs": "./scripts/site-regions-rendered.mjs"
+    "./measure/*": "./measure/*"
   },
   "files": [
     "dist",
     "src",
-    "regions.json",
     "measure.json",
     "measure",
     "scripts"
@@ -93,10 +90,8 @@
     "build": "tsup",
     "dev": "tsup --no-clean --no-dts",
     "typecheck": "tsc --noEmit && tsc -p tsconfig.tests.json",
-    "lint": "node scripts/check-site-regions.mjs && oxlint src scripts && simplix-design-literals src",
-    "test": "node scripts/check-site-regions.mjs --selftest && node scripts/site-regions-rendered.mjs --selftest && node scripts/site-demo.mjs --selftest && vitest run && pnpm test:templates",
-    "design:css": "simplix-design-css --root ../site-core --out ../site-clarity/src/styles/designs/clarity.css",
-    "design:check": "simplix-design-css --root ../site-core --out ../site-clarity/src/styles/designs/clarity.css --check && node scripts/check-site-regions.mjs",
+    "lint": "oxlint src scripts && simplix-design-literals src",
+    "test": "node scripts/site-demo.mjs --selftest && vitest run && pnpm test:templates",
     "clean": "rm -rf dist .turbo",
     "rendered": "node scripts/site-demo.mjs --measure",
     "test:templates": "node ../../testing/template-harness/harness.mjs ."

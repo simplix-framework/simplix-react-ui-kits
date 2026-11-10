@@ -12,7 +12,7 @@ The web site kit in the clarity design: the site parts of `@simplix-react-ui-kit
 @import "./site-theme.css"; /* the product's values for the variables below */
 ```
 
-The parts carry no classes of their own: every element is marked with `data-slot`, and `styles/designs/clarity.css` draws each slot with Tailwind utilities that read the site variables. The window (`SiteWindow`) is the `page` container, so the parts reflow on the page tiers (`page-narrow` 620px, `page-medium` 900px, `page-wide` 1200px, declared in `styles/site-tokens.css` as `--container-page-*`) by the window's width, not the viewport's.
+The parts carry no classes of their own: every element is marked with `data-slot`, and `site-core`'s `styles/designs/base.css` (the parts' `.style.ts` declarations compiled, which `app.css` imports) draws each slot with Tailwind utilities that read the site variables this kit defines. The window (`SiteWindow`) is the `page` container, so the parts reflow on the page tiers (`page-narrow` 620px, `page-medium` 900px, `page-wide` 1200px, declared in `styles/site-tokens.css` as `--container-page-*`) by the window's width, not the viewport's.
 
 ```tsx
 import { SiteWindow, SiteBar, SiteFooter } from "@simplix-react-ui-kits/site-clarity/shell";
@@ -182,7 +182,7 @@ Inside an element marked `data-band="dark"` (`SiteBand`, `HeroBand` with `tone="
 
 ## Page region contract
 
-`regions.json` names, per site page type, the regions in drawing order, the part that fills each and the prop that feeds it (`slot`), the `data-slot` marks that place an element in it, the named parts inside it a rendered check measures, and the controls it may hold. A type is `ready` when the kit draws every region it lists; the others are `planned` with the reason.
+`site-core/regions.json` names, per site page type, the regions in drawing order, the part that fills each and the prop that feeds it (`slot`), the `data-slot` marks that place an element in it, the named parts inside it a rendered check measures, and the controls it may hold. A type is `ready` when the kit draws every region it lists; the others are `planned` with the reason.
 
 | Type | Status | Regions |
 | --- | --- | --- |
@@ -199,14 +199,14 @@ Inside an element marked `data-band="dark"` (`SiteBand`, `HeroBand` with `tone="
 
 `tests/slot-styles.test.ts` refuses a slot style whose base, or one of whose variant values, sets one property twice (two border colours, two directions): the stylesheet's order, not the class order, would decide which one draws, so an override goes in a variant.
 
-`node scripts/check-site-regions.mjs` holds the contract to the slots site-core declares (`pnpm lint`, `design:check`), and `--selftest` proves it on a broken contract. A part that names an enabled action is `site-action:not(:disabled)`, never `:enabled`: the action is a link or a button, `:enabled` matches only a form control, and only a button is disabled; the check refuses the `:enabled` form.
+`node ../site-core/scripts/check-site-regions.mjs` holds the contract to the slots site-core declares (site-core's `pnpm lint`), and `--selftest` proves it on a broken contract. A part that names an enabled action is `site-action:not(:disabled)`, never `:enabled`: the action is a link or a button, `:enabled` matches only a form control, and only a button is disabled; the check refuses the `:enabled` form.
 
 ## Rendered checks
 
-`scripts/site-regions-rendered.mjs` exports `probe`, `judge`, `compare` and `byRegion`:
+`site-core/scripts/site-regions-rendered.mjs` exports `probe`, `judge`, `compare` and `byRegion`:
 
 ```js
-import { contract, probe, judge, compare, byRegion } from "@simplix-react-ui-kits/site-clarity/scripts/site-regions-rendered.mjs";
+import { contract, probe, judge, compare, byRegion } from "@simplix-react-ui-kits/site-core/scripts/site-regions-rendered.mjs";
 
 const signature = await page.evaluate(probe, { contract, type: "pricing" });
 judge(signature, "pricing"); // [] when the regions are in the contract's order and hold only their controls

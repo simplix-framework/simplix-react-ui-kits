@@ -45,9 +45,8 @@ const NoticeDismissalsContext = createContext<NoticeDismissals>(NO_SOURCE);
  * Supplies the dismissal set the cards read.
  *
  * <p><b>Why this is a port and not a hook that reads the server.</b> A dismissal is a row this
- * operator owns on the installation's own settings API, and `@simplix-react-ui-kits/console-classic` is the layer
- * 1 `ui` pack — its dependency column in `docs/tracking/PRODUCT-LAYERING.md` §2 is a dash. The
- * cards are the pattern (P-23 · P-45) and stay here; the read is the capability and lives in the
+ * operator owns on the installation's own settings API, and a console kit depends on no product
+ * API. The cards are the pattern and stay here; the read is the capability and lives in the
  * module that owns that API.
  */
 export const NoticeDismissalsProvider = NoticeDismissalsContext.Provider;

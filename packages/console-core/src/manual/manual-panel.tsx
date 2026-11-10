@@ -5,6 +5,7 @@ import { useTranslation } from "@simplix-react/i18n/react";
 import { ArrowLeftIcon, CircleHelpIcon, XIcon } from "lucide-react";
 
 import { BoundedDialogContent } from "../layout/bounded-dialog-content";
+import { usePreferenceNamespace } from "../layout/preference-namespace";
 import { useManualStore } from "./manual-store";
 import { useManualPage } from "./use-manual-page";
 import {
@@ -64,7 +65,8 @@ export function ManualPanel({ route }: ManualPanelProps) {
 
   // Read synchronously on the first render rather than in an effect, which would paint the panel
   // at the default width and then snap it to the reader's on every open.
-  const [width, setWidth] = useState(() => readManualWidth());
+  const namespace = usePreferenceNamespace();
+  const [width, setWidth] = useState(() => readManualWidth(namespace));
   const drag = useRef<{ startX: number; startWidth: number } | null>(null);
 
   // A new screen means a new question: whatever page the reader picked from the contents is not
@@ -84,7 +86,7 @@ export function ManualPanel({ route }: ManualPanelProps) {
       drag.current = null;
       document.body.style.cursor = "";
       document.body.style.userSelect = "";
-      setWidth((held) => { writeManualWidth(held); return held; });
+      setWidth((held) => { writeManualWidth(namespace, held); return held; });
     };
     window.addEventListener("pointermove", onMove);
     window.addEventListener("pointerup", onUp);
@@ -94,7 +96,7 @@ export function ManualPanel({ route }: ManualPanelProps) {
       window.removeEventListener("pointerup", onUp);
       window.removeEventListener("pointercancel", onUp);
     };
-  }, []);
+  }, [namespace]);
 
   // A picture at the panel's width is smaller than the screen it shows, so pressing one opens it
   // at its own size. Delegated from the body rather than bound per image: the markup is injected,
@@ -156,7 +158,7 @@ export function ManualPanel({ route }: ManualPanelProps) {
             event.preventDefault();
             setWidth((held) => {
               const next = clampManualWidth(held + step);
-              writeManualWidth(next);
+              writeManualWidth(namespace, next);
               return next;
             });
           }}

@@ -44,11 +44,9 @@ const ConsoleContext = createContext<ConsoleContextValue | null>(null);
  * Supplies what the shell knows about the operator and the workplace.
  *
  * <p><b>Why the provider that fills this lives elsewhere.</b> Both answers come from domain
- * endpoints (who is signed in, and what the front door drew), and `@simplix-react-ui-kits/console-classic` is
- * the layer 1 `ui` pack, whose dependency column in `docs/tracking/PRODUCT-LAYERING.md` §2 is a
- * dash. The shape and the reader are the pattern and stay here; the two reads and the role-to-
- * layout catalogue are the capability and live in the module that owns the front door, which
- * design 17.3 already places at layer 1.
+ * endpoints (who is signed in, and what the front door drew), and a console kit depends on no
+ * product API. The shape and the reader are the pattern and stay here; the two reads and the
+ * role-to-layout catalogue are the capability and live in the module that owns the front door.
  */
 export const ConsoleContextProvider = ConsoleContext.Provider;
 

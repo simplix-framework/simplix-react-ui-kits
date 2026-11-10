@@ -6,7 +6,7 @@ import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 /**
  * A page with tabs holds one list hook across all of them: the tab that has a body of its own draws no
  * list, and the hook, with the page index it holds, outlives it. The generated list hands the hook the
- * scope below as its `scopeKey` (`console-clarity/tests/list-scope.test.ts` holds the template to this
+ * scope below as its `scopeKey` (`tests/kit/list-address.test.ts` holds the template to this
  * exact expression), so these tests mount the real `useCrudList` under a real React root with it and
  * move the tab the way the page's address does.
  */

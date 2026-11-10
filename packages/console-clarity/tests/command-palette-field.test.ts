@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
-import clarity from "../styles/designs/clarity-stylesheet";
-import { paletteFieldStyle } from "./command-palette.style";
+import clarity from "../src/styles/designs/clarity-stylesheet";
+import { paletteFieldStyle } from "../../console-core/src/shell/command-palette.style";
 
 // The palette's field holds the keys for as long as the palette stands open, so no design draws a
 // ring or a box around it: the open panel and the caret say where focus is. Every design is written

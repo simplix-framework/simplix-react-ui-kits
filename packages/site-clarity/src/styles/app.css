@@ -2,7 +2,7 @@
    framework theme, then its own theme: the site parts carry no classes of their own, so every look
    comes from the slot rules below, drawn with the site variables. */
 @import "./site-tokens.css";
-@import "./designs/clarity.css";
+@import "@simplix-react-ui-kits/site-core/styles/designs/base.css";
 
 /* The site parts as a content source, as every kit stylesheet registers its own, so a utility a part
    writes on an element reaches an app whose own @source globs do not cover the kit. */

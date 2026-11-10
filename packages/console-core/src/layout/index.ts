@@ -100,6 +100,7 @@ export {
 } from "./settings-tiles";
 export { TileSpark, type TileSparkShape } from "./tile-spark";
 export { TilesCollapseProvider, useTilesCollapse, type TilesCollapse } from "./tiles-collapse";
+export { PreferenceNamespaceContext, usePreferenceNamespace } from "./preference-namespace";
 export { PHONE_WINDOW, REDUCED_MOTION } from "./window-size";
 export { ShareBar, type Share } from "./share-bar";
 

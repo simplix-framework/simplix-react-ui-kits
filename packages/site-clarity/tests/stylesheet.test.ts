@@ -6,7 +6,7 @@ import { describe, expect, it } from "vitest";
 // drawn, every site variable a rule reads is defined in the tokens file, and every variable the
 // tokens file defines is documented in the README a product's token script is written from.
 // @ts-expect-error: a plain ES module without declarations
-import { declaredSlots } from "../scripts/check-site-regions.mjs";
+import { declaredSlots } from "../../site-core/scripts/check-site-regions.mjs";
 
 const root = join(import.meta.dirname, "..");
 const read = (path: string) => readFileSync(join(root, path), "utf8");
@@ -32,7 +32,7 @@ describe("the site app stylesheet", () => {
 });
 
 describe("the site stylesheet", () => {
-  const css = read("src/styles/designs/clarity.css");
+  const css = read("../site-core/src/styles/designs/base.css");
   const tokens = read("src/styles/site-tokens.css");
   const readme = read("README.md");
   const slots: Set<string> = declaredSlots();
@@ -99,7 +99,7 @@ describe("the site window against a host's base layer", () => {
   it("matches a heading with an element's weight, so it wins over a host's bare h1 rule that comes before it", () => {
     // `:where(...)` alone would weigh nothing and lose to the host's `h1 { opacity: 0.8 }`.
     expect(app).not.toMatch(/:where\([^)]*\)\s*:where\(h1/);
-    expect(app.indexOf("@layer base")).toBeGreaterThan(app.indexOf('@import "./designs/clarity.css"'));
+    expect(app.indexOf("@layer base")).toBeGreaterThan(app.indexOf('@import "@simplix-react-ui-kits/site-core/styles/designs/base.css"'));
   });
 });
 

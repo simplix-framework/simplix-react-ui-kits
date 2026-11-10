@@ -16,8 +16,8 @@
 /* This kit's own components as a content source, so an app importing this stylesheet gets every
    utility the kit's parts write wherever the kit is installed. */
 @source '../**/*.{ts,tsx}';
-/* The kit's own slots in the classic design (generated from the .style.ts declarations), then
-   every other design the kit draws. */
+/* The kit's own slots as their .style.ts declarations draw them (the classic design). A design kit
+   loads its own design over them when that design is chosen. */
 @import './utilities.css';
 @import './designs/classic.css';
 @import './fills.css';

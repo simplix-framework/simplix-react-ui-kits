@@ -1,6 +1,6 @@
 {
   "$comment": "The site design's literal values live in its tokens file; everything else reads them through variables.",
-  "designFiles": ["src/styles/site-tokens.css", "src/styles/designs/clarity.css"],
+  "designFiles": ["src/styles/site-tokens.css"],
   "exclude": ["**/*.test.ts", "tests/fixtures/**"],
   "allow": {},
   "max": { "arbitrary-literal": 0, "arbitrary-shadow": 0, "arbitrary-colour": 0, "css-literal": 0 }

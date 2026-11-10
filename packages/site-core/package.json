@@ -75,20 +75,27 @@
       "types": "./src/shell/index.ts",
       "import": "./dist/shell/index.js"
     },
-    "./templates/*": "./templates/*"
+    "./templates/*": "./templates/*",
+    "./styles/*": "./src/styles/*",
+    "./regions.json": "./regions.json",
+    "./scripts/site-regions-rendered.mjs": "./scripts/site-regions-rendered.mjs"
   },
   "files": [
     "dist",
     "src",
-    "templates"
+    "templates",
+    "scripts",
+    "regions.json"
   ],
   "scripts": {
     "build": "tsup",
     "dev": "tsup --no-clean --no-dts",
     "typecheck": "tsc --noEmit",
-    "lint": "oxlint src && simplix-design-classes src && simplix-slot-spread src && simplix-design-literals src",
-    "test": "vitest run",
-    "clean": "rm -rf dist .turbo"
+    "lint": "node scripts/check-site-regions.mjs && oxlint src && simplix-design-classes src && simplix-slot-spread src && simplix-design-literals src",
+    "test": "node scripts/check-site-regions.mjs --selftest && node scripts/site-regions-rendered.mjs --selftest && vitest run",
+    "clean": "rm -rf dist .turbo",
+    "design:css": "simplix-design-css --root . --out src/styles/designs/base.css",
+    "design:check": "simplix-design-css --root . --out src/styles/designs/base.css --check"
   },
   "dependencies": {
     "simplix-react": "catalog:"

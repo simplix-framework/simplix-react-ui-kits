@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { shellSlots } from "./shell";
+import { shellSlots } from "../src/styles/designs/clarity/shell";
 
 /**
  * A mark the clarity shell fades must stay readable.

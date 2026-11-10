@@ -83,7 +83,7 @@ describe("a card whose figure carries a unit", () => {
     const html = renderToStaticMarkup(
       createElement(I18nProvider, { adapter, children: createElement(UIProvider, { children: createElement(SettingsTiles, { tiles: withUnit, title: "Summary" }) }) }),
     );
-    // The unit stays in one piece through the framework's slot (see console-clarity/tests/stat-card-unit.test.ts).
+    // The unit stays in one piece through the framework's slot (see tests/kit/stat-card-unit.test.ts).
     expect(html).toMatch(/<span[^>]*data-slot="stat-card-unit"[^>]*>credits<\/span>/);
     expect(html).not.toContain("stat-card-unit]]:whitespace-nowrap");
   });

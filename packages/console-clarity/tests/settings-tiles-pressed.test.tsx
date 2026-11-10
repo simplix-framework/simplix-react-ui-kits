@@ -3,7 +3,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { UIProvider } from "@simplix-react/ui";
 import { describe, expect, it, vi } from "vitest";
 
-import type { SettingsTile, TileFilters } from "./settings-tiles";
+import type { SettingsTile, TileFilters } from "../../console-core/src/layout/settings-tiles";
 import type { SlotStyle } from "@simplix-react/ui/design";
 
 // The tiles' import graph reads the browser's storage when it loads, and this suite renders on the server.
@@ -13,9 +13,9 @@ vi.hoisted(() => {
     localStorage: { getItem: (key: string) => items.get(key) ?? null, setItem: (key: string, value: string) => void items.set(key, value), removeItem: (key: string) => void items.delete(key) },
   });
 });
-const { SettingsTiles } = await import("./settings-tiles");
-const { default: clarityCss } = await import("../styles/designs/clarity-stylesheet");
-const styles = await import("./settings-tiles.style");
+const { SettingsTiles } = await import("../../console-core/src/layout/settings-tiles");
+const { default: clarityCss } = await import("../src/styles/designs/clarity-stylesheet");
+const styles = await import("../../console-core/src/layout/settings-tiles.style");
 
 const tiles: SettingsTile[] = [
   { key: "failed", label: "Failed", value: 2, counted: true, filter: { field: "status", value: "FAILED" } },

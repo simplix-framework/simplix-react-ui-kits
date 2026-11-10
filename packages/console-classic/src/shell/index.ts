@@ -1,7 +1,9 @@
+import { CLASSIC_DESIGN, type Design } from "@simplix-react/ui/design";
+
 export * from "@simplix-react-ui-kits/console-core/shell";
 
 /**
- * The designs this kit offers, its own first, so a mockup's toolbar and a display setting open in
- * the design the kit's screens are drawn in.
+ * The designs this kit offers: the classic design, which the shared parts' own declarations draw,
+ * so a mockup's toolbar opens in the design the kit's screens are drawn in.
  */
-export { CONSOLE_DESIGNS as KIT_DESIGNS } from "@simplix-react-ui-kits/console-core/shell";
+export const KIT_DESIGNS: readonly Design[] = [CLASSIC_DESIGN];

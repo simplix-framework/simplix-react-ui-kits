@@ -9,9 +9,9 @@ import { afterEach, describe, expect, it } from "vitest";
 // against markup in the framework checkout's `jsdom`, which this package does not install.
 
 // @ts-expect-error the script is plain JavaScript that a product's runner imports
-import { compare, probe, regionsOf } from "../scripts/regions-rendered.mjs";
+import { compare, probe, regionsOf } from "../../scripts/regions-rendered.mjs";
 
-const root = join(__dirname, "..");
+const root = join(__dirname, "../..");
 const uiDir = realpathSync(join(root, "../../node_modules/@simplix-react/ui"));
 const { JSDOM } = createRequire(join(uiDir, "package.json"))("jsdom") as { JSDOM: new (html: string) => { window: Window & typeof globalThis } };
 

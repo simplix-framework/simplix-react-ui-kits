@@ -3,7 +3,7 @@ import { join } from "node:path";
 
 import { describe, expect, it } from "vitest";
 
-import { installedFramework, PACKAGES } from "./installed-framework";
+import { installedFramework, PACKAGES } from "../../console-core/tests/kit/installed-framework";
 
 /**
  * The idle sort arrow of a table head stays readable in every console screen.
@@ -60,7 +60,7 @@ describe("the idle sort arrow in the installed framework", () => {
 
 describe("the kit's own clarity design", () => {
   it("holds no rule for the sort arrow", () => {
-    const kit = readFileSync(join(PACKAGES, "console-core/src/styles/designs/clarity.css"), "utf8");
+    const kit = readFileSync(join(PACKAGES, "console-clarity/src/styles/designs/clarity.css"), "utf8");
     expect(kit).not.toContain("crud-list-sort-icon");
   });
 });

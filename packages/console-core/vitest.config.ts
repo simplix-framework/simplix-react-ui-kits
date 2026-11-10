@@ -20,9 +20,6 @@ const alias = (name: string) => [
 
 // React Query and zustand are inlined for the same reason as the framework: left external, Node resolves its
 // `react` import from its own location and a hook rendered under the aliased React has no dispatcher.
-// Only `*.test.*` files are tests: the design specs under `src/styles/designs` end in `.spec.ts`
-// and hold a design, not a suite.
-//
 // A test that needs a DOM (an effect, a re-render, an event) is named `*.dom.test.tsx` and runs in the
 // second project, whose environment is the framework checkout's `jsdom` (`vitest-jsdom.mjs`: the kit
 // installs no DOM of its own). Every other test runs as a plain node test.

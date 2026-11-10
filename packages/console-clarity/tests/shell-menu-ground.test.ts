@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { shellSlots } from "./shell";
+import { shellSlots } from "../src/styles/designs/clarity/shell";
 
 /**
  * The menu column and the rail stand on a ground of their own, so what is drawn on it reads the

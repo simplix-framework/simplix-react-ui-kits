@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 
 import { context, domainStub, pageDir, widgetsDir, widgetsStub } from "./crud-page-fixture";
 import { render, typecheck, virtualRoot } from "./template-typecheck";
+import { KIT_NAME } from "./kit";
 
 /**
  * The generated CRUD page is the screen's whole start: it compiles against the kit's own sources with
@@ -11,7 +12,7 @@ import { render, typecheck, virtualRoot } from "./template-typecheck";
 
 /** A blocks file stating every key the kit's `CrudPageBlocks` lists. */
 const everyKeyBlocks = `
-import type { CrudPageBlocks, PageBlocksContext } from "@simplix-react-ui-kits/console-clarity/page";
+import type { CrudPageBlocks, PageBlocksContext } from "${KIT_NAME}/page";
 import type { ProductDetailProps, ProductListProps, ProductRow, useProductList } from "../../widgets/product";
 
 export function usePageBlocks(page: PageBlocksContext): CrudPageBlocks<ProductRow, ProductListProps, ProductDetailProps, ReturnType<typeof useProductList>> {

@@ -10,7 +10,8 @@ import type { QueryClient } from "@tanstack/react-query";
 
 import { ErrorDialog } from "../error";
 import { TilesCollapseProvider } from "../layout/tiles-collapse";
-import { CONSOLE_DESIGNS, ConsoleDesignContext } from "./console-design";
+import { PreferenceNamespaceContext } from "../layout/preference-namespace";
+import { ConsoleDesignContext, ConsoleDesignsContext } from "./console-design";
 import { useAppliedFill, useDisplayPreferences } from "./display-preferences";
 import { useTheme } from "./use-theme";
 
@@ -39,6 +40,12 @@ export interface ConsoleProvidersProps {
    * A design kit passes its own; the classic design when absent.
    */
   readonly design?: Design;
+  /**
+   * The designs the reader may pick in the display settings, the kit's own first. A design kit
+   * passes the designs it ships; only `design` when absent, and the display settings then offer no
+   * choice.
+   */
+  readonly designs?: readonly Design[];
   /**
    * The installation's UI defaults (frontend invariant #69): how a record's detail appears, and
    * any other `UIProvider` default the product sets once at its root. The reader's density
@@ -129,6 +136,7 @@ export function ConsoleProviders({
   queryClient,
   product,
   design = CLASSIC_DESIGN,
+  designs = [design],
   defaults: installationDefaults,
   drawToasts = true,
   drawErrors = true,
@@ -141,7 +149,7 @@ export function ConsoleProviders({
     [refreshesOnLocaleChange, i18nAdapter, queryClient, auth, accessPolicy],
   );
   const { prefs } = useDisplayPreferences();
-  const chosen = CONSOLE_DESIGNS.find((d) => d.id === prefs.design) ?? design;
+  const chosen = designs.find((d) => d.id === prefs.design) ?? design;
   const defaults =
     installationDefaults || prefs.density
       ? { ...installationDefaults, ...(prefs.density ? { density: prefs.density } : {}) }
@@ -157,11 +165,15 @@ export function ConsoleProviders({
                 {/* Inside the UI provider and above the router: the figure row's fold is one
                     choice the operator makes once and every route reads, so it cannot live in a
                     layout a navigation remounts. */}
+                <PreferenceNamespaceContext.Provider value={namespace}>
                 <TilesCollapseProvider namespace={namespace}>
                   <ConsoleProductProvider subjects={product.subjects} brand={product.brand}>
-                    <ConsoleDesignContext.Provider value={design}>{children}</ConsoleDesignContext.Provider>
+                    <ConsoleDesignContext.Provider value={design}>
+                      <ConsoleDesignsContext.Provider value={designs}>{children}</ConsoleDesignsContext.Provider>
+                    </ConsoleDesignContext.Provider>
                   </ConsoleProductProvider>
                 </TilesCollapseProvider>
+                </PreferenceNamespaceContext.Provider>
                 {drawErrors ? <ErrorDialog /> : null}
                 {drawToasts ? <ToastContainer /> : null}
               </UIProvider>

@@ -117,19 +117,14 @@
     "dev": "tsup --no-clean --no-dts",
     "typecheck": "tsc --noEmit",
     "lint": "oxlint src",
-    "test": "vitest run --passWithNoTests && pnpm test:templates",
+    "test": "pnpm test:kit && pnpm test:templates",
     "clean": "rm -rf dist .turbo",
-    "test:templates": "node ../../testing/template-harness/harness.mjs ."
+    "test:templates": "node ../../testing/template-harness/harness.mjs .",
+    "test:kit": "KIT_DIR=. vitest run --config ../console-core/tests/kit/vitest.config.ts"
   },
   "dependencies": {
     "@simplix-react-ui-kits/console-core": "workspace:*",
-    "@fontsource/noto-sans-jp": "catalog:",
-    "@fontsource/noto-sans-kr": "catalog:",
-    "lucide-react": "catalog:",
-    "react-daum-postcode": "^3.2.0",
-    "simplix-react": "catalog:",
-    "simplix-react-ext": "catalog:",
-    "zustand": "catalog:"
+    "simplix-react": "catalog:"
   },
   "peerDependencies": {
     "react": ">=18.0.0",

@@ -3,6 +3,7 @@ import ts from "typescript";
 import { describe, expect, it } from "vitest";
 
 import { render, typecheck, virtualRoot } from "./template-typecheck";
+import { KIT_NAME } from "./kit";
 
 /**
  * What the widget templates take from the generator instead of a screen writing it by hand: a holder
@@ -58,12 +59,12 @@ export interface ProductListRow { readonly productId: string; readonly name?: st
 export declare function useListProduct(params?: unknown, options?: unknown): { data: unknown; isLoading: boolean; error: unknown };
 `;
 const memberDomainStub = `
-import type { useAllowed } from "@simplix-react-ui-kits/console-clarity/entity";
+import type { useAllowed } from "${KIT_NAME}/entity";
 export declare function useListMembers(params?: unknown, options?: unknown): { data: unknown; isLoading: boolean; error: unknown };
 export declare const listMembersAccess: Parameters<typeof useAllowed>[0];
 `;
 const memberWidgetsStub = `
-import type { ContractOverrides, RecordColumn } from "@simplix-react-ui-kits/console-clarity/entity";
+import type { ContractOverrides, RecordColumn } from "${KIT_NAME}/entity";
 export interface MemberRow { readonly memberId: string; readonly productId?: string; readonly name?: string }
 export declare function useMemberColumns(overrides?: ContractOverrides, options?: { readonly omit?: readonly string[] }): RecordColumn<MemberRow>[];
 `;

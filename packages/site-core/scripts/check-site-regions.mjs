@@ -9,7 +9,7 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const here = dirname(dirname(fileURLToPath(import.meta.url)));
-const coreSource = resolve(here, "../site-core/src");
+const coreSource = resolve(here, "src");
 
 /** The slot names every `.style.ts` under `dir` declares. */
 export function declaredSlots(dir = coreSource) {

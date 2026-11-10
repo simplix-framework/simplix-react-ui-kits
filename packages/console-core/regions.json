@@ -372,22 +372,22 @@
   "valueParts": {
     "$comment": "Files that draw a value (a list cell or a detail value). A value part draws no control: a row's verbs live in its action strip, copy and the whole text in the detail.",
     "files": [
-      "../console-core/src/entity/record-value.tsx",
-      "../console-core/src/entity/record-excerpt.tsx",
-      "../console-core/src/entity/record-meter.tsx",
-      "../console-core/src/entity/option-label.tsx"
+      "src/entity/record-value.tsx",
+      "src/entity/record-excerpt.tsx",
+      "src/entity/record-meter.tsx",
+      "src/entity/option-label.tsx"
     ]
   },
   "slotProps": {
     "$comment": "Interfaces a page fills its slots through. Every boolean prop in them is listed here with the reason it changes content (a region on or off, behaviour) rather than look; an unlisted boolean is a per-screen presentation flag and fails the check.",
     "interfaces": {
-      "../console-core/src/entity/record-list.tsx": [
+      "src/entity/record-list.tsx": [
         "RecordColumn",
         "RecordAction",
         "RecordListFeatures",
         "RecordListProps"
       ],
-      "../console-core/src/page/types.ts": [
+      "src/page/types.ts": [
         "PageTabSpec",
         "PageNoticeSpec",
         "PageSpec"
@@ -418,12 +418,12 @@
   "dataSlots": {
     "$comment": "Region members a page fills with data only. A member whose type names ReactNode lets a screen draw the region by hand and fails the check.",
     "members": {
-      "../console-core/src/page/crud-page-blocks.ts": {
+      "src/page/crud-page-blocks.ts": {
         "CrudPageBlocks": [
           "timeRange"
         ]
       },
-      "../console-core/src/page/types.ts": {
+      "src/page/types.ts": {
         "PageSpec": [
           "timeRange"
         ]
@@ -483,25 +483,25 @@
   "pageApi": {
     "$comment": "Every member of a page type's spec or blocks interface that takes a drawn node, with its class: body (the type's one free content area), content (free composition inside a named slot the template draws, never a region part), or dialogs. A node-typed member not listed here lets a screen draw a region by hand, and check-regions fails it.",
     "interfaces": {
-      "../console-core/src/page/types.ts": [
+      "src/page/types.ts": [
         "PageBlocks",
         "PageHelpSpec",
         "PageTabSpec",
         "PageNoticeSpec",
         "PageSpec"
       ],
-      "../console-core/src/page/crud-page-blocks.ts": [
+      "src/page/crud-page-blocks.ts": [
         "CrudPageBlocks"
       ],
-      "../console-core/src/entity/record-list.tsx": [
+      "src/entity/record-list.tsx": [
         "RecordListProps"
       ],
-      "../console-core/templates/app-shell.hbs": [
+      "templates/app-shell.hbs": [
         "ShellParts",
         "ShellMenuEntry",
         "ShellMenuGroup"
       ],
-      "../console-core/templates/app-shell.top-bar.hbs": [
+      "templates/app-shell.top-bar.hbs": [
         "ShellParts"
       ]
     },

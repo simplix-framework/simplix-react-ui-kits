@@ -1,11 +1,12 @@
 /**
- * Where the reader's help-panel width lives between visits.
+ * Where the reader's help-panel width lives between visits: under the app's preference namespace
+ * (`usePreferenceNamespace`).
  *
- * <p>Its own namespace, outside every token store's prefix. Signing out clears a token store by
- * sweeping its prefix, so a preference parked inside is erased by the one act it has to outlive —
+ * <p>Its own key, outside every token store's prefix. Signing out clears a token store by
+ * sweeping its prefix, so a preference parked inside is erased by the one act it has to outlive -
  * the panel would come back narrow after every sign-in with nothing saying why.
  */
-const STORE_KEY = "smart-safety.prefs:manual-width";
+const keyFor = (namespace: string) => `${namespace}.prefs:manual-width`;
 
 /**
  * The narrowest the panel may be dragged.
@@ -30,11 +31,12 @@ export const clampManualWidth = (width: number) =>
   Math.min(MAX_MANUAL_WIDTH, Math.max(MIN_MANUAL_WIDTH, Math.round(width)));
 
 /**
+ * @param namespace the app's preference namespace
  * @returns the width the reader last left, or the default
  */
-export function readManualWidth(): number {
+export function readManualWidth(namespace: string): number {
   try {
-    const held = Number(localStorage.getItem(STORE_KEY));
+    const held = Number(localStorage.getItem(keyFor(namespace)));
     return Number.isFinite(held) && held > 0 ? clampManualWidth(held) : DEFAULT_MANUAL_WIDTH;
   } catch {
     return DEFAULT_MANUAL_WIDTH;
@@ -42,12 +44,13 @@ export function readManualWidth(): number {
 }
 
 /**
+ * @param namespace the app's preference namespace
  * @param width the width to keep
  */
-export function writeManualWidth(width: number): void {
+export function writeManualWidth(namespace: string, width: number): void {
   try {
-    localStorage.setItem(STORE_KEY, String(clampManualWidth(width)));
+    localStorage.setItem(keyFor(namespace), String(clampManualWidth(width)));
   } catch {
-    /* storage unavailable — the width lasts this visit, which beats refusing the drag */
+    /* storage unavailable - the width lasts this visit, which beats refusing the drag */
   }
 }

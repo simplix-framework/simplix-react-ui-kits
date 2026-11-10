@@ -151,30 +151,12 @@ importers:
 
   packages/console-clarity:
     dependencies:
-      '@fontsource/noto-sans-jp':
-        specifier: 'catalog:'
-        version: 5.3.1
-      '@fontsource/noto-sans-kr':
-        specifier: 'catalog:'
-        version: 5.3.1
       '@simplix-react-ui-kits/console-core':
         specifier: workspace:*
         version: link:../console-core
-      lucide-react:
-        specifier: 'catalog:'
-        version: 1.61.0(@types/react@19.3.0)(react@19.3.1)
-      react-daum-postcode:
-        specifier: ^3.2.0
-        version: 3.2.0(react@19.3.1)
       simplix-react:
         specifier: link:/Users/taehwan/Workspace/simplix/simplix-react/packages/simplix-react
         version: link:../../../simplix-react/packages/simplix-react
-      simplix-react-ext:
-        specifier: link:/Users/taehwan/Workspace/simplix/simplix-react/packages/simplix-react-ext
-        version: link:../../../simplix-react/packages/simplix-react-ext
-      zustand:
-        specifier: 'catalog:'
-        version: 5.0.16(@types/react@19.3.0)(immer@10.2.0)(react@19.3.1)(use-sync-external-store@1.7.0(react@19.3.1))
     devDependencies:
       '@tanstack/react-query':
         specifier: 'catalog:'
@@ -212,30 +194,12 @@ importers:
 
   packages/console-classic:
     dependencies:
-      '@fontsource/noto-sans-jp':
-        specifier: 'catalog:'
-        version: 5.3.1
-      '@fontsource/noto-sans-kr':
-        specifier: 'catalog:'
-        version: 5.3.1
       '@simplix-react-ui-kits/console-core':
         specifier: workspace:*
         version: link:../console-core
-      lucide-react:
-        specifier: 'catalog:'
-        version: 1.61.0(@types/react@19.3.0)(react@19.3.1)
-      react-daum-postcode:
-        specifier: ^3.2.0
-        version: 3.2.0(react@19.3.1)
       simplix-react:
         specifier: link:/Users/taehwan/Workspace/simplix/simplix-react/packages/simplix-react
         version: link:../../../simplix-react/packages/simplix-react
-      simplix-react-ext:
-        specifier: link:/Users/taehwan/Workspace/simplix/simplix-react/packages/simplix-react-ext
-        version: link:../../../simplix-react/packages/simplix-react-ext
-      zustand:
-        specifier: 'catalog:'
-        version: 5.0.16(@types/react@19.3.0)(immer@10.2.0)(react@19.3.1)(use-sync-external-store@1.7.0(react@19.3.1))
     devDependencies:
       '@tanstack/react-query':
         specifier: 'catalog:'

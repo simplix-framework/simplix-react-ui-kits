@@ -43,7 +43,7 @@ describe("the scheme change in the site stylesheet", () => {
   });
 
   const tokens = read("src/styles/site-tokens.css");
-  const css = read("src/styles/designs/clarity.css");
+  const css = read("../site-core/src/styles/designs/base.css");
   const rule = switchRule(tokens);
 
   it("has a rule on the document element under the mark site-core sets", () => {

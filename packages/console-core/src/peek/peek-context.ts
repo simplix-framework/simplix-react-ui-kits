@@ -55,7 +55,7 @@ export interface PeekHostController {
 }
 
 const MISSING_HOST =
-  "No PeekHost is mounted. Wrap the app root in <PeekHost> from @simplix-react-ui-kits/console-classic/peek " +
+  "No PeekHost is mounted. Wrap the app root in <PeekHost> from the console kit's /peek entry " +
   "so peek dialogs mount outside the rows that open them.";
 
 /**

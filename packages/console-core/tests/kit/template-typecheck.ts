@@ -1,7 +1,10 @@
-import { dirname, join, resolve, sep } from "node:path";
+import { createRequire } from "node:module";
+import { dirname, join, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import { loadProjectTemplates, renderTemplate } from "@simplix-react/cli";
 import ts from "typescript";
+
+import { KIT_DIR, KIT_NAME } from "./kit";
 
 /**
  * Renders a template the way the generator does and type-checks the result against the kit's own
@@ -11,8 +14,7 @@ import ts from "typescript";
  * the base kit's beneath them, with the kit's values written in), read and rendered by the CLI.
  */
 
-const here = dirname(fileURLToPath(import.meta.url));
-const packageDir = resolve(here, "..");
+const packageDir = KIT_DIR;
 const templates = await loadProjectTemplates(packageDir, packageDir);
 
 export function render(templateFile: string, context: Record<string, unknown>): string {
@@ -21,6 +23,13 @@ export function render(templateFile: string, context: Record<string, unknown>): 
   if (source === undefined) throw new Error(`${templateFile}: no template of that name is in force for this kit`);
   return renderTemplate(source, context);
 }
+
+// The generated app declares these itself (the CLI's app and module package.json), so they resolve
+// as the app resolves them, not from the design kit, which draws none of them.
+const fromCore = createRequire(fileURLToPath(new URL("../../package.json", import.meta.url)));
+const appDependencies = Object.fromEntries(
+  ["lucide-react"].map((name) => [name, [dirname(fromCore.resolve(`${name}/package.json`))]]),
+);
 
 // Nothing is written: the files the tests hand in exist only for the compiler's host.
 export const virtualRoot = join(packageDir, ".template-check");
@@ -38,10 +47,11 @@ export function typecheck(files: Readonly<Record<string, string>>, roots: readon
     rootDir: undefined,
     outDir: undefined,
     paths: {
-      "@simplix-react-ui-kits/console-clarity/*": [join(packageDir, "src", "*")],
+      [`${KIT_NAME}/*`]: [join(packageDir, "src", "*")],
       "@test/domain-product": [join(virtualRoot, "domain-product.ts")],
       "@test/domain-member": [join(virtualRoot, "domain-member.ts")],
       "@test/member-widgets": [join(virtualRoot, "modules", "other", "src", "widgets", "index.ts")],
+      ...appDependencies,
       ...extraPaths,
     },
   };

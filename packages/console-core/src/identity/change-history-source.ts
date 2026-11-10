@@ -115,9 +115,8 @@ const ChangeHistorySourceContext = createContext<ChangeHistoryReader | null>(nul
 /**
  * Supplies the audit read the change-history panel draws.
  *
- * <p><b>Why this is a port.</b> `@simplix-react-ui-kits/console-classic` is the layer 1 `ui` pack and its
- * dependency column in `docs/tracking/PRODUCT-LAYERING.md` §2 is a dash. P-18 is one of the 43
- * patterns, so §2's 「`ui`는 나누지 않는다」 keeps the panel here and this is how the read reaches it.
+ * <p><b>Why this is a port.</b> A console kit depends on no product API. The change-history panel
+ * is a pattern, so it stays in the kit, and this port is how the product's audit read reaches it.
  */
 export const ChangeHistorySourceProvider = ChangeHistorySourceContext.Provider;
 
