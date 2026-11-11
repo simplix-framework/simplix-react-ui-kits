@@ -1276,9 +1276,6 @@
   [data-slot="console-page-header-actions"][data-slot][data-s-console-page-header-actions] {
     @apply ml-auto;
   }
-  [data-slot="console-phone-menu-sheet"][data-slot][data-s-console-phone-menu-sheet] {
-    @apply gap-3 rounded-t-lg px-4 pb-4;
-  }
   [data-slot="console-phone-row-button"][data-slot][data-s-console-phone-row-button] {
     @apply rounded-lg border px-3 py-2 text-left;
   }
@@ -1691,6 +1688,9 @@
   }
   :where([data-part="console-phone-empty"])[data-part][data-p-console-phone-empty] {
     @apply py-8 text-center;
+  }
+  :where([data-part="console-phone-menu-sheet"])[data-part][data-p-console-phone-menu-sheet] {
+    @apply gap-3 rounded-t-lg pb-4 [&_[data-slot=sheet-title]_a]:inline-flex [&_[data-slot=sheet-title]_a]:min-h-11 [&_[data-slot=sheet-title]_a]:items-center;
   }
   :where([data-part="console-phone-screen-body"])[data-part][data-p-console-phone-screen-body] {
     @apply p-3 [&_[data-slot=input]]:h-12 [&_[data-slot=field-select-trigger]]:h-12 [&_[data-slot=date-picker-trigger]]:h-12 [&_textarea]:min-h-24 [&_[data-slot=field-clear-button]]:relative [&_[data-slot=field-clear-button]]:after:absolute [&_[data-slot=field-clear-button]]:after:-inset-3 [&_[data-slot=field-clear-button]]:after:content-[''] [&_[role=checkbox]]:relative [&_[role=checkbox]]:after:absolute [&_[role=checkbox]]:after:-inset-3.5 [&_[role=checkbox]]:after:content-[''];

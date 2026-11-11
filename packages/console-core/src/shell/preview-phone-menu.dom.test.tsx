@@ -23,8 +23,8 @@ function mount(open = true) {
   const chrome = {
     title: "Console", area: "work", current: "tasks", namespace: "phone-menu-test",
     labels: { menu: "Menu" },
-    areas: [{ key: "work", label: "Work" }, { key: "personal", label: "My work" }],
-    menuFor: (area: string) => ({ title: area, groups: [{ key: area, label: area, entries: area === "work" ? [{ key: "tasks", label: "Tasks", href: "/tasks" }, { key: "unbuilt", label: "Unavailable" }] : [{ key: "requests", label: "Requests", href: "/requests" }] }] }),
+    areas: [{ key: "home", label: "Home", href: "/home" }, { key: "empty", label: "Empty area" }, { key: "work", label: "Work" }, { key: "personal", label: "My work" }],
+    menuFor: (area: string) => ({ title: area, groups: ["home", "empty"].includes(area) ? [] : [{ key: area, label: area === "work" ? "Work" : "My work", entries: area === "work" ? [{ key: "tasks", label: "Tasks", href: "/tasks" }, { key: "unbuilt", label: "Unavailable" }] : [{ key: "requests", label: "Requests", href: "/requests" }] }] }),
     settings: createElement("button", null, "Language"), navigate,
   } as unknown as ConsolePreviewChrome;
   host = document.createElement("div"); document.body.append(host); root = createRoot(host);
@@ -35,9 +35,15 @@ function mount(open = true) {
 describe("the preview's phone menu", () => {
   it("offers the same declared destinations across areas and keeps unavailable entries inactive", () => {
     mount();
-    expect([...document.querySelectorAll("a[href]")].map((link) => link.getAttribute("href"))).toEqual(["/tasks", "/requests"]);
+    expect([...document.querySelectorAll("a[href]")].map((link) => link.getAttribute("href"))).toEqual(["/home", "/tasks", "/requests"]);
     expect(document.body.textContent).toContain("Unavailable");
     expect(document.body.textContent).toContain("Language");
+  });
+  it("prints a shared area and group title once and uses the phone body spacing", () => {
+    mount();
+    expect(document.body.textContent?.match(/My work/g)).toHaveLength(1);
+    expect(document.body.textContent).not.toContain("Empty area");
+    expect(document.querySelector('[data-part="console-phone-menu-sheet"] [data-part="console-phone-screen-body"]')).not.toBeNull();
   });
   it("uses the supplied navigation port and closes on a destination", () => {
     const { navigate, close } = mount();

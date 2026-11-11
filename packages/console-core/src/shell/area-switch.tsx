@@ -9,6 +9,8 @@ export interface ConsoleArea {
   readonly key: string;
   /** What the row prints. */
   readonly label: ReactNode;
+  /** An area's own destination where it has no menu groups, such as the console's home. */
+  readonly href?: string;
 }
 
 /** Props for {@link ConsoleAreaSwitch}. */

@@ -534,6 +534,7 @@ export function ConsolePhoneMenuSheet({
         </SheetHeader>
         <Stack
           gap="md"
+          {...partAttributes(phoneScreenBodyStyle, {})}
           flex
           minSize
           overflow="auto"

@@ -236,15 +236,21 @@ export function ConsolePreviewPhoneMenu({ chrome, open, onOpenChange }: {
         if (chrome.navigate) chrome.navigate(href);
         else window.location.assign(href);
       }}>
-        {chrome.areas.map((area) => (
-          <ConsolePhoneMenuSection key={area.key} title={area.label}>
-            {chrome.menuFor(area.key).groups.map((group) => (
-              <ConsolePhoneMenuSection key={group.key} title={group.label}>
+        {chrome.areas.map((area) => {
+          const menu = chrome.menuFor(area.key);
+          if (!menu.groups.length) return area.href ? (
+            <ConsolePhoneMenuSection key={area.key}>
+              <ConsoleMenuLinkRow href={area.href} label={area.label} current={area.key === chrome.area} />
+            </ConsolePhoneMenuSection>
+          ) : null;
+          return <ConsolePhoneMenuSection key={area.key} title={area.label}>
+            {menu.groups.map((group) => (
+              <ConsolePhoneMenuSection key={group.key} title={menu.groups.length === 1 && group.label === area.label ? undefined : group.label}>
                 {group.entries.map((entry) => <EntryRow key={entry.key} entry={entry} current={chrome.current} />)}
               </ConsolePhoneMenuSection>
             ))}
           </ConsolePhoneMenuSection>
-        ))}
+        })}
       </Stack>
     </ConsolePhoneMenuSheet>
   );
