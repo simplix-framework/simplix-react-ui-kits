@@ -49,6 +49,7 @@ import { ConsoleMenuSearch } from "./menu-search";
 import { ConsoleServiceLinks, type ConsoleServiceLink } from "./service-links";
 import { useSidebarCollapse } from "./sidebar-collapse";
 import { consoleWindowStyle } from "./console-window.style";
+import { ConsolePhoneMenuSheet, ConsolePhoneMenuSection } from "./phone-shell";
 
 /** One destination in the preview's menu. */
 export interface ConsolePreviewMenuEntry {
@@ -215,6 +216,38 @@ function destinationsOf(chrome: ConsolePreviewChrome): Destination[] {
     }
   }
   return found;
+}
+
+/** The preview's phone menu reuses its declared desktop destinations and navigation port. */
+export function ConsolePreviewPhoneMenu({ chrome, open, onOpenChange }: {
+  readonly chrome: ConsolePreviewChrome;
+  readonly open: boolean;
+  readonly onOpenChange: (open: boolean) => void;
+}) {
+  return (
+    <ConsolePhoneMenuSheet open={open} onOpenChange={onOpenChange} title={chrome.title} description={chrome.labels.menu} footer={chrome.settings}>
+      <Stack gap="md" onClickCapture={(event) => {
+        const link = event.target instanceof Element ? event.target.closest("a[href]") : null;
+        if (!link || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+        const href = link.getAttribute("href");
+        if (!href) return;
+        event.preventDefault();
+        onOpenChange(false);
+        if (chrome.navigate) chrome.navigate(href);
+        else window.location.assign(href);
+      }}>
+        {chrome.areas.map((area) => (
+          <ConsolePhoneMenuSection key={area.key} title={area.label}>
+            {chrome.menuFor(area.key).groups.map((group) => (
+              <ConsolePhoneMenuSection key={group.key} title={group.label}>
+                {group.entries.map((entry) => <EntryRow key={entry.key} entry={entry} current={chrome.current} />)}
+              </ConsolePhoneMenuSection>
+            ))}
+          </ConsolePhoneMenuSection>
+        ))}
+      </Stack>
+    </ConsolePhoneMenuSheet>
+  );
 }
 
 /**

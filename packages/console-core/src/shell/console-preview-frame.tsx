@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { PageHeaderProvider, ToastContainer, usePageHeaderState } from "@simplix-react/ui";
 
 import { TilesCollapseProvider } from "../layout/tiles-collapse";
@@ -7,7 +7,7 @@ import { NoticeRegistryProvider } from "../notice/notice-registry";
 import { PeekHost } from "../peek/peek-host";
 import { ConsoleContentColumn } from "./content-column";
 import { ConsoleContextProvider, type ConsoleContextValue } from "./console-context";
-import { ConsolePreviewWindowChrome, type ConsolePreviewChrome } from "./preview-chrome";
+import { ConsolePreviewWindowChrome, ConsolePreviewPhoneMenu, type ConsolePreviewChrome } from "./preview-chrome";
 import { ConsolePhoneShell, useConsoleOnAPhone } from "./phone-shell";
 import { ConsoleTopBarWindow } from "./top-bar-window";
 
@@ -78,13 +78,15 @@ export function ConsolePreviewFrame({ console, namespace, chrome, topBar, childr
 
 /**
  * The phone shell around a previewed page: the page header's title in the top bar and the menu
- * entry along the bottom. A preview has no router, so the entry is drawn without a destination.
+ * entry along the bottom. The menu uses the same destinations and navigation port as the desktop.
  */
 function PreviewPhoneShell({ chrome, children }: { readonly chrome: ConsolePreviewChrome; readonly children: ReactNode }) {
   const { title } = usePageHeaderState();
+  const [menuOpen, setMenuOpen] = useState(false);
   return (
-    <ConsolePhoneShell brand={chrome.mark} title={title ?? chrome.title} tabs={[{ key: "menu", label: chrome.labels.menu, icon: "menu" }]} activeTab="">
+    <ConsolePhoneShell brand={chrome.mark} title={title ?? chrome.title} tabs={[{ key: "menu", label: chrome.labels.menu, icon: "menu", onPress: () => setMenuOpen(true) }]} activeTab="">
       <ConsoleContentColumn>{children}</ConsoleContentColumn>
+      <ConsolePreviewPhoneMenu chrome={chrome} open={menuOpen} onOpenChange={setMenuOpen} />
     </ConsolePhoneShell>
   );
 }
