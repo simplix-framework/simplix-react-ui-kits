@@ -4,7 +4,7 @@ import { defineSlotStyle } from "@simplix-react/ui/design";
 export const noticeCardStyle = defineSlotStyle({
   slot: "console-notice-card",
   // A card brought back draws the shared entrance on the base duration and the spring.
-  base: "duration-[var(--dur-base)] ease-[var(--ease-spring)]",
+  base: "duration-[var(--dur-base)] ease-[var(--ease-spring)] break-keep [overflow-wrap:anywhere]",
   variants: {
     kind: { help: "", warning: "", info: "", danger: "" },
   },
@@ -14,7 +14,7 @@ export const noticeCardStyle = defineSlotStyle({
 /** The slot a help notice card is drawn on: the card a page keeps beside its figures to open an explanation. */
 export const explanationCardStyle = defineSlotStyle({
   slot: "console-explanation-card",
-  base: "duration-[var(--dur-base)] ease-[var(--ease-spring)]",
+  base: "duration-[var(--dur-base)] ease-[var(--ease-spring)] break-keep [overflow-wrap:anywhere]",
   variants: {
     kind: { help: "" },
   },

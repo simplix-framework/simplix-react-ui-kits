@@ -5,6 +5,8 @@ import {
   Button,
   CrudList,
   EmptyState,
+  TableCardFrameContext,
+  useTableCardFrame,
   Flex,
   Grid,
   Stack,
@@ -683,6 +685,9 @@ export function RecordList<Row>({
 }: RecordListProps<Row>) {
   const { t } = useTranslation(PACKAGE_NAMESPACE + "/features");
   const nested = useContext(RecordListNestingContext);
+  const inheritedFrame = useTableCardFrame();
+  // Own one surface while retaining a containing card's height and scroll constraints.
+  const listFrame = useMemo(() => ({ ...inheritedFrame, framed: true }), [inheritedFrame]);
   // When the list narrows past the toolbar's fold (or widens back), the count, the search and the
   // filter controls glide to their new rows instead of jumping.
   const rootRef = useRef<HTMLDivElement>(null);
@@ -826,6 +831,7 @@ export function RecordList<Row>({
   return (
     // `data-pager="off"` marks a pager the caller turned off, so a check can tell it from a lost one.
     <div ref={rootRef} className="@container/record-list" data-pager={on("pagination") ? undefined : "off"} {...slotAttributes(recordListStyle, { nested })}>
+    <TableCardFrameContext.Provider value={listFrame}>
     <CrudList defaultViewMode={openView} onViewModeChange={viewToggle ? remembered.remember : undefined}>
       {filtered ? (
         <CrudList.FilterBar
@@ -1019,6 +1025,7 @@ export function RecordList<Row>({
         </Flex>
       ) : null}
     </CrudList>
+    </TableCardFrameContext.Provider>
     {selectable ? (
       // Over the foot of the window, centred; the bar takes the pointer only while it is open.
       <div className="pointer-events-none fixed bottom-12 left-1/2 z-40 -translate-x-1/2 [&>[data-open=true]]:pointer-events-auto">

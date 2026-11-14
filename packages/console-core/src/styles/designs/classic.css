@@ -848,7 +848,7 @@
     @apply font-mono text-xs;
   }
   [data-slot="console-explanation-card"][data-slot][data-s-console-explanation-card] {
-    @apply duration-[var(--dur-base)] ease-[var(--ease-spring)];
+    @apply duration-[var(--dur-base)] ease-[var(--ease-spring)] break-keep [overflow-wrap:anywhere];
   }
   [data-slot="console-notice-actions"][data-slot][data-s-console-notice-actions] {
     @apply mt-3 gap-1.5;
@@ -863,7 +863,7 @@
     @apply grid-rows-[0fr];
   }
   [data-slot="console-notice-card"][data-slot][data-s-console-notice-card] {
-    @apply duration-[var(--dur-base)] ease-[var(--ease-spring)];
+    @apply duration-[var(--dur-base)] ease-[var(--ease-spring)] break-keep [overflow-wrap:anywhere];
   }
   [data-slot="console-notice-chevron"][data-slot][data-s-console-notice-chevron] {
     @apply block size-3.5 transition-transform duration-[var(--dur-base)] ease-[var(--ease)];
