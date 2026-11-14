@@ -4,6 +4,7 @@ import { partAttributes, slotAttributes } from "@simplix-react/ui/design";
 
 import { RecordVerbButton } from "../entity/record-blocks";
 import { BoundedDialogContent } from "../layout/bounded-dialog-content";
+import { WHOLE_VIEW_METRICS } from "./whole-view";
 import { procedureChoicesStyle, procedureHeadStyle, procedureNameStyle, procedureNoteStyle } from "./procedure-catalogue.style";
 
 /** One procedure a reader can choose. */
@@ -59,7 +60,7 @@ export function ProcedureCatalogue({ label, procedures, selected, onSelect, proc
           </Flex>
           {/* The lanes scroll inside their own box, so the row of lane names stays in sight. */}
           <Stack gap="none" className="min-h-0 flex-1 overflow-hidden">
-            <ProcessLanes key={chosen.key} {...procedure} scrollToActive={false} className="h-full" />
+            <ProcessLanes key={chosen.key} {...procedure} layout="lanes" metrics={WHOLE_VIEW_METRICS} scrollToActive={false} className="h-full" />
           </Stack>
         </>
       ) : (
@@ -89,7 +90,10 @@ export function ProcedureDialog({ title, open, onOpenChange, ...catalogue }: Pro
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
         </DialogHeader>
-        <ProcedureCatalogue {...catalogue} />
+        {/* The dialog itself never scrolls: the catalogue fills it and only the lanes scroll, in their own box. */}
+        <Stack gap="none" className="min-h-0 min-w-0 flex-1 overflow-hidden">
+          <ProcedureCatalogue {...catalogue} />
+        </Stack>
       </BoundedDialogContent>
     </Dialog>
   );
