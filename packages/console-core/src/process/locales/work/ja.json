@@ -1,0 +1,21 @@
+{
+  "tabs": {
+    "progress": "進行",
+    "map": "全体を見る",
+    "outputs": "成果物",
+    "history": "履歴",
+    "related": "関連業務"
+  },
+  "stage": "現在の段階",
+  "holder": "現在の担当",
+  "mine": "自分の番",
+  "waiting": "他の担当の番",
+  "finished": "完了した業務",
+  "choices": "他の選択",
+  "records": "記録一覧を見る",
+  "empty": {
+    "outputs": "まだ作成した記録がありません。",
+    "history": "まだ処理した作業がありません。",
+    "related": "続く業務がありません。"
+  }
+}

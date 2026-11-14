@@ -94,6 +94,11 @@
       "types": "./src/peek/index.ts",
       "import": "./dist/peek/index.js"
     },
+    "./process": {
+      "source": "./src/process/index.ts",
+      "types": "./src/process/index.ts",
+      "import": "./dist/process/index.js"
+    },
     "./screen": {
       "source": "./src/screen/index.ts",
       "types": "./src/screen/index.ts",

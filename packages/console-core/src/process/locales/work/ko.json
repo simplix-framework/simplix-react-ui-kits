@@ -1,0 +1,21 @@
+{
+  "tabs": {
+    "progress": "진행",
+    "map": "넓게 보기",
+    "outputs": "산출물",
+    "history": "이력",
+    "related": "관련 업무"
+  },
+  "stage": "현재 단계",
+  "holder": "지금 담당",
+  "mine": "내 차례",
+  "waiting": "다른 담당의 차례",
+  "finished": "끝난 업무",
+  "choices": "다른 선택",
+  "records": "기록 목록 보기",
+  "empty": {
+    "outputs": "아직 만든 기록이 없습니다.",
+    "history": "아직 처리한 일이 없습니다.",
+    "related": "이어진 업무가 없습니다."
+  }
+}

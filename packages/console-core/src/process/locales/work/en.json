@@ -1,0 +1,21 @@
+{
+  "tabs": {
+    "progress": "Progress",
+    "map": "Whole view",
+    "outputs": "Records",
+    "history": "History",
+    "related": "Related work"
+  },
+  "stage": "Current step",
+  "holder": "Held by",
+  "mine": "Your turn",
+  "waiting": "Waiting on someone else",
+  "finished": "Finished",
+  "choices": "Other choices",
+  "records": "See the records",
+  "empty": {
+    "outputs": "No record has been made yet.",
+    "history": "Nothing has been done yet.",
+    "related": "No work follows from this one."
+  }
+}

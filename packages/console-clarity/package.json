@@ -104,6 +104,11 @@
       "types": "./src/shell/index.ts",
       "import": "./dist/shell/index.js"
     },
+    "./process": {
+      "source": "./src/process/index.ts",
+      "types": "./src/process/index.ts",
+      "import": "./dist/process/index.js"
+    },
     "./styles/*": "./src/styles/*"
   },
   "files": [

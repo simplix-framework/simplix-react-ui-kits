@@ -8,6 +8,7 @@
 /* Calendar package Tailwind content-source registration (same self-registration
    mechanism as the framework UI styles.css). */
 @import '@simplix-react/calendar/styles.css';
+@import '@simplix-react/process/styles.css';
 /* The type steps the kit's parts read, after the framework theme so a theme that defines them wins
    only through a more specific selector. */
 @import './type-steps.css';

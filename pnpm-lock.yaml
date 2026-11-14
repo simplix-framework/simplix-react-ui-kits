@@ -148,6 +148,12 @@ importers:
       '@simplix-react/mock':
         specifier: link:/Users/taehwan/Workspace/simplix/simplix-react/packages/mock
         version: link:../simplix-react/packages/mock
+      '@simplix-react/process':
+        specifier: link:/Users/taehwan/Workspace/simplix/simplix-react/packages/process
+        version: link:../simplix-react/packages/process
+      '@simplix-react/process-core':
+        specifier: link:/Users/taehwan/Workspace/simplix/simplix-react/packages/process-core
+        version: link:../simplix-react/packages/process-core
       '@simplix-react/react':
         specifier: link:/Users/taehwan/Workspace/simplix/simplix-react/packages/react
         version: link:../simplix-react/packages/react

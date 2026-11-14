@@ -907,6 +907,48 @@
   [data-slot="console-page-meta"][data-slot][data-s-console-page-meta] {
     @apply mt-1.5 flex flex-wrap items-center;
   }
+  [data-slot="console-work-empty"][data-slot][data-s-console-work-empty] {
+    @apply px-1 py-6 text-sm text-muted-foreground;
+  }
+  [data-slot="console-work-fact"][data-slot][data-s-console-work-fact] {
+    @apply text-xs text-muted-foreground;
+  }
+  [data-slot="console-work-kind"][data-slot][data-s-console-work-kind] {
+    @apply text-xs font-medium text-muted-foreground;
+  }
+  [data-slot="console-work-list"][data-slot][data-s-console-work-list] {
+    @apply m-0 list-none p-0;
+  }
+  [data-slot="console-work-row-go"][data-slot][data-s-console-work-row-go] {
+    @apply text-muted-foreground;
+  }
+  [data-slot="console-work-row"][data-slot][data-s-console-work-row] {
+    @apply gap-3 border-b border-border px-1 py-2 text-start;
+  }
+  [data-slot="console-work-row-sub"][data-slot][data-s-console-work-row-sub] {
+    @apply text-xs text-muted-foreground;
+  }
+  [data-slot="console-work-row-title"][data-slot][data-s-console-work-row-title] {
+    @apply text-sm font-medium;
+  }
+  [data-slot="console-work-tab-count"][data-slot][data-s-console-work-tab-count] {
+    @apply ms-1 text-xs text-muted-foreground;
+  }
+  [data-slot="console-work-title"][data-slot][data-s-console-work-title] {
+    @apply text-base font-semibold text-foreground;
+  }
+  [data-slot="console-work-turn-label"][data-slot][data-s-console-work-turn-label] {
+    @apply text-xs font-semibold;
+  }
+  [data-slot="console-work-turn-label"][data-state="mine"][data-s-console-work-turn-label] {
+    @apply text-primary;
+  }
+  [data-slot="console-work-turn-label"][data-state="waiting"][data-s-console-work-turn-label] {
+    @apply text-muted-foreground;
+  }
+  [data-slot="console-work-turn-label"][data-state="finished"][data-s-console-work-turn-label] {
+    @apply text-muted-foreground;
+  }
   [data-slot="console-agent-dock-glyph"][data-slot][data-s-console-agent-dock-glyph] {
     @apply mr-1;
   }
@@ -1536,6 +1578,24 @@
   :where([data-part="console-record-page-flow"])[data-part][data-p-console-record-page-flow] {
     @apply sticky top-0 pt-2;
   }
+  :where([data-part="console-work-body"])[data-part][data-p-console-work-body] {
+    @apply px-4 py-3;
+  }
+  :where([data-part="console-work-head"])[data-part][data-p-console-work-head] {
+    @apply border-b border-border px-4 py-3;
+  }
+  :where([data-part="console-work-turn"])[data-part][data-p-console-work-turn] {
+    @apply rounded-md border px-4 py-3;
+  }
+  :where([data-part="console-work-turn"][data-part-state="mine"])[data-part][data-p-console-work-turn] {
+    @apply border-primary/40 bg-primary/5;
+  }
+  :where([data-part="console-work-turn"][data-part-state="waiting"])[data-part][data-p-console-work-turn] {
+    @apply border-border bg-muted/40;
+  }
+  :where([data-part="console-work-turn"][data-part-state="finished"])[data-part][data-p-console-work-turn] {
+    @apply border-border bg-muted/40;
+  }
   :where([data-part="console-form-sheet-cell"])[data-part][data-p-console-form-sheet-cell] {
     @apply align-top border;
   }
@@ -1853,6 +1913,12 @@
   }
   :where([data-slot="presentation-group"])[data-s-presentation-group] {
     @apply [&>button:focus-visible]:!shadow-[var(--focus-halo)] [&>button]:!h-6 [&>button]:!w-7 [&>button]:!min-w-0 [&>button]:!p-0 [&_svg]:!size-3.5 [&>button]:rounded-none [&>button:first-child]:rounded-l-md [&>button:last-child]:rounded-r-md [&>button]:!border-0 [&>button]:!shadow-none [&>button+button]:!border-l [&>button+button]:!border-border [&>button[aria-pressed=true]]:bg-accent! [&>button[aria-pressed=true]]:text-accent-foreground! [&>button:not([aria-pressed=true])]:text-muted-foreground;
+  }
+  :where([data-slot="console-work-row"])[data-s-console-work-row] {
+    @apply last:border-b-0;
+  }
+  :where([data-slot="console-work-row"][data-opens="true"])[data-s-console-work-row] {
+    @apply hover:bg-muted/50 focus-visible:bg-muted/50 focus-visible:outline-none;
   }
   :where([data-slot="console-plan-palette-item"][data-placeable="true"])[data-s-console-plan-palette-item] {
     @apply hover:bg-accent;
