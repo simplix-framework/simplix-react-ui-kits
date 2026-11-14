@@ -3,7 +3,7 @@
 // into blocks (auth-copy.json: the step, the scheme, the title and the card's blocks in reading
 // order), and this page draws each block with the part that draws it. The words are the reference
 // product's own, kept as written because where a line wraps is part of what is measured.
-import type { ReactNode } from "react";
+import { Fragment, type ReactNode } from "react";
 import { SiteAction, type SiteActionTone } from "@simplix-react-ui-kits/site-core/action";
 import { AuthAlert, AuthCard, AuthDoneMark, AuthFieldHead, AuthForm, AuthLink, AuthLinks, AuthOr, AuthPage, AuthProviders, AuthText, PasswordRules, PasswordStrength } from "@simplix-react-ui-kits/site-core/auth";
 import { CodeField, FieldNote, FormField, SiteInput } from "@simplix-react-ui-kits/site-core/form";
@@ -69,7 +69,7 @@ function AuthBlock({ block }: { block: Block }): ReactNode {
         );
       return (
         <AuthLinks layout={b.layout as "spread" | "inline"}>
-          {(b.items as Item[]).map((item, index) => ("link" in item ? <span key={index}>{linkOf(item)}</span> : <span key={index}>{item.text}</span>))}
+          {(b.items as Item[]).map((item, index) => ("link" in item ? <Fragment key={index}>{linkOf(item)}</Fragment> : <span key={index}>{item.text}</span>))}
         </AuthLinks>
       );
     case "link":

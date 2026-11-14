@@ -10,7 +10,7 @@
 // type it draws unless a measure entry names another. The theme values (`tests/fixtures/theme.css`)
 // stand in for a product's token file. The measure files are `measure.json` and `measure/*.json`. esbuild and @tailwindcss/node are found the way the
 // framework's design scripts find them: through this package's bundler, then through @simplix-react/ui.
-import { spawnSync } from "node:child_process";
+import { spawn, spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, readdirSync, readFileSync, realpathSync, rmSync, writeFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { dirname, join, resolve } from "node:path";
@@ -125,13 +125,14 @@ export async function buildDemo(props = {}, { planted = "", fixture = "pricing" 
 }
 
 /**
- * Opens each page in one ego-browser task space and returns the probe's signature of each. A run
- * names the page type it is read as, the viewport width and, where given, the page root's width,
- * which a reference measured inside a frame (a phone mock-up) dictates, and its least height.
+ * The ego-browser script that opens each run's page in the task space `space` and prints the probe's
+ * signature of each. A run names the page type it is read as, the viewport width and, where given,
+ * the page root's width, which a reference measured inside a frame (a phone mock-up) dictates, and
+ * its least height.
  */
-export function probeInBrowser(runs) {
-  const script = `
-const task = await taskSpace("site-demo-" + ${process.pid});
+function probeScript(runs, space) {
+  return `
+const task = await taskSpace(${JSON.stringify(space)});
 const page = task.page("p1");
 const probeFn = (${probe.toString()});
 const runs = ${JSON.stringify(runs)};
@@ -151,11 +152,51 @@ for (const run of runs) {
 await task.finish({ keep: [] });
 console.log("SITE_DEMO_PROBE " + JSON.stringify(readings));
 `;
-  const run = spawnSync("ego-browser", ["nodejs"], { input: script, encoding: "utf8", maxBuffer: 256 * 1024 * 1024 });
-  const printed = `${run.stdout ?? ""}${run.stderr ?? ""}`;
+}
+
+/** The readings a finished browser run printed. */
+function readingsOf(status, printed) {
   const at = printed.indexOf("SITE_DEMO_PROBE ");
-  if (run.status !== 0 || at < 0) throw new Error(`the browser run did not finish (exit ${run.status})\n${printed.slice(0, 1200)}`);
+  if (status !== 0 || at < 0) throw new Error(`the browser run did not finish (exit ${status})\n${printed.slice(0, 1200)}`);
   return JSON.parse(printed.slice(at + "SITE_DEMO_PROBE ".length).split("\n")[0]);
+}
+
+/** Opens each page in one ego-browser task space and returns the probe's signature of each. */
+export function probeInBrowser(runs) {
+  const run = spawnSync("ego-browser", ["nodejs"], { input: probeScript(runs, `site-demo-${process.pid}`), encoding: "utf8", maxBuffer: 256 * 1024 * 1024 });
+  return readingsOf(run.status, `${run.stdout ?? ""}${run.stderr ?? ""}`);
+}
+
+/**
+ * The same readings, taken in `lanes` browser task spaces at once: the runs are dealt out in turn and
+ * each lane opens its own, so the wall time is the longest lane's and the readings keep the runs' order.
+ */
+export async function probeAcross(runs, lanes = 8) {
+  const dealt = Array.from({ length: Math.min(lanes, runs.length) }, () => []);
+  runs.forEach((run, index) => dealt[index % dealt.length].push({ run, index }));
+  const readings = new Array(runs.length);
+  await Promise.all(
+    dealt.map(
+      (lane, number) =>
+        new Promise((done, refuse) => {
+          const child = spawn("ego-browser", ["nodejs"], { stdio: ["pipe", "pipe", "pipe"] });
+          let printed = "";
+          child.stdout.on("data", (chunk) => (printed += chunk));
+          child.stderr.on("data", (chunk) => (printed += chunk));
+          child.on("error", refuse);
+          child.on("close", (status) => {
+            try {
+              readingsOf(status, printed).forEach((reading, at) => (readings[lane[at].index] = reading));
+              done();
+            } catch (error) {
+              refuse(error);
+            }
+          });
+          child.stdin.end(probeScript(lane.map((one) => one.run), `site-demo-${process.pid}-${number}`));
+        }),
+    ),
+  );
+  return readings;
 }
 
 /** A signature cut down to one region, as a measure.json entry with `only` records it. */
@@ -201,7 +242,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === resolve(process.argv[1
     const runOf = async (page, planted) => ({ html: await buildDemo(page.props, { planted, fixture: page.fixture ?? page.type }), type: page.type, viewport: page.viewport, rootWidth: page.rootWidth, minHeight: page.signature?.frame?.window?.height });
     const runs = await Promise.all(entries.map(([, page]) => runOf(page, "")));
     const planted = selftest ? await Promise.all(entries.map(([, page]) => runOf(page, plant))) : [];
-    const readings = probeInBrowser([...runs, ...planted]);
+    const readings = await probeAcross([...runs, ...planted]);
     const held = (reading, page) => {
       const cut = page.only ? onlyRegion(reading, page.only) : reading;
       return { verdict: page.only ? [] : judge(cut, page.type), differences: compare(page.signature, cut) };
