@@ -60,6 +60,9 @@ export interface WorkPageProps {
   readonly children?: ReactNode;
 }
 
+/** The whole view draws narrower lanes than a page does, so a procedure of many lanes fits the window without scrolling sideways. */
+const WHOLE_METRICS = { laneMinWidth: 80, titleWidth: 152 } as const;
+
 /**
  * One piece of work as a page: the screen of the step in hand in the middle, and beside it a rail
  * with whose turn it is and the steps of the procedure. Pressing a step shows that step's screen in
@@ -170,7 +173,7 @@ export function WorkPage({ kind, title, stage, onClose, backLabel, turn, procedu
           {/* The lanes scroll inside their own box, so the row of lane names stays in sight. */}
           <Stack gap="none" className="min-h-0 flex-1 overflow-hidden">
             {/* Picking a step on the lanes closes the whole view and shows that step's screen. */}
-            <ProcessLanes {...procedure} layout="lanes" scrollToActive={false} className="h-full" onSelect={(target) => { procedure.onSelect?.(target); setWide(false); }} />
+            <ProcessLanes {...procedure} layout="lanes" metrics={WHOLE_METRICS} scrollToActive={false} className="h-full" onSelect={(target) => { procedure.onSelect?.(target); setWide(false); }} />
           </Stack>
         </BoundedDialogContent>
       </Dialog>
