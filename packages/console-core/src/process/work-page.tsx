@@ -2,11 +2,13 @@ import { type ReactNode, useState } from "react";
 import { useTranslation } from "@simplix-react/i18n/react";
 import { ProcessLanes } from "@simplix-react/process";
 import { Button, Dialog, DialogHeader, DialogTitle, EmptyState, Flex, Stack, StatusBadge, type StatusTone, Tabs, TabsContent, TabsTrigger } from "@simplix-react/ui";
-import { ArrowLeftIcon, ChevronRightIcon, Maximize2Icon } from "lucide-react";
+import { ArrowLeftIcon, ChevronRightIcon, Maximize2Icon, XIcon } from "lucide-react";
 import { partAttributes, slotAttributes } from "@simplix-react/ui/design";
 
 import { BoundedDialogContent } from "../layout/bounded-dialog-content";
 import { PageTabStrip } from "../layout/page-tab-strip";
+import { useCrudPresentation } from "../page/crud-page";
+import { DetailPresentationSwitch } from "../page/detail-presentation-switch";
 import { PACKAGE_NAMESPACE } from "./locales";
 import { workLocationPathStyle, workLocationStepStyle, workLocationStyle, workPageHeadStyle, workRailBarStyle, workRailBodyStyle, workRailStyle } from "./work-page.style";
 import { WHOLE_VIEW_METRICS } from "./whole-view";
@@ -72,14 +74,20 @@ export interface WorkPageProps {
 export function WorkPage({ kind, title, stage, onClose, backLabel, turn, procedure, location, atCurrent, onCurrent, history, related, defaultWide = false, defaultRailTab = "progress", empty, children }: WorkPageProps) {
   const { t } = useTranslation(`${PACKAGE_NAMESPACE}/work`);
   const [wide, setWide] = useState(defaultWide);
+  // Beside a list, over it or in a dialog, the work closes as any record does there: by the mark at
+  // the end of its head, next to the switch between presentations. As a page it has the way back.
+  const crud = useCrudPresentation();
+  const asPage = !crud || crud.presentation === "page";
   const counts = { history: history.length, related: related.length };
   return (
     <Stack gap="none" className="min-h-0 flex-1" data-work-page>
       <Flex align="center" {...partAttributes(workPageHeadStyle, {})}>
-        <Button size="sm" variant="ghost" onClick={onClose} className="shrink-0">
-          <ArrowLeftIcon aria-hidden className="size-4" />
-          {backLabel ?? t("back")}
-        </Button>
+        {asPage ? (
+          <Button size="sm" variant="ghost" onClick={onClose} className="shrink-0" data-work-back>
+            <ArrowLeftIcon aria-hidden className="size-4" />
+            {backLabel ?? t("back")}
+          </Button>
+        ) : null}
         <Stack gap="none" className="min-w-0 flex-1">
           <span {...slotAttributes(workKindStyle, {})}>{kind}</span>
           <span className="truncate" {...slotAttributes(workTitleStyle, {})}>
@@ -87,6 +95,12 @@ export function WorkPage({ kind, title, stage, onClose, backLabel, turn, procedu
           </span>
         </Stack>
         {stage ? <StatusBadge tone={stage.tone ?? "processing"} label={stage.label} appearance="filled" /> : null}
+        {crud?.presentationSwitch ? <DetailPresentationSwitch {...crud.presentationSwitch} /> : null}
+        {asPage ? null : (
+          <Button size="sm" variant="ghost" onClick={onClose} aria-label={t("close")} className="shrink-0" data-work-close>
+            <XIcon aria-hidden className="size-4" />
+          </Button>
+        )}
       </Flex>
       {/* raw layout: the screen in view with the rail over its end edge; unfolded, the rail spans the whole box. */}
       <div className="relative flex min-h-0 flex-1">

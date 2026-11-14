@@ -222,6 +222,7 @@ export function CrudPage({
     notice: raised.length > 0 ? [...declared, ...raised] : spec.notice,
     tilesFilters: spec.tilesFilters ?? tileFilters,
   };
-  const pageSpec = recordAsPage ? { title: recordPageTitle(onAPhone, spec.title), layout: spec.layout, width: spec.width } : listSpec;
+  // A page standing inside another keeps out of the header whichever view it shows.
+  const pageSpec = recordAsPage ? { title: recordPageTitle(onAPhone, spec.title), layout: spec.layout, width: spec.width, embedded: spec.embedded } : listSpec;
   return <ConsolePage spec={{ ...pageSpec, body }} search={search} onNavigate={onNavigate} />;
 }
