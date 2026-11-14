@@ -10,8 +10,9 @@ import { SiteDialogFrame } from "./dialog";
 import { FieldNote, FormField, SiteInput, SiteTextarea } from "./fields";
 import { radioKeyTarget, radioTabStop } from "./radio-keys";
 import { SiteSelect } from "./select";
-import { siteCheckboxStyle } from "./form.style";
+
 import { SiteToastList } from "./toasts";
+import { siteCheckboxStyle } from "./choices.style";
 
 const byPart = (html: string, part: string) => tagsOf(html).filter((tag) => tag.attributes["data-part"] === part);
 // A framework part draws its own glyph and, for a form, a hidden native control beside it.

@@ -7,40 +7,11 @@ import { siteCardTextStyle, siteStepDiscStyle } from "../install/install.style";
 import { SiteLive } from "../page/site-bits";
 import { ArticleAnchor } from "./help-lists";
 import {
-  siteArticleFactsStyle,
-  siteArticleFactStyle,
-  siteArticleIntroStyle,
-  siteArticleLeadStyle,
-  siteArticleStepBodyStyle,
-  siteArticleStepStyle,
-  siteArticleWhereStyle,
-  siteDocActionStyle,
-  siteDocHeadingStyle,
-  siteDocProgressStyle,
-  siteDocSectionStyle,
-  siteDocTextStyle,
-  siteFeedbackAskStyle,
-  siteFeedbackChoicesStyle,
-  siteFeedbackMoreStyle,
-  siteFeedbackRowStyle,
-  siteFeedbackStyle,
-  siteFeedbackThanksStyle,
-  siteFigureCaptionStyle,
-  siteFigureStyle,
-  siteQuickAskStyle,
-  siteQuickBoxStyle,
-  siteQuickItemStyle,
-  siteQuickListStyle,
-  siteQuickTitleStyle,
-  siteRelatedGridStyle,
-  siteRelatedLinkStyle,
-  siteRelatedStyle,
   siteArticleListTitleStyle,
   siteArticleNameStyle,
   siteArticleMetaStyle,
-  siteTipMarkStyle,
-  siteTipStyle,
 } from "./help.style";
+import { siteQuickItemStyle, siteFeedbackThanksStyle, siteRelatedGridStyle, siteTipStyle, siteDocHeadingStyle, siteArticleWhereStyle, siteArticleStepStyle, siteQuickListStyle, siteFeedbackRowStyle, siteDocSectionStyle, siteQuickTitleStyle, siteDocProgressStyle, siteDocActionStyle, siteFeedbackAskStyle, siteTipMarkStyle, siteFeedbackMoreStyle, siteRelatedStyle, siteFigureCaptionStyle, siteDocTextStyle, siteFigureStyle, siteFeedbackChoicesStyle, siteRelatedLinkStyle, siteArticleFactsStyle, siteQuickAskStyle, siteFeedbackStyle, siteArticleFactStyle, siteArticleLeadStyle, siteQuickBoxStyle, siteArticleStepBodyStyle, siteArticleIntroStyle } from "./article.style";
 
 /** Props for {@link ArticleIntro}. */
 export interface ArticleIntroProps {

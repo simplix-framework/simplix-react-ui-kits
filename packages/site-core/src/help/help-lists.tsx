@@ -3,26 +3,13 @@ import { slotAttributes, type SlotStyle } from "@simplix-react/ui/design";
 
 import { SiteLink } from "../link/site-link";
 import {
-  siteArticleLinkStyle,
-  siteArticleListHeadStyle,
-  siteArticleListStyle,
   siteArticleMetaStyle,
   siteArticleNameStyle,
-  siteArticleNumberStyle,
-  siteArticleRowsStyle,
-  siteArticleRowStyle,
   siteArticleListTitleStyle,
-  siteCategoryCountStyle,
-  siteCategoryGridStyle,
-  siteCategoryItemStyle,
-  siteCategoryLinkStyle,
-  siteCategoryListStyle,
-  siteCategoryStyle,
-  siteCategoryTitleStyle,
-  siteColumnsStyle,
   siteLinkMarkStyle,
   siteLinkTextStyle,
 } from "./help.style";
+import { siteCategoryLinkStyle, siteArticleNumberStyle, siteCategoryGridStyle, siteCategoryListStyle, siteArticleRowStyle, siteCategoryTitleStyle, siteColumnsStyle, siteArticleListHeadStyle, siteCategoryCountStyle, siteCategoryItemStyle, siteArticleLinkStyle, siteArticleRowsStyle, siteCategoryStyle, siteArticleListStyle } from "./help-lists.style";
 
 /** An article a list links to. */
 export interface SiteArticleLink {

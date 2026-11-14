@@ -5,7 +5,8 @@ import { SiteBadge } from "../page/site-bits";
 import { bySlot, silentRefusals, tabStops, unmarked } from "../testing/markup";
 import { DocLayout } from "./doc-layout";
 import { ChangeList, ClauseList, DiffText, diffChanged, diffVisible, FilledText, InfoCard, InfoGrid, KeyValues, LegalArticle, NoticeBanner, PlainSummary, PrintButton, VersionPicker } from "./legal-parts";
-import { siteInfoGridStyle, siteKeyValuesStyle, siteValueStyle } from "./legal.style";
+
+import { siteKeyValuesStyle, siteInfoGridStyle, siteValueStyle } from "./legal-parts.style";
 
 const clause = "The app {+edits a pptx+}{-only reads files-} for {company}.";
 

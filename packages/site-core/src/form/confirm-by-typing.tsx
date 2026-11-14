@@ -4,13 +4,8 @@ import { slotAttributes } from "@simplix-react/ui/design";
 import { SiteAction, type SiteActionBase, type SiteActionSpec, type SiteReason } from "../action/site-action";
 import { FormField, SiteInput } from "./fields";
 import { useQuestionFocus } from "./question-focus";
-import {
-  siteConfirmActionsStyle,
-  siteConfirmBodyStyle,
-  siteConfirmPointStyle,
-  siteConfirmStyle,
-  siteConfirmTitleStyle,
-} from "./form.style";
+
+import { siteConfirmBodyStyle, siteConfirmActionsStyle, siteConfirmPointStyle, siteConfirmStyle, siteConfirmTitleStyle } from "./confirm-by-typing.style";
 
 /** Whether what was typed confirms the question: the word, ignoring the space around it. */
 export function typedConfirms(typed: string, word: string): boolean {

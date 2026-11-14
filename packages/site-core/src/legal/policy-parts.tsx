@@ -2,7 +2,7 @@ import { type MouseEvent, type ReactNode, useId } from "react";
 import { slotAttributes } from "@simplix-react/ui/design";
 
 import { SiteAction, type SiteActionSpec } from "../action/site-action";
-import { siteDocActionStyle, siteDocHeadingStyle } from "../help/help.style";
+
 import { siteCaptionStyle } from "../page/site-page.style";
 import {
   siteAgencyGridStyle,
@@ -21,6 +21,7 @@ import {
   siteRightsTextStyle,
   siteRightsTitleStyle,
 } from "./policy.style";
+import { siteDocHeadingStyle, siteDocActionStyle } from "../help/article.style";
 
 /** Props for {@link LegalSection}. */
 export interface LegalSectionProps {

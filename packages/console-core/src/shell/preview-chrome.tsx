@@ -1,126 +1,24 @@
-import {
-  BellIcon,
-  CircleHelpIcon,
-  KeyboardIcon,
-  PanelLeftCloseIcon,
-  PanelLeftOpenIcon,
-} from "lucide-react";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { BellIcon, CircleHelpIcon, KeyboardIcon, PanelLeftCloseIcon, PanelLeftOpenIcon } from "lucide-react";
 import { useTranslation } from "@simplix-react/i18n/react";
-import {
-  Button,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  Flex,
-  Popover,
-  PopoverTrigger,
-  Stack,
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@simplix-react/ui";
+import { Button, DropdownMenuItem, DropdownMenuSeparator, Flex } from "@simplix-react/ui";
 import { partAttributes } from "@simplix-react/ui/design";
+
 import { zoneLabel } from "../datetime";
 import { ManualPanel, useManualStore } from "../manual";
 import type { ConsoleArea } from "./area-switch";
-import {
-  ConsoleCommandPalette,
-  ConsoleShortcutList,
-  type ConsoleCommand,
-  type ConsoleShortcut,
-} from "./command-palette";
+import { ConsoleCommandPalette, ConsoleShortcutList, type ConsoleCommand, type ConsoleShortcut } from "./command-palette";
 import { useConsole } from "./console-context";
 import { ConsoleStatusStrip, type ConsoleStatusStripProps, ConsoleTopBar } from "./console-top-bar";
 import { useConsoleHotkeys } from "./console-hotkeys";
 import { PACKAGE_NAMESPACE } from "./locales";
-import {
-  ConsoleMenuBranch,
-  ConsoleMenuBranchRow,
-  ConsoleMenuColumn,
-  ConsoleMenuFlyout,
-  ConsoleMenuInactiveRow,
-  ConsoleMenuLinkRow,
-  ConsoleMenuRail,
-  ConsoleMenuRailButton,
-  ConsoleMenuFold,
-  ConsoleMenuSlot,
-} from "./menu-tree";
+import { ConsoleMenuColumn, ConsoleMenuRail, ConsoleMenuSlot } from "./menu-tree";
 import { ConsoleMenuSearch } from "./menu-search";
 import { ConsoleServiceLinks, type ConsoleServiceLink } from "./service-links";
 import { useSidebarCollapse } from "./sidebar-collapse";
 import { consoleWindowStyle } from "./console-window.style";
-import { ConsolePhoneMenuSheet, ConsolePhoneMenuSection } from "./phone-shell";
-
-/** One destination in the preview's menu. */
-export interface ConsolePreviewMenuEntry {
-  readonly key: string;
-  readonly label: ReactNode;
-  readonly icon?: ReactNode;
-  /** Where the row goes. Absent, the row is drawn inactive, as the console draws an unbuilt screen. */
-  readonly href?: string;
-  /** Why an inactive row cannot be opened, announced and shown on hover, as the console shows it. */
-  readonly inactiveReason?: string;
-  /** The mark at the end of an inactive row, saying which kind of unavailable it is. */
-  readonly inactiveMark?: ReactNode;
-  readonly children?: readonly ConsolePreviewMenuEntry[];
-}
-
-/** One cluster of the menu: a branch row and the destinations under it. */
-export interface ConsolePreviewMenuGroup {
-  readonly key: string;
-  readonly label: ReactNode;
-  readonly icon?: ReactNode;
-  readonly entries: readonly ConsolePreviewMenuEntry[];
-}
-
-/** The menu column of one area. */
-export interface ConsolePreviewMenu {
-  /** The area's name, over the column. */
-  readonly title: ReactNode;
-  readonly groups: readonly ConsolePreviewMenuGroup[];
-}
-
-/** The words the chrome prints, in the product's own catalogue. */
-export interface ConsolePreviewChromeLabels {
-  readonly search: string;
-  readonly site: string;
-  readonly noSite: string;
-  readonly notifications: string;
-  /** What the bell's list says when nothing is waiting. */
-  readonly noNotifications: string;
-  readonly account: string;
-  readonly signOut: string;
-  readonly menu: string;
-  readonly rail: string;
-  readonly expand: string;
-  readonly collapse: string;
-  readonly status: string;
-  readonly quiet: string;
-  /** The workplace clock, with the zone already filled in by {@link ConsolePreviewChrome.siteClock}. */
-  readonly siteClock: (zone: string) => string;
-}
-
-/** One reading on the right of the status strip. */
-export interface ConsolePreviewStatusSegment {
-  readonly label: string;
-  /** `warn` when the reading is something somebody has to act on. */
-  readonly tone?: "plain" | "warn";
-}
-
-/** What the status strip reports beyond the workplace's zone. */
-export interface ConsolePreviewStatus {
-  /** What is happening now. Absent, the strip says nothing is waiting. */
-  readonly ticker?: { readonly text: string; readonly live?: boolean };
-  /** The shift the workplace is on, read after its zone in the same reading. */
-  readonly shift?: string;
-  /** Readings after the zone, in order. */
-  readonly segments?: readonly ConsolePreviewStatusSegment[];
-  /**
-   * The workplace's wall clock when the preview opens, as `HH:MM:SS`, so a still of the page reads
-   * the story's own time. It ticks from there. Absent, the strip draws no clock.
-   */
-  readonly clockStart?: string;
-}
+import type { ConsolePreviewChromeLabels, ConsolePreviewMenu, ConsolePreviewStatus } from "./preview-chrome-types";
+import { MenuGroup, RailEntry, RailGroup, destinationsOf } from "./preview-chrome-menu";
 
 /** What the window around a previewed screen draws. */
 export interface ConsolePreviewChrome {
@@ -176,84 +74,6 @@ export interface ConsolePreviewChrome {
    * (`menu`), where the top bar draws none. The palette it opens is the same.
    */
   readonly searchIn?: "bar" | "menu";
-}
-
-/** Whether an entry is the current destination or holds it. */
-function holds(entry: ConsolePreviewMenuEntry, current: string | undefined): boolean {
-  if (current === undefined) return false;
-  return entry.key === current || (entry.children ?? []).some((child) => holds(child, current));
-}
-
-/** A label the palette can match, or nothing when the product handed in markup. */
-const textOf = (node: ReactNode): string | undefined => (typeof node === "string" ? node : undefined);
-
-/** A destination the palette can open: a menu row that has an address and a name in words. */
-interface Destination {
-  readonly key: string;
-  readonly label: string;
-  readonly path: string;
-  readonly href: string;
-  readonly icon?: ReactNode;
-}
-
-/** Every destination of every area, with the area and cluster it sits under. */
-function destinationsOf(chrome: ConsolePreviewChrome): Destination[] {
-  const found: Destination[] = [];
-  for (const area of chrome.areas) {
-    const menu = chrome.menuFor(area.key);
-    const areaLabel = textOf(area.label) ?? area.key;
-    const walk = (entry: ConsolePreviewMenuEntry, path: string) => {
-      if (entry.children) {
-        entry.children.forEach((child) => walk(child, path));
-        return;
-      }
-      const label = textOf(entry.label);
-      if (entry.href && label) found.push({ key: entry.key, label, path, href: entry.href, icon: entry.icon });
-    };
-    for (const group of menu.groups) {
-      const path = menu.groups.length > 1 ? `${areaLabel} / ${textOf(group.label) ?? group.key}` : areaLabel;
-      group.entries.forEach((entry) => walk(entry, path));
-    }
-  }
-  return found;
-}
-
-/** The preview's phone menu reuses its declared desktop destinations and navigation port. */
-export function ConsolePreviewPhoneMenu({ chrome, open, onOpenChange }: {
-  readonly chrome: ConsolePreviewChrome;
-  readonly open: boolean;
-  readonly onOpenChange: (open: boolean) => void;
-}) {
-  return (
-    <ConsolePhoneMenuSheet open={open} onOpenChange={onOpenChange} title={chrome.title} description={chrome.labels.menu} footer={chrome.settings}>
-      <Stack gap="md" onClickCapture={(event) => {
-        const link = event.target instanceof Element ? event.target.closest("a[href]") : null;
-        if (!link || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-        const href = link.getAttribute("href");
-        if (!href) return;
-        event.preventDefault();
-        onOpenChange(false);
-        if (chrome.navigate) chrome.navigate(href);
-        else window.location.assign(href);
-      }}>
-        {chrome.areas.map((area) => {
-          const menu = chrome.menuFor(area.key);
-          if (!menu.groups.length) return area.href ? (
-            <ConsolePhoneMenuSection key={area.key}>
-              <ConsoleMenuLinkRow href={area.href} label={area.label} current={area.key === chrome.area} />
-            </ConsolePhoneMenuSection>
-          ) : null;
-          return <ConsolePhoneMenuSection key={area.key} title={area.label}>
-            {menu.groups.map((group) => (
-              <ConsolePhoneMenuSection key={group.key} title={menu.groups.length === 1 && group.label === area.label ? undefined : group.label}>
-                {group.entries.map((entry) => <EntryRow key={entry.key} entry={entry} current={chrome.current} />)}
-              </ConsolePhoneMenuSection>
-            ))}
-          </ConsolePhoneMenuSection>
-        })}
-      </Stack>
-    </ConsolePhoneMenuSheet>
-  );
 }
 
 /**
@@ -487,116 +307,6 @@ export function previewStripProps(chrome: ConsolePreviewChrome, zone: string, cl
   };
 }
 
-/**
- * The fold of every branch the reader has toggled, kept for the life of the page.
- *
- * <p>A branch that opened only when it held the current screen showed a different column on every
- * screen, so a destination seen on one screen was missing on the next. Every branch now starts
- * open, and a fold the reader chose outlives the move to another screen because the chrome is
- * remounted per screen and this map is not.
- */
-const branchFolds = new Map<string, boolean>();
-
-function useBranchFold(key: string, forced: boolean): readonly [boolean, () => void] {
-  const [open, setOpen] = useState(() => forced || (branchFolds.get(key) ?? true));
-  const toggle = () => {
-    branchFolds.set(key, !open);
-    setOpen(!open);
-  };
-  return [forced || open, toggle];
-}
-
-function MenuGroup({
-  group,
-  single,
-  current,
-}: {
-  readonly group: ConsolePreviewMenuGroup;
-  readonly single: boolean;
-  readonly current: string | undefined;
-}) {
-  const [open, toggle] = useBranchFold(`group:${group.key}`, single);
-  return (
-    <Stack gap="xs">
-      {single ? null : (
-        <ConsoleMenuBranchRow weight="cluster" icon={group.icon} label={group.label} open={open} onToggle={toggle} />
-      )}
-      <ConsoleMenuFold open={single || open}>
-        <ConsoleMenuBranch ruled={!single}>
-          {group.entries.map((entry) => (
-            <EntryRow key={entry.key} entry={entry} current={current} />
-          ))}
-        </ConsoleMenuBranch>
-      </ConsoleMenuFold>
-    </Stack>
-  );
-}
-
-/** One destination as a mark of its own on the rail: pressing it opens it, and one with no screen is drawn inactive. */
-function RailEntry({ entry, current, onOpen }: { readonly entry: ConsolePreviewMenuEntry; readonly current: string | undefined; readonly onOpen: (href: string) => void }) {
-  const href = entry.href;
-  return (
-    <ConsoleMenuRailButton
-      active={holds(entry, current)}
-      label={textOf(entry.label)}
-      disabled={href === undefined}
-      aria-description={entry.inactiveReason}
-      onClick={href ? () => onOpen(href) : undefined}
-    >
-      {entry.icon}
-    </ConsoleMenuRailButton>
-  );
-}
-
-function RailGroup({ group, current }: { readonly group: ConsolePreviewMenuGroup; readonly current: string | undefined }) {
-  const [open, setOpen] = useState(false);
-  const active = group.entries.some((entry) => holds(entry, current));
-  const name = textOf(group.label);
-  return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <ConsoleMenuRailButton active={active} label={name} onMouseEnter={() => setOpen(true)}>
-          {group.icon}
-        </ConsoleMenuRailButton>
-      </PopoverTrigger>
-      <ConsoleMenuFlyout title={group.label} onMouseLeave={() => setOpen(false)}>
-        {group.entries.map((entry) => (
-          <EntryRow key={entry.key} entry={entry} current={current} />
-        ))}
-      </ConsoleMenuFlyout>
-    </Popover>
-  );
-}
-
-function EntryRow({ entry, current }: { readonly entry: ConsolePreviewMenuEntry; readonly current: string | undefined }) {
-  const [open, toggle] = useBranchFold(`entry:${entry.key}`, false);
-  if (entry.children) {
-    return (
-      <Stack gap="xs">
-        <ConsoleMenuBranchRow icon={entry.icon} label={entry.label} open={open} onToggle={toggle} />
-        <ConsoleMenuFold open={open}>
-          <ConsoleMenuBranch ruled>
-            {entry.children.map((child) => (
-              <EntryRow key={child.key} entry={child} current={current} />
-            ))}
-          </ConsoleMenuBranch>
-        </ConsoleMenuFold>
-      </Stack>
-    );
-  }
-  if (!entry.href) {
-    const row = <ConsoleMenuInactiveRow icon={entry.icon} label={entry.label} mark={entry.inactiveMark} aria-description={entry.inactiveReason} />;
-    if (!entry.inactiveReason) return row;
-    return (
-      <Tooltip>
-        <TooltipTrigger asChild>{row}</TooltipTrigger>
-        <TooltipContent>{entry.inactiveReason}</TooltipContent>
-      </Tooltip>
-    );
-  }
-  return <ConsoleMenuLinkRow href={entry.href} current={entry.key === current} icon={entry.icon} label={entry.label} />;
-}
-
 /** Seconds since midnight of an `HH:MM:SS` reading. */
 function secondsOf(clock: string): number {
   const [h = 0, m = 0, s = 0] = clock.split(":").map(Number);
@@ -617,3 +327,6 @@ function useTickingClock(start: string | undefined): string | undefined {
   const pad = (n: number) => String(n).padStart(2, "0");
   return `${pad(Math.floor(total / 3600) % 24)}:${pad(Math.floor(total / 60) % 60)}:${pad(total % 60)}`;
 }
+
+export * from "./preview-chrome-types";
+export * from "./preview-chrome-menu";

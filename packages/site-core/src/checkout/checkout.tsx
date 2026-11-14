@@ -4,12 +4,6 @@ import { slotAttributes } from "@simplix-react/ui/design";
 import { SiteAction, type SiteActionSpec } from "../action/site-action";
 import { SiteCheckbox } from "../form/choices";
 import {
-  siteChainDiscStyle,
-  siteChainLabelStyle,
-  siteChainNoteStyle,
-  siteChainReadyStyle,
-  siteChainStepsStyle,
-  siteChainStepStyle,
   siteCheckoutActionsStyle,
   siteCheckoutHeadStyle,
   siteCheckoutLedeStyle,
@@ -18,41 +12,6 @@ import {
   siteCheckoutRowStyle,
   siteCheckoutStyle,
   siteCheckoutTitleStyle,
-  siteConsentAgainNoteStyle,
-  siteConsentAgainStyle,
-  siteConsentAllStyle,
-  siteConsentItemStyle,
-  siteConsentListStyle,
-  siteConsentViewStyle,
-  siteDoneMarkStyle,
-  siteDoneTextStyle,
-  siteDoneTitleStyle,
-  siteMethodAboutStyle,
-  siteMethodGridStyle,
-  siteMethodMarkStyle,
-  siteMethodNameStyle,
-  siteMethodStyle,
-  siteMethodTextStyle,
-  siteOrderAmountStyle,
-  siteOrderHeadStyle,
-  siteOrderLabelStyle,
-  siteOrderLinesStyle,
-  siteOrderLineStyle,
-  siteOrderLiveDotStyle,
-  siteOrderLiveStyle,
-  siteOrderNoteStyle,
-  siteOrderSummaryStyle,
-  siteOrderTitleStyle,
-  siteProgressChainStyle,
-  siteProviderBodyStyle,
-  siteProviderFrameStyle,
-  siteProviderLabelStyle,
-  siteProviderMarkStyle,
-  siteProviderNameStyle,
-  siteProviderOwnerStyle,
-  siteProviderTargetStyle,
-  siteProviderWaitingStyle,
-  siteProviderWaitingTextStyle,
   siteSavingStyle,
   siteStepCaptionStyle,
   siteStepHeadingStyle,
@@ -61,6 +20,9 @@ import {
   siteStepperStyle,
   siteStepStyle,
 } from "./checkout.style";
+import { siteDoneTextStyle, siteDoneMarkStyle, siteChainStepsStyle, siteChainDiscStyle, siteProgressChainStyle, siteChainReadyStyle, siteChainStepStyle, siteChainNoteStyle, siteChainLabelStyle, siteDoneTitleStyle } from "./checkout-progress.style";
+import { siteOrderLiveDotStyle, siteConsentItemStyle, siteOrderLineStyle, siteConsentAllStyle, siteOrderHeadStyle, siteOrderNoteStyle, siteConsentViewStyle, siteOrderAmountStyle, siteOrderLinesStyle, siteConsentAgainNoteStyle, siteOrderTitleStyle, siteOrderLabelStyle, siteConsentAgainStyle, siteConsentListStyle, siteOrderSummaryStyle, siteOrderLiveStyle } from "./checkout-order.style";
+import { siteProviderWaitingTextStyle, siteProviderLabelStyle, siteMethodStyle, siteProviderNameStyle, siteMethodNameStyle, siteProviderBodyStyle, siteProviderFrameStyle, siteProviderTargetStyle, siteProviderMarkStyle, siteMethodTextStyle, siteMethodAboutStyle, siteProviderOwnerStyle, siteMethodGridStyle, siteProviderWaitingStyle, siteMethodMarkStyle } from "./checkout-payment.style";
 
 /** Props for {@link Stepper}. */
 export interface StepperProps {

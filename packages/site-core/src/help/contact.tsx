@@ -4,23 +4,8 @@ import { slotAttributes } from "@simplix-react/ui/design";
 import { SiteAction, type SiteActionSpec } from "../action/site-action";
 import { SiteLink } from "../link/site-link";
 import { siteCardTextStyle } from "../install/install.style";
-import {
-  siteAttachAboutStyle,
-  siteAttachLabelStyle,
-  siteAttachReasonStyle,
-  siteAttachStyle,
-  siteAttachTitleStyle,
-  siteCardHeadingStyle,
-  siteContactActionsStyle,
-  siteContactActionStyle,
-  siteContactMarkStyle,
-  siteContactNoteStyle,
-  siteContactRowStyle,
-  siteContactStyle,
-  siteContactTitleStyle,
-  siteSuggestBoxStyle,
-  siteSuggestLinkStyle,
-} from "./help.style";
+
+import { siteSuggestBoxStyle, siteContactTitleStyle, siteContactStyle, siteAttachLabelStyle, siteSuggestLinkStyle, siteAttachTitleStyle, siteAttachReasonStyle, siteContactActionsStyle, siteContactActionStyle, siteCardHeadingStyle, siteAttachAboutStyle, siteContactNoteStyle, siteAttachStyle, siteContactRowStyle, siteContactMarkStyle } from "./contact.style";
 
 /** Props for {@link ContactPanel}. */
 export interface ContactPanelProps {

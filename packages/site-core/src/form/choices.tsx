@@ -3,21 +3,8 @@ import { Checkbox, Switch } from "@simplix-react/ui";
 import { partAttributes, slotAttributes } from "@simplix-react/ui/design";
 
 import { radioKeyTarget, radioTabStop } from "./radio-keys";
-import {
-  siteCheckBadgeStyle,
-  siteCheckboxStyle,
-  siteCheckLabelStyle,
-  siteCheckStyle,
-  siteRadioBodyStyle,
-  siteRadioCardsStyle,
-  siteRadioCardStyle,
-  siteRadioDotStyle,
-  siteRadioMarkStyle,
-  siteRadioTextStyle,
-  siteRadioTitleStyle,
-  siteToggleRowStyle,
-  siteToggleStyle,
-} from "./form.style";
+
+import { siteRadioTitleStyle, siteRadioCardsStyle, siteCheckboxStyle, siteCheckLabelStyle, siteRadioDotStyle, siteRadioMarkStyle, siteToggleRowStyle, siteRadioBodyStyle, siteCheckBadgeStyle, siteToggleStyle, siteRadioCardStyle, siteRadioTextStyle, siteCheckStyle } from "./choices.style";
 
 /** Props for {@link SiteCheckbox}. */
 export interface SiteCheckboxProps {

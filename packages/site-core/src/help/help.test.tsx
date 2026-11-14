@@ -5,11 +5,15 @@ import type { SiteActionSpec } from "../action/site-action";
 import { SiteChip } from "../page/site-bits";
 import { bySlot, silentRefusals, tabStops, unmarked } from "../testing/markup";
 import { FieldRow, FormField } from "../form/fields";
-import { SITE_FIELD_NARROW, siteFieldRowStyle, siteInputStyle, siteTextareaStyle } from "../form/form.style";
+import { SITE_FIELD_NARROW } from "../form/form.style";
 import { AttachBox, ContactForm, ContactPanel, ContactSent, SuggestBox } from "./contact";
-import { siteCategoryGridStyle, siteColumnsStyle, siteContactStyle, siteSearchHeroInnerStyle, siteSearchInputStyle, siteSearchKeysStyle } from "./help.style";
+
 import { ArticleList, CategoryGrid, SiteColumns } from "./help-lists";
 import { SearchHero, SiteSearch, searchKeyTarget, StatusLine } from "./search-hero";
+import { siteCategoryGridStyle, siteColumnsStyle } from "./help-lists.style";
+import { siteSearchHeroInnerStyle, siteSearchKeysStyle, siteSearchInputStyle } from "./search-hero.style";
+import { siteContactStyle } from "./contact.style";
+import { siteTextareaStyle, siteInputStyle, siteFieldRowStyle } from "../form/fields.style";
 
 const matches = [
   { key: "a", title: "When voices are not made", meta: "Troubleshooting" },

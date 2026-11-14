@@ -3,10 +3,12 @@ import { describe, expect, it } from "vitest";
 
 import { DocLayout } from "../legal/doc-layout";
 import { LegalTable } from "../legal/legal-table";
-import { siteDocBodyStyle, siteDocRailStyle, siteLegalTableHeadStyle, siteLegalTableRowStyle, siteTocJumpStyle } from "../legal/legal.style";
+
 import { bySlot, silentRefusals, tabStops, unmarked } from "../testing/markup";
 import { ArticleFigure, ArticleIntro, ArticleStep, DocProgress, DocSection, FeedbackPanel, QuickBox, RelatedLinks, TipNote } from "./article";
-import { siteRelatedGridStyle } from "./help.style";
+import { siteRelatedGridStyle } from "./article.style";
+import { siteDocRailStyle, siteDocBodyStyle, siteTocJumpStyle } from "../legal/doc-layout.style";
+import { siteLegalTableRowStyle, siteLegalTableHeadStyle } from "../legal/legal-table.style";
 
 const layout = (over = {}) =>
   renderToStaticMarkup(

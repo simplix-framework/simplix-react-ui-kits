@@ -5,25 +5,8 @@ import { SiteAction, type SiteActionSpec } from "../action/site-action";
 import {
   siteLinkMarkStyle,
   siteLinkTextStyle,
-  siteSearchEmptyStyle,
-  siteSearchFoundStyle,
-  siteSearchHeadStyle,
-  siteSearchHeroInnerStyle,
-  siteSearchHeroLedeStyle,
-  siteSearchHeroStyle,
-  siteSearchHeroTitleStyle,
-  siteSearchInputStyle,
-  siteSearchKeysStyle,
-  siteSearchOptionMetaStyle,
-  siteSearchOptionStyle,
-  siteSearchOptionTitleStyle,
-  siteSearchResultsStyle,
-  siteSearchStyle,
-  siteStatusDotStyle,
-  siteStatusLineStyle,
-  siteSuggestionsLabelStyle,
-  siteSuggestionsStyle,
 } from "./help.style";
+import { siteSearchStyle, siteSuggestionsStyle, siteSearchHeroInnerStyle, siteSearchOptionStyle, siteSearchFoundStyle, siteSearchKeysStyle, siteSearchOptionTitleStyle, siteSearchHeadStyle, siteSearchEmptyStyle, siteSearchHeroTitleStyle, siteStatusLineStyle, siteSearchHeroLedeStyle, siteSuggestionsLabelStyle, siteSearchInputStyle, siteStatusDotStyle, siteSearchResultsStyle, siteSearchHeroStyle, siteSearchOptionMetaStyle } from "./search-hero.style";
 
 /** Props for {@link StatusLine}. */
 export interface StatusLineProps {

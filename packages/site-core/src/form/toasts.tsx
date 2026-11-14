@@ -2,7 +2,8 @@ import { removeToast, useToastStore, type Toast } from "@simplix-react/ui";
 import { slotAttributes } from "@simplix-react/ui/design";
 
 import { SiteLink } from "../link/site-link";
-import { siteToastActionStyle, siteToastDotStyle, siteToastMessageStyle, siteToastsStyle, siteToastStyle } from "./form.style";
+
+import { siteToastsStyle, siteToastStyle, siteToastDotStyle, siteToastActionStyle, siteToastMessageStyle } from "./toasts.style";
 
 /** The dot's tone for a toast's kind: the accent for a command that took effect, else its state. */
 const toneOf = (type: Toast["type"]): "good" | "warn" | "bad" => (type === "error" ? "bad" : type === "warning" ? "warn" : "good");

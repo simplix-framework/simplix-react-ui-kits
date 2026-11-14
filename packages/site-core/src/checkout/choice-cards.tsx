@@ -2,16 +2,8 @@ import { useRef, type KeyboardEvent, type ReactNode } from "react";
 import { slotAttributes } from "@simplix-react/ui/design";
 
 import { radioKeyTarget, radioTabStop } from "../form/radio-keys";
-import {
-  siteChoiceBadgeStyle,
-  siteChoiceBodyStyle,
-  siteChoiceCardsStyle,
-  siteChoiceCardStyle,
-  siteChoiceMetaStyle,
-  siteChoicePriceStyle,
-  siteChoiceTitleStyle,
-  siteChoiceUnitStyle,
-} from "./checkout.style";
+
+import { siteChoiceCardStyle, siteChoiceMetaStyle, siteChoiceTitleStyle, siteChoiceBadgeStyle, siteChoiceUnitStyle, siteChoiceBodyStyle, siteChoiceCardsStyle, siteChoicePriceStyle } from "./choice-cards.style";
 
 /** One choice of {@link ChoiceCards}. */
 export interface ChoiceCardOption<T extends string> {

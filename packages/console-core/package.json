@@ -20,8 +20,8 @@
       "import": "./dist/attachment/index.js"
     },
     "./badge": {
-      "source": "./src/badge/index.tsx",
-      "types": "./src/badge/index.tsx",
+      "source": "./src/badge/index.ts",
+      "types": "./src/badge/index.ts",
       "import": "./dist/badge/index.js"
     },
     "./clipboard": {

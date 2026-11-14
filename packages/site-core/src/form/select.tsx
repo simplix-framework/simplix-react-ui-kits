@@ -1,7 +1,7 @@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@simplix-react/ui";
 import { partAttributes, slotAttributes } from "@simplix-react/ui/design";
 
-import { siteSelectMenuStyle, siteSelectOptionStyle, siteSelectStyle, siteSelectValueStyle } from "./form.style";
+import { siteSelectMenuStyle, siteSelectValueStyle, siteSelectOptionStyle, siteSelectStyle } from "./select.style";
 
 /** One option of a {@link SiteSelect}. */
 export interface SiteSelectOption<T extends string> {

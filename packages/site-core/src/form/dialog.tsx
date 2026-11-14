@@ -2,15 +2,7 @@ import type { ReactNode } from "react";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogTitle } from "@simplix-react/ui";
 import { partAttributes, slotAttributes } from "@simplix-react/ui/design";
 
-import {
-  siteDialogCloseStyle,
-  siteDialogDescriptionStyle,
-  siteDialogFootStyle,
-  siteDialogHeadStyle,
-  siteDialogStyle,
-  siteDialogTitlesStyle,
-  siteDialogTitleStyle,
-} from "./form.style";
+import { siteDialogCloseStyle, siteDialogTitleStyle, siteDialogStyle, siteDialogDescriptionStyle, siteDialogTitlesStyle, siteDialogHeadStyle, siteDialogFootStyle } from "./dialog.style";
 
 /** Props for {@link SiteDialogFrame}. */
 export interface SiteDialogFrameProps {

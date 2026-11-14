@@ -381,7 +381,7 @@
   "slotProps": {
     "$comment": "Interfaces a page fills its slots through. Every boolean prop in them is listed here with the reason it changes content (a region on or off, behaviour) rather than look; an unlisted boolean is a per-screen presentation flag and fails the check.",
     "interfaces": {
-      "src/entity/record-list.tsx": [
+      "src/entity/record-list-types.ts": [
         "RecordColumn",
         "RecordAction",
         "RecordListFeatures",
@@ -493,7 +493,7 @@
       "src/page/crud-page-blocks.ts": [
         "CrudPageBlocks"
       ],
-      "src/entity/record-list.tsx": [
+      "src/entity/record-list-types.ts": [
         "RecordListProps"
       ],
       "templates/app-shell.hbs": [

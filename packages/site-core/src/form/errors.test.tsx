@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { siteErrorKind, siteErrorView, type SiteErrorEvent, type SiteErrorsCopy } from "./errors";
-import { siteErrorReasonStyle } from "./form.style";
+import { siteErrorReasonStyle } from "./errors.style";
 
 const copy: SiteErrorsCopy = {
   titles: { validation: "Check what you entered", auth: "Not allowed", client: "Not sent", server: "Something went wrong", network: "No connection", unknown: "Something went wrong", gateway: "Service unavailable" },

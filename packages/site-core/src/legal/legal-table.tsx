@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { slotAttributes } from "@simplix-react/ui/design";
 
-import { siteLegalTableCellStyle, siteLegalTableColumnStyle, siteLegalTableHeadStyle, siteLegalTableLabelStyle, siteLegalTableRowStyle, siteLegalTableStyle } from "./legal.style";
+import { siteLegalTableColumnStyle, siteLegalTableStyle, siteLegalTableHeadStyle, siteLegalTableRowStyle, siteLegalTableLabelStyle, siteLegalTableCellStyle } from "./legal-table.style";
 
 /** Props for {@link LegalTable}. */
 export interface LegalTableProps {

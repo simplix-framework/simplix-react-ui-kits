@@ -14,7 +14,7 @@ const read = (path: string) => readFileSync(join(PACKAGES, path), "utf8");
 
 describe("a fluid column's cell", () => {
   it("is ellipsized by the utility that leaves a control's focus halo room", () => {
-    const fluid = read("console-core/src/entity/record-list.tsx")
+    const fluid = read("console-core/src/entity/record-list-view.tsx")
       .split("\n")
       .find((line) => line.includes("column.minWidth !== undefined") && line.includes("className="));
     expect(fluid).toBeDefined();

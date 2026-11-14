@@ -1,7 +1,7 @@
 import { useRef, useState, type KeyboardEvent, type PointerEvent } from "react";
 import { slotAttributes } from "@simplix-react/ui/design";
 
-import { siteSliderFillStyle, siteSliderStyle, siteSliderThumbStyle, siteSliderTrackStyle } from "./form.style";
+import { siteSliderTrackStyle, siteSliderFillStyle, siteSliderThumbStyle, siteSliderStyle } from "./slider.style";
 
 /** The range a slider moves over and the steps it moves in. */
 export interface SiteSliderRange {

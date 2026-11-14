@@ -3,7 +3,8 @@ import { slotAttributes } from "@simplix-react/ui/design";
 
 import { SiteAction } from "../action/site-action";
 import { SiteDialog } from "./dialog";
-import { siteErrorReasonsStyle, siteErrorReasonStyle } from "./form.style";
+
+import { siteErrorReasonStyle, siteErrorReasonsStyle } from "./errors.style";
 
 /** One failure the framework's error store holds. */
 export type SiteErrorEvent = ReturnType<typeof useErrorStore>[number];

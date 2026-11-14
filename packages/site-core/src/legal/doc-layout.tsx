@@ -3,27 +3,11 @@ import { slotAttributes } from "@simplix-react/ui/design";
 
 import { SiteAction, type SiteActionSpec } from "../action/site-action";
 import { SiteSelect } from "../form/select";
-import { siteDocActionStyle } from "../help/help.style";
+
 import { SiteBreadcrumb, SitePage, type SiteBreadcrumbStep } from "../page/site-page";
-import {
-  siteDocBodyStyle,
-  siteDocControlsStyle,
-  siteDocHeadStyle,
-  siteDocRailStyle,
-  siteDocRailTitleStyle,
-  siteDocSideStyle,
-  siteDocStyle,
-  siteDocTitleRowStyle,
-  siteDocTitleStyle,
-  siteTocButtonStyle,
-  siteTocChangedStyle,
-  siteTocDoneStyle,
-  siteTocItemStyle,
-  siteTocJumpStyle,
-  siteTocNumberStyle,
-  siteTocStyle,
-  siteTocTitleStyle,
-} from "./legal.style";
+
+import { siteDocActionStyle } from "../help/article.style";
+import { siteDocStyle, siteDocHeadStyle, siteTocTitleStyle, siteDocSideStyle, siteTocButtonStyle, siteTocJumpStyle, siteDocTitleStyle, siteDocBodyStyle, siteTocItemStyle, siteDocRailStyle, siteDocRailTitleStyle, siteTocDoneStyle, siteDocTitleRowStyle, siteTocStyle, siteTocChangedStyle, siteTocNumberStyle, siteDocControlsStyle } from "./doc-layout.style";
 
 /** One section of a document's contents. */
 export interface SiteTocEntry {

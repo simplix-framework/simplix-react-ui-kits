@@ -1,14 +1,7 @@
 import type { InputHTMLAttributes, ReactNode, TextareaHTMLAttributes } from "react";
 import { slotAttributes } from "@simplix-react/ui/design";
 
-import {
-  siteFieldInlineStyle,
-  siteFieldNoteStyle,
-  siteFieldRowStyle,
-  siteFieldStyle,
-  siteInputStyle,
-  siteTextareaStyle,
-} from "./form.style";
+import { siteFieldStyle, siteFieldNoteStyle, siteFieldRowStyle, siteTextareaStyle, siteInputStyle, siteFieldInlineStyle } from "./fields.style";
 
 /** Props for {@link FormField}. */
 export interface FormFieldProps {

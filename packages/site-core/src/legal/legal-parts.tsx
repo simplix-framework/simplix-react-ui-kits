@@ -2,47 +2,11 @@ import { Fragment, type MouseEvent, type ReactNode, useId } from "react";
 import { slotAttributes } from "@simplix-react/ui/design";
 
 import { SiteAction, type SiteActionSpec, type SiteReason, useRefusal } from "../action/site-action";
-import { siteDocActionStyle } from "../help/help.style";
+
 import { siteCaptionStyle } from "../page/site-page.style";
-import {
-  siteBannerActionsStyle,
-  siteBannerBodyStyle,
-  siteBannerMarkStyle,
-  siteBannerStyle,
-  siteBannerTextStyle,
-  siteBannerTitleStyle,
-  siteChangeItemStyle,
-  siteChangeItemsStyle,
-  siteChangeLegendStyle,
-  siteChangeLinkStyle,
-  siteChangeListHeadStyle,
-  siteChangeListStyle,
-  siteChangeListTitleStyle,
-  siteChangeNoStyle,
-  siteChangeWhatStyle,
-  siteClauseListStyle,
-  siteClauseMarkStyle,
-  siteClauseStyle,
-  siteClauseTextStyle,
-  siteDiffAddedStyle,
-  siteDiffRemovedStyle,
-  siteFieldGapStyle,
-  siteInfoCardStyle,
-  siteInfoCardTitleStyle,
-  siteInfoGridStyle,
-  siteKeyStyle,
-  siteKeyValueStyle,
-  siteKeyValuesStyle,
-  siteLegalArticleHeadingStyle,
-  siteLegalArticleNoStyle,
-  siteLegalArticleStyle,
-  siteLegalArticleWasStyle,
-  sitePlainSummaryLabelStyle,
-  sitePlainSummaryStyle,
-  sitePlainSummaryTextStyle,
-  siteToggleFieldStyle,
-  siteValueStyle,
-} from "./legal.style";
+
+import { siteDocActionStyle } from "../help/article.style";
+import { siteBannerTextStyle, siteBannerActionsStyle, siteBannerMarkStyle, siteClauseTextStyle, siteChangeLinkStyle, siteClauseStyle, siteInfoCardStyle, siteBannerStyle, siteInfoCardTitleStyle, siteChangeLegendStyle, siteFieldGapStyle, siteClauseListStyle, siteChangeListTitleStyle, sitePlainSummaryStyle, siteValueStyle, siteLegalArticleNoStyle, siteChangeWhatStyle, siteChangeListStyle, siteClauseMarkStyle, siteKeyValuesStyle, siteChangeItemsStyle, siteKeyStyle, siteLegalArticleHeadingStyle, siteDiffAddedStyle, siteLegalArticleStyle, siteBannerBodyStyle, siteChangeListHeadStyle, siteChangeNoStyle, sitePlainSummaryTextStyle, siteKeyValueStyle, siteChangeItemStyle, siteToggleFieldStyle, siteBannerTitleStyle, sitePlainSummaryLabelStyle, siteLegalArticleWasStyle, siteDiffRemovedStyle, siteInfoGridStyle } from "./legal-parts.style";
 
 /** Which text a legal clause is drawn as: this version, the previous one, or both with the changes marked. */
 export type SiteDiffMode = "current" | "previous" | "diff";
