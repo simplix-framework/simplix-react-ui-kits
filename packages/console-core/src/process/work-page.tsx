@@ -80,7 +80,7 @@ export function WorkPage({ kind, title, stage, onClose, backLabel, turn, procedu
   const asPage = !crud || crud.presentation === "page";
   const counts = { history: history.length, related: related.length };
   return (
-    <Stack gap="none" className="min-h-0 flex-1" data-work-page>
+    <Stack gap="none" className="min-h-0 flex-1" data-work-page data-work-shown={procedure.selected?.id}>
       <Flex align="center" {...partAttributes(workPageHeadStyle, {})}>
         {asPage ? (
           <Button size="sm" variant="ghost" onClick={onClose} className="shrink-0" data-work-back>
