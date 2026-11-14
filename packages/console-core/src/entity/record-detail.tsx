@@ -30,7 +30,7 @@ import {
 } from "./record-detail.style";
 import { TileSpark } from "../layout/tile-spark";
 import { copyTextOf, RecordValueView } from "./record-value";
-import { WorkProgress } from "../process/work-window";
+import { WorkProgress } from "../process/work-progress";
 import { StageGate } from "./stage-gate";
 import { EvidenceGrid } from "../attachment/evidence-grid";
 import { ApprovalFlow } from "../layout/approval-flow";

@@ -15,7 +15,7 @@ import type { HistoryRailProps } from "../screen/history-rail";
 import type { RecordHistory } from "./record-history-layout";
 import type { ChangeHistoryRead } from "../identity/change-history";
 import type { ScoreSheetProps } from "../screen/score-sheet";
-import type { WorkProgressProps } from "../process/work-window";
+import type { WorkProgressProps } from "../process/work-progress";
 
 /** One labelled value of a {@link RecordDetail} section. */
 export interface RecordField {

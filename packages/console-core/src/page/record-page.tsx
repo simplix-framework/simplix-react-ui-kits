@@ -29,8 +29,8 @@ export interface RecordPageProps {
   readonly header: RecordPageHeader;
   /** Tabs, sections and commands, read by {@link RecordDetail}'s rules. */
   readonly detail: Omit<RecordDetailProps, "onClose">;
-  /** The list the page returns to. */
-  readonly back: PageBackTarget;
+  /** The list the page returns to. Left out where the page stands inside another that carries the way back. */
+  readonly back?: PageBackTarget;
 }
 
 /** The way back: the menu's link where every segment is known, otherwise the page's own close. */

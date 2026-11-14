@@ -1,21 +1,23 @@
 {
-  "tabs": {
-    "progress": "Progress",
-    "map": "Whole view",
-    "outputs": "Records",
-    "history": "History",
-    "related": "Related work"
-  },
   "stage": "Current step",
   "holder": "Held by",
   "mine": "Your turn",
   "waiting": "Waiting on someone else",
   "finished": "Finished",
-  "choices": "Other choices",
-  "records": "See the records",
   "empty": {
-    "outputs": "No record has been made yet.",
     "history": "Nothing has been done yet.",
     "related": "No work follows from this one."
+  },
+  "back": "Back to the list",
+  "location": "Where this screen is",
+  "go": "Go there",
+  "current": "To the current step",
+  "shown": "Step in view",
+  "wide": "Whole view",
+  "narrow": "Fold",
+  "rail": {
+    "progress": "Progress",
+    "history": "History",
+    "related": "Related work"
   }
 }

@@ -1,14 +1,5 @@
 import { defineSlotStyle } from "@simplix-react/ui/design";
 
-/** The head of a piece of work: what kind it is, its name, and where it stands. */
-export const workHeadStyle = defineSlotStyle({
-  slot: "console-work-head",
-  as: "part",
-  base: "border-b border-border px-4 py-3",
-  variants: {},
-  defaultVariants: {},
-});
-
 /** The kind of work, above its name. */
 export const workKindStyle = defineSlotStyle({
   slot: "console-work-kind",
@@ -21,14 +12,6 @@ export const workKindStyle = defineSlotStyle({
 export const workTitleStyle = defineSlotStyle({
   slot: "console-work-title",
   base: "text-base font-semibold text-foreground",
-  variants: {},
-  defaultVariants: {},
-});
-
-/** A labelled fact of the head: the current step, who holds it. */
-export const workFactStyle = defineSlotStyle({
-  slot: "console-work-fact",
-  base: "text-xs text-muted-foreground",
   variants: {},
   defaultVariants: {},
 });
@@ -60,23 +43,6 @@ export const workTurnLabelStyle = defineSlotStyle({
     },
   },
   defaultVariants: { state: "waiting" },
-});
-
-/** The scrolling body of a piece of work, under its head. */
-export const workBodyStyle = defineSlotStyle({
-  slot: "console-work-body",
-  as: "part",
-  base: "px-4 py-3",
-  variants: {},
-  defaultVariants: {},
-});
-
-/** The count beside a tab's name. */
-export const workTabCountStyle = defineSlotStyle({
-  slot: "console-work-tab-count",
-  base: "ms-1 text-xs text-muted-foreground",
-  variants: {},
-  defaultVariants: {},
 });
 
 /** The list of the records, the history or the related work. */

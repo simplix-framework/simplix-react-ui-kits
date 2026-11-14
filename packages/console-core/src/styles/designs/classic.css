@@ -907,11 +907,11 @@
   [data-slot="console-page-meta"][data-slot][data-s-console-page-meta] {
     @apply mt-1.5 flex flex-wrap items-center;
   }
+  [data-slot="console-work-location-step"][data-slot][data-s-console-work-location-step] {
+    @apply text-sm font-semibold text-foreground;
+  }
   [data-slot="console-work-empty"][data-slot][data-s-console-work-empty] {
     @apply px-1 py-6 text-sm text-muted-foreground;
-  }
-  [data-slot="console-work-fact"][data-slot][data-s-console-work-fact] {
-    @apply text-xs text-muted-foreground;
   }
   [data-slot="console-work-kind"][data-slot][data-s-console-work-kind] {
     @apply text-xs font-medium text-muted-foreground;
@@ -930,9 +930,6 @@
   }
   [data-slot="console-work-row-title"][data-slot][data-s-console-work-row-title] {
     @apply text-sm font-medium;
-  }
-  [data-slot="console-work-tab-count"][data-slot][data-s-console-work-tab-count] {
-    @apply ms-1 text-xs text-muted-foreground;
   }
   [data-slot="console-work-title"][data-slot][data-s-console-work-title] {
     @apply text-base font-semibold text-foreground;
@@ -1578,11 +1575,26 @@
   :where([data-part="console-record-page-flow"])[data-part][data-p-console-record-page-flow] {
     @apply sticky top-0 pt-2;
   }
-  :where([data-part="console-work-body"])[data-part][data-p-console-work-body] {
-    @apply px-4 py-3;
+  :where([data-part="console-work-location-path"])[data-part][data-p-console-work-location-path] {
+    @apply text-xs text-muted-foreground;
   }
-  :where([data-part="console-work-head"])[data-part][data-p-console-work-head] {
-    @apply border-b border-border px-4 py-3;
+  :where([data-part="console-work-location"])[data-part][data-p-console-work-location] {
+    @apply gap-3 border-b border-border bg-muted/40 px-4 py-2;
+  }
+  :where([data-part="console-work-page-head"])[data-part][data-p-console-work-page-head] {
+    @apply gap-3 border-b border-border px-4 py-2.5;
+  }
+  :where([data-part="console-work-rail-bar"])[data-part][data-p-console-work-rail-bar] {
+    @apply gap-2 border-b border-border px-3 py-2;
+  }
+  :where([data-part="console-work-rail-body"])[data-part][data-p-console-work-rail-body] {
+    @apply px-3 py-3;
+  }
+  :where([data-part="console-work-rail"])[data-part][data-p-console-work-rail] {
+    @apply border-s border-border bg-background transition-[width] duration-200;
+  }
+  :where([data-part="console-work-rail"][data-part-wide="true"])[data-part][data-p-console-work-rail] {
+    @apply shadow-lg;
   }
   :where([data-part="console-work-turn"])[data-part][data-p-console-work-turn] {
     @apply rounded-md border px-4 py-3;
