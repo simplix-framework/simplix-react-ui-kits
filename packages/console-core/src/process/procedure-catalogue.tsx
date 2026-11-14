@@ -1,8 +1,9 @@
 import { ProcessLanes, type ProcessLanesProps } from "@simplix-react/process";
-import { Button, EmptyState, Flex, Stack } from "@simplix-react/ui";
+import { Button, Dialog, DialogHeader, DialogTitle, EmptyState, Flex, Stack } from "@simplix-react/ui";
 import { partAttributes, slotAttributes } from "@simplix-react/ui/design";
 
 import { RecordVerbButton } from "../entity/record-blocks";
+import { BoundedDialogContent } from "../layout/bounded-dialog-content";
 import { procedureChoicesStyle, procedureHeadStyle, procedureNameStyle, procedureNoteStyle } from "./procedure-catalogue.style";
 
 /** One procedure a reader can choose. */
@@ -65,5 +66,31 @@ export function ProcedureCatalogue({ label, procedures, selected, onSelect, proc
         <EmptyState size="sm" title={empty.title} description={empty.description} />
       )}
     </Stack>
+  );
+}
+
+/** Props for {@link ProcedureDialog}. */
+export interface ProcedureDialogProps extends ProcedureCatalogueProps {
+  /** What the dialog is for: reading the procedures, or starting a piece of work. */
+  readonly title: string;
+  readonly open: boolean;
+  readonly onOpenChange: (open: boolean) => void;
+}
+
+/**
+ * The catalogue of procedures in a dialog as large as the window, opened over the screen the
+ * reader is on: to read how a kind of work goes, or to choose the work to start and see all of
+ * it first.
+ */
+export function ProcedureDialog({ title, open, onOpenChange, ...catalogue }: ProcedureDialogProps) {
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <BoundedDialogContent width="window" className="h-dvh" data-procedure-dialog>
+        <DialogHeader>
+          <DialogTitle>{title}</DialogTitle>
+        </DialogHeader>
+        <ProcedureCatalogue {...catalogue} />
+      </BoundedDialogContent>
+    </Dialog>
   );
 }
