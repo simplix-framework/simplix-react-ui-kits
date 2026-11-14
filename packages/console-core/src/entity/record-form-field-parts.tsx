@@ -64,11 +64,13 @@ export function MonthField({ common, value, onChange, placeholder }: { readonly 
             </Button>
           </PopoverTrigger>
           <PopoverContent>
+            {/* A month is picked as the span of its days: the calendar's month mode reports a range, never a single day. */}
             <Calendar
               mode="month"
-              selected={selected}
-              onSelect={(date) => {
-                onChange(`${date.getFullYear()}-${pad(date.getMonth() + 1)}`);
+              selectedRange={selected ? { from: selected, to: new Date(selected.getFullYear(), selected.getMonth() + 1, 0) } : undefined}
+              onSelectRange={(range) => {
+                if (!range.from) return;
+                onChange(`${range.from.getFullYear()}-${pad(range.from.getMonth() + 1)}`);
                 setOpen(false);
               }}
             />
