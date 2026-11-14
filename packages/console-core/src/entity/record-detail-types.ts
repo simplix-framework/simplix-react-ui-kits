@@ -15,6 +15,7 @@ import type { HistoryRailProps } from "../screen/history-rail";
 import type { RecordHistory } from "./record-history-layout";
 import type { ChangeHistoryRead } from "../identity/change-history";
 import type { ScoreSheetProps } from "../screen/score-sheet";
+import type { WorkProgressProps } from "../process/work-window";
 
 /** One labelled value of a {@link RecordDetail} section. */
 export interface RecordField {
@@ -59,6 +60,8 @@ export interface RecordTabContent {
    * record's history.
    */
   readonly flow?: ApprovalFlowProps;
+  /** Where the record stands in the work it belongs to: whose turn it is and the steps of its procedure, drawn first. */
+  readonly work?: WorkProgressProps;
   readonly gate?: StageGateProps;
   readonly sheet?: FormSheetProps;
   readonly measurements?: MeasurementGridProps;

@@ -30,6 +30,7 @@ import {
 } from "./record-detail.style";
 import { TileSpark } from "../layout/tile-spark";
 import { copyTextOf, RecordValueView } from "./record-value";
+import { WorkProgress } from "../process/work-window";
 import { StageGate } from "./stage-gate";
 import { EvidenceGrid } from "../attachment/evidence-grid";
 import { ApprovalFlow } from "../layout/approval-flow";
@@ -124,6 +125,7 @@ export function RecordTabBody({ content, count }: { readonly content: RecordTabC
     return (
       <Stack gap="sm">
         {content.flow ? <ApprovalFlow {...content.flow} /> : null}
+        {content.work ? <WorkProgress {...content.work} /> : null}
         {content.gate ? <StageGate {...content.gate} /> : null}
         <EmptyState
           size="sm"
@@ -138,6 +140,7 @@ export function RecordTabBody({ content, count }: { readonly content: RecordTabC
   return (
     <Stack gap="sm">
       {content.flow ? <ApprovalFlow {...content.flow} /> : null}
+      {content.work ? <WorkProgress {...content.work} /> : null}
       {content.gate ? <StageGate {...content.gate} /> : null}
       <Sections sections={content.sections} />
       {content.sheet ? <FormSheet {...content.sheet} /> : null}
