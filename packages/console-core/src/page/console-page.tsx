@@ -93,7 +93,7 @@ export function ConsolePage({
   );
   const description = metaLine ?? (typeof spec.description === "string" ? spec.description : undefined);
 
-  usePageHeader({
+  usePageHeader(spec.embedded ? null : {
     title: spec.title,
     // Read off the menu tree rather than off the page: a screen with a row of its own is returned
     // to by pressing that row, and only a screen without one owes the reader a breadcrumb.

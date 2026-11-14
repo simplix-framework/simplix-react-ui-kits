@@ -46,14 +46,16 @@ export function BoundedDialogContent({
  *
  * <p>Four steps, because a per-dialog pixel figure is how thirty dialogs end up thirty widths: a
  * confirmation is `sm`, a form is `md`, a form with a table in it is `lg`, and a comparison of two
- * records side by side is `xl`. The width only applies from the `sm` breakpoint up; below it a
- * dialog is the window.
+ * records side by side is `xl`. A drawing that needs every pixel across (a procedure as lanes) is
+ * `window`: as wide as the window lets it be. The width only applies from the `sm` breakpoint up;
+ * below it a dialog is the window.
  */
-export type DialogWidth = "sm" | "md" | "lg" | "xl";
+export type DialogWidth = "sm" | "md" | "lg" | "xl" | "window";
 
 const WIDTH_CLASS: Record<DialogWidth, string> = {
   sm: "sm:max-w-md",
   md: "sm:max-w-lg",
   lg: "sm:max-w-2xl",
   xl: "sm:max-w-4xl",
+  window: "sm:max-w-none",
 };

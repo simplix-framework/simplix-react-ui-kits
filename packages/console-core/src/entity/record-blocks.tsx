@@ -1,12 +1,12 @@
 import { useEffect, useRef, type ReactNode } from "react";
-import { AlertBanner, Button, Flex, type StatusTone } from "@simplix-react/ui";
+import { AlertBanner, Button, Flex, type StatusTone, Tooltip, TooltipContent, TooltipTrigger } from "@simplix-react/ui";
 import { CircleAlertIcon, CircleCheckIcon, InfoIcon, TriangleAlertIcon } from "lucide-react";
 import { slotAttributes } from "@simplix-react/ui/design";
 
 import { NoticeCard } from "../notice/notice-card";
 import { NoticeMenu } from "../notice/notice-menu";
 import type { DismissibleNoticeKind } from "../notice/notice-kind";
-import { recordNoteIconStyle, recordNoteStyle, verbBlockedReasonStyle, verbBlockedStyle } from "./record-blocks.style";
+import { recordNoteIconStyle, recordNoteStyle, verbBlockedStyle } from "./record-blocks.style";
 
 /** A message inside a panel, a form or a dialog: it stays as long as what it explains is on screen. */
 export interface RecordNotice {
@@ -211,8 +211,9 @@ export function RecordVerbs({ verbs, end = false }: { readonly verbs?: readonly 
 /**
  * One {@link RecordVerb}.
  *
- * <p>A disabled verb writes its reason under itself, so the reader learns what is missing without
- * hovering a control that answers nothing; the full reason stays as the title when the line is cut.
+ * <p>A disabled verb says why in a tooltip, so a row of commands stays one row whatever each
+ * of them is waiting for. A disabled button takes no pointer, so the wrapper carries the hover
+ * and the focus, and the reason reaches a reader who uses neither as the wrapper's description.
  */
 export function RecordVerbButton({ verb }: { readonly verb: RecordVerb }) {
   const variant = verb.kind === "primary" ? "primary" : verb.kind === "danger" ? "destructive" : verb.kind === "quiet" ? "ghost" : "outline";
@@ -222,7 +223,6 @@ export function RecordVerbButton({ verb }: { readonly verb: RecordVerb }) {
       variant={variant}
       onClick={verb.onClick}
       disabled={Boolean(verb.disabled) || verb.pending !== undefined}
-      title={verb.disabled}
       loading={verb.pending !== undefined}
       loadingText={verb.pending}
     >
@@ -231,9 +231,13 @@ export function RecordVerbButton({ verb }: { readonly verb: RecordVerb }) {
   );
   if (!verb.disabled) return button;
   return (
-    <span className="inline-flex max-w-60 flex-col items-stretch" title={verb.disabled} {...slotAttributes(verbBlockedStyle, {})}>
-      {button}
-      <span className="line-clamp-2" {...slotAttributes(verbBlockedReasonStyle, {})}>{verb.disabled}</span>
-    </span>
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <span tabIndex={0} aria-description={verb.disabled} className="inline-flex cursor-default" {...slotAttributes(verbBlockedStyle, {})}>
+          {button}
+        </span>
+      </TooltipTrigger>
+      <TooltipContent>{verb.disabled}</TooltipContent>
+    </Tooltip>
   );
 }

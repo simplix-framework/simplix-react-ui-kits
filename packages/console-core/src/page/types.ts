@@ -203,6 +203,8 @@ export interface PageNoticeSpec {
  * are declared in the same order every time, and the parts they do not have are simply missing.
  */
 export interface PageSpec {
+  /** The page stands inside another page, which owns the header: this one registers none. */
+  readonly embedded?: boolean;
   readonly title: string;
   /**
    * The line under the title. Several facts about the page (a workplace, a date, a shift) are

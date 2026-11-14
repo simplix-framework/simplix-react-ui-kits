@@ -35,21 +35,16 @@ export const workLocationPathStyle = defineSlotStyle({
   defaultVariants: {},
 });
 
-/** The progress rail beside the screen in view; unfolded, it covers the screen. */
+/** The progress rail beside the screen in view. */
 export const workRailStyle = defineSlotStyle({
   slot: "console-work-rail",
   as: "part",
-  base: "border-s border-border bg-background transition-[width] duration-200",
-  variants: {
-    wide: {
-      true: "shadow-lg",
-      false: "",
-    },
-  },
-  defaultVariants: { wide: false },
+  base: "border-s border-border bg-background",
+  variants: {},
+  defaultVariants: {},
 });
 
-/** The row at the top of the rail that folds and unfolds it. */
+/** The row at the top of the rail, with the way to the whole view. */
 export const workRailBarStyle = defineSlotStyle({
   slot: "console-work-rail-bar",
   as: "part",

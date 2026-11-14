@@ -1,10 +1,11 @@
 import { type ReactNode, useState } from "react";
 import { useTranslation } from "@simplix-react/i18n/react";
 import { ProcessLanes } from "@simplix-react/process";
-import { Button, EmptyState, Flex, Stack, StatusBadge, type StatusTone, Tabs, TabsContent, TabsTrigger } from "@simplix-react/ui";
-import { ArrowLeftIcon, ChevronRightIcon, Maximize2Icon, Minimize2Icon } from "lucide-react";
+import { Button, Dialog, DialogHeader, DialogTitle, EmptyState, Flex, Stack, StatusBadge, type StatusTone, Tabs, TabsContent, TabsTrigger } from "@simplix-react/ui";
+import { ArrowLeftIcon, ChevronRightIcon, Maximize2Icon } from "lucide-react";
 import { partAttributes, slotAttributes } from "@simplix-react/ui/design";
 
+import { BoundedDialogContent } from "../layout/bounded-dialog-content";
 import { PageTabStrip } from "../layout/page-tab-strip";
 import { PACKAGE_NAMESPACE } from "./locales";
 import { workLocationPathStyle, workLocationStepStyle, workLocationStyle, workPageHeadStyle, workRailBarStyle, workRailBodyStyle, workRailStyle } from "./work-page.style";
@@ -49,7 +50,7 @@ export interface WorkPageProps {
   readonly history: readonly WorkEvent[];
   /** The records and the work related to this one. */
   readonly related: readonly WorkRow[];
-  /** Whether the rail opens unfolded over the screen; the page keeps its own state after that. */
+  /** Whether the whole view of the procedure is open when the page opens; the page keeps its own state after that. */
   readonly defaultWide?: boolean;
   /** The rail tab the page opens on. */
   readonly defaultRailTab?: "progress" | "history" | "related";
@@ -62,9 +63,10 @@ export interface WorkPageProps {
 /**
  * One piece of work as a page: the screen of the step in hand in the middle, and beside it a rail
  * with whose turn it is and the steps of the procedure. Pressing a step shows that step's screen in
- * the same place, and one button brings the step in hand back. Unfolded, the rail covers the
- * screen and draws the procedure as lanes; folded, it is the column of steps again. The bar over
- * the screen says where that screen is in the menu and leads there with the same record open.
+ * the same place, and one button brings the step in hand back. The whole view opens the
+ * procedure as lanes in a dialog as large as the window; picking a step there closes it and shows
+ * that step's screen. The bar over the screen says where that screen is in the menu and leads
+ * there with the same record open.
  */
 export function WorkPage({ kind, title, stage, onClose, backLabel, turn, procedure, location, atCurrent, onCurrent, history, related, defaultWide = false, defaultRailTab = "progress", empty, children }: WorkPageProps) {
   const { t } = useTranslation(`${PACKAGE_NAMESPACE}/work`);
@@ -87,7 +89,7 @@ export function WorkPage({ kind, title, stage, onClose, backLabel, turn, procedu
       </Flex>
       {/* raw layout: the screen in view with the rail over its end edge; unfolded, the rail spans the whole box. */}
       <div className="relative flex min-h-0 flex-1">
-        <Stack gap="none" className="me-72 min-h-0 min-w-0 flex-1" data-work-screen aria-hidden={wide || undefined}>
+        <Stack gap="none" className="me-72 min-h-0 min-w-0 flex-1" data-work-screen>
           {location ? (
             <Flex align="center" justify="between" wrap {...partAttributes(workLocationStyle, {})}>
               <Stack gap="none" className="min-w-0">
@@ -125,50 +127,53 @@ export function WorkPage({ kind, title, stage, onClose, backLabel, turn, procedu
             {children ?? (empty ? <EmptyState size="sm" title={empty.title} description={empty.description} /> : null)}
           </Stack>
         </Stack>
-        <Stack
-          gap="none"
-          role="complementary"
-          data-work-rail={wide ? "wide" : "folded"}
-          className={wide ? "absolute inset-y-0 end-0 w-full" : "absolute inset-y-0 end-0 w-72"}
-          {...partAttributes(workRailStyle, { wide })}
-        >
+        <Stack gap="none" role="complementary" data-work-rail className="absolute inset-y-0 end-0 w-72" {...partAttributes(workRailStyle, {})}>
           <Flex align="center" justify="between" {...partAttributes(workRailBarStyle, {})}>
             <span {...slotAttributes(workKindStyle, {})}>{t("rail.progress")}</span>
-            <Button size="sm" variant="ghost" onClick={() => setWide(!wide)} aria-expanded={wide} data-work-wide>
-              {wide ? <Minimize2Icon aria-hidden className="size-4" /> : <Maximize2Icon aria-hidden className="size-4" />}
-              {wide ? t("narrow") : t("wide")}
+            <Button size="sm" variant="ghost" onClick={() => setWide(true)} data-work-wide>
+              <Maximize2Icon aria-hidden className="size-4" />
+              {t("wide")}
             </Button>
           </Flex>
           <Stack gap="md" className="min-h-0 flex-1 overflow-auto" {...partAttributes(workRailBodyStyle, {})}>
-            {wide ? (
-              <ProcessLanes {...procedure} layout="lanes" scrollToActive={false} />
-            ) : (
-              <>
-                <WorkTurnCard turn={turn} />
-                <Tabs defaultValue={defaultRailTab}>
-                  <PageTabStrip fromStart>
-                    {(["progress", "history", "related"] as const).map((key) => (
-                      <TabsTrigger key={key} value={key} data-work-tab={key}>
-                        {t(`rail.${key}`)}
-                        {key !== "progress" && counts[key] > 0 ? ` ${counts[key]}` : null}
-                      </TabsTrigger>
-                    ))}
-                  </PageTabStrip>
-                  <TabsContent value="progress">
-                    <ProcessLanes {...procedure} layout="stack" scrollToActive={false} />
-                  </TabsContent>
-                  <TabsContent value="history">
-                    <WorkEvents events={history} emptyLabel={t("empty.history")} />
-                  </TabsContent>
-                  <TabsContent value="related">
-                    <WorkRows rows={related} emptyLabel={t("empty.related")} />
-                  </TabsContent>
-                </Tabs>
-              </>
-            )}
+            <WorkTurnCard turn={turn} />
+            <Tabs defaultValue={defaultRailTab}>
+              <PageTabStrip fromStart>
+                {(["progress", "history", "related"] as const).map((key) => (
+                  <TabsTrigger key={key} value={key} data-work-tab={key}>
+                    {t(`rail.${key}`)}
+                    {key !== "progress" && counts[key] > 0 ? ` ${counts[key]}` : null}
+                  </TabsTrigger>
+                ))}
+              </PageTabStrip>
+              <TabsContent value="progress">
+                <ProcessLanes {...procedure} layout="stack" scrollToActive={false} />
+              </TabsContent>
+              <TabsContent value="history">
+                <WorkEvents events={history} emptyLabel={t("empty.history")} />
+              </TabsContent>
+              <TabsContent value="related">
+                <WorkRows rows={related} emptyLabel={t("empty.related")} />
+              </TabsContent>
+            </Tabs>
           </Stack>
         </Stack>
       </div>
+      <Dialog open={wide} onOpenChange={setWide}>
+        {/* As large as the window, so the lanes are drawn side by side without scrolling sideways wherever they fit. */}
+        <BoundedDialogContent width="window" className="h-dvh" data-work-whole>
+          <DialogHeader>
+            <DialogTitle>
+              {kind} · {title}
+            </DialogTitle>
+          </DialogHeader>
+          {/* The lanes scroll inside their own box, so the row of lane names stays in sight. */}
+          <Stack gap="none" className="min-h-0 flex-1 overflow-hidden">
+            {/* Picking a step on the lanes closes the whole view and shows that step's screen. */}
+            <ProcessLanes {...procedure} layout="lanes" scrollToActive={false} className="h-full" onSelect={(target) => { procedure.onSelect?.(target); setWide(false); }} />
+          </Stack>
+        </BoundedDialogContent>
+      </Dialog>
     </Stack>
   );
 }
