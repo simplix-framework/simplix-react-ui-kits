@@ -7,8 +7,6 @@
   "sideEffects": [
     "**/*.css"
   ],
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
   "exports": {
     "./account": {
       "source": "./src/account/index.ts",
@@ -91,10 +89,11 @@
     "dev": "tsup --no-clean --no-dts",
     "typecheck": "tsc --noEmit && tsc -p tsconfig.tests.json",
     "lint": "oxlint src scripts && simplix-design-literals src",
-    "test": "node scripts/site-demo.mjs --selftest && vitest run && pnpm test:templates",
+    "test": "node scripts/site-demo.mjs --selftest && vitest run && pnpm test:kit && pnpm test:templates",
     "clean": "rm -rf dist .turbo",
     "rendered": "node scripts/site-demo.mjs --measure",
-    "test:templates": "node ../../testing/template-harness/harness.mjs ."
+    "test:templates": "node ../../testing/template-harness/harness.mjs .",
+    "test:kit": "KIT_DIR=. vitest run --config ../site-core/tests/kit/vitest.config.ts"
   },
   "dependencies": {
     "@simplix-react-ui-kits/site-core": "workspace:*",
@@ -106,13 +105,14 @@
     "tailwindcss": ">=4.0.0"
   },
   "devDependencies": {
-    "@simplix-react-ui-kits/console-core": "workspace:*",
+    "@tailwindcss/node": "catalog:",
     "@tanstack/react-router": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "oxlint": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
+    "tailwindcss": "catalog:",
     "tsup": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"

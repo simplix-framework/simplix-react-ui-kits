@@ -27,7 +27,7 @@ function overridden(classes: string): string[] {
   return listed.filter((name) => !kept.has(name));
 }
 
-const core = join(import.meta.dirname, "../../site-core/src");
+const core = join(import.meta.dirname, "../../src");
 const walk = (path: string): string[] => (statSync(path).isDirectory() ? readdirSync(path).flatMap((name) => walk(join(path, name))) : [path]);
 const files = walk(core).filter((path) => path.endsWith(".style.ts"));
 const styles: SlotStyleShape[] = [];

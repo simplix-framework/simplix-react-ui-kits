@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 
-import { installedFramework } from "./installed-framework";
+import { installedFramework } from "../installed-framework";
 
 // A tile figure may break anywhere, so its unit ("credits", or the Korean word) must be one piece. The
 // framework's stat card draws the unit in its own slot and keeps it whole in both designs; the kit adds

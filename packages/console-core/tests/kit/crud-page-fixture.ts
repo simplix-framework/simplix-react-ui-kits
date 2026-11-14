@@ -1,7 +1,7 @@
 import { join } from "node:path";
 
 import { virtualRoot } from "./template-typecheck";
-import { KIT_NAME } from "./kit";
+import { KIT_NAME } from "../../../../testing/template-harness/lib/kit";
 
 /**
  * What a generated CRUD page compiles against in the kit's tests: the context the CLI hands its

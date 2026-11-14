@@ -8,8 +8,6 @@
     "**/locales/**",
     "**/*.css"
   ],
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
   "exports": {
     "./api": {
       "source": "./src/api/index.ts",
@@ -147,45 +145,6 @@
   },
   "simplix": {
     "extends": "@simplix-react-ui-kits/console-core",
-    "id": "classic",
-    "fence": [
-      {
-        "name": "@simplix-react/ui",
-        "importNames": [
-          "CrudList",
-          "ListDetail",
-          "CrudDetail",
-          "CrudForm",
-          "useCrudPageState",
-          "useCrudNavigation",
-          "ChipFilter"
-        ],
-        "message": "Screens compose the console kit's parts (CrudPage, RecordList, RecordDetail, RecordForm from @simplix-react-ui-kits/console-classic), never the framework's screen-composition parts directly. A screen's own chip narrowing is the list's `narrowing` data, never a ChipFilter it draws."
-      },
-      {
-        "name": "@simplix-react-ui-kits/console-classic/layout",
-        "importNames": [
-          "SettingsTiles",
-          "TilesCollapseProvider",
-          "useTilesCollapse"
-        ],
-        "message": "A screen hands its figures to the page as spec.tiles; the page shell draws the figure row and its one fold. Never draw SettingsTiles or a tile fold yourself."
-      },
-      {
-        "name": "@simplix-react-ui-kits/console-classic/datetime",
-        "importNames": [
-          "ListTimeRange",
-          "PageTimeRange"
-        ],
-        "message": "A screen switches the time range region on with data (blocks `timeRange: { field, presets?, counts? }`); the page template draws the strip. Never draw ListTimeRange yourself."
-      },
-      {
-        "name": "@simplix-react-ui-kits/console-classic/notice",
-        "importNames": [
-          "NoticeCard"
-        ],
-        "message": "A notice is data: spec.notice / notices on the page, notices on a tab, fallback for a page with nothing to show. The page draws every notice card; a screen never draws one."
-      }
-    ]
+    "id": "classic"
   }
 }

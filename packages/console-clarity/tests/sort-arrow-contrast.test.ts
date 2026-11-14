@@ -3,7 +3,7 @@ import { join } from "node:path";
 
 import { describe, expect, it } from "vitest";
 
-import { installedFramework, PACKAGES } from "../../console-core/tests/kit/installed-framework";
+import { installedFramework, PACKAGES } from "../../console-core/tests/installed-framework";
 
 /**
  * The idle sort arrow of a table head stays readable in every console screen.

@@ -8,6 +8,9 @@
 // A window narrower than PHONE_WINDOW (768) draws the phone bar, which carries the page title and
 // every control as a 44px target; a wider one draws the page header's heading.
 
+import { resolve } from "node:path";
+import { fileURLToPath } from "node:url";
+
 /** The width below which the console draws its phone shell (`PHONE_WINDOW`, max-width 767px). */
 export const PHONE_MAX = 767;
 /** What a finger covers, in pixels. */
@@ -69,4 +72,31 @@ export function compare(reading, width) {
     out.push("the page draws no heading");
   }
   return out;
+}
+
+// node scripts/overflow-rendered.mjs --selftest   judges readings built by hand: each good one must hold, each bad one must be refused
+if (process.argv[1] && fileURLToPath(import.meta.url) === resolve(process.argv[1]) && process.argv.includes("--selftest")) {
+  const reading = (over = {}) => ({ innerWidth: 390, documentWidth: 390, mainScrollWidth: 358, mainClientWidth: 358, barDrawn: true, barTitle: "Members", heading: "", small: [], wide: [], lang: "en", ...over });
+  const desk = (over = {}) => reading({ innerWidth: 1440, documentWidth: 1440, mainScrollWidth: 1200, mainClientWidth: 1200, barDrawn: false, barTitle: "", heading: "Members", ...over });
+  const good = [
+    [reading(), 390],
+    [reading({ innerWidth: PHONE_MAX, documentWidth: PHONE_MAX }), PHONE_MAX],
+    [desk(), 1440],
+    [desk({ innerWidth: PHONE_MAX + 1, documentWidth: PHONE_MAX + 1 }), PHONE_MAX + 1],
+  ];
+  // A hit per way a width can fail; each is the form `compare` must refuse.
+  const bad = {
+    "a document wider than the window": [reading({ documentWidth: 412, wide: ["div[console-page] right 412"] }), 390],
+    "a content column that scrolls sideways": [reading({ mainScrollWidth: 400 }), 390],
+    "a phone window with no bar": [reading({ barDrawn: false }), 390],
+    "a phone bar with no title": [reading({ barTitle: "" }), 390],
+    "a phone bar control under a finger": [reading({ small: ["Menu 36x36"] }), 390],
+    "a wide window with no heading": [desk({ heading: "" }), 1440],
+    "a wide document at desk width": [desk({ documentWidth: 1500 }), 1440],
+  };
+  const missed = good.flatMap(([r, width]) => compare(r, width).map((p) => `miss at ${width}: ${p}`));
+  const hits = Object.entries(bad).filter(([, [r, width]]) => compare(r, width).length === 0).map(([label]) => `no hit for ${label}`);
+  const ok = missed.length === 0 && hits.length === 0;
+  console.log(ok ? `overflow-rendered selftest: hit ${Object.keys(bad).length}, miss 0` : `overflow-rendered selftest FAILED\n${[...missed, ...hits].join("\n")}`);
+  process.exit(ok ? 0 : 1);
 }

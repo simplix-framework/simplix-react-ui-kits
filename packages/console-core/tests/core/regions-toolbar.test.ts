@@ -11,7 +11,7 @@ import { afterEach, describe, expect, it } from "vitest";
 
 // @ts-expect-error the script is plain JavaScript that a product's runner imports
 import { compare, contract, probe, regionsOf } from "../../scripts/regions-rendered.mjs";
-import { installedFramework } from "./installed-framework";
+import { installedFramework } from "../installed-framework";
 
 const framework = installedFramework();
 const { JSDOM } = createRequire(join(framework, "package.json"))("jsdom") as { JSDOM: new (html: string) => { window: Window & typeof globalThis } };

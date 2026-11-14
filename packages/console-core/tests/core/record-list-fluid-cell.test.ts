@@ -3,7 +3,7 @@ import { join } from "node:path";
 
 import { describe, expect, it } from "vitest";
 
-import { PACKAGES } from "./installed-framework";
+import { PACKAGES } from "../installed-framework";
 
 /**
  * A fluid column's cell ellipsizes one line, and the line may be a control (a name that opens a peek).

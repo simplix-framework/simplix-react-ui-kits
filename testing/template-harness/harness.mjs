@@ -4,6 +4,7 @@ import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, rmSync, symli
 import { dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
+import { exportSurface, surfaceShortfall } from "./lib/exports.mjs";
 import { overrideBreaches, planTemplates } from "./lib/plan.mjs";
 import { fenceBreaches, typecheckProject } from "./lib/typecheck.mjs";
 
@@ -42,8 +43,8 @@ const kitManifest = JSON.parse(readFileSync(join(kitDir, "package.json"), "utf-8
 const kitLabel = kitManifest.name.replace(/^@[^/]+\//, "");
 const out = join(here, ".out", kitLabel);
 
-const { loadProjectTemplates, resolveKitChain } = await import(pathToFileURL(join(cliDir, "dist", "index.js")).href);
-if (typeof resolveKitChain !== "function") {
+const { kitFenceOf, loadProjectTemplates, resolveKitChain } = await import(pathToFileURL(join(cliDir, "dist", "index.js")).href);
+if (typeof resolveKitChain !== "function" || typeof kitFenceOf !== "function") {
   const { version } = JSON.parse(readFileSync(join(cliDir, "package.json"), "utf-8"));
   fail([`@simplix-react/cli ${version} reads no kit chain (simplix.extends); the templates need 0.3.12 or later. Run pnpm local:link to use a framework checkout until it is released.`]);
 }
@@ -60,6 +61,13 @@ const own = new Set(templateNames(chain.kit?.templates));
 const base = new Set(chain.layers.slice(0, -1).flatMap((layer) => templateNames(layer.templates)));
 const breaches = overrideBreaches(base, own, kitManifest.simplix?.overrides ?? {});
 
+// A design kit exports everything the core kit it extends does, entry by entry.
+const coreLayer = chain.layers.length > 1 ? chain.layers[chain.layers.length - 2] : undefined;
+if (coreLayer) {
+  const coreManifest = JSON.parse(readFileSync(join(coreLayer.dir, "package.json"), "utf-8"));
+  breaches.push(...surfaceShortfall(exportSurface({ dir: kitDir, manifest: kitManifest }), exportSurface({ dir: coreLayer.dir, manifest: coreManifest }), { kit: kitManifest.name, core: coreManifest.name }));
+}
+
 const templates = await loadProjectTemplates(out, kitDir);
 const plan = planTemplates(templates.keys());
 const problems = [...breaches, ...plan.unrendered.map((name) => `${name}.hbs: no CLI command renders it`)];
@@ -70,7 +78,8 @@ const commands = commandsFor(plan);
 for (const args of commands) run(args);
 if (plan.route) await writeRouteTree();
 
-const fenced = fenceBreaches(out, kitManifest.simplix?.fence ?? []);
+// The fence is the chain's: the core kit declares it once for every design, naming the design kit by token.
+const fenced = fenceBreaches(out, (await kitFenceOf(out, kitDir)) ?? []);
 if (fenced.length > 0) fail([`${fenced.length} import(s) in the generated code that ${kitManifest.name} fences:`, ...fenced]);
 
 const messages = typecheckProject(out, join(out, "config", "typescript", "react.json"), [kitDir]);

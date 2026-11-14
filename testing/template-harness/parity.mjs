@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { dirname, join, relative, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
-import ts from "typescript";
+import { fileURLToPath, pathToFileURL } from "node:url";
+
+import { exportSurface } from "./lib/exports.mjs";
 
 /**
  * Proves two kits of one family generate the same product: the projects the harness generated from
@@ -65,21 +66,6 @@ function renderedFromOverride(text, stems) {
   return id !== undefined && stems.includes(id);
 }
 
-/** Each export entry of a kit mapped to the names its source module exports. */
-function exportSurface(kit) {
-  const entries = Object.entries(kit.manifest.exports ?? {}).filter(([key, entry]) => typeof entry === "object" && entry?.source);
-  const roots = entries.map(([, entry]) => resolve(kit.dir, entry.source));
-  const program = ts.createProgram({ rootNames: roots, options: { noEmit: true, jsx: ts.JsxEmit.ReactJSX, moduleResolution: ts.ModuleResolutionKind.Bundler, module: ts.ModuleKind.ESNext, target: ts.ScriptTarget.ES2022, skipLibCheck: true, allowJs: false } });
-  const checker = program.getTypeChecker();
-  const surface = new Map();
-  for (const [key, entry] of entries) {
-    const source = program.getSourceFile(resolve(kit.dir, entry.source));
-    const symbol = source && checker.getSymbolAtLocation(source);
-    surface.set(key, symbol ? checker.getExportsOfModule(symbol).map((one) => one.getName()).sort() : []);
-  }
-  return surface;
-}
-
 const [first, second] = process.argv.slice(2).map((arg) => kitOf(resolve(arg)));
 if (!first || !second) fail(["usage: parity.mjs <kit directory> <kit directory>"]);
 for (const kit of [first, second]) {
@@ -119,8 +105,11 @@ for (const key of new Set([...surfaceA.keys(), ...surfaceB.keys()])) {
 
 // The imports a kit refuses outside itself are part of what it is: a fence one kit lacks lets a
 // screen drawn with it place framework parts the other kit's screens may not.
-const fenceA = tokenized(JSON.stringify(first.manifest.simplix?.fence ?? [], null, 2), first);
-const fenceB = tokenized(JSON.stringify(second.manifest.simplix?.fence ?? [], null, 2), second);
+const { kitFenceOf } = await import(pathToFileURL(join(here, "../../node_modules/@simplix-react/cli/dist/index.js")).href);
+if (typeof kitFenceOf !== "function") fail(["the installed @simplix-react/cli reads no fence through a kit chain (kitFenceOf); run pnpm local:link to use a framework checkout until it is released"]);
+const fenceOf = async (kit) => tokenized(JSON.stringify((await kitFenceOf(kit.out, kit.dir)) ?? [], null, 2), kit);
+const fenceA = await fenceOf(first);
+const fenceB = await fenceOf(second);
 if (fenceA !== fenceB) problems.push(`simplix.fence: ${first.name} and ${second.name} fence different imports or say different things about them`);
 
 if (problems.length > 0) fail([`${first.name} and ${second.name} are not at parity:`, ...problems]);

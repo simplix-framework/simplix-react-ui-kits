@@ -1,22 +1,11 @@
 import { defineConfig } from "tsup";
 
-// The clarity site kit re-exports the shared parts segment by segment; the parts build in site-core.
+import { exportEntries } from "../../config/tsup/entries.mjs";
+
+// A design kit re-exports its core kit segment by segment, one entry per export in package.json;
+// the parts themselves build in the core kit.
 export default defineConfig((options) => ({
-  entry: {
-    "account/index": "src/account/index.ts",
-    "action/index": "src/action/index.ts",
-    "auth/index": "src/auth/index.ts",
-    "checkout/index": "src/checkout/index.ts",
-    "form/index": "src/form/index.ts",
-    "help/index": "src/help/index.ts",
-    "install/index": "src/install/index.ts",
-    "legal/index": "src/legal/index.ts",
-    "link/index": "src/link/index.ts",
-    "marketing/index": "src/marketing/index.ts",
-    "page/index": "src/page/index.ts",
-    "pricing/index": "src/pricing/index.ts",
-    "shell/index": "src/shell/index.ts",
-  },
+  entry: exportEntries(import.meta.url),
   format: ["esm"],
   dts: !options.watch,
   sourcemap: true,

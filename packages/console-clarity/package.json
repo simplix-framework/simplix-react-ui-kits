@@ -8,8 +8,6 @@
     "**/locales/**",
     "**/*.css"
   ],
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
   "exports": {
     "./api": {
       "source": "./src/api/index.ts",
@@ -116,11 +114,11 @@
     "build": "NODE_OPTIONS=--max-old-space-size=4096 tsup",
     "dev": "tsup --no-clean --no-dts",
     "typecheck": "tsc --noEmit",
-    "lint": "oxlint src",
+    "lint": "oxlint src && pnpm -s design:check",
     "test": "vitest run && pnpm test:kit && pnpm test:templates",
     "clean": "rm -rf dist .turbo",
-    "design:css": "simplix-design-css --root ../console-core --design-spec ../console-clarity/src/styles/designs/clarity.spec.ts --out ../console-clarity/src/styles/designs/clarity.css --compiled ../console-clarity/src/styles/designs/clarity-stylesheet.ts --tailwind-from ../../../simplix-react/apps/storybook --reference src/styles/utilities.css",
-    "design:check": "simplix-design-css --root ../console-core --design-spec ../console-clarity/src/styles/designs/clarity.spec.ts --out ../console-clarity/src/styles/designs/clarity.css --compiled ../console-clarity/src/styles/designs/clarity-stylesheet.ts --tailwind-from ../../../simplix-react/apps/storybook --reference src/styles/utilities.css --check && simplix-design-coverage ../console-core/src/styles/designs/classic.css src/styles/designs/clarity.css && simplix-design-literals src",
+    "design:css": "simplix-design-css --root ../console-core --design-spec ../console-clarity/src/styles/designs/clarity.spec.ts --out ../console-clarity/src/styles/designs/clarity.css --compiled ../console-clarity/src/styles/designs/clarity-stylesheet.ts --tailwind-from . --reference src/styles/utilities.css",
+    "design:check": "simplix-design-css --root ../console-core --design-spec ../console-clarity/src/styles/designs/clarity.spec.ts --out ../console-clarity/src/styles/designs/clarity.css --compiled ../console-clarity/src/styles/designs/clarity-stylesheet.ts --tailwind-from . --reference src/styles/utilities.css --check && simplix-design-coverage ../console-core/src/styles/designs/classic.css src/styles/designs/clarity.css && simplix-design-literals src",
     "test:templates": "node ../../testing/template-harness/harness.mjs .",
     "test:kit": "KIT_DIR=. vitest run --config ../console-core/tests/kit/vitest.config.ts"
   },
@@ -135,6 +133,7 @@
     "@tanstack/react-router": ">=1.0.0"
   },
   "devDependencies": {
+    "@tailwindcss/node": "catalog:",
     "@tanstack/react-query": "catalog:",
     "@tanstack/react-router": "catalog:",
     "@testing-library/react": "catalog:",
@@ -143,51 +142,13 @@
     "oxlint": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
+    "tailwindcss": "catalog:",
     "tsup": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
   },
   "simplix": {
     "extends": "@simplix-react-ui-kits/console-core",
-    "id": "clarity",
-    "fence": [
-      {
-        "name": "@simplix-react/ui",
-        "importNames": [
-          "CrudList",
-          "ListDetail",
-          "CrudDetail",
-          "CrudForm",
-          "useCrudPageState",
-          "useCrudNavigation",
-          "ChipFilter"
-        ],
-        "message": "Screens compose the console kit's parts (CrudPage, RecordList, RecordDetail, RecordForm from @simplix-react-ui-kits/console-clarity), never the framework's screen-composition parts directly. A screen's own chip narrowing is the list's `narrowing` data, never a ChipFilter it draws."
-      },
-      {
-        "name": "@simplix-react-ui-kits/console-clarity/layout",
-        "importNames": [
-          "SettingsTiles",
-          "TilesCollapseProvider",
-          "useTilesCollapse"
-        ],
-        "message": "A screen hands its figures to the page as spec.tiles; the page shell draws the figure row and its one fold. Never draw SettingsTiles or a tile fold yourself."
-      },
-      {
-        "name": "@simplix-react-ui-kits/console-clarity/datetime",
-        "importNames": [
-          "ListTimeRange",
-          "PageTimeRange"
-        ],
-        "message": "A screen switches the time range region on with data (blocks `timeRange: { field, presets?, counts? }`); the page template draws the strip. Never draw ListTimeRange yourself."
-      },
-      {
-        "name": "@simplix-react-ui-kits/console-clarity/notice",
-        "importNames": [
-          "NoticeCard"
-        ],
-        "message": "A notice is data: spec.notice / notices on the page, notices on a tab, fallback for a page with nothing to show. The page draws every notice card; a screen never draws one."
-      }
-    ]
+    "id": "clarity"
   }
 }

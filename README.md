@@ -14,7 +14,7 @@ UI kits for simplix-react products. A kit is a design: the page patterns, layout
 
 Every console kit ships every design's stylesheet, so the reader can switch design, colour theme, card fill, row density and dark mode at run time from `DisplaySettings` (`/shell`); the kit only decides which design a console opens in.
 
-A design kit re-exports `console-core` segment by segment and adds its design: the design spec that redraws the core's slots, the stylesheet generated from it (`pnpm design:css` in the design kit), and its defaults (the design `ConsoleProviders` draws in and the `KIT_DESIGNS` the display settings offer). The core's own `.style.ts` declarations are the base look, `console-core/src/styles/designs/classic.css`, so every console design behaves identically and differs only in how it looks.
+A design kit re-exports `console-core` segment by segment and adds its design: the design spec that redraws the core's slots, the stylesheet generated from it (`pnpm design:css` in the design kit; `pnpm lint` fails where a generated stylesheet is behind its declarations), and its defaults (the design `ConsoleProviders` draws in and the `KIT_DESIGNS` the display settings offer). The core's own `.style.ts` declarations are the base look, `console-core/src/styles/designs/classic.css`, so every console design behaves identically and differs only in how it looks.
 
 A kit is named `<area>-<design>`, because one area (a console, a kiosk, a field app) can have several designs.
 
@@ -170,11 +170,13 @@ Then depend on the kit with `"@simplix-react-ui-kits/console-classic": "workspac
 | `site-core` | `templates/`: the site shell and the site page kinds and variants |
 | A design kit | none of its own: `simplix.extends` names the core kit, and `simplix.id` names the kit in the files it generates |
 
+A segment is declared once, in the core kit's `exports`. `node scripts/sync-design-kits.mjs` writes the matching export entry and re-export file into every design kit, each package's build entries are read from its `exports`, and `pnpm lint` fails where a design kit lacks a segment of its core kit or holds one of its own.
+
 A template writes the kit a product draws with as `{{@kit.package}}` (the package name), `{{@kit.label}}` (the name without the scope) and `{{@kit.id}}`, which the CLI fills in before it renders, so `import { RecordList } from "{{@kit.package}}/entity"` imports from `console-clarity` in one product and from `console-classic` in another.
 
 A design kit that has to draw a template differently ships that one file in its own `templates/`, sets `simplix.templates`, and names it in `simplix.overrides` with the reason. The harness refuses a kit template that replaces the core's without that entry, and a template only one kit ships.
 
-`testing/template-harness` generates a project from every template a kit has, through the CLI itself: a domain from a SimpliX Meta snapshot, the CRUD screen with its route and menu entry, and one page of every kind and variant with its board frame. It then refuses any generated import the kit's `simplix.fence` names, type-checks every generated file against the router's generated route tree, and mounts every generated board frame, page and shell in a DOM, failing on a throw or a console error. `parity.mjs` compares the projects of two kits of one area file by file, with each kit's own values put back as tokens, and compares the names each export entry carries and the imports each kit fences.
+`testing/template-harness` generates a project from every template a kit has, through the CLI itself: a domain from a SimpliX Meta snapshot, the CRUD screen with its route and menu entry, and one page of every kind and variant with its board frame. It then refuses any generated import the kit fences (`simplix.fence`, declared once in the core kit with the design kit named as `{{@kit.package}}`), refuses a design kit that exports less than its core kit does, type-checks every generated file against the router's generated route tree, and mounts every generated board frame, page and shell in a DOM, failing on a throw or a console error. `parity.mjs` compares the projects of two kits of one area file by file, with each kit's own values put back as tokens, and compares the names each export entry carries and the imports each kit fences.
 
 ```bash
 pnpm --filter @simplix-react-ui-kits/console-classic test:templates   # one kit

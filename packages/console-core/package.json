@@ -8,8 +8,6 @@
     "**/locales/**",
     "**/*.css"
   ],
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
   "exports": {
     "./api": {
       "source": "./src/api/index.ts",
@@ -115,7 +113,6 @@
     "./scripts/list-columns-rendered.mjs": "./scripts/list-columns-rendered.mjs"
   },
   "bin": {
-    "simplix-design-literals": "scripts/check-design-literals.mjs",
     "simplix-avatar-owner": "scripts/check-avatar-owner.mjs"
   },
   "files": [
@@ -130,11 +127,11 @@
     "build": "NODE_OPTIONS=--max-old-space-size=4096 tsup",
     "dev": "tsup --no-clean --no-dts",
     "typecheck": "tsc --noEmit",
-    "lint": "node scripts/check-regions.mjs && oxlint src && node scripts/check-avatar-owner.mjs --test && node scripts/check-avatar-owner.mjs --owner 'src/identity/initials-avatar*' src",
-    "test": "node scripts/check-regions.mjs --selftest && node scripts/regions-rendered.mjs --selftest && node scripts/tile-columns-rendered.mjs --selftest && node scripts/list-columns-rendered.mjs --selftest && node scripts/focus-clip-rendered.mjs --selftest && node scripts/clip-rendered.mjs --selftest && vitest run --passWithNoTests",
+    "lint": "node scripts/check-regions.mjs && oxlint src && node scripts/check-avatar-owner.mjs --test && node scripts/check-avatar-owner.mjs --owner 'src/identity/initials-avatar*' src && pnpm -s design:check",
+    "test": "node scripts/check-regions.mjs --selftest && node scripts/regions-rendered.mjs --selftest && node scripts/tile-columns-rendered.mjs --selftest && node scripts/list-columns-rendered.mjs --selftest && node scripts/focus-clip-rendered.mjs --selftest && node scripts/clip-rendered.mjs --selftest && node scripts/overflow-rendered.mjs --selftest && vitest run --passWithNoTests",
     "clean": "rm -rf dist .turbo",
     "design:css": "simplix-design-css --root . --out src/styles/designs/classic.css",
-    "design:check": "simplix-design-css --root . --out src/styles/designs/classic.css --check && simplix-design-classes src && node ../../node_modules/@simplix-react/ui/scripts/check-slot-spread.mjs src && node scripts/check-design-literals.mjs --test && node scripts/check-design-literals.mjs src"
+    "design:check": "simplix-design-css --root . --out src/styles/designs/classic.css --check && simplix-design-classes src && simplix-slot-spread src && simplix-design-literals src"
   },
   "dependencies": {
     "@fontsource/noto-sans-jp": "catalog:",
@@ -168,6 +165,45 @@
     "vitest": "catalog:"
   },
   "simplix": {
-    "templates": "templates"
+    "templates": "templates",
+    "fence": [
+      {
+        "name": "@simplix-react/ui",
+        "importNames": [
+          "CrudList",
+          "ListDetail",
+          "CrudDetail",
+          "CrudForm",
+          "useCrudPageState",
+          "useCrudNavigation",
+          "ChipFilter"
+        ],
+        "message": "Screens compose the console kit's parts (CrudPage, RecordList, RecordDetail, RecordForm from {{@kit.package}}), never the framework's screen-composition parts directly. A screen's own chip narrowing is the list's `narrowing` data, never a ChipFilter it draws."
+      },
+      {
+        "name": "{{@kit.package}}/layout",
+        "importNames": [
+          "SettingsTiles",
+          "TilesCollapseProvider",
+          "useTilesCollapse"
+        ],
+        "message": "A screen hands its figures to the page as spec.tiles; the page shell draws the figure row and its one fold. Never draw SettingsTiles or a tile fold yourself."
+      },
+      {
+        "name": "{{@kit.package}}/datetime",
+        "importNames": [
+          "ListTimeRange",
+          "PageTimeRange"
+        ],
+        "message": "A screen switches the time range region on with data (blocks `timeRange: { field, presets?, counts? }`); the page template draws the strip. Never draw ListTimeRange yourself."
+      },
+      {
+        "name": "{{@kit.package}}/notice",
+        "importNames": [
+          "NoticeCard"
+        ],
+        "message": "A notice is data: spec.notice / notices on the page, notices on a tab, fallback for a page with nothing to show. The page draws every notice card; a screen never draws one."
+      }
+    ]
   }
 }

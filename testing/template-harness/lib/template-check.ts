@@ -1,7 +1,8 @@
-import { dirname, join, resolve, sep } from "node:path";
-import { fileURLToPath } from "node:url";
+import { join, sep } from "node:path";
 import { loadProjectTemplates, renderTemplate } from "@simplix-react/cli";
 import ts from "typescript";
+
+import { KIT_DIR, KIT_NAME } from "./kit";
 
 /**
  * Renders a template the way the generator does and type-checks the result against the kit's own
@@ -11,9 +12,7 @@ import ts from "typescript";
  * the base kit's beneath them, with the kit's values written in), read and rendered by the CLI.
  */
 
-const here = dirname(fileURLToPath(import.meta.url));
-const packageDir = resolve(here, "..");
-const templates = await loadProjectTemplates(packageDir, packageDir);
+const templates = await loadProjectTemplates(KIT_DIR, KIT_DIR);
 
 export function render(templateFile: string, context: Record<string, unknown>): string {
   const name = templateFile.replace(/\.hbs$/, "");
@@ -23,20 +22,22 @@ export function render(templateFile: string, context: Record<string, unknown>): 
 }
 
 // Nothing is written: the files the tests hand in exist only for the compiler's host.
-export const virtualRoot = join(packageDir, ".template-check");
+export const virtualRoot = join(KIT_DIR, ".template-check");
 
-/** The compiler's messages for `roots`, with `files` present in memory. */
-export function typecheck(files: Readonly<Record<string, string>>, roots: readonly string[]): string[] {
-  const config = ts.readConfigFile(join(packageDir, "tsconfig.json"), ts.sys.readFile);
-  const parsed = ts.parseJsonConfigFileContent(config.config, ts.sys, packageDir);
+/**
+ * The compiler's messages for `roots`, with `files` present in memory. The kit's own entries
+ * resolve to its sources; `paths` adds the module mappings of the area or of the test (a stand-in
+ * for a domain package, an app's own dependency).
+ */
+export function typecheck(files: Readonly<Record<string, string>>, roots: readonly string[], paths: Readonly<Record<string, readonly string[]>> = {}): string[] {
+  const config = ts.readConfigFile(join(KIT_DIR, "tsconfig.json"), ts.sys.readFile);
+  const parsed = ts.parseJsonConfigFileContent(config.config, ts.sys, KIT_DIR);
   const options: ts.CompilerOptions = {
     ...parsed.options,
     noEmit: true,
     rootDir: undefined,
     outDir: undefined,
-    paths: {
-      "@simplix-react-ui-kits/site-clarity/*": [join(packageDir, "src", "*")],
-    },
+    paths: { [`${KIT_NAME}/*`]: [join(KIT_DIR, "src", "*")], ...Object.fromEntries(Object.entries(paths).map(([name, to]) => [name, [...to]])) },
   };
   const present = new Map(Object.entries(files));
   const host = ts.createCompilerHost(options);
@@ -58,4 +59,3 @@ export function typecheck(files: Readonly<Record<string, string>>, roots: readon
     });
   });
 }
-

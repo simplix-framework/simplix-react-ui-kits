@@ -3,7 +3,7 @@ import ts from "typescript";
 import { describe, expect, it } from "vitest";
 
 import { render, typecheck, virtualRoot } from "./template-typecheck";
-import { KIT_NAME } from "./kit";
+import { KIT_NAME } from "../../../../testing/template-harness/lib/kit";
 
 /**
  * What the widget templates take from the generator instead of a screen writing it by hand: a holder

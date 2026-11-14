@@ -3,7 +3,7 @@ import { join, relative } from "node:path";
 
 import { describe, expect, it } from "vitest";
 
-import { installedFramework, PACKAGES } from "../../console-core/tests/kit/installed-framework";
+import { installedFramework, PACKAGES } from "../../console-core/tests/installed-framework";
 
 /**
  * The keyboard stays visible under forced colors (Windows High Contrast) in every console part.

@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 
 import { context, domainStub, pageDir, widgetsDir, widgetsStub } from "./crud-page-fixture";
 import { render, typecheck, virtualRoot } from "./template-typecheck";
-import { KIT_NAME } from "./kit";
+import { KIT_NAME } from "../../../../testing/template-harness/lib/kit";
 
 /**
  * The generated CRUD page is the screen's whole start: it compiles against the kit's own sources with

@@ -18,8 +18,9 @@ const alias = (name: string) => [
   { find: new RegExp(`^${name}/(.*)$`), replacement: `${frameworkDir(name)}/$1` },
 ];
 
-// Only `*.test.*` files under src are tests.
+// The parts are tested beside their sources; `tests/core` holds the checks of the contract and of
+// the slot declarations as a whole, which read no design kit.
 export default defineConfig({
   resolve: { dedupe: ["react", "react-dom"], alias: [...alias("react"), ...alias("react-dom"), ...alias("lucide-react")] },
-  test: { include: ["src/**/*.test.{ts,tsx}"], server: { deps: { inline: [/@simplix-react\//] } } },
+  test: { include: ["src/**/*.test.{ts,tsx}", "tests/core/**/*.test.ts"], server: { deps: { inline: [/@simplix-react\//] } } },
 });
