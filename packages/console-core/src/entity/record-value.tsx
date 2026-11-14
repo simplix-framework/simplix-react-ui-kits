@@ -166,8 +166,9 @@ export function RecordValueView({ value }: { readonly value: RecordValue }): Rea
     return (
       // Badges wrap one by one inside the column; a badge's own words never break or ellipsize.
       <Flex gap="xs" wrap className="[&>*]:whitespace-nowrap">
-        {value.badges.map((badge) => (
-          <StatusBadge key={badge.label} tone={badge.tone ?? "neutral"} label={badge.label} />
+        {value.badges.map((badge, index) => (
+          // Two badges may read the same (two files of one name), so the place in the row tells them apart.
+          <StatusBadge key={`${index}:${badge.label}`} tone={badge.tone ?? "neutral"} label={badge.label} />
         ))}
       </Flex>
     );
