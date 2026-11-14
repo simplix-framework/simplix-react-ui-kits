@@ -1,3 +1,4 @@
+export { ProcedureCatalogue, type ProcedureCatalogueProps, type ProcedureChoice } from "./procedure-catalogue";
 export { WorkPage, type WorkLocation, type WorkPageProps } from "./work-page";
 export { WorkProgress, type WorkProcedure, type WorkProgressProps } from "./work-progress";
 export { WorkTurnCard, type WorkChoice, type WorkTurn } from "./work-turn";

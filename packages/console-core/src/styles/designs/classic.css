@@ -904,6 +904,12 @@
   [data-slot="console-page-meta"][data-slot][data-s-console-page-meta] {
     @apply mt-1.5 flex flex-wrap items-center;
   }
+  [data-slot="console-procedure-name"][data-slot][data-s-console-procedure-name] {
+    @apply text-base font-semibold text-foreground;
+  }
+  [data-slot="console-procedure-note"][data-slot][data-s-console-procedure-note] {
+    @apply text-xs text-muted-foreground;
+  }
   [data-slot="console-work-location-step"][data-slot][data-s-console-work-location-step] {
     @apply text-sm font-semibold text-foreground;
   }
@@ -1571,6 +1577,12 @@
   }
   :where([data-part="console-record-page-flow"])[data-part][data-p-console-record-page-flow] {
     @apply sticky top-0 pt-2;
+  }
+  :where([data-part="console-procedure-choices"])[data-part][data-p-console-procedure-choices] {
+    @apply gap-2 border-b border-border pb-3;
+  }
+  :where([data-part="console-procedure-head"])[data-part][data-p-console-procedure-head] {
+    @apply gap-3 py-3;
   }
   :where([data-part="console-work-location-path"])[data-part][data-p-console-work-location-path] {
     @apply text-xs text-muted-foreground;
