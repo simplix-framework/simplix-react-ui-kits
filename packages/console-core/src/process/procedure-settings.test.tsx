@@ -49,13 +49,14 @@ describe("ProcedureSettings", () => {
     expect(read).not.toContain("data-process-editor");
   });
 
-  it("publishes only a changed procedure without problems", () => {
-    // The button that publishes is the only primary verb of the tab: whether it is drawn disabled.
-    const publish = (html: string): boolean => { const button = html.match(/<button[^>]*>(?:(?!<\/button>).)*publish(?:(?!<\/button>).)*<\/button>/s)?.[0] ?? ""; if (button === "") throw new Error("no publish button"); return /\sdisabled=""|aria-disabled="true"/.test(button); };
+  it("holds publishing back until the procedure is changed, free of problems, and the change is described", () => {
+    // The reason the button is held back is what the reader is told: one per cause.
+    const reason = (html: string): string => { const button = html.match(/<[^>]*aria-description="([^"]*)"[^>]*>(?:(?!<\/button>).)*publish/s) ?? html.match(/aria-description="([^"]*)"/); if (button === null) throw new Error("the publish button is not held back"); return button[1] ?? ""; };
     const check = (props: Partial<ProcedureSettingsProps>): string => drawn({ onPublish: () => {}, defaultTab: "check", ...props });
-    expect(publish(check({}))).toBe(true);
-    expect(publish(check({ editing: sessionAt(changed()) }))).toBe(false);
-    expect(publish(check({ editing: sessionAt(changed()), problems: [{ subject: "write", message: "No screen offers this act" }] }))).toBe(true);
+    expect(reason(check({}))).toBe("blocked.same");
+    expect(reason(check({ editing: sessionAt(changed()), problems: [{ subject: "write", message: "No screen offers this act" }] }))).toBe("blocked.problems");
+    expect(reason(check({ editing: sessionAt(changed()) }))).toBe("blocked.note");
+    expect(check({ editing: sessionAt(changed()) })).toContain("data-procedure-note");
   });
 
   it("draws nothing under the choices while none is chosen", () => {

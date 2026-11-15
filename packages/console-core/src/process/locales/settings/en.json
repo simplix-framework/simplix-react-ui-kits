@@ -11,11 +11,13 @@
   "publish": "Publish",
   "blocked": {
     "problems": "Every problem has to be resolved before publishing",
-    "same": "Nothing differs from the published version"
+    "same": "Nothing differs from the published version",
+    "note": "Write what changed before publishing"
   },
   "changes": "Changes from the published version",
   "inForce": "In force",
   "compared": "Changes from the version before",
   "first": "This is the first published version",
-  "by": "Published by"
+  "by": "Published by",
+  "note": "What changed"
 }

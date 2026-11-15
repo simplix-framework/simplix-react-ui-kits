@@ -1,9 +1,9 @@
 import { type ReactNode, useState } from "react";
 import { useTranslation } from "@simplix-react/i18n/react";
 import { ProcessLanes } from "@simplix-react/process";
-import { ProcessDiff, ProcessEditor, ProcessProblems, useProcessProblems, type EditorProblem, type EditorTarget, type ProcessEditing } from "@simplix-react/process/edit";
-import type { Facts, ProcessDefinition } from "@simplix-react/process-core";
-import { Button, DetailList, DetailListRow, EmptyState, Flex, Stack, StatusBadge, Tabs, TabsContent, TabsTrigger, Text } from "@simplix-react/ui";
+import { ProcessDiff, ProcessEditor, ProcessProblems, useProcessProblems, type EditorProblem, type EditorScope, type EditorTarget, type ProcessEditing } from "@simplix-react/process/edit";
+import type { Act, Facts, ProcessDefinition } from "@simplix-react/process-core";
+import { Button, DetailList, DetailListRow, EmptyState, Flex, Label, Stack, StatusBadge, Tabs, TabsContent, TabsTrigger, Text, Textarea } from "@simplix-react/ui";
 import { partAttributes, slotAttributes } from "@simplix-react/ui/design";
 
 import { RecordVerbButton } from "../entity/record-blocks";
@@ -24,6 +24,8 @@ export interface ProcedureVersion {
   readonly by?: string;
   /** What the version changed, in the publisher's words. */
   readonly note?: string;
+  /** Where the version came from, where the product tells versions apart by it (set here, or registered by a release); drawn as a mark beside its name. */
+  readonly origin?: string;
   readonly definition: ProcessDefinition;
 }
 
@@ -49,8 +51,12 @@ export interface ProcedureSettingsProps {
   readonly renderFields?: (target: EditorTarget, editing: ProcessEditing) => ReactNode;
   /** The reader's word for a member of the product's own that differs between versions. */
   readonly fieldLabel?: (field: string) => string | undefined;
-  /** Publishes the procedure as it stands. Left out, the reader may read and not change: no editor and no publishing. */
-  readonly onPublish?: () => void;
+  /** Publishes the procedure as it stands, with what the publisher wrote about the change. Left out, the reader may read and not change: no editor and no publishing. */
+  readonly onPublish?: (note: string) => void;
+  /** What the editor lets the reader change; `wording` for a product whose flow is fixed elsewhere. */
+  readonly scope?: EditorScope;
+  /** The lanes an act may be given to, where not every lane may take it. */
+  readonly lanesFor?: (act: Act) => readonly string[];
   /** The tab the screen opens on. */
   readonly defaultTab?: "edit" | "check" | "versions";
   /** The version the history opens on; the one in force when left out. */
@@ -65,7 +71,7 @@ export interface ProcedureSettingsProps {
  * check, where the problems and what changed from the version in force are both in sight, and
  * only while there is no problem and something changed.
  */
-export function ProcedureSettings({ label, procedures, selected, onSelect, editing, facts, versions, problems, describe, renderFields, fieldLabel, onPublish, defaultTab = "edit", defaultVersion, empty }: ProcedureSettingsProps) {
+export function ProcedureSettings({ label, procedures, selected, onSelect, editing, facts, versions, problems, describe, renderFields, fieldLabel, onPublish, scope, lanesFor, defaultTab = "edit", defaultVersion, empty }: ProcedureSettingsProps) {
   const chosen = procedures.find((one) => one.key === selected);
   return (
     <Stack gap="none" className="min-h-0 flex-1" data-procedure-settings>
@@ -77,7 +83,7 @@ export function ProcedureSettings({ label, procedures, selected, onSelect, editi
         ))}
       </Flex>
       {chosen && editing ? (
-        <Chosen key={chosen.key} chosen={chosen} editing={editing} facts={facts} versions={versions} problems={problems} describe={describe} renderFields={renderFields} fieldLabel={fieldLabel} onPublish={onPublish} defaultTab={defaultTab} defaultVersion={defaultVersion} />
+        <Chosen key={chosen.key} chosen={chosen} editing={editing} facts={facts} versions={versions} problems={problems} describe={describe} renderFields={renderFields} fieldLabel={fieldLabel} onPublish={onPublish} scope={scope} lanesFor={lanesFor} defaultTab={defaultTab} defaultVersion={defaultVersion} />
       ) : (
         <EmptyState size="sm" title={empty.title} description={empty.description} />
       )}
@@ -85,14 +91,15 @@ export function ProcedureSettings({ label, procedures, selected, onSelect, editi
   );
 }
 
-type ChosenProps = Pick<ProcedureSettingsProps, "facts" | "versions" | "problems" | "describe" | "renderFields" | "fieldLabel" | "onPublish" | "defaultVersion"> & { readonly chosen: ProcedureChoice; readonly editing: ProcessEditing; readonly defaultTab: "edit" | "check" | "versions" };
+type ChosenProps = Pick<ProcedureSettingsProps, "facts" | "versions" | "problems" | "describe" | "renderFields" | "fieldLabel" | "onPublish" | "scope" | "lanesFor" | "defaultVersion"> & { readonly chosen: ProcedureChoice; readonly editing: ProcessEditing; readonly defaultTab: "edit" | "check" | "versions" };
 
-function Chosen({ chosen, editing, facts, versions, problems, describe, renderFields, fieldLabel, onPublish, defaultTab, defaultVersion }: ChosenProps) {
+function Chosen({ chosen, editing, facts, versions, problems, describe, renderFields, fieldLabel, onPublish, scope, lanesFor, defaultTab, defaultVersion }: ChosenProps) {
   const { t } = useTranslation(`${PACKAGE_NAMESPACE}/settings`);
   const inForce = versions[0];
   const listed = useProcessProblems(editing.definition, problems);
   const changed = inForce === undefined || JSON.stringify(inForce.definition) !== JSON.stringify(editing.definition);
-  const blocked = listed.length > 0 ? t("blocked.problems") : changed ? undefined : t("blocked.same");
+  const [note, setNote] = useState("");
+  const blocked = listed.length > 0 ? t("blocked.problems") : !changed ? t("blocked.same") : note.trim() === "" ? t("blocked.note") : undefined;
   const [versionKey, setVersionKey] = useState(defaultVersion ?? inForce?.key);
   const at = versions.findIndex((version) => version.key === versionKey);
   const version = versions[at];
@@ -135,14 +142,18 @@ function Chosen({ chosen, editing, facts, versions, problems, describe, renderFi
           ))}
         </PageTabStrip>
         <TabsContent value="edit" className="min-h-0 flex-1 overflow-auto" {...partAttributes(procedureTabBodyStyle, {})}>
-          {onPublish ? <ProcessEditor editing={editing} facts={facts} problems={problems} renderFields={describe || renderFields ? fields : undefined} /> : <ProcessLanes definition={editing.definition} facts={facts} layout="lanes" metrics={WHOLE_VIEW_METRICS} scrollToActive={false} />}
+          {onPublish ? <ProcessEditor editing={editing} facts={facts} problems={problems} scope={scope} lanesFor={lanesFor} renderFields={describe || renderFields ? fields : undefined} /> : <ProcessLanes definition={editing.definition} facts={facts} layout="lanes" metrics={WHOLE_VIEW_METRICS} scrollToActive={false} />}
         </TabsContent>
         {onPublish ? (
           <TabsContent value="check" className="min-h-0 flex-1 overflow-auto" {...partAttributes(procedureTabBodyStyle, {})}>
             <Stack gap="lg">
-              <Flex justify="end">
-                <RecordVerbButton verb={{ label: t("publish"), onClick: onPublish, kind: "primary", disabled: blocked }} />
-              </Flex>
+              <Stack gap="xs">
+                <Label htmlFor="procedure-change-note">{t("note")}</Label>
+                <Textarea id="procedure-change-note" value={note} onChange={(event) => setNote(event.target.value)} rows={2} data-procedure-note />
+                <Flex justify="end">
+                  <RecordVerbButton verb={{ label: t("publish"), onClick: () => { onPublish(note.trim()); setNote(""); }, kind: "primary", disabled: blocked }} />
+                </Flex>
+              </Stack>
               <ProcessProblems definition={editing.definition} problems={problems} />
               {inForce ? (
                 <Stack gap="sm">
@@ -161,6 +172,7 @@ function Chosen({ chosen, editing, facts, versions, problems, describe, renderFi
               {versions.map((one, index) => (
                 <Button key={one.key} size="sm" variant={one.key === versionKey ? "primary" : "outline"} aria-pressed={one.key === versionKey} onClick={() => setVersionKey(one.key)} data-procedure-version={one.key}>
                   {one.label}
+                  {one.origin ? ` · ${one.origin}` : null}
                   {index === 0 ? ` · ${t("inForce")}` : null}
                 </Button>
               ))}
@@ -169,7 +181,7 @@ function Chosen({ chosen, editing, facts, versions, problems, describe, renderFi
               <>
                 <Stack gap="none">
                   <Text size="sm" weight="semibold">
-                    {[version.label, version.publishedOn].filter(Boolean).join(" · ")}
+                    {[version.label, version.origin, version.publishedOn].filter(Boolean).join(" · ")}
                   </Text>
                   {version.by ? (
                     <Text size="caption" tone="muted">
