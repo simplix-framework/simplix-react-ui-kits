@@ -2,7 +2,8 @@
   "tabs": {
     "edit": "Edit",
     "check": "Check before publishing",
-    "versions": "Versions"
+    "versions": "Versions",
+    "view": "Procedure"
   },
   "status": {
     "draft": "Unpublished changes",

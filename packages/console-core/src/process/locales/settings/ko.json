@@ -2,7 +2,8 @@
   "tabs": {
     "edit": "편집",
     "check": "게시 전 검사",
-    "versions": "판 이력"
+    "versions": "판 이력",
+    "view": "절차"
   },
   "status": {
     "draft": "게시하지 않은 변경 있음",

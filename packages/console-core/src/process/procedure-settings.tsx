@@ -13,6 +13,9 @@ import type { ProcedureChoice } from "./procedure-catalogue";
 import { procedureChoicesStyle, procedureHeadStyle, procedureNameStyle, procedureNoteStyle, procedureTabBodyStyle } from "./procedure-catalogue.style";
 import { WHOLE_VIEW_METRICS } from "./whole-view";
 
+/** A procedure with nothing in it, for the list of problems while none is chosen. */
+const EMPTY: ProcessDefinition = { format: "simplix-process", version: 1, id: "", name: "", lanes: [], sections: [], jumps: [] };
+
 /** One published version of a procedure. */
 export interface ProcedureVersion {
   readonly key: string;
@@ -37,8 +40,10 @@ export interface ProcedureSettingsProps {
   /** The chosen procedure's key. */
   readonly selected?: string;
   readonly onSelect: (key: string) => void;
-  /** The chosen procedure as it is being edited. Left out with `selected` set, nothing is drawn under the choices. */
+  /** The chosen procedure as it is being edited, where the reader may change it. */
   readonly editing?: ProcessEditing;
+  /** The chosen procedure, where it is only read: a product whose procedures are files a release adds. One of `editing` and `definition` is given for the chosen procedure. */
+  readonly definition?: ProcessDefinition;
   /** The facts the procedure is drawn with. */
   readonly facts?: Facts;
   /** The published versions, newest first. The first is the one in force. */
@@ -71,7 +76,7 @@ export interface ProcedureSettingsProps {
  * check, where the problems and what changed from the version in force are both in sight, and
  * only while there is no problem and something changed.
  */
-export function ProcedureSettings({ label, procedures, selected, onSelect, editing, facts, versions, problems, describe, renderFields, fieldLabel, onPublish, scope, lanesFor, defaultTab = "edit", defaultVersion, empty }: ProcedureSettingsProps) {
+export function ProcedureSettings({ label, procedures, selected, onSelect, editing, definition, facts, versions, problems, describe, renderFields, fieldLabel, onPublish, scope, lanesFor, defaultTab = "edit", defaultVersion, empty }: ProcedureSettingsProps) {
   const chosen = procedures.find((one) => one.key === selected);
   return (
     <Stack gap="none" className="min-h-0 flex-1" data-procedure-settings>
@@ -82,8 +87,8 @@ export function ProcedureSettings({ label, procedures, selected, onSelect, editi
           </Button>
         ))}
       </Flex>
-      {chosen && editing ? (
-        <Chosen key={chosen.key} chosen={chosen} editing={editing} facts={facts} versions={versions} problems={problems} describe={describe} renderFields={renderFields} fieldLabel={fieldLabel} onPublish={onPublish} scope={scope} lanesFor={lanesFor} defaultTab={defaultTab} defaultVersion={defaultVersion} />
+      {chosen && (editing || definition) ? (
+        <Chosen key={chosen.key} chosen={chosen} editing={editing} definition={definition} facts={facts} versions={versions} problems={problems} describe={describe} renderFields={renderFields} fieldLabel={fieldLabel} onPublish={onPublish} scope={scope} lanesFor={lanesFor} defaultTab={defaultTab} defaultVersion={defaultVersion} />
       ) : (
         <EmptyState size="sm" title={empty.title} description={empty.description} />
       )}
@@ -91,13 +96,16 @@ export function ProcedureSettings({ label, procedures, selected, onSelect, editi
   );
 }
 
-type ChosenProps = Pick<ProcedureSettingsProps, "facts" | "versions" | "problems" | "describe" | "renderFields" | "fieldLabel" | "onPublish" | "scope" | "lanesFor" | "defaultVersion"> & { readonly chosen: ProcedureChoice; readonly editing: ProcessEditing; readonly defaultTab: "edit" | "check" | "versions" };
+type ChosenProps = Pick<ProcedureSettingsProps, "facts" | "versions" | "problems" | "describe" | "renderFields" | "fieldLabel" | "onPublish" | "scope" | "lanesFor" | "defaultVersion"> & { readonly chosen: ProcedureChoice; readonly editing?: ProcessEditing; readonly definition?: ProcessDefinition; readonly defaultTab: "edit" | "check" | "versions" };
 
-function Chosen({ chosen, editing, facts, versions, problems, describe, renderFields, fieldLabel, onPublish, scope, lanesFor, defaultTab, defaultVersion }: ChosenProps) {
+function Chosen({ chosen, editing, definition, facts, versions, problems, describe, renderFields, fieldLabel, onPublish, scope, lanesFor, defaultTab, defaultVersion }: ChosenProps) {
   const { t } = useTranslation(`${PACKAGE_NAMESPACE}/settings`);
   const inForce = versions[0];
-  const listed = useProcessProblems(editing.definition, problems);
-  const changed = inForce === undefined || JSON.stringify(inForce.definition) !== JSON.stringify(editing.definition);
+  // What is drawn: the procedure as it is being edited, or the one handed in to be read.
+  const drawn = editing?.definition ?? definition ?? inForce?.definition;
+  const [picked, setPicked] = useState<EditorTarget>({ kind: "process" });
+  const listed = useProcessProblems(drawn ?? EMPTY, problems);
+  const changed = inForce === undefined || JSON.stringify(inForce.definition) !== JSON.stringify(drawn);
   const [note, setNote] = useState("");
   const blocked = listed.length > 0 ? t("blocked.problems") : !changed ? t("blocked.same") : note.trim() === "" ? t("blocked.note") : undefined;
   const [versionKey, setVersionKey] = useState(defaultVersion ?? inForce?.key);
@@ -119,7 +127,10 @@ function Chosen({ chosen, editing, facts, versions, problems, describe, renderFi
       </>
     );
   };
-  const tabs = onPublish ? (["edit", "check", "versions"] as const) : (["edit", "versions"] as const);
+  const writes = onPublish !== undefined && editing !== undefined;
+  const tabs = writes ? (["edit", "check", "versions"] as const) : (["edit", "versions"] as const);
+  if (!drawn) return null;
+  const told = picked.kind === "process" ? [] : describe?.(picked, drawn) ?? [];
   return (
     <>
       <Flex align="center" justify="between" wrap {...partAttributes(procedureHeadStyle, {})}>
@@ -129,22 +140,42 @@ function Chosen({ chosen, editing, facts, versions, problems, describe, renderFi
         </Stack>
         <Flex gap="sm" align="center">
           {inForce ? <StatusBadge tone="neutral" label={`${inForce.label} · ${t("inForce")}`} /> : null}
-          {onPublish ? <StatusBadge tone={changed ? "warning" : "success"} label={t(changed ? "status.draft" : "status.same")} data-procedure-changed={changed} /> : null}
+          {writes ? <StatusBadge tone={changed ? "warning" : "success"} label={t(changed ? "status.draft" : "status.same")} data-procedure-changed={changed} /> : null}
         </Flex>
       </Flex>
-      <Tabs defaultValue={onPublish || defaultTab !== "check" ? defaultTab : "edit"} className="flex min-h-0 flex-1 flex-col">
+      <Tabs defaultValue={writes || defaultTab !== "check" ? defaultTab : "edit"} className="flex min-h-0 flex-1 flex-col">
         <PageTabStrip fromStart>
           {tabs.map((key) => (
             <TabsTrigger key={key} value={key} data-procedure-tab={key}>
-              {t(`tabs.${key}`)}
+              {t(key === "edit" && !writes ? "tabs.view" : `tabs.${key}`)}
               {key === "check" && listed.length > 0 ? ` ${listed.length}` : null}
             </TabsTrigger>
           ))}
         </PageTabStrip>
         <TabsContent value="edit" className="min-h-0 flex-1 overflow-auto" {...partAttributes(procedureTabBodyStyle, {})}>
-          {onPublish ? <ProcessEditor editing={editing} facts={facts} problems={problems} scope={scope} lanesFor={lanesFor} renderFields={describe || renderFields ? fields : undefined} /> : <ProcessLanes definition={editing.definition} facts={facts} layout="lanes" metrics={WHOLE_VIEW_METRICS} scrollToActive={false} />}
+          {writes && editing ? (
+            <ProcessEditor editing={editing} facts={facts} problems={problems} scope={scope} lanesFor={lanesFor} renderFields={describe || renderFields ? fields : undefined} />
+          ) : (
+            // Read only: the part picked on the drawing shows what the product knows about it under the lanes.
+            <ProcessLanes
+              definition={drawn}
+              facts={facts}
+              layout="lanes"
+              metrics={WHOLE_VIEW_METRICS}
+              scrollToActive={false}
+              selected={picked.kind === "process" ? null : { kind: picked.kind, id: picked.id }}
+              onSelect={(target) => setPicked({ kind: target.kind, id: target.id })}
+              renderDetail={told.length > 0 ? () => (
+                <DetailList>
+                  {told.map((line) => (
+                    <DetailListRow key={line.label} primary={line.label} trailing={line.value} />
+                  ))}
+                </DetailList>
+              ) : undefined}
+            />
+          )}
         </TabsContent>
-        {onPublish ? (
+        {writes && editing && onPublish ? (
           <TabsContent value="check" className="min-h-0 flex-1 overflow-auto" {...partAttributes(procedureTabBodyStyle, {})}>
             <Stack gap="lg">
               <Stack gap="xs">

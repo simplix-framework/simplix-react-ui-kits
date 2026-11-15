@@ -2,7 +2,8 @@
   "tabs": {
     "edit": "編集",
     "check": "公開前の検査",
-    "versions": "版の履歴"
+    "versions": "版の履歴",
+    "view": "手続き"
   },
   "status": {
     "draft": "未公開の変更あり",
