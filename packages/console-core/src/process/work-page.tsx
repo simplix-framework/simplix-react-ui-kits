@@ -150,9 +150,10 @@ export function WorkPage({ kind, title, stage, onClose, backLabel, turn, procedu
               {t("wide")}
             </Button>
           </Flex>
-          <Stack gap="md" className="min-h-0 flex-1 overflow-auto" {...partAttributes(workRailBodyStyle, {})}>
+          {/* Whose turn it is and the tabs stay in place; what the tab in view shows scrolls under them. */}
+          <Stack gap="md" className="min-h-0 flex-1" {...partAttributes(workRailBodyStyle, {})}>
             <WorkTurnCard turn={turn} />
-            <Tabs defaultValue={defaultRailTab}>
+            <Tabs defaultValue={defaultRailTab} className="flex min-h-0 flex-1 flex-col">
               <PageTabStrip fromStart>
                 {(["progress", "history", "related"] as const).map((key) => (
                   <TabsTrigger key={key} value={key} data-work-tab={key}>
@@ -161,13 +162,13 @@ export function WorkPage({ kind, title, stage, onClose, backLabel, turn, procedu
                   </TabsTrigger>
                 ))}
               </PageTabStrip>
-              <TabsContent value="progress">
+              <TabsContent value="progress" className="min-h-0 flex-1 overflow-auto" data-work-rail-scroll>
                 <ProcessLanes {...procedure} layout="stack" scrollToActive={false} />
               </TabsContent>
-              <TabsContent value="history">
+              <TabsContent value="history" className="min-h-0 flex-1 overflow-auto" data-work-rail-scroll>
                 <WorkEvents events={history} emptyLabel={t("empty.history")} />
               </TabsContent>
-              <TabsContent value="related">
+              <TabsContent value="related" className="min-h-0 flex-1 overflow-auto" data-work-rail-scroll>
                 <WorkRows rows={related} emptyLabel={t("empty.related")} />
               </TabsContent>
             </Tabs>

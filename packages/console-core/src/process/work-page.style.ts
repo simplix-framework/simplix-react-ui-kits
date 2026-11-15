@@ -53,7 +53,7 @@ export const workRailBarStyle = defineSlotStyle({
   defaultVariants: {},
 });
 
-/** The scrolling body of the rail. */
+/** The body of the rail: whose turn it is and the tabs, over the scrolling content of the tab in view. */
 export const workRailBodyStyle = defineSlotStyle({
   slot: "console-work-rail-body",
   as: "part",
