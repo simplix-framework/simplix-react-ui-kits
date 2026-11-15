@@ -1,4 +1,4 @@
-import { type ReactNode, useState } from "react";
+import { type ReactNode, useRef, useState } from "react";
 import { useTranslation } from "@simplix-react/i18n/react";
 import { ProcessLanes } from "@simplix-react/process";
 import { Button, Dialog, DialogHeader, DialogTitle, EmptyState, Flex, Stack, StatusBadge, type StatusTone, Tabs, TabsContent, TabsTrigger } from "@simplix-react/ui";
@@ -79,6 +79,14 @@ export function WorkPage({ kind, title, stage, onClose, backLabel, turn, procedu
   const crud = useCrudPresentation();
   const asPage = !crud || crud.presentation === "page";
   const counts = { history: history.length, related: related.length };
+  const [railTab, setRailTab] = useState<string>(defaultRailTab);
+  const rail = useRef<HTMLDivElement>(null);
+  // From the turn card: the screen of the step in hand, and that step brought into sight among the steps.
+  const showCurrent = (): void => {
+    onCurrent();
+    setRailTab("progress");
+    requestAnimationFrame(() => rail.current?.querySelector('[data-work-rail-scroll] [data-run="active"]')?.scrollIntoView({ block: "center", behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" }));
+  };
   return (
     <Stack gap="none" className="min-h-0 flex-1" data-work-page data-work-shown={procedure.selected?.id}>
       <Flex align="center" {...partAttributes(workPageHeadStyle, {})}>
@@ -142,7 +150,7 @@ export function WorkPage({ kind, title, stage, onClose, backLabel, turn, procedu
             {children ?? (empty ? <EmptyState size="sm" title={empty.title} description={empty.description} /> : null)}
           </Stack>
         </Stack>
-        <Stack gap="none" role="complementary" data-work-rail className="absolute inset-y-0 end-0 w-72" {...partAttributes(workRailStyle, {})}>
+        <Stack ref={rail} gap="none" role="complementary" data-work-rail className="absolute inset-y-0 end-0 w-72" {...partAttributes(workRailStyle, {})}>
           <Flex align="center" justify="between" {...partAttributes(workRailBarStyle, {})}>
             <span {...slotAttributes(workKindStyle, {})}>{t("rail.progress")}</span>
             <Button size="sm" variant="ghost" onClick={() => setWide(true)} data-work-wide>
@@ -152,8 +160,8 @@ export function WorkPage({ kind, title, stage, onClose, backLabel, turn, procedu
           </Flex>
           {/* Whose turn it is and the tabs stay in place; what the tab in view shows scrolls under them. */}
           <Stack gap="md" className="min-h-0 flex-1" {...partAttributes(workRailBodyStyle, {})}>
-            <WorkTurnCard turn={turn} />
-            <Tabs defaultValue={defaultRailTab} className="flex min-h-0 flex-1 flex-col">
+            <WorkTurnCard turn={{ ...turn, onShow: turn.onShow ?? showCurrent }} />
+            <Tabs value={railTab} onValueChange={setRailTab} className="flex min-h-0 flex-1 flex-col">
               <PageTabStrip fromStart>
                 {(["progress", "history", "related"] as const).map((key) => (
                   <TabsTrigger key={key} value={key} data-work-tab={key}>
