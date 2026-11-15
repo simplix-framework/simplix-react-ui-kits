@@ -19,5 +19,10 @@
     "history": "履歴",
     "related": "関連業務"
   },
-  "close": "閉じる"
+  "close": "閉じる",
+  "phone": {
+    "previous": "前の業務",
+    "next": "次の業務",
+    "count": "{{at}} / {{of}}"
+  }
 }

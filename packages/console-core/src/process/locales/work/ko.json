@@ -19,5 +19,10 @@
     "history": "이력",
     "related": "관련 업무"
   },
-  "close": "닫기"
+  "close": "닫기",
+  "phone": {
+    "previous": "앞의 업무",
+    "next": "다음 업무",
+    "count": "{{at}} / {{of}}"
+  }
 }

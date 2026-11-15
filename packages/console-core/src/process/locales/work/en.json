@@ -19,5 +19,10 @@
     "history": "History",
     "related": "Related work"
   },
-  "close": "Close"
+  "close": "Close",
+  "phone": {
+    "previous": "Previous work",
+    "next": "Next work",
+    "count": "{{at}} / {{of}}"
+  }
 }

@@ -33,3 +33,12 @@ export const procedureNoteStyle = defineSlotStyle({
   variants: {},
   defaultVariants: {},
 });
+
+/** What a tab of the procedure settings shows: the editor, the check before publishing, the versions. */
+export const procedureTabBodyStyle = defineSlotStyle({
+  slot: "console-procedure-tab-body",
+  as: "part",
+  base: "p-4",
+  variants: {},
+  defaultVariants: {},
+});

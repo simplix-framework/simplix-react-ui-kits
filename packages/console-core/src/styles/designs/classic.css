@@ -1584,6 +1584,9 @@
   :where([data-part="console-procedure-head"])[data-part][data-p-console-procedure-head] {
     @apply gap-3 py-3;
   }
+  :where([data-part="console-procedure-tab-body"])[data-part][data-p-console-procedure-tab-body] {
+    @apply p-4;
+  }
   :where([data-part="console-work-location-path"])[data-part][data-p-console-work-location-path] {
     @apply text-xs text-muted-foreground;
   }

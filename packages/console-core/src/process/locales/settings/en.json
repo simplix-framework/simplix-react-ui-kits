@@ -1,0 +1,21 @@
+{
+  "tabs": {
+    "edit": "Edit",
+    "check": "Check before publishing",
+    "versions": "Versions"
+  },
+  "status": {
+    "draft": "Unpublished changes",
+    "same": "Same as the published version"
+  },
+  "publish": "Publish",
+  "blocked": {
+    "problems": "Every problem has to be resolved before publishing",
+    "same": "Nothing differs from the published version"
+  },
+  "changes": "Changes from the published version",
+  "inForce": "In force",
+  "compared": "Changes from the version before",
+  "first": "This is the first published version",
+  "by": "Published by"
+}

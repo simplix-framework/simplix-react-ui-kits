@@ -1,7 +1,6 @@
 import { useTranslation } from "@simplix-react/i18n/react";
 import { Button, Flex, Stack, Text } from "@simplix-react/ui";
 import { partAttributes, slotAttributes } from "@simplix-react/ui/design";
-import { LocateFixedIcon } from "lucide-react";
 
 import { PACKAGE_NAMESPACE } from "./locales";
 import { workTurnLabelStyle, workTurnStyle } from "./work-window.style";
@@ -27,8 +26,6 @@ export interface WorkTurn {
   readonly hint?: string;
   /** The button that opens the screen the act is done on; drawn on the reader's own turn. */
   readonly action?: { readonly label: string; readonly onAct: () => void; readonly disabledReason?: string };
-  /** Shows the step in hand: its screen, and its place among the steps. Drawn as a button while the work is not finished. */
-  readonly onShow?: () => void;
   /** The other ways out of the step in hand. */
   readonly choices?: readonly WorkChoice[];
 }
@@ -40,7 +37,6 @@ export interface WorkTurn {
 export function WorkTurnCard({ turn }: { readonly turn: WorkTurn }) {
   const { t } = useTranslation(`${PACKAGE_NAMESPACE}/work`);
   const choices = turn.choices ?? [];
-  const show = turn.state === "finished" ? undefined : turn.onShow;
   return (
     <section data-work-turn={turn.state} {...partAttributes(workTurnStyle, { state: turn.state })}>
       <Stack gap="sm">
@@ -60,17 +56,11 @@ export function WorkTurnCard({ turn }: { readonly turn: WorkTurn }) {
             </Text>
           ) : null}
         </Stack>
-        {turn.action || show || choices.length > 0 ? (
+        {turn.action || choices.length > 0 ? (
           <Flex gap="sm" wrap align="center">
             {turn.action ? (
               <Button size="sm" onClick={turn.action.onAct} disabled={turn.action.disabledReason !== undefined} title={turn.action.disabledReason}>
                 {turn.action.label}
-              </Button>
-            ) : null}
-            {show ? (
-              <Button size="sm" variant="outline" onClick={show} data-work-turn-show>
-                <LocateFixedIcon aria-hidden className="size-4" />
-                {t("current")}
               </Button>
             ) : null}
             {choices.map((choice) => (

@@ -2,7 +2,7 @@ import { type ReactNode, useRef, useState } from "react";
 import { useTranslation } from "@simplix-react/i18n/react";
 import { ProcessLanes } from "@simplix-react/process";
 import { Button, Dialog, DialogHeader, DialogTitle, EmptyState, Flex, Stack, StatusBadge, type StatusTone, Tabs, TabsContent, TabsTrigger } from "@simplix-react/ui";
-import { ArrowLeftIcon, ChevronRightIcon, Maximize2Icon, XIcon } from "lucide-react";
+import { ArrowLeftIcon, ChevronRightIcon, LocateFixedIcon, Maximize2Icon, XIcon } from "lucide-react";
 import { partAttributes, slotAttributes } from "@simplix-react/ui/design";
 
 import { BoundedDialogContent } from "../layout/bounded-dialog-content";
@@ -66,7 +66,7 @@ export interface WorkPageProps {
 /**
  * One piece of work as a page: the screen of the step in hand in the middle, and beside it a rail
  * with whose turn it is and the steps of the procedure. Pressing a step shows that step's screen in
- * the same place, and one button brings the step in hand back. The whole view opens the
+ * the same place, and the button at the head of the rail brings the step in hand back and into sight. The whole view opens the
  * procedure as lanes in a dialog as large as the window; picking a step there closes it and shows
  * that step's screen. The bar over the screen says where that screen is in the menu and leads
  * there with the same record open.
@@ -81,7 +81,7 @@ export function WorkPage({ kind, title, stage, onClose, backLabel, turn, procedu
   const counts = { history: history.length, related: related.length };
   const [railTab, setRailTab] = useState<string>(defaultRailTab);
   const rail = useRef<HTMLDivElement>(null);
-  // From the turn card: the screen of the step in hand, and that step brought into sight among the steps.
+  // From the head of the rail: the screen of the step in hand, and that step brought into sight among the steps.
   const showCurrent = (): void => {
     onCurrent();
     setRailTab("progress");
@@ -126,26 +126,13 @@ export function WorkPage({ kind, title, stage, onClose, backLabel, turn, procedu
                   ))}
                 </Flex>
               </Stack>
-              <Flex gap="sm" align="center" className="ms-auto shrink-0">
-                {atCurrent ? null : (
-                  <Button size="sm" variant="outline" onClick={onCurrent} data-work-current>
-                    {t("current")}
-                  </Button>
-                )}
-                {location.onGo ? (
-                  <Button size="sm" variant="outline" onClick={location.onGo} data-work-go>
-                    {t("go")}
-                  </Button>
-                ) : null}
-              </Flex>
+              {location.onGo ? (
+                <Button size="sm" variant="outline" onClick={location.onGo} className="ms-auto shrink-0" data-work-go>
+                  {t("go")}
+                </Button>
+              ) : null}
             </Flex>
-          ) : atCurrent ? null : (
-            <Flex align="center" justify="end" {...partAttributes(workLocationStyle, {})}>
-              <Button size="sm" variant="outline" onClick={onCurrent} data-work-current>
-                {t("current")}
-              </Button>
-            </Flex>
-          )}
+          ) : null}
           <Stack gap="none" className="min-h-0 flex-1 overflow-auto">
             {children ?? (empty ? <EmptyState size="sm" title={empty.title} description={empty.description} /> : null)}
           </Stack>
@@ -153,14 +140,20 @@ export function WorkPage({ kind, title, stage, onClose, backLabel, turn, procedu
         <Stack ref={rail} gap="none" role="complementary" data-work-rail className="absolute inset-y-0 end-0 w-72" {...partAttributes(workRailStyle, {})}>
           <Flex align="center" justify="between" {...partAttributes(workRailBarStyle, {})}>
             <span {...slotAttributes(workKindStyle, {})}>{t("rail.progress")}</span>
-            <Button size="sm" variant="ghost" onClick={() => setWide(true)} data-work-wide>
-              <Maximize2Icon aria-hidden className="size-4" />
-              {t("wide")}
-            </Button>
+            <Flex gap="xs" align="center">
+              <Button size="xs" variant="ghost" onClick={showCurrent} data-work-current data-at-current={atCurrent || undefined}>
+                <LocateFixedIcon aria-hidden className="size-3.5" />
+                {t("current")}
+              </Button>
+              <Button size="xs" variant="ghost" onClick={() => setWide(true)} data-work-wide>
+                <Maximize2Icon aria-hidden className="size-3.5" />
+                {t("wide")}
+              </Button>
+            </Flex>
           </Flex>
           {/* Whose turn it is and the tabs stay in place; what the tab in view shows scrolls under them. */}
           <Stack gap="md" className="min-h-0 flex-1" {...partAttributes(workRailBodyStyle, {})}>
-            <WorkTurnCard turn={{ ...turn, onShow: turn.onShow ?? showCurrent }} />
+            <WorkTurnCard turn={turn} />
             <Tabs value={railTab} onValueChange={setRailTab} className="flex min-h-0 flex-1 flex-col">
               <PageTabStrip fromStart>
                 {(["progress", "history", "related"] as const).map((key) => (
