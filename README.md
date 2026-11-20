@@ -149,7 +149,7 @@ The console has one search, a shell part rather than a routed screen. The top ba
 Add this repository as a git submodule and its packages to the product's pnpm workspace:
 
 ```bash
-git submodule add https://github.com/simplecore-inc/simplix-react-ui-kits.git vendor/ui-kits
+git submodule add https://github.com/simplix-framework/simplix-react-ui-kits.git vendor/ui-kits
 ```
 
 ```yaml
