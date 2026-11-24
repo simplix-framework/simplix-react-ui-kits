@@ -13,10 +13,10 @@
 import { existsSync, readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { listFiles, parseArgs } from "../lib/fs-util.mjs";
-import { KIT_ROOT } from "../lib/kit-root.mjs";
+import { PACKAGE_ROOT } from "../lib/package-root.mjs";
 
 // The settings hook is this package's own `settings` entry, under whatever name it is published.
-const SETTINGS = `${JSON.parse(readFileSync(join(KIT_ROOT, "package.json"), "utf8")).name}/settings`;
+const SETTINGS = `${JSON.parse(readFileSync(join(PACKAGE_ROOT, "package.json"), "utf8")).name}/settings`;
 
 const args = parseArgs(process.argv.slice(2));
 const root = resolve(args.root ?? process.cwd());

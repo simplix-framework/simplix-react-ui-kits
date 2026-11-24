@@ -16,7 +16,7 @@ import { fileURLToPath } from "node:url";
 const here = dirname(fileURLToPath(import.meta.url));
 const workspace = resolve(here, "../..");
 const packagesDir = join(workspace, "packages");
-const mockup = join(packagesDir, "mockup");
+const mockup = join(workspace, "tools", "mockup");
 const framework = resolve(workspace, process.env.SIMPLIX_FRAMEWORK ?? JSON.parse(readFileSync(join(workspace, "package.json"), "utf8")).simplix.frameworkPath);
 
 if (!existsSync(join(framework, "pnpm-lock.yaml"))) {

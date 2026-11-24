@@ -4,7 +4,7 @@
 import { existsSync, readFileSync, realpathSync, statSync } from "node:fs";
 import { createRequire } from "node:module";
 import { join, relative, resolve, sep } from "node:path";
-import { KIT_ROOT } from "./kit-root.mjs";
+import { PACKAGE_ROOT } from "./package-root.mjs";
 import { searchForWorkspaceRoot, transformWithOxc } from "vite";
 import { colorThemeOf, designChain, loadDesigns, scopeDesignTokens } from "./designs.mjs";
 import { FRAMEWORK_SCOPE, locateFramework } from "./framework.mjs";
@@ -112,7 +112,7 @@ export function simplixMockupKit(options = {}) {
           dedupe: ["react", "react-dom", "react-router-dom", "@tanstack/react-query", "i18next", "react-i18next", "storybook", "@storybook/react"],
         },
         optimizeDeps: { exclude: [...(packages ? packages.keys() : [`${FRAMEWORK_SCOPE}ui`])] },
-        server: { fs: { allow: [KIT_ROOT, libraryRoot, ...linkedWorkspaces(libraryRoot), ...(frameworkRoot ? [frameworkRoot] : []), ...designDirs] } },
+        server: { fs: { allow: [PACKAGE_ROOT, libraryRoot, ...linkedWorkspaces(libraryRoot), ...(frameworkRoot ? [frameworkRoot] : []), ...designDirs] } },
         // A checkout is compiled by this plugin instead (see transform), so the core transform
         // and the React refresh transform leave its files alone; arrays merge with other plugins'.
         // The refresh filter matches everything not excluded unless it is also given an include.
@@ -158,10 +158,10 @@ export function simplixMockupKit(options = {}) {
         return { code: code + overrideSources.map((dir) => `\n@source ${JSON.stringify(dir)};`).join(""), map: null };
       }
       // oxc reads the tsconfig nearest a file, and a checkout's tsconfig extends a package only its
-      // own install provides; compiling under `lib/` gives its files the tsconfig written there.
+      // own install provides; compiling under `lib/framework-tsconfig/` gives its files the tsconfig written there.
       if (checkoutPattern?.test(file) && /\.[cm]?[jt]sx?$/.test(file) && !file.includes(`${sep}node_modules${sep}`)) {
         const ext = file.match(/\.([cm]?)([jt]sx?)$/)[2];
-        const result = await transformWithOxc(code, join(KIT_ROOT, "lib", ".framework", relative(frameworkRoot, file)), {
+        const result = await transformWithOxc(code, join(PACKAGE_ROOT, "lib", "framework-tsconfig", relative(frameworkRoot, file)), {
           lang: ext,
           jsx: { runtime: "automatic", importSource: "react" },
         });
@@ -172,4 +172,4 @@ export function simplixMockupKit(options = {}) {
   };
 }
 
-export { KIT_ROOT };
+export { PACKAGE_ROOT };

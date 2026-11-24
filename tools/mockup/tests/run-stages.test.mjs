@@ -5,7 +5,7 @@ import { chmodSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:f
 import { tmpdir } from "node:os";
 import { delimiter, join } from "node:path";
 import { describe, it } from "node:test";
-import { runStages, stageEnvironment, stageProblems, summaryLines } from "./run-stages.mjs";
+import { runStages, stageEnvironment, stageProblems, summaryLines } from "../lib/run-stages.mjs";
 
 /** A runner that answers each command with the status the table gives it and records the order. */
 const fake = (statuses, ran = []) => (command) => {

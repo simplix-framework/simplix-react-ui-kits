@@ -19,7 +19,7 @@ import { join, relative, resolve } from "node:path";
 import { listFiles, parseArgs } from "../lib/fs-util.mjs";
 import { FRAMEWORK_SCOPE, locateFramework } from "../lib/framework.mjs";
 import { frameworkPin, frameworkVersions } from "../lib/framework-versions.mjs";
-import { KIT_ROOT } from "../lib/kit-root.mjs";
+import { PACKAGE_ROOT } from "../lib/package-root.mjs";
 import { frameworkOf } from "../lib/mockup-root.mjs";
 
 const argv = process.argv.slice(2);
@@ -29,7 +29,7 @@ if (!args.root || !args.name || !args["ui-kit"]) {
   process.exit(2);
 }
 const root = resolve(args.root);
-const scaffold = join(KIT_ROOT, "scaffold");
+const scaffold = join(PACKAGE_ROOT, "scaffold");
 const created = [];
 const skipped = [];
 for (const rel of listFiles(scaffold)) {
@@ -107,7 +107,7 @@ function catalogOf(workspaceRoot) {
 }
 const catalog = args.workspace ? catalogOf(resolve(String(args.workspace))) : new Set();
 
-const kit = JSON.parse(readFileSync(join(KIT_ROOT, "package.json"), "utf8"));
+const kit = JSON.parse(readFileSync(join(PACKAGE_ROOT, "package.json"), "utf8"));
 const manifestPath = join(root, "package.json");
 if (existsSync(manifestPath)) {
   skipped.push("package.json");

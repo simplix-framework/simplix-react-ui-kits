@@ -11,13 +11,18 @@ UI kits for simplix-react products. A kit is a design: the page patterns, layout
 | `@simplix-react-ui-kits/console-clarity` | Operations console, clarity design: hairline borders on a near-white canvas, one accent, hierarchy from type weight and spacing |
 | `@simplix-react-ui-kits/site-core` | The parts every web site design shares: the site shell (window, bar, footer, dark band), the page column, head, section and breadcrumb, and the pricing parts. Behaviour and markup only; each element carries the `data-slot` a design draws |
 | `@simplix-react-ui-kits/site-clarity` | Web site, clarity design: `site-core` drawn with hairline borders, one accent and hierarchy from type, reading the `--site-*` variables a product sets; holds the site page region contract and its rendered checks |
-| `@simplix-react-ui-kits/mockup` | Not a design: the mockup tooling. The Storybook preview and preset a mockup root runs, the `simplix-mockup` checks its screens pass, and the generator of a new root ([packages/mockup](packages/mockup/README.md)) |
 
 Every console kit ships every design's stylesheet, so the reader can switch design, colour theme, card fill, row density and dark mode at run time from `DisplaySettings` (`/shell`); the kit only decides which design a console opens in.
 
 A design kit re-exports `console-core` segment by segment and adds its design: the design spec that redraws the core's slots, the stylesheet generated from it (`pnpm design:css` in the design kit; `pnpm lint` fails where a generated stylesheet is behind its declarations), and its defaults (the design `ConsoleProviders` draws in and the `KIT_DESIGNS` the display settings offer). The core's own `.style.ts` declarations are the base look, `console-core/src/styles/designs/classic.css`, so every console design behaves identically and differs only in how it looks.
 
-A kit is named `<area>-<design>`, because one area (a console, a kiosk, a field app) can have several designs.
+A kit is named `<area>-<design>`, because one area (a console, a kiosk, a field app) can have several designs. `packages/` holds the kits and nothing else.
+
+## Tools
+
+| Package | Holds |
+| --- | --- |
+| `@simplix-react-ui-kits/mockup` | The mockup tooling ([tools/mockup](tools/mockup/README.md)): the Storybook preview and preset a mockup root runs, the `simplix-mockup` commands its screens pass, and the generator of a new root. It is released with the kits and names none of them |
 
 ## Site kit
 

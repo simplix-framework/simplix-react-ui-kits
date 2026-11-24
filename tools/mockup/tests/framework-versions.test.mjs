@@ -3,7 +3,7 @@ import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
-import { frameworkPin, frameworkVersions } from "./framework-versions.mjs";
+import { frameworkPin, frameworkVersions } from "../lib/framework-versions.mjs";
 
 const LOCKFILE = `lockfileVersion: '9.0'
 

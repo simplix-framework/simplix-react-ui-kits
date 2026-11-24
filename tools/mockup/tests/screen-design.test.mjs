@@ -2,7 +2,7 @@
 // for and to stay quiet on the form it must leave alone.
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { blocksAreEmpty, declaredListView, detailSectionTitles, descriptionCatalogProblems, entitySearchOffers, entryProblems, searchProblems, listViewProblems, manifestProblems, placeholderFields, placeholderFrameProblems, placeholderRowProblems, recordListAttributes, pageDrawsFacet, primaryKeyOf, readRoutePath, withoutComments } from "./screen-design.mjs";
+import { blocksAreEmpty, declaredListView, detailSectionTitles, descriptionCatalogProblems, entitySearchOffers, entryProblems, searchProblems, listViewProblems, manifestProblems, placeholderFields, placeholderFrameProblems, placeholderRowProblems, recordListAttributes, pageDrawsFacet, primaryKeyOf, readRoutePath, withoutComments } from "../lib/screen-design.mjs";
 
 const EMPTY = "export function usePageBlocks(): PageBlocks {\n  return {};\n}\n";
 const CUSTOMISED = "export function usePageBlocks(): PageBlocks {\n  return { spec: { description: t(\"d\") } };\n}\n";

@@ -1,7 +1,7 @@
 // The active design is a module the mockup plugin writes; a root that reads this file as the
 // package's types needs its declaration with it.
 // oxlint-disable-next-line typescript/triple-slash-reference
-/// <reference path="./kit-env.d.ts" />
+/// <reference path="./design-module.d.ts" />
 // Storybook preview for a mockup root: the framework's providers, the active kit design, and a
 // toolbar of global settings (detail presentation, design, colour theme, card fill, density, mode,
 // frame, locale) that applies to every screen at once.

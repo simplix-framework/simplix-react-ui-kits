@@ -6,7 +6,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/simplix-framework/simplix-react-ui-kits.git",
-    "directory": "packages/mockup"
+    "directory": "tools/mockup"
   },
   "publishConfig": {
     "access": "public"
@@ -22,7 +22,7 @@
       "types": "./src/settings.tsx",
       "import": "./dist/settings.js"
     },
-    "./preset": "./storybook/preset.mjs",
+    "./preset": "./src/preset.mjs",
     "./vite-plugin": "./lib/vite-plugin.mjs",
     "./screen-design": "./lib/screen-design.mjs",
     "./package.json": "./package.json"
@@ -34,18 +34,16 @@
     "dist",
     "src",
     "bin",
-    "checks",
+    "commands",
     "lib",
-    "storybook",
-    "scaffold",
-    "!lib/*.test.mjs"
+    "scaffold"
   ],
   "scripts": {
     "build": "tsup",
     "dev": "tsup --no-clean --no-dts",
     "typecheck": "tsc --noEmit",
-    "lint": "oxlint src lib checks bin storybook",
-    "test": "node --test lib/*.test.mjs",
+    "lint": "oxlint src lib commands bin tests && simplix-em-dash src lib commands bin scaffold",
+    "test": "node --test tests/*.test.mjs",
     "clean": "rm -rf dist .turbo"
   },
   "dependencies": {

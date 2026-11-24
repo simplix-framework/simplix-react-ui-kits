@@ -13,7 +13,7 @@ import {
   renderMenu,
   resolveMenu,
   wordProblems,
-} from "./console-menu.mjs";
+} from "../lib/console-menu.mjs";
 
 const MENU_SOURCE = `
   const GATE = { action: "list" };

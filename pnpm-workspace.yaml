@@ -1,5 +1,6 @@
 packages:
   - packages/*
+  - tools/*
   - testing/*
 
 # The versions a product consuming these kits resolves. A product that adds the kits to its own

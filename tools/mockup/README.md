@@ -5,7 +5,7 @@ Tooling for mockups of simplix-react products: the Storybook setup a mockup root
 A mockup draws every screen with one UI kit (a package of screen types built on simplix-react, named in `mockup.config.json` `uiKit`). This package adds:
 
 - **A Storybook setup for mockup roots**: the framework's providers and a toolbar of global settings (detail presentation, design, colour theme, card fill, density, mode, frame, locale) that applies to every screen.
-- **Checks and scripts**, run as `simplix-mockup <command>` from the root: screen and design validation, version pinning against the framework lockfile, token extraction, captures, and a mockup root generator.
+- **Commands**, run as `simplix-mockup <command>` from the root: screen and design validation, version pinning against the framework lockfile, token extraction, captures, and a mockup root generator.
 
 It names no product and holds no design. Everything specific to a product is in the product's own mockup root: its `mockup.config.json`, its screens, and the designs it proposes for the framework.
 
@@ -15,12 +15,12 @@ It names no product and holds no design. Everything specific to a product is in 
 | --- | --- |
 | `src/preview.tsx` | `createMockupPreview()` (`/preview`): providers and the global settings toolbar for a mockup root |
 | `src/settings.tsx` | `useMockupSettings()` (`/settings`): the toolbar's settings, read by a screen |
-| `storybook/preset.mjs` | The Storybook preset (`/preset`): reads the root's `mockup.config.json` and adds the plugin |
+| `src/preset.mjs` | The Storybook preset (`/preset`): reads the root's `mockup.config.json` and adds the plugin |
 | `lib/vite-plugin.mjs` | The plugin (`/vite-plugin`): renders the framework from a checkout or the installed packages, with a design's overrides and tokens applied |
-| `bin/simplix-mockup.mjs` | `simplix-mockup <command>`: runs one file of `checks/` |
-| `checks/` | `check-screens`, `check-designs`, `check-imports`, `check-versions`, `console-menu`, `screen-design`, `run-stages`, `new-override`, `extract-tokens`, `capture`, `story-digest`, `init-mockup` |
+| `bin/simplix-mockup.mjs` | `simplix-mockup <command>`: runs one file of `commands/` |
+| `commands/` | `check-screens`, `check-designs`, `check-imports`, `check-versions`, `console-menu`, `screen-design`, `run-stages`, `new-override`, `extract-tokens`, `capture`, `story-digest`, `init-mockup` |
 | `scaffold/` | Files `init-mockup` copies into a new mockup root |
-| `lib/` | Helpers the checks and the plugin share, each proved by the `*.test.mjs` beside it (`pnpm test`); `lib/screen-design.mjs` is also an entry (`/screen-design`), for a root whose own check reads a design entry |
+| `lib/` | Helpers the commands and the plugin share, each proved by its `tests/*.test.mjs` (`pnpm test`); `lib/screen-design.mjs` is also an entry (`/screen-design`), for a root whose own check reads a design entry |
 
 ## Designs
 
