@@ -22,4 +22,4 @@ The parts take plain props and name no product, endpoint or router: labels, addr
 
 ---
 
-<p class="page-source"><a href="https://github.com/simplix-framework/simplix-react-ui-kits/blob/main/packages/site-core/README.md" target="_blank" rel="noopener noreferrer">View source</a></p>
+<p class="page-source"><a href="https://github.com/simplix-framework/simplix-react-ui-kits/blob/main/packages/site-core/README.md" target="_blank" rel="noopener noreferrer">Edit on GitHub</a></p>

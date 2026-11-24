@@ -1,14 +1,12 @@
-* **개요**
-  * [문서](/ko/README.md)
-
 * **시작하기**
-  * [시작하기](/ko/getting-started/README.md)
+  * [문서 홈](/ko/README.md)
+  * [소개](/ko/getting-started/README.md)
   * [개요](/ko/getting-started/overview.md)
   * [설치](/ko/getting-started/installation.md)
   * [빠른 시작](/ko/getting-started/quick-start.md)
 
 * **핵심 개념**
-  * [핵심 개념](/ko/core-concepts/README.md)
+  * [소개](/ko/core-concepts/README.md)
   * [kit과 디자인](/ko/core-concepts/kits-and-designs.md)
   * [화면 템플릿](/ko/core-concepts/screen-templates.md)
   * [목업 루트](/ko/core-concepts/mockup-roots.md)
@@ -17,7 +15,7 @@
   * [콘솔 레코드와 검색](/ko/core-concepts/console-records-and-search.md)
 
 * **가이드**
-  * [가이드](/ko/guides/README.md)
+  * [소개](/ko/guides/README.md)
   * [제품에서 kit 사용하기](/ko/guides/use-a-kit-in-a-product.md)
   * [화면 생성하기](/ko/guides/generate-screens.md)
   * [목업 루트 생성하기](/ko/guides/create-a-mockup-root.md)
@@ -27,13 +25,13 @@
   * [릴리스하기](/ko/guides/release.md)
 
 * **튜토리얼**
-  * [튜토리얼](/ko/tutorials/README.md)
+  * [소개](/ko/tutorials/README.md)
   * [화면 하나로 목업 루트 만들기](/ko/tutorials/first-mockup-screen.md)
 
 * **참조**
-  * [참조](/ko/reference/README.md)
-  * [`simplix-mockup` 명령](/ko/reference/simplix-mockup-commands.md)
-  * [`mockup.config.json`](/ko/reference/mockup-config.md)
+  * [소개](/ko/reference/README.md)
+  * [simplix-mockup 명령](/ko/reference/simplix-mockup-commands.md)
+  * [mockup.config.json](/ko/reference/mockup-config.md)
   * [kit 매니페스트](/ko/reference/kit-manifest.md)
   * [워크스페이스 스크립트](/ko/reference/workspace-scripts.md)
 
@@ -43,5 +41,5 @@
   * [@simplix-react-ui-kits/mockup](/ko/tools/mockup/README.md)
 
 * **프로젝트**
-  * [Contributing to simplix-react-ui-kits](/ko/CONTRIBUTING.md)
+  * [기여하기](/ko/CONTRIBUTING.md)
   * [변경 이력](https://github.com/simplix-framework/simplix-react-ui-kits/blob/main/CHANGELOG.md)

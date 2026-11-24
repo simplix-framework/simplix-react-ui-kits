@@ -96,4 +96,4 @@ A kit names no product. A value of yours reaches a part through a prop or a prov
 
 ---
 
-<p class="page-source"><a href="https://github.com/simplix-framework/simplix-react-ui-kits/blob/main/docs/en/guides/use-a-kit-in-a-product.md" target="_blank" rel="noopener noreferrer">View source</a></p>
+<p class="page-source"><a href="https://github.com/simplix-framework/simplix-react-ui-kits/blob/main/docs/en/guides/use-a-kit-in-a-product.md" target="_blank" rel="noopener noreferrer">Edit on GitHub</a></p>

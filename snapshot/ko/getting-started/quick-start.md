@@ -81,4 +81,4 @@ simplix scaffold project --module projects \
 
 ---
 
-<p class="page-source"><a href="https://github.com/simplix-framework/simplix-react-ui-kits/blob/main/docs/ko/getting-started/quick-start.md" target="_blank" rel="noopener noreferrer">원본 보기</a></p>
+<p class="page-source"><a href="https://github.com/simplix-framework/simplix-react-ui-kits/blob/main/docs/ko/getting-started/quick-start.md" target="_blank" rel="noopener noreferrer">GitHub에서 편집</a></p>

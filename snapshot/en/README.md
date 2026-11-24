@@ -18,4 +18,4 @@ Each document is one type: a tutorial teaches, a guide solves one problem, a ref
 
 ---
 
-<p class="page-source"><a href="https://github.com/simplix-framework/simplix-react-ui-kits/blob/main/docs/en/README.md" target="_blank" rel="noopener noreferrer">View source</a></p>
+<p class="page-source"><a href="https://github.com/simplix-framework/simplix-react-ui-kits/blob/main/docs/en/README.md" target="_blank" rel="noopener noreferrer">Edit on GitHub</a></p>

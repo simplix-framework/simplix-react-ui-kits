@@ -12,4 +12,4 @@ Start here when the kits are new to you.
 
 ---
 
-<p class="page-source"><a href="https://github.com/simplix-framework/simplix-react-ui-kits/blob/main/docs/en/getting-started/README.md" target="_blank" rel="noopener noreferrer">View source</a></p>
+<p class="page-source"><a href="https://github.com/simplix-framework/simplix-react-ui-kits/blob/main/docs/en/getting-started/README.md" target="_blank" rel="noopener noreferrer">Edit on GitHub</a></p>

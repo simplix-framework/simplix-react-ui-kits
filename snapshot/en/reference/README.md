@@ -15,4 +15,4 @@ The public API of a kit part is documented in its source, as TSDoc on the export
 
 ---
 
-<p class="page-source"><a href="https://github.com/simplix-framework/simplix-react-ui-kits/blob/main/docs/en/reference/README.md" target="_blank" rel="noopener noreferrer">View source</a></p>
+<p class="page-source"><a href="https://github.com/simplix-framework/simplix-react-ui-kits/blob/main/docs/en/reference/README.md" target="_blank" rel="noopener noreferrer">Edit on GitHub</a></p>

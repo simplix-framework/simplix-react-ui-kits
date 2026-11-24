@@ -85,4 +85,4 @@ Give `design.json` a `base`. The chain is searched from the selected design down
 
 ---
 
-<p class="page-source"><a href="https://github.com/simplix-framework/simplix-react-ui-kits/blob/main/docs/en/guides/propose-a-framework-design-change.md" target="_blank" rel="noopener noreferrer">View source</a></p>
+<p class="page-source"><a href="https://github.com/simplix-framework/simplix-react-ui-kits/blob/main/docs/en/guides/propose-a-framework-design-change.md" target="_blank" rel="noopener noreferrer">Edit on GitHub</a></p>

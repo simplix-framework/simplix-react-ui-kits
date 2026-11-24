@@ -95,4 +95,4 @@ kit은 이 저장소의 catalog에 고정한 simplix-react 버전 하나를 기�
 
 ---
 
-<p class="page-source"><a href="https://github.com/simplix-framework/simplix-react-ui-kits/blob/main/docs/ko/getting-started/installation.md" target="_blank" rel="noopener noreferrer">원본 보기</a></p>
+<p class="page-source"><a href="https://github.com/simplix-framework/simplix-react-ui-kits/blob/main/docs/ko/getting-started/installation.md" target="_blank" rel="noopener noreferrer">GitHub에서 편집</a></p>

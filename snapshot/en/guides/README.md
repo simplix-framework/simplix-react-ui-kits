@@ -23,4 +23,4 @@ Each guide solves one problem. Pick the one that matches what you are doing.
 
 ---
 
-<p class="page-source"><a href="https://github.com/simplix-framework/simplix-react-ui-kits/blob/main/docs/en/guides/README.md" target="_blank" rel="noopener noreferrer">View source</a></p>
+<p class="page-source"><a href="https://github.com/simplix-framework/simplix-react-ui-kits/blob/main/docs/en/guides/README.md" target="_blank" rel="noopener noreferrer">Edit on GitHub</a></p>

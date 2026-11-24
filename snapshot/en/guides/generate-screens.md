@@ -84,4 +84,4 @@ When the app's `templates.storiesDir` names a directory, each generated page als
 
 ---
 
-<p class="page-source"><a href="https://github.com/simplix-framework/simplix-react-ui-kits/blob/main/docs/en/guides/generate-screens.md" target="_blank" rel="noopener noreferrer">View source</a></p>
+<p class="page-source"><a href="https://github.com/simplix-framework/simplix-react-ui-kits/blob/main/docs/en/guides/generate-screens.md" target="_blank" rel="noopener noreferrer">Edit on GitHub</a></p>

@@ -75,4 +75,4 @@ Commit by naming your own paths, read the diff before staging, and leave changes
 
 ---
 
-<p class="page-source"><a href="https://github.com/simplix-framework/simplix-react-ui-kits/blob/main/docs/en/guides/work-on-the-kits.md" target="_blank" rel="noopener noreferrer">View source</a></p>
+<p class="page-source"><a href="https://github.com/simplix-framework/simplix-react-ui-kits/blob/main/docs/en/guides/work-on-the-kits.md" target="_blank" rel="noopener noreferrer">Edit on GitHub</a></p>

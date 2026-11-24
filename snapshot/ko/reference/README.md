@@ -15,4 +15,4 @@ kit 파트의 공개 API는 소스의 export에 TSDoc으로 문서화되어 있�
 
 ---
 
-<p class="page-source"><a href="https://github.com/simplix-framework/simplix-react-ui-kits/blob/main/docs/ko/reference/README.md" target="_blank" rel="noopener noreferrer">원본 보기</a></p>
+<p class="page-source"><a href="https://github.com/simplix-framework/simplix-react-ui-kits/blob/main/docs/ko/reference/README.md" target="_blank" rel="noopener noreferrer">GitHub에서 편집</a></p>

@@ -22,4 +22,4 @@ The console has one search, a shell part rather than a routed screen. The top ba
 
 ---
 
-<p class="page-source"><a href="https://github.com/simplix-framework/simplix-react-ui-kits/blob/main/docs/en/core-concepts/console-records-and-search.md" target="_blank" rel="noopener noreferrer">View source</a></p>
+<p class="page-source"><a href="https://github.com/simplix-framework/simplix-react-ui-kits/blob/main/docs/en/core-concepts/console-records-and-search.md" target="_blank" rel="noopener noreferrer">Edit on GitHub</a></p>

@@ -63,4 +63,4 @@ The same template imports from `console-clarity` in one product and from `consol
 
 ---
 
-<p class="page-source"><a href="https://github.com/simplix-framework/simplix-react-ui-kits/blob/main/docs/en/core-concepts/screen-templates.md" target="_blank" rel="noopener noreferrer">View source</a></p>
+<p class="page-source"><a href="https://github.com/simplix-framework/simplix-react-ui-kits/blob/main/docs/en/core-concepts/screen-templates.md" target="_blank" rel="noopener noreferrer">Edit on GitHub</a></p>

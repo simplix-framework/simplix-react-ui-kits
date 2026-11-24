@@ -96,4 +96,4 @@ kit에는 제품 이름이 없습니다. 제품의 값은 prop이나 provider로
 
 ---
 
-<p class="page-source"><a href="https://github.com/simplix-framework/simplix-react-ui-kits/blob/main/docs/ko/guides/use-a-kit-in-a-product.md" target="_blank" rel="noopener noreferrer">원본 보기</a></p>
+<p class="page-source"><a href="https://github.com/simplix-framework/simplix-react-ui-kits/blob/main/docs/ko/guides/use-a-kit-in-a-product.md" target="_blank" rel="noopener noreferrer">GitHub에서 편집</a></p>

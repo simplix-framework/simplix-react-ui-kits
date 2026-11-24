@@ -24,4 +24,4 @@ The keyboard focus ring (`--focus-halo`, a box-shadow outside the control) is ke
 
 ---
 
-<p class="page-source"><a href="https://github.com/simplix-framework/simplix-react-ui-kits/blob/main/docs/en/core-concepts/console-pages.md" target="_blank" rel="noopener noreferrer">View source</a></p>
+<p class="page-source"><a href="https://github.com/simplix-framework/simplix-react-ui-kits/blob/main/docs/en/core-concepts/console-pages.md" target="_blank" rel="noopener noreferrer">Edit on GitHub</a></p>

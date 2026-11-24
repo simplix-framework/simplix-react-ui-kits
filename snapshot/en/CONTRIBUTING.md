@@ -85,4 +85,4 @@ Every package is released together under the root version. Add what your change 
 
 ---
 
-<p class="page-source"><a href="https://github.com/simplix-framework/simplix-react-ui-kits/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener noreferrer">View source</a></p>
+<p class="page-source"><a href="https://github.com/simplix-framework/simplix-react-ui-kits/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener noreferrer">Edit on GitHub</a></p>
