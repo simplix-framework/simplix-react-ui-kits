@@ -5,3 +5,4 @@ dist/
 .simplix-react
 testing/template-harness/.out/
 testing/mockup-root/.out/
+__pycache__/
