@@ -1,0 +1,25 @@
+{
+  "name": "simplix-react-ui-kits",
+  "description": "simplix-react-ui-kits - UI kits for simplix-react products: screen parts, screen templates and mockup tooling",
+  "keywords": "simplix-react, UI kit, React, screen templates, mockup, Storybook",
+  "repository": "https://github.com/simplix-framework/simplix-react-ui-kits",
+  "branch": "main",
+  "languages": [
+    "en",
+    "ko"
+  ],
+  "homes": [
+    "README.md",
+    "docs/README.md"
+  ],
+  "documents": [
+    "CONTRIBUTING.md",
+    "packages/*/README.md",
+    "tools/mockup/README.md"
+  ],
+  "theme": {
+    "color": "#6d3fc4",
+    "strong": "#4a2a8a",
+    "cover": "#e3d9f7"
+  }
+}

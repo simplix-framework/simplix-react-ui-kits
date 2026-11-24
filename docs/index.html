@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{{NAME}} Documentation</title>
+  <meta name="description" content="{{DESCRIPTION}}">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta name="keywords" content="{{KEYWORDS}}">
+
+  <link rel="stylesheet" href="assets/version-selector.css">
+
+  <!-- Theme -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsify@5.1.0/dist/themes/core.min.css">
+
+  <!-- Prism syntax highlighting -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/themes/prism-tomorrow.min.css">
+
+  <style>
+    :root {
+      --theme-color: {{THEME_COLOR}};
+      --sidebar-width: 300px;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+                   "Noto Sans KR", "Malgun Gothic", sans-serif;
+    }
+
+    .sidebar {
+      padding-left: 20px;
+    }
+
+    .sidebar-nav li {
+      margin: 6px 0;
+    }
+
+    .app-sub-sidebar {
+      margin-left: 1em;
+    }
+
+    .markdown-section code {
+      border-radius: 4px;
+    }
+
+    .markdown-section pre {
+      border-radius: 8px;
+    }
+
+    .markdown-section table {
+      display: table;
+      width: 100%;
+    }
+
+    .markdown-section th {
+      background-color: #f8f8f8;
+    }
+
+    .markdown-section img {
+      max-width: 100%;
+    }
+
+    .page-source {
+      text-align: right;
+      font-size: 0.9em;
+    }
+
+    .page-source a {
+      color: #767676;
+    }
+
+    section.cover,
+    section.cover.show {
+      background: linear-gradient(to bottom, {{THEME_COVER}} 0%, {{THEME_COVER}} 50%, #ffffff 100%) !important;
+    }
+
+    .cover-main {
+      background: transparent !important;
+    }
+
+    section.cover h1,
+    section.cover p,
+    section.cover ul li {
+      color: {{THEME_STRONG}} !important;
+    }
+
+    section.cover .cover-main > p:last-child a {
+      border-radius: 4px;
+      color: #fff !important;
+      border-color: {{THEME_COLOR}};
+      background-color: {{THEME_COLOR}};
+    }
+
+    section.cover .cover-main > p:last-child a:hover {
+      background-color: {{THEME_STRONG}};
+    }
+
+    .search input {
+      border-radius: 4px;
+    }
+
+    @media screen and (max-width: 768px) {
+      :root {
+        --sidebar-width: 240px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="app">Loading...</div>
+
+  <script>
+    window.$docsify = {
+      name: '{{NAME}}',
+      nameLink: '#/',
+      repo: '{{REPOSITORY}}',
+      loadSidebar: true,
+      loadNavbar: true,
+      coverpage: true,
+      onlyCover: false,
+      auto2top: true,
+      maxLevel: 4,
+      subMaxLevel: 3,
+      noEmoji: true,
+
+      // The site opens in the first language (relative paths, so a version folder can hold it)
+      homepage: '{{HOME}}',
+
+      // One sidebar per language and one navbar, whatever folder a page is in
+      alias: {
+        '/ko/.*/_sidebar.md': 'ko/_sidebar.md',
+        '/ko/_sidebar.md': 'ko/_sidebar.md',
+        '/.*/_sidebar.md': 'en/_sidebar.md',
+        '/.*/_navbar.md': '_navbar.md'
+      },
+
+      search: {
+        maxAge: 86400000,
+        paths: 'auto',
+        placeholder: {
+          '/ko/': '검색...',
+          '/en/': 'Search...',
+          '/': 'Search...'
+        },
+        noData: {
+          '/ko/': '결과 없음',
+          '/en/': 'No results',
+          '/': 'No results'
+        },
+        depth: 3,
+        namespace: '{{NAME}}-docs-' + window.location.pathname.replace(/index\.html$/, ''),
+        pathNamespaces: ['/en', '/ko']
+      },
+
+      pagination: {
+        previousText: 'Prev',
+        nextText: 'Next',
+        crossChapter: true,
+        crossChapterText: true
+      },
+
+      copyCode: {
+        buttonText: 'Copy',
+        errorText: 'Error',
+        successText: 'Copied'
+      },
+
+      plugins: [
+        // The texts of the page follow the language of the page
+        function(hook, vm) {
+          var i18n = {
+            ko: {
+              pagination: { previousText: '이전', nextText: '다음' },
+              copyCode: { buttonText: '복사', errorText: '오류', successText: '완료' }
+            },
+            en: {
+              pagination: { previousText: 'Prev', nextText: 'Next' },
+              copyCode: { buttonText: 'Copy', errorText: 'Error', successText: 'Copied' }
+            }
+          };
+
+          function getLang(path) {
+            return path && path.indexOf('/ko/') === 0 ? 'ko' : 'en';
+          }
+
+          hook.init(function() {
+            var texts = i18n[getLang(window.location.hash.replace('#', ''))];
+            window.$docsify.pagination.previousText = texts.pagination.previousText;
+            window.$docsify.pagination.nextText = texts.pagination.nextText;
+            window.$docsify.copyCode.buttonText = texts.copyCode.buttonText;
+            window.$docsify.copyCode.errorText = texts.copyCode.errorText;
+            window.$docsify.copyCode.successText = texts.copyCode.successText;
+          });
+
+          hook.doneEach(function() {
+            var lang = getLang(vm.route.path);
+            var texts = i18n[lang];
+            document.documentElement.lang = lang;
+            var prevBtn = document.querySelector('.pagination-item--previous .pagination-item-title');
+            var nextBtn = document.querySelector('.pagination-item--next .pagination-item-title');
+            if (prevBtn) prevBtn.textContent = texts.pagination.previousText;
+            if (nextBtn) nextBtn.textContent = texts.pagination.nextText;
+          });
+        }
+      ]
+    }
+  </script>
+
+  <!-- Version selector -->
+  <script src="assets/version-selector.js"></script>
+
+  <!-- Docsify core -->
+  <script src="https://cdn.jsdelivr.net/npm/docsify@5.1.0"></script>
+
+  <!-- Plugins -->
+  <script src="https://cdn.jsdelivr.net/npm/docsify@5.1.0/dist/plugins/search.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/docsify-pagination@2.10.1/dist/docsify-pagination.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/docsify-copy-code@3.0.2/dist/docsify-copy-code.min.js"></script>
+
+  <!-- Syntax highlighting -->
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/components/prism-typescript.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/components/prism-jsx.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/components/prism-tsx.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/components/prism-bash.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/components/prism-json.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/components/prism-yaml.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/components/prism-ini.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/components/prism-http.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/components/prism-markdown.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/components/prism-handlebars.min.js"></script>
+</body>
+</html>
