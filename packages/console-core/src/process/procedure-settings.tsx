@@ -9,8 +9,8 @@ import { partAttributes, slotAttributes } from "@simplix-react/ui/design";
 import { RecordVerbButton } from "../entity/record-blocks";
 import { PageTabStrip } from "../layout/page-tab-strip";
 import { PACKAGE_NAMESPACE } from "./locales";
-import type { ProcedureChoice } from "./procedure-catalogue";
-import { procedureChoicesStyle, procedureHeadStyle, procedureNameStyle, procedureNoteStyle, procedureTabBodyStyle } from "./procedure-catalogue.style";
+import { ProcedureChoices, type ProcedureChoice } from "./procedure-catalogue";
+import { procedureHeadStyle, procedureNameStyle, procedureNoteStyle, procedureTabBodyStyle } from "./procedure-catalogue.style";
 import { WHOLE_VIEW_METRICS } from "./whole-view";
 
 /** A procedure with nothing in it, for the list of problems while none is chosen. */
@@ -62,6 +62,8 @@ export interface ProcedureSettingsProps {
   readonly scope?: EditorScope;
   /** The lanes an act may be given to, where not every lane may take it. */
   readonly lanesFor?: (act: Act) => readonly string[];
+  /** What the row of kinds of work is, where the procedures carry a kind. */
+  readonly groupLabel?: string;
   /** The tab the screen opens on. */
   readonly defaultTab?: "edit" | "check" | "versions";
   /** The version the history opens on; the one in force when left out. */
@@ -76,17 +78,11 @@ export interface ProcedureSettingsProps {
  * check, where the problems and what changed from the version in force are both in sight, and
  * only while there is no problem and something changed.
  */
-export function ProcedureSettings({ label, procedures, selected, onSelect, editing, definition, facts, versions, problems, describe, renderFields, fieldLabel, onPublish, scope, lanesFor, defaultTab = "edit", defaultVersion, empty }: ProcedureSettingsProps) {
+export function ProcedureSettings({ groupLabel, label, procedures, selected, onSelect, editing, definition, facts, versions, problems, describe, renderFields, fieldLabel, onPublish, scope, lanesFor, defaultTab = "edit", defaultVersion, empty }: ProcedureSettingsProps) {
   const chosen = procedures.find((one) => one.key === selected);
   return (
     <Stack gap="none" className="min-h-0 flex-1" data-procedure-settings>
-      <Flex wrap role="group" aria-label={label} {...partAttributes(procedureChoicesStyle, {})}>
-        {procedures.map((one) => (
-          <Button key={one.key} size="sm" variant={one.key === selected ? "primary" : "outline"} aria-pressed={one.key === selected} onClick={() => onSelect(one.key)} data-procedure-choice={one.key}>
-            {one.label}
-          </Button>
-        ))}
-      </Flex>
+      <ProcedureChoices label={label} procedures={procedures} selected={selected} onSelect={onSelect} groupLabel={groupLabel} />
       {chosen && (editing || definition) ? (
         <Chosen key={chosen.key} chosen={chosen} editing={editing} definition={definition} facts={facts} versions={versions} problems={problems} describe={describe} renderFields={renderFields} fieldLabel={fieldLabel} onPublish={onPublish} scope={scope} lanesFor={lanesFor} defaultTab={defaultTab} defaultVersion={defaultVersion} />
       ) : (

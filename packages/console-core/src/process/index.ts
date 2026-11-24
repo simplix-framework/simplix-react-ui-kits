@@ -1,4 +1,4 @@
-export { ProcedureCatalogue, ProcedureDialog, type ProcedureCatalogueProps, type ProcedureChoice, type ProcedureDialogProps } from "./procedure-catalogue";
+export { ProcedureCatalogue, ProcedureChoices, ProcedureDialog, type ProcedureCatalogueProps, type ProcedureChoice, type ProcedureChoicesProps, type ProcedureDialogProps } from "./procedure-catalogue";
 export { ProcedureSettings, type ProcedureSettingsProps, type ProcedureVersion } from "./procedure-settings";
 export { useProcessEditing, type EditorProblem, type EditorScope, type EditorTarget, type ProcessEditing } from "@simplix-react/process/edit";
 export { PhoneTurns, type PhoneTurnItem, type PhoneTurnsProps } from "./phone-turn";

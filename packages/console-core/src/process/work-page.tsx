@@ -10,7 +10,7 @@ import { PageTabStrip } from "../layout/page-tab-strip";
 import { useCrudPresentation } from "../page/crud-page";
 import { DetailPresentationSwitch } from "../page/detail-presentation-switch";
 import { PACKAGE_NAMESPACE } from "./locales";
-import { workLocationPathStyle, workLocationStepStyle, workLocationStyle, workPageHeadStyle, workRailBarStyle, workRailBodyStyle, workRailStyle } from "./work-page.style";
+import { workEmptyStyle, workLocationPathStyle, workLocationStepStyle, workLocationStyle, workPageHeadStyle, workRailBarStyle, workRailBodyStyle, workRailStyle } from "./work-page.style";
 import { WHOLE_VIEW_METRICS } from "./whole-view";
 import { WorkEvents, WorkRows, type WorkEvent, type WorkRow } from "./work-rows";
 import { WorkTurnCard, type WorkTurn } from "./work-turn";
@@ -110,9 +110,9 @@ export function WorkPage({ kind, title, stage, onClose, backLabel, turn, procedu
           </Button>
         )}
       </Flex>
-      {/* raw layout: the screen in view with the rail over its end edge; unfolded, the rail spans the whole box. */}
-      <div className="relative flex min-h-0 flex-1">
-        <Stack gap="none" className="me-72 min-h-0 min-w-0 flex-1" data-work-screen>
+      {/* raw layout: the screen in view and the rail beside it, each scrolling inside the height the two share. */}
+      <div className="flex min-h-0 flex-1">
+        <Stack gap="none" className="min-h-0 min-w-0 flex-1" data-work-screen>
           {location ? (
             <Flex align="center" justify="between" wrap {...partAttributes(workLocationStyle, {})}>
               <Stack gap="none" className="min-w-0">
@@ -134,10 +134,15 @@ export function WorkPage({ kind, title, stage, onClose, backLabel, turn, procedu
             </Flex>
           ) : null}
           <Stack gap="none" className="min-h-0 flex-1 overflow-auto">
-            {children ?? (empty ? <EmptyState size="sm" title={empty.title} description={empty.description} /> : null)}
+            {children ??
+              (empty ? (
+                <Stack gap="none" {...partAttributes(workEmptyStyle, {})}>
+                  <EmptyState size="sm" title={empty.title} description={empty.description} />
+                </Stack>
+              ) : null)}
           </Stack>
         </Stack>
-        <Stack ref={rail} gap="none" role="complementary" data-work-rail className="absolute inset-y-0 end-0 w-72" {...partAttributes(workRailStyle, {})}>
+        <Stack ref={rail} gap="none" role="complementary" data-work-rail className="min-h-0 w-72 shrink-0" {...partAttributes(workRailStyle, {})}>
           <Flex align="center" justify="between" {...partAttributes(workRailBarStyle, {})}>
             <span {...slotAttributes(workKindStyle, {})}>{t("rail.progress")}</span>
             <Flex gap="xs" align="center">

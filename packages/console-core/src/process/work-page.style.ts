@@ -61,3 +61,12 @@ export const workRailBodyStyle = defineSlotStyle({
   variants: {},
   defaultVariants: {},
 });
+
+/** The room around the message a work page shows where the step in view has no record yet. */
+export const workEmptyStyle = defineSlotStyle({
+  slot: "console-work-screen-empty",
+  as: "part",
+  base: "p-4",
+  variants: {},
+  defaultVariants: {},
+});

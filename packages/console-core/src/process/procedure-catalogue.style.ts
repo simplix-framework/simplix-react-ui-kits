@@ -9,6 +9,14 @@ export const procedureChoicesStyle = defineSlotStyle({
   defaultVariants: {},
 });
 
+/** What the select of procedures chooses, said beside it. */
+export const procedureChoicesLabelStyle = defineSlotStyle({
+  slot: "console-procedure-choices-label",
+  base: "text-sm text-muted-foreground",
+  variants: {},
+  defaultVariants: {},
+});
+
 /** The line over the chosen procedure: its name, how it starts, and the way to start it. */
 export const procedureHeadStyle = defineSlotStyle({
   slot: "console-procedure-head",

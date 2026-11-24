@@ -75,6 +75,8 @@ export type { RecordFormField, RecordFormProps, RecordFormSection, RecordOption,
 export type { CrudDetailBlocks, CrudFormBlocks } from "./crud-widget-blocks";
 export { PermissionMatrix } from "./permission-matrix";
 export type { PermissionCell, PermissionMatrixProps } from "./permission-matrix";
+export { stageGateFromAnswer, verbsFromCommands } from "./command-answer";
+export type { CommandAnswer, StageGateAnswer } from "./command-answer";
 export { StageGate } from "./stage-gate";
 export type { StageCondition, StageGateProps } from "./stage-gate";
 export { stageGateVerdict } from "./stage-gate-verdict";

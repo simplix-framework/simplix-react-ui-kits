@@ -904,6 +904,9 @@
   [data-slot="console-page-meta"][data-slot][data-s-console-page-meta] {
     @apply mt-1.5 flex flex-wrap items-center;
   }
+  [data-slot="console-procedure-choices-label"][data-slot][data-s-console-procedure-choices-label] {
+    @apply text-sm text-muted-foreground;
+  }
   [data-slot="console-procedure-name"][data-slot][data-s-console-procedure-name] {
     @apply text-base font-semibold text-foreground;
   }
@@ -1585,6 +1588,9 @@
     @apply gap-3 py-3;
   }
   :where([data-part="console-procedure-tab-body"])[data-part][data-p-console-procedure-tab-body] {
+    @apply p-4;
+  }
+  :where([data-part="console-work-screen-empty"])[data-part][data-p-console-work-screen-empty] {
     @apply p-4;
   }
   :where([data-part="console-work-location-path"])[data-part][data-p-console-work-location-path] {
