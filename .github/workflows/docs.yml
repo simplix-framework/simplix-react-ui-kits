@@ -1,0 +1,106 @@
+name: Deploy Documentation
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/**'
+      - '**/*.md'
+      - 'scripts/build-docs.mjs'
+      - 'scripts/prepare-docs.mjs'
+      - 'scripts/tests/docs-site.test.mjs'
+      - '.github/workflows/docs.yml'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Released x.y.z version to build. Leave empty for snapshot.'
+        required: false
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    env:
+      INPUT_VERSION: ${{ github.event.inputs.version }}
+    steps:
+      - name: Determine checkout ref
+        id: checkout-ref
+        run: |
+          if [ -n "$INPUT_VERSION" ] && [[ ! "$INPUT_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::Version must use the stable x.y.z format."
+            exit 1
+          fi
+          if [ -n "$INPUT_VERSION" ]; then
+            echo "ref=v${INPUT_VERSION}" >> "$GITHUB_OUTPUT"
+          else
+            echo "ref=main" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Checkout source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ steps.checkout-ref.outputs.ref }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '24'
+
+      - name: Determine version
+        id: version
+        run: |
+          if [ -n "$INPUT_VERSION" ]; then
+            VERSION="$INPUT_VERSION"
+            FOLDER_NAME="$INPUT_VERSION"
+          else
+            VERSION=$(node -p "require('./package.json').version")
+            FOLDER_NAME="snapshot"
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "folder_name=$FOLDER_NAME" >> "$GITHUB_OUTPUT"
+          echo "Building documentation for version: $VERSION (folder: $FOLDER_NAME)"
+
+      - name: Test the site tooling
+        run: node --test scripts/tests/docs-site.test.mjs
+
+      - name: Build documentation
+        env:
+          DOCS_VERSION: ${{ steps.version.outputs.version }}
+        run: node scripts/build-docs.mjs
+
+      - name: Checkout gh-pages
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: gh-pages
+          path: gh-pages
+        continue-on-error: true
+
+      - name: Checkout current navigation tooling
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: main
+          path: .docs-tooling
+          sparse-checkout: |
+            docs/assets/version-selector.js
+            docs/assets/version-selector.css
+            scripts/prepare-docs.mjs
+          sparse-checkout-cone-mode: false
+
+      - name: Prepare deployment
+        env:
+          FOLDER_NAME: ${{ steps.version.outputs.folder_name }}
+        run: node .docs-tooling/scripts/prepare-docs.mjs gh-pages build-docs deploy "$FOLDER_NAME"
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@84c30a85c19949d7eee79c4ff27748b70285e453 # v4.1.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./deploy
+          keep_files: false
