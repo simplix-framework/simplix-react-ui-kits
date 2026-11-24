@@ -1,6 +1,6 @@
 # Contributing to simplix-react-ui-kits
 
-The rules that bind every change are in [AGENTS.md](https://github.com/simplix-framework/simplix-react-ui-kits/blob/main/AGENTS.md). This page is the practical side: how to set up, what to run, and where a change goes.
+How to set up, what to run, and where a change goes.
 
 ## Development Setup
 
@@ -56,7 +56,7 @@ A generated file is regenerated, never edited: a stylesheet by `pnpm design:css`
 
 - The documents live in `docs/en` and `docs/ko`, at the same paths. Change both in the same change.
 - Each document is one Diataxis type: a tutorial, a guide, a reference or an explanation.
-- A figure is drawn by a module under `docs/figures/` with the svg-diagrams document-figure library, once per language. Edit the module, build, and run the library's `verify.py`; never edit the SVG.
+- A figure is drawn by a module under `docs/figures/` with the svg-diagrams document-figure library, once per language. The settings are `docs/figures/document-figures.json`, passed to the library's `build.py` and `verify.py` as `--config`. Edit the module, build, and run `verify.py`; never edit the SVG.
 - `README.md` and `docs/en` are written in English, `docs/ko` in Korean.
 
 ### Documentation site
