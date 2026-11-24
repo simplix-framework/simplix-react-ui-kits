@@ -3,12 +3,12 @@
 // @simplix-react/* from a design routes back through the override itself, so it is refused.
 //   [--design-dirs a:b]
 import { readFileSync } from "node:fs";
-import { join, resolve } from "node:path";
+import { join } from "node:path";
 import { listFiles, parseArgs } from "../lib/fs-util.mjs";
-import { KIT_ROOT } from "../lib/kit-root.mjs";
+import { designDirsOf } from "../lib/mockup-root.mjs";
 
 const args = parseArgs(process.argv.slice(2));
-const dirs = [join(KIT_ROOT, "designs"), ...(args["design-dirs"] ?? process.env.KIT_DESIGN_DIRS ?? "").split(":").filter(Boolean).map((d) => resolve(d))];
+const dirs = designDirsOf(process.cwd(), args["design-dirs"]);
 const problems = [];
 let files = 0;
 for (const dir of dirs) {

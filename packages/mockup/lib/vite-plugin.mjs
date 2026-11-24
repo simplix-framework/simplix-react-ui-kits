@@ -1,10 +1,11 @@
 // Vite plugin that renders the framework's own components, from a checkout or from the installed
-// packages' sources, with a kit design's component changes and tokens applied.
-import { existsSync, statSync } from "node:fs";
+// packages' sources, with a design's component changes and tokens applied. A design is a directory
+// of the mockup root that names it (`designDirs`); this package holds none.
+import { existsSync, readFileSync, realpathSync, statSync } from "node:fs";
 import { createRequire } from "node:module";
 import { join, relative, resolve, sep } from "node:path";
 import { KIT_ROOT } from "./kit-root.mjs";
-import { transformWithOxc } from "vite";
+import { searchForWorkspaceRoot, transformWithOxc } from "vite";
 import { colorThemeOf, designChain, loadDesigns, scopeDesignTokens } from "./designs.mjs";
 import { FRAMEWORK_SCOPE, locateFramework } from "./framework.mjs";
 
@@ -30,6 +31,26 @@ function exportAliases(packages) {
   return aliases;
 }
 
+/**
+ * The workspaces of the libraries linked into the library root from outside it (a UI kit linked from
+ * its own checkout). Such a library's dependencies (its fonts, its styles) are installed in its own
+ * workspace, so the dev server has to be allowed to serve files from there.
+ */
+function linkedWorkspaces(libraryRoot) {
+  const manifest = join(libraryRoot, "package.json");
+  if (!existsSync(manifest)) return [];
+  const { dependencies = {}, devDependencies = {} } = JSON.parse(readFileSync(manifest, "utf8"));
+  const roots = new Set();
+  for (const name of Object.keys({ ...dependencies, ...devDependencies })) {
+    const link = join(libraryRoot, "node_modules", name);
+    if (!existsSync(link)) continue;
+    const real = realpathSync(link);
+    if (real.startsWith(libraryRoot + sep) || real.split(sep).includes("node_modules")) continue;
+    roots.add(searchForWorkspaceRoot(real));
+  }
+  return [...roots];
+}
+
 function firstExisting(base) {
   const isFile = (path) => existsSync(path) && statSync(path).isFile();
   if (isFile(base)) return base;
@@ -42,13 +63,13 @@ function firstExisting(base) {
  *                                       installed packages' sources are used
  * @param {string} [options.libraryRoot] directory whose node_modules provides the libraries
  * @param {string} [options.design]      design name; defaults to KIT_DESIGN, else "framework"
- * @param {string[]} [options.designDirs] directories holding designs, the kit's own first
+ * @param {string[]} [options.designDirs] the directories of the mockup root that hold its designs
  */
 export function simplixMockupKit(options = {}) {
   const libraryRoot = resolve(options.libraryRoot ?? process.cwd());
   const framework = options.framework ?? process.env.SIMPLIX_FRAMEWORK;
   const design = options.design ?? process.env.KIT_DESIGN ?? "framework";
-  const designDirs = [join(KIT_ROOT, "designs"), ...(options.designDirs ?? []).map((d) => resolve(d))];
+  const designDirs = (options.designDirs ?? []).map((d) => resolve(d));
   const chain = designChain(loadDesigns(designDirs), design);
 
   const requireFromLibraries = createRequire(join(libraryRoot, "package.json"));
@@ -83,19 +104,15 @@ export function simplixMockupKit(options = {}) {
           // export condition, so a design override can replace a source file.
           alias: [
             ...(packages ? exportAliases(packages) : []),
-            ...(frameworkRoot
-              ? [
-                  { find: /^tailwindcss$/, replacement: tailwind },
-                  // Any checkout file by its path: the kit's Storybook loads the framework preview this way.
-                  { find: /^@kit-framework\//, replacement: frameworkRoot + "/" },
-                ]
-              : []),
+            ...(frameworkRoot ? [{ find: /^tailwindcss$/, replacement: tailwind }] : []),
           ],
           conditions: ["source"],
-          dedupe: ["react", "react-dom", "@tanstack/react-query", "i18next", "react-i18next"],
+          // One copy of each, the library root's: this package and a UI kit linked from their own
+          // checkout would otherwise bring the copies installed there.
+          dedupe: ["react", "react-dom", "react-router-dom", "@tanstack/react-query", "i18next", "react-i18next", "storybook", "@storybook/react"],
         },
         optimizeDeps: { exclude: [...(packages ? packages.keys() : [`${FRAMEWORK_SCOPE}ui`])] },
-        server: { fs: { allow: [KIT_ROOT, libraryRoot, ...(frameworkRoot ? [frameworkRoot] : []), ...designDirs] } },
+        server: { fs: { allow: [KIT_ROOT, libraryRoot, ...linkedWorkspaces(libraryRoot), ...(frameworkRoot ? [frameworkRoot] : []), ...designDirs] } },
         // A checkout is compiled by this plugin instead (see transform), so the core transform
         // and the React refresh transform leave its files alone; arrays merge with other plugins'.
         // The refresh filter matches everything not excluded unless it is also given an include.
@@ -141,10 +158,10 @@ export function simplixMockupKit(options = {}) {
         return { code: code + overrideSources.map((dir) => `\n@source ${JSON.stringify(dir)};`).join(""), map: null };
       }
       // oxc reads the tsconfig nearest a file, and a checkout's tsconfig extends a package only its
-      // own install provides; compiling under the kit's path gives its files the kit's tsconfig.
+      // own install provides; compiling under `lib/` gives its files the tsconfig written there.
       if (checkoutPattern?.test(file) && /\.[cm]?[jt]sx?$/.test(file) && !file.includes(`${sep}node_modules${sep}`)) {
         const ext = file.match(/\.([cm]?)([jt]sx?)$/)[2];
-        const result = await transformWithOxc(code, join(KIT_ROOT, ".framework", relative(frameworkRoot, file)), {
+        const result = await transformWithOxc(code, join(KIT_ROOT, "lib", ".framework", relative(frameworkRoot, file)), {
           lang: ext,
           jsx: { runtime: "automatic", importSource: "react" },
         });

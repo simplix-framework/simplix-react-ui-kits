@@ -1,3 +1,7 @@
+// The active design is a module the mockup plugin writes; a root that reads this file as the
+// package's types needs its declaration with it.
+// oxlint-disable-next-line typescript/triple-slash-reference
+/// <reference path="./kit-env.d.ts" />
 // Storybook preview for a mockup root: the framework's providers, the active kit design, and a
 // toolbar of global settings (detail presentation, design, colour theme, card fill, density, mode,
 // frame, locale) that applies to every screen at once.
@@ -12,7 +16,7 @@ import { I18nProvider } from "@simplix-react/i18n/react";
 import { TooltipProvider, UIProvider, type LanguageSelectorPlacement } from "@simplix-react/ui";
 import { DESIGNS as FRAMEWORK_DESIGNS, type Design } from "@simplix-react/ui/design";
 import design from "virtual:kit-design";
-import { type DetailPresentation, type FrameMode, type MockupSettings, MockupSettingsContext } from "./mockup-settings";
+import { type DetailPresentation, type FrameMode, type MockupSettings, MockupSettingsContext } from "./settings";
 
 export interface MockupPreviewConfig {
   /** Locales the toolbar offers, the first being the default. */
@@ -75,6 +79,7 @@ export function createMockupPreview(config: MockupPreviewConfig): Preview {
       colorTheme: context.globals.colorTheme,
       mode: context.globals.mode === "dark" ? "dark" : "light",
       locale: context.globals.locale,
+      setLocale: (locale) => updateGlobals({ locale }),
       frame: context.globals.frame === "content" ? "content" : "full",
     };
     // The theme goes on <html>, as a product's theme hook puts it: a drawer, dialog or popover

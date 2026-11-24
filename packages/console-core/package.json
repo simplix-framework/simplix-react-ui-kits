@@ -1,9 +1,16 @@
 {
   "name": "@simplix-react-ui-kits/console-core",
-  "version": "0.0.1",
-  "private": true,
+  "version": "0.1.0-SNAPSHOT",
   "description": "Console UI kit parts shared by every console design: page pattern, layout, notices, shell and screen widgets, each element marked with the slot a design draws",
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/simplix-framework/simplix-react-ui-kits.git",
+    "directory": "packages/console-core"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "sideEffects": [
     "**/locales/**",
     "**/*.css"

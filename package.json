@@ -1,19 +1,23 @@
 {
   "name": "simplix-react-ui-kits",
+  "version": "0.1.0-SNAPSHOT",
   "private": true,
   "type": "module",
   "packageManager": "pnpm@10.12.4",
   "scripts": {
     "build": "pnpm -r build",
     "typecheck": "pnpm -r typecheck",
-    "test": "node scripts/sync-design-kits.mjs --test && pnpm -r test && node testing/template-harness/run-all.mjs --parity-only",
-    "lint": "simplix-declared-imports && simplix cycles packages --root . && simplix-em-dash packages && node scripts/sync-design-kits.mjs --check && pnpm -r lint",
+    "test": "node scripts/sync-design-kits.mjs --test && pnpm -r test && node testing/template-harness/run-all.mjs --parity-only && node testing/mockup-root/run.mjs",
+    "lint": "simplix-declared-imports && simplix cycles packages --root . && simplix-em-dash packages && node scripts/sync-design-kits.mjs --check && node scripts/sync-version.mjs --check && pnpm -r lint",
+    "sync-version": "node scripts/sync-version.mjs",
+    "release": "node -e \"if(require('./package.json').version.endsWith('-SNAPSHOT')){console.error('Refusing to publish a -SNAPSHOT version; releases run via .github/workflows/release.yml');process.exit(1)}\" && pnpm sync-version && pnpm build && pnpm -r publish --access public",
     "check:imports": "simplix-declared-imports",
     "local:link": "SIMPLIX_PROFILE=local pnpm install",
     "local:unlink": "SIMPLIX_PROFILE=registry pnpm install",
     "local:status": "node .pnpmfile.cjs status",
     "cycles": "simplix cycles packages --root .",
-    "test:templates": "node testing/template-harness/run-all.mjs"
+    "test:templates": "node testing/template-harness/run-all.mjs",
+    "test:mockup": "node testing/mockup-root/run.mjs"
   },
   "simplix": {
     "linkProfile": "auto",

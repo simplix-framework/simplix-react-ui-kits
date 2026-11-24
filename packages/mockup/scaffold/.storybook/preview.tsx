@@ -1,4 +1,4 @@
-import { createMockupPreview } from "../kit/storybook/mockup-preview";
+import { createMockupPreview } from "@simplix-react-ui-kits/mockup/preview";
 import config from "../mockup.config.json";
 import "../src/index.css";
 

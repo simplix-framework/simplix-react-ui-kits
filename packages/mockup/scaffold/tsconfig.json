@@ -16,12 +16,14 @@
     "noEmit": true,
     "types": [
       "vite/client"
+    ],
+    "customConditions": [
+      "source"
     ]
   },
   "include": [
     ".storybook",
     "fixtures",
-    "screens",
-    "kit/storybook"
+    "screens"
   ]
 }

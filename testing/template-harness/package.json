@@ -1,5 +1,6 @@
 {
   "name": "@simplix-react-ui-kits/template-harness",
+  "version": "0.1.0-SNAPSHOT",
   "private": true,
   "type": "module",
   "description": "Generates a project from every template a kit ships, through the simplix CLI, and checks the generated code.",

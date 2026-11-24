@@ -1,9 +1,16 @@
 {
   "name": "@simplix-react-ui-kits/site-core",
-  "version": "0.0.1",
-  "private": true,
+  "version": "0.1.0-SNAPSHOT",
   "description": "Web site UI kit parts shared by every site design: the site shell, page column and pricing parts, each element marked with the slot a design draws",
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/simplix-framework/simplix-react-ui-kits.git",
+    "directory": "packages/site-core"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "sideEffects": [
     "**/*.css"
   ],

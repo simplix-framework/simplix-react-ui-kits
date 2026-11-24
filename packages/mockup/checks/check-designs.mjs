@@ -1,26 +1,23 @@
 #!/usr/bin/env node
-// Validates every kit design against the framework it changes:
+// Validates every design of a mockup root against the framework it changes:
 //   ✖ an override with no framework file at its path, or not recorded in design.json
 //   ✖ an override identical to the framework file: adopted upstream (or never changed), delete it
 //   ✖ the framework file changed since the override was written: reconcile, then re-record
 //   ✖ an unknown colour preset, a bad base chain, a malformed tokens.css
 //   [--design-dirs a:b] [--framework <checkout>]
 import { existsSync, readFileSync } from "node:fs";
-import { basename, join, resolve } from "node:path";
+import { basename, join } from "node:path";
 import { designChain, loadDesigns, scopeDesignTokens } from "../lib/designs.mjs";
 import { locateFramework } from "../lib/framework.mjs";
 import { listFiles, parseArgs, sha256 } from "../lib/fs-util.mjs";
-import { KIT_ROOT } from "../lib/kit-root.mjs";
+import { designDirsOf, frameworkOf } from "../lib/mockup-root.mjs";
 
 const args = parseArgs(process.argv.slice(2));
-const extra = (args["design-dirs"] ?? process.env.KIT_DESIGN_DIRS ?? "").split(":").filter(Boolean).map((d) => resolve(d));
-const designs = loadDesigns([join(KIT_ROOT, "designs"), ...extra]);
-// The framework comes from --framework, then SIMPLIX_FRAMEWORK, then the `framework` the mockup root
-// names in mockup.config.json (resolved from that root), and only then the packages installed here.
-const configPath = resolve("mockup.config.json");
-const configured = existsSync(configPath) ? JSON.parse(readFileSync(configPath, "utf8")).framework : undefined;
-const framework = args.framework ?? process.env.SIMPLIX_FRAMEWORK ?? (configured ? resolve(configured) : undefined);
-const { uiSrc } = locateFramework({ framework, libraryRoot: KIT_ROOT });
+// The designs are the root's own: --design-dirs, then KIT_DESIGN_DIRS, then the `designDirs` the root
+// names in mockup.config.json. The framework comes from --framework, then SIMPLIX_FRAMEWORK, then the
+// `framework` the root names, and only then the packages installed in the root.
+const designs = loadDesigns(designDirsOf(process.cwd(), args["design-dirs"]));
+const { uiSrc } = locateFramework({ framework: frameworkOf(process.cwd(), args.framework), libraryRoot: process.cwd() });
 const presets = new Set(listFiles(join(uiSrc, "theme", "presets"), (r, isDir) => !isDir && r.endsWith(".css")).map((f) => basename(f, ".css")));
 const allowedKeys = new Set(["name", "description", "base", "colorTheme", "overrides"]);
 const problems = [];
@@ -29,7 +26,9 @@ let overrideCount = 0;
 for (const [name, design] of designs) {
   const where = `designs/${name}`;
   for (const key of Object.keys(design)) if (key !== "dir" && !allowedKeys.has(key)) problems.push(`${where}: unknown key "${key}"`);
-  if (design.colorTheme && design.colorTheme !== "default" && !presets.has(design.colorTheme)) {
+  // A design that names itself as the colour theme draws its own tokens.css as that theme.
+  const ownTheme = design.colorTheme === name && existsSync(join(design.dir, "tokens.css"));
+  if (design.colorTheme && design.colorTheme !== "default" && !presets.has(design.colorTheme) && !ownTheme) {
     problems.push(`${where}: colorTheme "${design.colorTheme}" is not a framework preset (${[...presets].join(", ")})`);
   }
   try {

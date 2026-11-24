@@ -13,6 +13,10 @@
 import { existsSync, readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { listFiles, parseArgs } from "../lib/fs-util.mjs";
+import { KIT_ROOT } from "../lib/kit-root.mjs";
+
+// The settings hook is this package's own `settings` entry, under whatever name it is published.
+const SETTINGS = `${JSON.parse(readFileSync(join(KIT_ROOT, "package.json"), "utf8")).name}/settings`;
 
 const args = parseArgs(process.argv.slice(2));
 const root = resolve(args.root ?? process.cwd());
@@ -30,9 +34,9 @@ const allowed = [
   (spec) => spec === config.uiKit || spec.startsWith(`${config.uiKit}/`),
   (spec) => spec === "react",
   (spec) => spec.startsWith("@storybook/"),
-  (spec) => /^(\.\.\/)+fixtures\//.test(spec) || /^\.\/fixtures\//.test(spec),
+  (spec) => /^(\.\.\/)+fixtures\//.test(spec) || spec.startsWith("./fixtures/"),
   (spec) => /^(\.\.\/)+locales\//.test(spec),
-  (spec) => /kit\/storybook\/mockup-settings(\.tsx?)?$/.test(spec),
+  (spec) => spec === SETTINGS,
   ...(config.screenImports ?? []).map((prefix) => (spec) => spec === prefix || spec.startsWith(`${prefix}/`)),
 ];
 const EXCEPTION = /\/\/\s*ui-kit-exception:\s*\S/;

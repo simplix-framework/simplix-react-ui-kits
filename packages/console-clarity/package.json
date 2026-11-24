@@ -1,9 +1,16 @@
 {
   "name": "@simplix-react-ui-kits/console-clarity",
-  "version": "0.0.1",
-  "private": true,
+  "version": "0.1.0-SNAPSHOT",
   "description": "Console UI kit, clarity design: the console parts drawn with hairline borders, one accent and hierarchy from type, defaulting every console to the clarity design",
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/simplix-framework/simplix-react-ui-kits.git",
+    "directory": "packages/console-clarity"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "sideEffects": [
     "**/locales/**",
     "**/*.css"
@@ -116,7 +123,7 @@
     "src"
   ],
   "scripts": {
-    "build": "NODE_OPTIONS=--max-old-space-size=4096 tsup",
+    "build": "NODE_OPTIONS=--max-old-space-size=8192 tsup",
     "dev": "tsup --no-clean --no-dts",
     "typecheck": "tsc --noEmit",
     "lint": "oxlint src && pnpm -s design:check",

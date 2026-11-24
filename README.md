@@ -11,6 +11,7 @@ UI kits for simplix-react products. A kit is a design: the page patterns, layout
 | `@simplix-react-ui-kits/console-clarity` | Operations console, clarity design: hairline borders on a near-white canvas, one accent, hierarchy from type weight and spacing |
 | `@simplix-react-ui-kits/site-core` | The parts every web site design shares: the site shell (window, bar, footer, dark band), the page column, head, section and breadcrumb, and the pricing parts. Behaviour and markup only; each element carries the `data-slot` a design draws |
 | `@simplix-react-ui-kits/site-clarity` | Web site, clarity design: `site-core` drawn with hairline borders, one accent and hierarchy from type, reading the `--site-*` variables a product sets; holds the site page region contract and its rendered checks |
+| `@simplix-react-ui-kits/mockup` | Not a design: the mockup tooling. The Storybook preview and preset a mockup root runs, the `simplix-mockup` checks its screens pass, and the generator of a new root ([packages/mockup](packages/mockup/README.md)) |
 
 Every console kit ships every design's stylesheet, so the reader can switch design, colour theme, card fill, row density and dark mode at run time from `DisplaySettings` (`/shell`); the kit only decides which design a console opens in.
 
@@ -146,10 +147,17 @@ The console has one search, a shell part rather than a routed screen. The top ba
 
 ## Using a kit in a product
 
-Add this repository as a git submodule and its packages to the product's pnpm workspace:
+Install the published packages, every one of which carries the repository's one version:
 
 ```bash
-git submodule add https://github.com/simplecore-inc/simplix-react-ui-kits.git vendor/ui-kits
+pnpm add @simplix-react-ui-kits/console-classic
+pnpm add -D @simplix-react-ui-kits/mockup   # a mockup root
+```
+
+A product that follows the kits between releases adds this repository as a git submodule and its packages to the product's pnpm workspace:
+
+```bash
+git submodule add https://github.com/simplix-framework/simplix-react-ui-kits.git vendor/ui-kits
 ```
 
 ```yaml
@@ -181,6 +189,26 @@ A design kit that has to draw a template differently ships that one file in its 
 ```bash
 pnpm --filter @simplix-react-ui-kits/console-classic test:templates   # one kit
 pnpm test:templates                                                   # every kit, then parity
+```
+
+## Mockup roots
+
+`testing/mockup-root` generates a mockup root for every kit through the mockup package's own generator, with the kit and the mockup package linked as a product beside this checkout links them, and runs what a product runs in it: the install, the root's `check` (screens, types, designs, imports, versions) and the Storybook build.
+
+```bash
+pnpm test:mockup                    # every kit
+node testing/mockup-root/run.mjs console-clarity
+```
+
+## Releasing
+
+Every package is released together under the version of the root `package.json`, which `scripts/sync-version.mjs` writes into each package (`pnpm lint` fails where one differs). Between releases the version ends in `-SNAPSHOT`, and the topmost section of `CHANGELOG.md` is the next release, marked `Unreleased`.
+
+The `Release` workflow (`.github/workflows/release.yml`, run by hand on a branch) installs against the published framework, builds, sets the release version, publishes every package to the public npm registry with `NPM_TOKEN`, tags `v<version>`, and opens the next `-SNAPSHOT` version. `pnpm publish` writes each `workspace:*` and `catalog:` dependency as the version it stands for, so a published kit depends on the published core kit of the same release.
+
+```bash
+node scripts/sync-version.mjs --check       # every package at the root version
+node scripts/sync-version.mjs --set 0.2.0   # set the root version and write it everywhere
 ```
 
 ## Working on the kits

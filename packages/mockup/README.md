@@ -1,47 +1,49 @@
-# simplix-mockup-kit
+# @simplix-react-ui-kits/mockup
 
-Tooling for mockups of simplix-react products, and the component design changes that have not yet landed in the framework.
+Tooling for mockups of simplix-react products: the Storybook setup a mockup root runs, the checks its screens pass, and the generator of a new root.
 
-A mockup draws every screen with one UI kit (a package of screen types built on simplix-react, named in `mockup.config.json` `uiKit`). This kit adds three things:
+A mockup draws every screen with one UI kit (a package of screen types built on simplix-react, named in `mockup.config.json` `uiKit`). This package adds:
 
-- **Designs**: changes to framework components and tokens that are proposed but not yet in the framework. When the framework adopts a change, it is deleted from the kit, so the kit's designs shrink toward empty.
-- **A Storybook setup for mockup roots**: the framework's providers and a toolbar of global settings (detail presentation, colour theme, mode, locale) that applies to every screen.
-- **Checks and scripts**: design validation, version pinning against the framework lockfile, token extraction, captures, and a mockup root generator.
+- **A Storybook setup for mockup roots**: the framework's providers and a toolbar of global settings (detail presentation, design, colour theme, card fill, density, mode, frame, locale) that applies to every screen.
+- **Checks and scripts**, run as `simplix-mockup <command>` from the root: screen and design validation, version pinning against the framework lockfile, token extraction, captures, and a mockup root generator.
+
+It names no product and holds no design. Everything specific to a product is in the product's own mockup root: its `mockup.config.json`, its screens, and the designs it proposes for the framework.
 
 ## Contents
 
 | Path | Contents |
 | --- | --- |
-| `designs/<design>/` | One design: `design.json`, an optional `tokens.css`, and `ds/` with framework files it changes |
-| `lib/vite-plugin.mjs` | Renders the framework from a checkout or the installed packages, with a design's overrides and tokens applied |
-| `storybook/preset.mjs` | Storybook preset that adds the plugin |
-| `storybook/mockup-preview.tsx` | `createMockupPreview()`: providers and the global settings toolbar for a mockup root |
-| `storybook/mockup-settings.tsx` | `useMockupSettings()`: the toolbar's settings, read by a screen |
-| `.storybook/` | The kit's own Storybook: every framework story rendered with a design |
+| `src/preview.tsx` | `createMockupPreview()` (`/preview`): providers and the global settings toolbar for a mockup root |
+| `src/settings.tsx` | `useMockupSettings()` (`/settings`): the toolbar's settings, read by a screen |
+| `storybook/preset.mjs` | The Storybook preset (`/preset`): reads the root's `mockup.config.json` and adds the plugin |
+| `lib/vite-plugin.mjs` | The plugin (`/vite-plugin`): renders the framework from a checkout or the installed packages, with a design's overrides and tokens applied |
+| `bin/simplix-mockup.mjs` | `simplix-mockup <command>`: runs one file of `checks/` |
+| `checks/` | `check-screens`, `check-designs`, `check-imports`, `check-versions`, `console-menu`, `screen-design`, `run-stages`, `new-override`, `extract-tokens`, `capture`, `story-digest`, `init-mockup` |
 | `scaffold/` | Files `init-mockup` copies into a new mockup root |
-| `checks/` | `check-screens`, `check-designs`, `check-imports`, `check-versions`, `console-menu`, `screen-design`, `run-stages`, `new-override`, `extract-tokens`, `capture`, `init-mockup` |
-| `lib/` | Helpers the checks and the plugin share; `console-menu.mjs` holds the console menu readers and checks, proved by `console-menu.test.mjs`; `screen-design.mjs` holds the screen design checks, proved by `screen-design.test.mjs`; `run-stages.mjs` runs a root's check stages, proved by `run-stages.test.mjs` (`pnpm test`) |
+| `lib/` | Helpers the checks and the plugin share, each proved by the `*.test.mjs` beside it (`pnpm test`) |
 
 ## Designs
 
+A design is a change to framework components and tokens that a product proposes and the framework has not adopted. It lives in the mockup root that proposes it, in a directory the root names in `mockup.config.json` `designDirs`; the root's `design` names the one it draws with. When the framework adopts a change, the override is deleted from the root.
+
 ```
-designs/<design>/
+<design dir>/<design>/
 ├ design.json   name, optional base design and colour preset, and one record per override
 ├ tokens.css    optional token overrides, written like the framework's theme/base.css (:root and .dark)
 └ ds/<path>     a framework file under @simplix-react/ui src, replaced at the same path
 ```
 
 - `framework` is the implicit root design: the framework as it ships.
-- `colorTheme` names a framework preset (`[data-color-theme]`).
+- `colorTheme` names a framework preset (`[data-color-theme]`), or the design itself when its `tokens.css` is the theme.
 - An override replaces the framework file at the same path for every importer. It reaches the original through `@kit-base/<path>`, never through `@simplix-react/*`.
-- `new-override` starts an override by copying the framework file and recording its hash and revision in `design.json`.
+- `new-override` starts an override in the root's first design directory by copying the framework file and recording its hash and revision in `design.json`.
 - `check-designs` reports an override that is identical to the framework file (adopted, delete it) and one whose framework file changed since it was recorded (reconcile it).
 
 ## Global settings
 
 | Setting | Values | Applied through |
 | --- | --- | --- |
-| Detail | `panel` · `drawer` · `page` | `panel` and `drawer` go to `UIProvider` `defaults.detailPresentation`; a screen reads `page` from `useMockupSettings()` |
+| Detail | `panel` · `drawer` · `dialog` · `page` | `panel`, `drawer` and `dialog` go to `UIProvider` `defaults.detailPresentation`; a screen reads `page` from `useMockupSettings()` |
 | Theme | framework `THEMES` | `data-color-theme` on `<html>` |
 | Mode | `light` · `dark` | `dark` class on `<html>` |
 | Locale | `mockup.config.json` `locales` | the framework i18n adapter |
@@ -59,8 +61,8 @@ The UI kit's own providers and page frame go in through `createMockupPreview({ d
 A mockup draws the product's menu beside every back office screen. `console-menu` writes that menu from the product's own menu module, so a menu entry added to the product reaches the mockup without a second edit, and checks that the menu's words agree with the entity each entry opens.
 
 ```bash
-node kit/checks/console-menu.mjs [--root <mockup root>]           # write the generated menu
-node kit/checks/console-menu.mjs [--root <mockup root>] --check   # fail when it is stale or the words disagree
+simplix-mockup console-menu [--root <mockup root>]           # write the generated menu
+simplix-mockup console-menu [--root <mockup root>] --check   # fail when it is stale or the words disagree
 ```
 
 The menu constant is read as syntax, never executed. An entry reaches its screen through its route: the route file declares the path and imports the `<Entity>CrudPage`, and the entity names the frame in `screens/` (`templates.story.files` of the scaffold config names a frame that predates its scaffold). An entry with no route falls back to the frame named after its catalogue key, and an entry with no frame is drawn inactive.
@@ -86,29 +88,45 @@ The root's `mockup.config.json` holds everything specific to the product, under 
 ## Mockup root
 
 ```bash
-mkdir <mockup-root> && cd <mockup-root> && git init
-git submodule add https://github.com/simplecore-inc/simplix-mockup-kit.git kit
-node kit/checks/init-mockup.mjs --root . --name <name> --ui-kit <ui kit package> [--workspace <pnpm workspace root>]
-pnpm install
+mkdir <mockup-root>
+pnpm dlx @simplix-react-ui-kits/mockup init-mockup --root <mockup-root> --name <name> --ui-kit <ui kit package> --framework <simplix-react checkout> [--workspace <pnpm workspace root>]
+cd <mockup-root> && pnpm install
 pnpm storybook
 ```
 
-`mockup.config.json` names the framework checkout (`framework`), the UI kit (`uiKit`), the design (`design`), extra design directories, the locales and the default detail presentation. With `--workspace`, libraries that workspace's catalog pins become `catalog:` dependencies. With `--framework-version`, the root depends on the published `@simplix-react/*` packages instead of a checkout.
+The root depends on the UI kit and on this package (`workspace:*` by default; `--ui-kit-version` and `--mockup-version` name a `link:` path or a published version), and its scripts run `simplix-mockup`. Its library versions are the ones the framework checkout's lockfile resolves, which `check-versions` keeps them equal to; with `--workspace`, a library that workspace's catalog pins is a `catalog:` dependency instead. With `--framework-version`, the root depends on the published `@simplix-react/*` packages instead of rendering a checkout.
 
-## The kit's Storybook
+`mockup.config.json` names the framework checkout (`framework`), the UI kit (`uiKit`), the design (`design`) and the directories that hold the root's designs (`designDirs`), the locales and the default detail presentation. The preset reads it, so the root's `.storybook/main.ts` only names the preset:
 
-```bash
-SIMPLIX_FRAMEWORK=<simplix-react checkout> KIT_DESIGN=<design> pnpm storybook
+```ts
+addons: ["@storybook/addon-a11y", "storybook-addon-pseudo-states", "@simplix-react-ui-kits/mockup/preset"],
 ```
 
-It renders every framework story with the framework's own preview and the design applied. One Storybook serves one design.
+The root's stylesheet imports what the UI kit declares in `simplix.stylesheet` of its manifest (a kit drawn after Tailwind and the framework theme lists all three), else `<ui kit>/styles/app.css`; `--stylesheet`, once per import, names another list.
+
+`testing/mockup-root` of the kits repository generates a root for every kit and runs its install, its `check` and its Storybook build (`pnpm test:mockup`).
+
+## Proving a change left the screens as they were
+
+`story-digest --url <storybook url> --out before.json` records, for every story under `screens/`, the visible text, every button with whether it can be pressed and the reason when it cannot, and the marks the mockup names. Record before a change, record again after it, and `story-digest --diff before.json after.json` lists each story that differs and exits non-zero when any does. `--channel chrome` uses an installed browser where the bundled one is not downloaded. Two recordings of an unchanged tree must not differ; where they do, the screen moves by itself and its moving text belongs in `moving`.
+
+```json
+{
+  "digest": {
+    "marks": { "step": { "selector": "[data-step]", "attribute": "data-step" }, "panel": { "selector": "[data-panel]" } },
+    "moving": ["\\d+ minutes? (left|ago)"]
+  }
+}
+```
+
+A mark with an `attribute` records that attribute of the first matching element; without one it records whether the element is there. A clock time (`12:34`) is always left out of the text.
 
 ## Running a root's checks together
 
 A root's `pnpm check` is the list of its stages, run by `run-stages` so that one failing stage does not hide the others: a chain of commands joined by `&&` stops at the first failure, and an unfinished file in one cluster then masks every stage behind it. The stages are the key `checkStages` of the root's `mockup.config.json`, `[{ "name", "command" }]`, run in order from the root through a shell. Every stage runs, the run ends with one line per stage and the names of the stages that failed, and the exit code is 1 when any failed (2 when the list is missing or malformed).
 
 ```bash
-node kit/checks/run-stages.mjs [--root <mockup root>]
+simplix-mockup run-stages [--root <mockup root>]
 ```
 
 ## Screen design
@@ -116,7 +134,7 @@ node kit/checks/run-stages.mjs [--root <mockup root>]
 A screen is designed for its purpose before it is scaffolded. `screen-design` reads a manifest beside the mockup with one entry per routed screen: the persona and the question they bring, whether the screen shows a description, cards and notices (each with its reason; none is a decision too), the list presentation, leading column, default sort and filters, and the detail sections. The board frame is drawn from that entry; a frame generated from the same template as the screen is not a design, so agreement against it proves nothing.
 
 ```bash
-node kit/checks/screen-design.mjs [--root <mockup root>]
+simplix-mockup screen-design [--root <mockup root>]
 ```
 
 One entry per routed screen:

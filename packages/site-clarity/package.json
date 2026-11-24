@@ -1,9 +1,16 @@
 {
   "name": "@simplix-react-ui-kits/site-clarity",
-  "version": "0.0.1",
-  "private": true,
+  "version": "0.1.0-SNAPSHOT",
   "description": "Web site UI kit, clarity design: the site parts drawn with hairline borders, one accent and hierarchy from type",
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/simplix-framework/simplix-react-ui-kits.git",
+    "directory": "packages/site-clarity"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "sideEffects": [
     "**/*.css"
   ],
@@ -119,6 +126,11 @@
   },
   "simplix": {
     "extends": "@simplix-react-ui-kits/site-core",
-    "id": "site"
+    "id": "site",
+    "stylesheet": [
+      "tailwindcss",
+      "@simplix-react/ui/theme.css",
+      "@simplix-react-ui-kits/site-clarity/styles/app.css"
+    ]
   }
 }

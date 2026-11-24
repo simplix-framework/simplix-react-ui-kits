@@ -1,4 +1,4 @@
-// Reads kit designs and resolves a design's base chain. "framework" is the implicit root: the
+// Reads the designs of a mockup root and resolves a design's base chain. "framework" is the implicit root: the
 // framework as it ships, with no directory of its own.
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
@@ -7,7 +7,7 @@ export const ROOT_DESIGN = "framework";
 
 /**
  * Loads every `<dir>/<name>/design.json` under the given directories. A name declared twice is
- * an error, so a mockup root cannot silently shadow a kit design.
+ * an error, so one design directory cannot silently shadow another.
  */
 export function loadDesigns(designDirs) {
   const designs = new Map();

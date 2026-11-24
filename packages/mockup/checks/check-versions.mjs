@@ -1,19 +1,18 @@
 #!/usr/bin/env node
-// Fails when a package.json (the kit's, or a mockup root's with --root) pins a library to another
-// version than the framework checkout's lockfile resolves, pins one inexactly, or lacks a library
-// the framework's UI packages need.
+// Fails when a mockup root's package.json pins a library to another version than the framework
+// checkout's lockfile resolves, pins one inexactly, or lacks a library the framework's UI packages
+// need. The root is the directory the command runs in unless --root names one.
 //   check-versions [--root <dir>] [--framework <checkout>]
 import { existsSync, readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { FRAMEWORK_SCOPE, locateFramework } from "../lib/framework.mjs";
 import { parseArgs } from "../lib/fs-util.mjs";
-import { KIT_ROOT } from "../lib/kit-root.mjs";
+import { frameworkVersions } from "../lib/framework-versions.mjs";
+import { frameworkOf } from "../lib/mockup-root.mjs";
 
 const args = parseArgs(process.argv.slice(2));
-const root = resolve(args.root ?? KIT_ROOT);
-const configPath = join(root, "mockup.config.json");
-const configured = existsSync(configPath) ? JSON.parse(readFileSync(configPath, "utf8")).framework : undefined;
-const framework = args.framework ?? (configured ? resolve(root, configured) : undefined);
+const root = resolve(args.root ?? process.cwd());
+const framework = frameworkOf(root, args.framework);
 const { frameworkRoot, packages } = locateFramework({ framework, libraryRoot: root });
 if (!frameworkRoot) {
   console.error("check-versions needs a framework checkout (--framework, mockup.config.json framework, or SIMPLIX_FRAMEWORK) for its lockfile");
@@ -53,24 +52,7 @@ for (const { manifest: m } of rendered) {
   }
 }
 
-// importers.<path>.<section>.<name>.version in pnpm-lock.yaml
-const lockfile = join(frameworkRoot, "pnpm-lock.yaml");
-if (!existsSync(lockfile)) throw new Error(`no pnpm-lock.yaml in ${frameworkRoot}`);
-const text = readFileSync(lockfile, "utf8");
-const importers = text.slice(text.indexOf("\nimporters:"), text.indexOf("\npackages:"));
-const resolved = new Map();
-let importer;
-let name;
-for (const line of importers.split("\n")) {
-  let m;
-  if ((m = line.match(/^  (\S.*):$/))) importer = m[1];
-  else if ((m = line.match(/^      '?([^':]+)'?:$/))) name = m[1];
-  else if ((m = line.match(/^        version: ([^\s(]+)/)) && importer && name && !m[1].startsWith("link:")) {
-    if (importer.startsWith("packages/") || importer.startsWith("apps/")) {
-      (resolved.get(name) ?? resolved.set(name, new Set()).get(name)).add(m[1]);
-    }
-  }
-}
+const resolved = frameworkVersions(frameworkRoot);
 let compared = 0;
 for (const [lib, version] of Object.entries(pins)) {
   const versions = resolved.get(lib);

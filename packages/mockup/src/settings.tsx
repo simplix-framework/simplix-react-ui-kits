@@ -15,6 +15,8 @@ export interface MockupSettings {
   colorTheme: string;
   mode: "light" | "dark";
   locale: string;
+  /** Sets the locale for every screen, as the toolbar does. */
+  setLocale: (locale: string) => void;
   /** `full` draws the UI kit's window chrome around the screen; `content` draws the screen alone. */
   frame: FrameMode;
 }

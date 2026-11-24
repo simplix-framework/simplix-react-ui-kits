@@ -4,3 +4,4 @@ dist/
 .DS_Store
 .simplix-react
 testing/template-harness/.out/
+testing/mockup-root/.out/
