@@ -24,6 +24,7 @@
     },
     "./preset": "./storybook/preset.mjs",
     "./vite-plugin": "./lib/vite-plugin.mjs",
+    "./screen-design": "./lib/screen-design.mjs",
     "./package.json": "./package.json"
   },
   "bin": {

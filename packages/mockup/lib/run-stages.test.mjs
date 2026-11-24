@@ -1,8 +1,11 @@
 // Hit and miss cases for lib/run-stages.mjs: a failing stage must not hide the stages behind it,
 // and a run of passing stages must stay quiet.
 import assert from "node:assert/strict";
+import { chmodSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { delimiter, join } from "node:path";
 import { describe, it } from "node:test";
-import { runStages, stageProblems, summaryLines } from "./run-stages.mjs";
+import { runStages, stageEnvironment, stageProblems, summaryLines } from "./run-stages.mjs";
 
 /** A runner that answers each command with the status the table gives it and records the order. */
 const fake = (statuses, ran = []) => (command) => {
@@ -64,5 +67,33 @@ describe("stageProblems", () => {
     assert.ok(stageProblems([{ command: "x" }]).some((p) => /no name/.test(p)));
     assert.ok(stageProblems([{ name: "a" }]).some((p) => /no command/.test(p)));
     assert.ok(stageProblems([{ name: "a", command: "x" }, { name: "a", command: "y" }]).some((p) => /twice/.test(p)));
+  });
+});
+
+describe("stageEnvironment", () => {
+  it("puts the root's node_modules/.bin first and keeps the caller's path behind it", () => {
+    const env = stageEnvironment("/root", { PATH: "/usr/bin", HOME: "/home" });
+    assert.equal(env.PATH, ["/root/node_modules/.bin", "/usr/bin"].join(delimiter));
+    assert.equal(env.HOME, "/home");
+  });
+
+  it("writes the path under the name the caller's environment uses", () => {
+    const env = stageEnvironment("/root", { Path: "C:/bin" });
+    assert.equal(env.Path, ["/root/node_modules/.bin", "C:/bin"].join(delimiter));
+    assert.equal("PATH" in env, false);
+  });
+
+  it("lets a stage name a command the root installs, and still fails for one it does not", () => {
+    const root = mkdtempSync(join(tmpdir(), "run-stages-"));
+    try {
+      mkdirSync(join(root, "node_modules", ".bin"), { recursive: true });
+      const tool = join(root, "node_modules", ".bin", "root-tool");
+      writeFileSync(tool, "#!/bin/sh\nexit 0\n");
+      chmodSync(tool, 0o755);
+      const { failed } = runStages([{ name: "installed", command: "root-tool" }, { name: "absent", command: "no-such-root-tool 2>/dev/null" }], { cwd: root, log: () => undefined });
+      assert.deepEqual(failed.map((one) => one.name), ["absent"]);
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
   });
 });

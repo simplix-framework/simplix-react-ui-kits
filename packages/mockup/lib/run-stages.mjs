@@ -3,6 +3,17 @@
 // cluster's unfinished file masks every other stage's result; here each stage runs whatever the
 // stages before it did, and the run fails when any of them failed.
 import { spawnSync } from "node:child_process";
+import { delimiter, join, resolve } from "node:path";
+
+/**
+ * The environment a stage runs in: the caller's, with the root's own `node_modules/.bin` first on the
+ * path, so a stage names a command the root installs (`simplix-mockup`, `tsc`) however the run was
+ * started.
+ */
+export function stageEnvironment(cwd = process.cwd(), env = process.env) {
+  const key = Object.keys(env).find((name) => name.toUpperCase() === "PATH") ?? "PATH";
+  return { ...env, [key]: [join(resolve(cwd), "node_modules", ".bin"), env[key]].filter(Boolean).join(delimiter) };
+}
 
 /**
  * Checks the shape of the stage list a root declares.
@@ -34,7 +45,7 @@ export function stageProblems(stages) {
  */
 export function runStages(stages, options = {}) {
   const log = options.log ?? ((line) => console.log(line));
-  const run = options.run ?? ((command, cwd) => spawnSync(command, { cwd, shell: true, stdio: "inherit" }));
+  const run = options.run ?? ((command, cwd) => spawnSync(command, { cwd, shell: true, stdio: "inherit", env: stageEnvironment(cwd) }));
   const results = [];
   for (const stage of stages) {
     log(`\n▶ ${stage.name}`);

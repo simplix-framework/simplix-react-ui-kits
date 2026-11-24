@@ -20,7 +20,7 @@ It names no product and holds no design. Everything specific to a product is in 
 | `bin/simplix-mockup.mjs` | `simplix-mockup <command>`: runs one file of `checks/` |
 | `checks/` | `check-screens`, `check-designs`, `check-imports`, `check-versions`, `console-menu`, `screen-design`, `run-stages`, `new-override`, `extract-tokens`, `capture`, `story-digest`, `init-mockup` |
 | `scaffold/` | Files `init-mockup` copies into a new mockup root |
-| `lib/` | Helpers the checks and the plugin share, each proved by the `*.test.mjs` beside it (`pnpm test`) |
+| `lib/` | Helpers the checks and the plugin share, each proved by the `*.test.mjs` beside it (`pnpm test`); `lib/screen-design.mjs` is also an entry (`/screen-design`), for a root whose own check reads a design entry |
 
 ## Designs
 
