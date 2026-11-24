@@ -28,6 +28,9 @@
 | `sync-version.mjs` | | 루트 버전을 모든 패키지에 기록 |
 | | `--check` | 버전이 다른 패키지가 있으면 실패 |
 | | `--set <version>` | 루트 버전을 설정하고 모든 패키지에 기록하며 `CHANGELOG.md`도 함께 갱신 |
+| `build-docs.mjs` | | 문서 사이트를 `build-docs/`에 조립하고, 대상이 없는 링크나 사이드바에 없는 페이지가 있으면 실패 |
+| `preview-docs.mjs` | `[--port <port>] [--release <version>...]` | GitHub Pages와 같은 구조로 버전마다 폴더를 두어 사이트를 제공 |
+| `prepare-docs.mjs` | `<previous> <built> <output> <version>` | 게시된 사이트에 새 빌드를 병합. `Deploy Documentation` 워크플로에서 실행 |
 
 ## kit 패키지
 

@@ -28,6 +28,9 @@
 | `sync-version.mjs` | | Writes the root version into every package |
 | | `--check` | Fails when a package is out of sync |
 | | `--set <version>` | Sets the root version, writes it everywhere, and moves `CHANGELOG.md` with it |
+| `build-docs.mjs` | | Assembles the documentation site under `build-docs/`, and fails on a link that leads nowhere or a page a sidebar does not list |
+| `preview-docs.mjs` | `[--port <port>] [--release <version>...]` | Serves the site as GitHub Pages does, with a folder for each version |
+| `prepare-docs.mjs` | `<previous> <built> <output> <version>` | Merges a new build into the published site. The `Deploy Documentation` workflow runs it |
 
 ## A kit package
 

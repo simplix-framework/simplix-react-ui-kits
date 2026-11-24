@@ -16,3 +16,4 @@ version and date, then opens a fresh `Unreleased` section for the following deve
 - `@simplix-react-ui-kits/console-core`, `console-clarity` and `console-classic`: the console UI kit, its parts and its two designs.
 - `@simplix-react-ui-kits/site-core` and `site-clarity`: the site UI kit and its design.
 - `@simplix-react-ui-kits/mockup`: the Storybook preview and preset of a mockup root, the `simplix-mockup` checks, and the generator of a new root.
+- A documentation site: `node scripts/build-docs.mjs` assembles the documents of both languages into a Docsify site, and the `Deploy Documentation` workflow publishes it to GitHub Pages with one folder for each version.
