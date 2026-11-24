@@ -59,7 +59,8 @@ const server = http.createServer((request, response) => {
       file = path.join(file, 'index.html');
     }
     const type = types[path.extname(file)] ?? 'application/octet-stream';
-    response.writeHead(200, { 'Content-Type': /^(text|application\/json|image\/svg)/.test(type) ? type + '; charset=utf-8' : type });
+    // A preview is rebuilt often, so nothing of it may be served from the browser cache.
+    response.writeHead(200, { 'Content-Type': /^(text|application\/json|image\/svg)/.test(type) ? type + '; charset=utf-8' : type, 'Cache-Control': 'no-store' });
     response.end(fs.readFileSync(file));
   } catch {
     response.writeHead(404);

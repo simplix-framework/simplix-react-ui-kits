@@ -75,9 +75,9 @@ test('release deployment retains snapshot, replaces same version and updates arc
 });
 
 test('a heading has one id on the repository host and another in Docsify', () => {
-  const headings = ['1. Colours, fonts (and radius)', 'Layout  ·  behaviour', 'Using `useList`', 'Setup', 'Setup', '[Linked](./x.md) title'];
-  assert.deepEqual(githubIds(headings), ['1-colours-fonts-and-radius', 'layout----behaviour', 'using-uselist', 'setup', 'setup-1', 'linked-title']);
-  assert.deepEqual(docsifyIds(headings), ['_1-colours-fonts-and-radius', 'layout--·--behaviour', 'using-uselist', 'setup', 'setup-1', 'linked-title']);
+  const headings = ['1. Colours, fonts (and radius)', 'Layout  ·  behaviour', 'Using `useList`', 'Setup', 'Setup', '[Linked](./x.md) title', "Don't return `Promise<T>` & **more**", 'The snake_case key'];
+  assert.deepEqual(githubIds(headings), ['1-colours-fonts-and-radius', 'layout----behaviour', 'using-uselist', 'setup', 'setup-1', 'linked-title', 'dont-return-promiset--more', 'the-snake_case-key']);
+  assert.deepEqual(docsifyIds(headings), ['_1-colours-fonts-and-radius', 'layout-·-behaviour', 'using-uselist', 'setup', 'setup-1', 'linked-title', 'don39t-return-promiselttgt-amp-more', 'the-snake_case-key']);
 });
 
 /** A repository with two languages, one document that has both and one that has English only. */
@@ -86,10 +86,10 @@ function fixture(t, sidebar = { en: ['README', 'guides/README', 'guides/usage', 
   put(root, 'package.json', JSON.stringify({ version: '1.2.3-SNAPSHOT' }));
   put(root, 'docs/site.json', JSON.stringify({
     name: 'project', description: 'A project', repository: 'https://example.test/owner/project', branch: 'main',
-    languages: ['en', 'ko'], homes: ['README.md'], documents: ['packages/*/README.md', 'tools/cli/README.md'],
-    theme: { color: '#111', strong: '#000', cover: '#eee' },
+    title: 'Project', badge: ['Pro-ject', 'UI Kit'], languages: ['en', 'ko'], homes: ['README.md'], documents: ['packages/*/README.md', 'tools/cli/README.md'],
+    theme: { color: '#112233', cover: '#eee', coverTitle: '#111', coverText: '#222', button: '#333', buttonHover: '#444' },
   }));
-  put(root, 'docs/index.html', '<html><head><title>{{NAME}} Documentation</title></head><body>{{HOME}} {{THEME_COLOR}}<!-- Docsify core --><script src="https://cdn.test/docsify@5"></script></body></html>');
+  put(root, 'docs/index.html', '<html><head><title>{{TITLE}} Documentation</title></head><body>{{NAME}} {{HOME}} {{THEME_COLOR}} {{BADGE}}<!-- Docsify core --><script src="https://cdn.test/docsify@4"></script></body></html>');
   put(root, 'docs/_coverpage.md', '# {{NAME}} {{VERSION}} {{VERSION_BADGE}}\n');
   put(root, 'docs/_navbar.md', '* [English](/en/README.md)\n');
   put(root, 'docs/assets/figure.en.svg', '<svg/>');
@@ -138,7 +138,7 @@ test('the build places every document and rewrites every link to its place in th
   assert.match(usage, /!\[Figure with items\[\]\]\(\.\.\/\.\.\/assets\/figure\.en\.svg\)/);
   assert.match(usage, /<img src="assets\/logo\.png" alt="logo" \/>/);
   assert.equal(usage.split('[kept](./missing.md)').length - 1, 2, 'code is left as written');
-  assert.match(usage, /blob\/main\/docs\/en\/guides\/usage\.md" target="_blank" rel="noopener noreferrer">View source</);
+  assert.match(usage, /blob\/main\/docs\/en\/guides\/usage\.md" target="_blank" rel="noopener noreferrer">Edit on GitHub</);
 
   assert.match(page('en/guides/README.md'), /\[Usage\]\(\/en\/guides\/usage\.md#_2-run-it\)/);
   assert.match(page('ko/guides/README.md'), /\[사용\]\(\/ko\/guides\/usage\.md#_2-실행하기\)/);
@@ -152,7 +152,8 @@ test('the build places every document and rewrites every link to its place in th
   assert.match(page('en/tools/cli/README.md'), /\[Run it\]\(\/en\/guides\/usage\.md#_2-run-it\)/);
 
   assert.equal(page('index.html').includes('{{'), false);
-  assert.match(page('index.html'), /<title>project Documentation<\/title>/);
+  assert.match(page('index.html'), /<title>Project Documentation<\/title>/);
+  assert.match(page('index.html'), /badge\/Pro--ject-UI_Kit-112233\?style=for-the-badge/);
   assert.match(page('_coverpage.md'), /1\.2\.3-SNAPSHOT 1\.2\.3--SNAPSHOT/);
   assert.equal(page('_sidebar.md'), page('en/_sidebar.md'));
   assert.ok(fs.existsSync(path.join(root, 'build-docs', '.nojekyll')));

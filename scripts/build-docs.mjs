@@ -22,7 +22,7 @@ import { dirname, join, posix } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const REPOSITORY_ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
-const SOURCE_LINK = { en: 'View source', ko: '원본 보기' };
+const SOURCE_LINK = { en: 'Edit on GitHub', ko: 'GitHub에서 편집' };
 const EXTERNAL = /^([a-z][a-z0-9+.-]*:|\/\/)/i;
 // The text of a link may hold one level of brackets: an image, or a name such as items[].
 const LINK = /(!?)\[((?:[^[\]]|\[[^[\]]*\])*)\]\(\s*<?([^)\s>]+)>?(\s+"[^"]*")?\s*\)/g;
@@ -114,7 +114,7 @@ export function githubIds(headings) {
     headings.map(text =>
       text
         .replace(/!?\[([^\]]*)\]\([^)]*\)/g, '$1')
-        .replace(/[`*_~]/g, '')
+        .replace(/[`*~]|(?<![\p{L}\p{N}])_+|_+(?![\p{L}\p{N}])/gu, '')
         .trim()
         .toLowerCase()
         .replace(/[^\p{L}\p{N}\p{M}\s_-]/gu, '')
@@ -123,20 +123,37 @@ export function githubIds(headings) {
   );
 }
 
-/** The ids Docsify 5 gives the headings of a document (its slugify, applied to the heading text). */
+const ENTITIES = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+const entities = (text, pattern) => text.replace(pattern, character => ENTITIES[character]);
+
+/** A heading as the HTML Docsify's Markdown renderer hands to its heading renderer. */
+function headingHtml(text) {
+  const kept = [];
+  const keep = html => MASK + (kept.push(html) - 1) + MASK;
+  return text
+    .replace(CODE_SPAN, span => {
+      const code = span.replace(/^`+ ?| ?`+$/g, '');
+      return keep('<code>' + entities(code, /[&<>"']/g) + '</code>');
+    })
+    .replace(/!\[[^\]]*\]\([^)]*\)/g, () => keep('<img>'))
+    .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1')
+    .replace(/<\/?[A-Za-z][^>]*>/g, keep)
+    .replace(/\*\*|~~|\*|(?<![\p{L}\p{N}])_+|_+(?![\p{L}\p{N}])/gu, '')
+    .replace(/[<>"']|&(?!#?\w+;)/g, character => ENTITIES[character])
+    .replace(MASKED, (_, index) => kept[Number(index)]);
+}
+
+/** The ids Docsify 4 gives the headings of a document (its slugify, applied to the heading as HTML). */
 export function docsifyIds(headings) {
   return numbered(
     headings.map(text =>
-      text
+      headingHtml(text)
         .trim()
-        .normalize('NFC')
-        .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
-        .replace(/\uFE0F/g, '')
-        .replace(/[\p{Emoji_Presentation}\p{Extended_Pictographic}]/gu, '')
         .replace(/[A-Z]+/g, upper => upper.toLowerCase())
         .replace(/<[^>]+>/g, '')
         .replace(DOCSIFY_REMOVED, '')
         .replace(/\s/g, '-')
+        .replace(/-+/g, '-')
         .replace(/^(\d)/, '_$1'),
     ),
   );
@@ -144,7 +161,7 @@ export function docsifyIds(headings) {
 
 export function loadConfig(root) {
   const config = JSON.parse(read(join(root, 'docs/site.json')));
-  for (const key of ['name', 'description', 'repository', 'branch', 'languages', 'theme']) {
+  for (const key of ['name', 'title', 'badge', 'description', 'repository', 'branch', 'languages', 'theme']) {
     if (config[key] === undefined) throw new Error('docs/site.json has no "' + key + '"');
   }
   return { documents: [], homes: [], keywords: '', ...config };
@@ -329,6 +346,9 @@ function checkSidebars(site) {
   }
 }
 
+/** A word of a shields.io badge: a hyphen and an underscore are doubled, and a space is an underscore. */
+const badgeText = text => encodeURIComponent(text.replaceAll('-', '--').replaceAll('_', '__').replaceAll(' ', '_'));
+
 const fill = (text, values, file) =>
   text.replace(/\{\{([A-Z_]+)\}\}/g, (whole, key) => {
     if (values[key] === undefined) throw new Error(file + ' names the unknown value ' + whole);
@@ -349,9 +369,15 @@ export function buildDocs({ root = REPOSITORY_ROOT, out = join(root, 'build-docs
     VERSION: built,
     // shields.io reads a hyphen in a badge value as a separator, so it is doubled.
     VERSION_BADGE: built.replaceAll('-', '--'),
+    TITLE: config.title,
+    // A shields.io badge with the two words of the name, in the theme colour.
+    BADGE: 'https://img.shields.io/badge/' + config.badge.map(badgeText).join('-') + '-' + config.theme.color.replace('#', '') + '?style=for-the-badge',
     THEME_COLOR: config.theme.color,
-    THEME_STRONG: config.theme.strong,
     THEME_COVER: config.theme.cover,
+    THEME_COVER_TITLE: config.theme.coverTitle,
+    THEME_COVER_TEXT: config.theme.coverText,
+    THEME_BUTTON: config.theme.button,
+    THEME_BUTTON_HOVER: config.theme.buttonHover,
   };
 
   rmSync(out, { recursive: true, force: true });
