@@ -1,0 +1,38 @@
+# simplix-react-ui-kits
+
+> UI kits for simplix-react products: the screen parts, the screen templates and the mockup tooling a product draws every screen with.
+
+A kit is a design built on simplix-react. An area (an operations console, a customer-facing site) has a core kit that holds behaviour, markup and templates, and design kits that redraw the same parts. A product picks one design kit, generates its screens from the kit's templates with the simplix CLI, and may keep a Storybook of those screens in a mockup root.
+
+## Docs
+
+### Getting Started
+- [Overview](https://raw.githubusercontent.com/simplix-framework/simplix-react-ui-kits/main/docs/en/getting-started/overview.md): What a kit is, what the repository holds, and how a product, a mockup and the framework fit together
+- [Installation](https://raw.githubusercontent.com/simplix-framework/simplix-react-ui-kits/main/docs/en/getting-started/installation.md): Published version, workspace submodule or linked checkout, and the stylesheet import
+- [Quick Start](https://raw.githubusercontent.com/simplix-framework/simplix-react-ui-kits/main/docs/en/getting-started/quick-start.md): Name the kit, fence the imports, and generate a console screen
+
+### Core Concepts
+- [Kits and Designs](https://raw.githubusercontent.com/simplix-framework/simplix-react-ui-kits/main/docs/en/core-concepts/kits-and-designs.md): Core kits, design kits, slots, segments, and why a design kit holds no component
+- [Screen Templates](https://raw.githubusercontent.com/simplix-framework/simplix-react-ui-kits/main/docs/en/core-concepts/screen-templates.md): Template resolution, kit tokens, the fence, and the harness that holds kits at parity
+- [Mockup Roots](https://raw.githubusercontent.com/simplix-framework/simplix-react-ui-kits/main/docs/en/core-concepts/mockup-roots.md): What a mockup root is and why the mockup package holds no product value and no design
+- [Console Pages](https://raw.githubusercontent.com/simplix-framework/simplix-react-ui-kits/main/docs/en/core-concepts/console-pages.md): Page order, the dashboard grid, the page region contract
+- [Console Lists](https://raw.githubusercontent.com/simplix-framework/simplix-react-ui-kits/main/docs/en/core-concepts/console-lists.md): Columns, table and card presentation, filters, filters in the address, row actions
+- [Console Records and Search](https://raw.githubusercontent.com/simplix-framework/simplix-react-ui-kits/main/docs/en/core-concepts/console-records-and-search.md): The record detail and the console search
+
+### Guides
+- [Use a Kit in a Product](https://raw.githubusercontent.com/simplix-framework/simplix-react-ui-kits/main/docs/en/guides/use-a-kit-in-a-product.md): Name the kit, import the stylesheet, wrap the app, fence the imports
+- [Generate Screens](https://raw.githubusercontent.com/simplix-framework/simplix-react-ui-kits/main/docs/en/guides/generate-screens.md): `simplix scaffold` and `simplix add-page` with the options a design decides
+- [Create a Mockup Root](https://raw.githubusercontent.com/simplix-framework/simplix-react-ui-kits/main/docs/en/guides/create-a-mockup-root.md): Generate a root, draw a screen, check it, capture it
+- [Propose a Framework Design Change](https://raw.githubusercontent.com/simplix-framework/simplix-react-ui-kits/main/docs/en/guides/propose-a-framework-design-change.md): A design override in a mockup root, from start to adoption
+- [Add a Screen Part](https://raw.githubusercontent.com/simplix-framework/simplix-react-ui-kits/main/docs/en/guides/add-a-screen-part.md): Add a part, a segment or a template to a core kit
+- [Work on the Kits](https://raw.githubusercontent.com/simplix-framework/simplix-react-ui-kits/main/docs/en/guides/work-on-the-kits.md): Set the workspace up and run its checks
+- [Release](https://raw.githubusercontent.com/simplix-framework/simplix-react-ui-kits/main/docs/en/guides/release.md): Publish every package under one version
+
+### Tutorials
+- [Build a Mockup Root with One Screen](https://raw.githubusercontent.com/simplix-framework/simplix-react-ui-kits/main/docs/en/tutorials/first-mockup-screen.md): Generate a root, draw one screen, pass the checks, follow the toolbar
+
+### Reference
+- [simplix-mockup Commands](https://raw.githubusercontent.com/simplix-framework/simplix-react-ui-kits/main/docs/en/reference/simplix-mockup-commands.md): Every command, its arguments and exit codes
+- [mockup.config.json](https://raw.githubusercontent.com/simplix-framework/simplix-react-ui-kits/main/docs/en/reference/mockup-config.md): Every key of a mockup root's configuration
+- [Kit Manifest](https://raw.githubusercontent.com/simplix-framework/simplix-react-ui-kits/main/docs/en/reference/kit-manifest.md): The `simplix` keys of a kit and the mockup package's entries
+- [Workspace Scripts](https://raw.githubusercontent.com/simplix-framework/simplix-react-ui-kits/main/docs/en/reference/workspace-scripts.md): The scripts of the root and of each package

@@ -1,0 +1,19 @@
+# 문서
+
+simplix-react-ui-kits 문서입니다. 문서를 여는 목적에 따라 나누었습니다.
+
+| 구분 | 읽는 상황 | 내용 |
+| --- | --- | --- |
+| [시작하기](/ko/getting-started/README.md) | kit을 처음 접할 때 | 개요, 설치, 빠른 시작 |
+| [핵심 개념](/ko/core-concepts/README.md) | 설계 결정의 이유를 알고 싶을 때 | kit과 디자인, 화면 템플릿, 목업 루트, 콘솔 페이지 · 목록 · 레코드와 검색 |
+| [가이드](/ko/guides/README.md) | 작업을 진행하는 중일 때 | kit 사용, 화면 생성, 목업 루트 생성, 프레임워크 디자인 변경 제안, 화면 파트 추가, kit 개발, 릴리스 |
+| [튜토리얼](/ko/tutorials/README.md) | 직접 따라 하며 익힐 때 | 화면 하나로 목업 루트 만들기 |
+| [참조](/ko/reference/README.md) | 이름이나 값을 찾을 때 | `simplix-mockup` 명령, `mockup.config.json`, kit 매니페스트 키, 워크스페이스 스크립트 |
+
+문서 하나는 한 가지 유형만 다룹니다. 튜토리얼은 순서대로 따라 하는 학습 문서, 가이드는 문제 하나의 해결 방법, 참조는 목록, 핵심 개념은 이유를 설명하는 문서입니다. 다른 유형의 내용이 필요한 곳에는 해당 문서의 링크를 둡니다.
+
+> English: [docs/en](/en/README.md)
+
+---
+
+<p class="page-source"><a href="https://github.com/simplix-framework/simplix-react-ui-kits/blob/main/docs/ko/README.md" target="_blank" rel="noopener noreferrer">원본 보기</a></p>
