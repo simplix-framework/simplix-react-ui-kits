@@ -74,7 +74,7 @@ Package documents: [site-clarity](packages/site-clarity/README.md), [site-core](
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md). The rules that bind every change are in [AGENTS.md](AGENTS.md).
+See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## License
 

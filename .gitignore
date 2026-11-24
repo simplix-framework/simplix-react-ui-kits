@@ -7,3 +7,6 @@ testing/template-harness/.out/
 testing/mockup-root/.out/
 __pycache__/
 build-docs/
+.claude/
+AGENTS.md
+CLAUDE.md

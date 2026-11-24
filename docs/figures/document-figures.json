@@ -1,0 +1,55 @@
+{
+  // The figures of docs/en and docs/ko, drawn by docs/figures/*.py with the svg-diagrams
+  // document-figure library. A figure is saved once per language, as <name>-en.svg and <name>-ko.svg.
+  "out": "../assets/diagrams",
+  "modules": ["*.py"],
+  "helpers": ["labels.py"],
+
+  // A Markdown page on the repository host is read in a column about 800px wide, so a 1200-unit
+  // board placed across it scales by 0.667.
+  "boards": { "1200": 800 },
+  "boardNames": { "FULL": 1200 },
+  "columnBoard": 1200,
+  "placeScale": 1.0,
+  "margin": 28,
+  "sideMargin": 28,
+
+  // The page's body is 16px; the figure body prints at 14.7px (22 units), the tag rung at 12px.
+  "ladder": [18, 20, 22, 24, 26, 28, 32],
+  "names": { "MICRO": 18, "CHIP": 20, "BODY": 22, "LEAD": 24, "CARD": 24, "SECTION": 26,
+             "EMPH": 28, "DISPLAY": 32 },
+  "steps": { "STEP": 30, "CHIP_STEP": 26 },
+  "subBodyShareMax": null,
+  "maxRung": null,
+
+  "strokes": { "HAIRLINE": 1.5, "STROKE": 2.0, "THICK": 3.0 },
+  "dashes": {
+    "DASH_PENDING": { "pattern": "6 5", "words": ["proposed", "제안"] },
+    "DASH_OUTSIDE": { "pattern": "5 4", "words": ["outside this repository", "저장소 밖"] },
+    "DASH_ALT":     { "pattern": "4 4", "words": ["alternative", "대안"] },
+    "DASH_BLOCK":   { "pattern": "3 3", "words": ["refused", "거부"] }
+  },
+  "dashWord": "dashed",
+
+  "theme": "paper",
+  "fontStack": null,
+  "icon": { "size": 26, "sw": 1.8 },
+  "icons": {},
+  "accents": {},
+  "badges": {},
+  "verdict": null,
+  "bullets": true,
+  "noBreak": [],
+
+  "heightReview": { "1200": 900 },
+  "deadMargin": null,
+  "stripRatio": 0.28,
+  "legendWords": { "dashed": ["dashed", "점선"] },
+  "footLegend": null,
+  "labelForm": {},
+  "register": null,
+  "sectionNumbers": true,
+  "logos": null,
+  "references": null,
+  "plans": null
+}
