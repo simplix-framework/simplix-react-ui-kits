@@ -8,5 +8,10 @@ testing/mockup-root/.out/
 __pycache__/
 build-docs/
 .claude/
+AGENT.md
+GEMINI.md
+.cursor/
+.cursorrules
+.codex/
 AGENTS.md
 CLAUDE.md
