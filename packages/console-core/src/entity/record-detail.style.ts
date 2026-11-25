@@ -21,15 +21,15 @@ export const recordHeadSubtitleStyle = defineSlotStyle({
 /** The record's key figures under its name: a balance, what is held, the limit. */
 export const recordHeadFiguresStyle = defineSlotStyle({
   slot: "console-record-head-figures",
-  base: "flex flex-wrap gap-x-6 gap-y-2 pt-2",
+  base: "flex flex-wrap gap-x-5 gap-y-1 pt-1.5",
   variants: {},
   defaultVariants: {},
 });
 
-/** One key figure: its name over its value. */
+/** One key figure: its name and its value on one line, so the head stays low. */
 export const recordHeadFigureStyle = defineSlotStyle({
   slot: "console-record-head-figure",
-  base: "flex min-w-0 flex-col",
+  base: "flex min-w-0 items-baseline gap-1.5",
   variants: {},
   defaultVariants: {},
 });
@@ -42,10 +42,27 @@ export const recordHeadFigureLabelStyle = defineSlotStyle({
   defaultVariants: {},
 });
 
-/** A key figure's value, in figures that line up. */
+/**
+ * A key figure's value, in figures that line up. It is set in the label's size at a medium weight:
+ * the record's name is the one heavy line of the head, and a figure reads as a fact about it.
+ */
 export const recordHeadFigureValueStyle = defineSlotStyle({
   slot: "console-record-head-figure-value",
-  base: "flex items-center gap-2 text-sm font-semibold tabular-nums",
+  base: "flex min-w-0 items-center gap-2 text-xs font-medium text-foreground tabular-nums",
+  variants: {},
+  defaultVariants: {},
+});
+
+/**
+ * The record's body under its head. A notice that leads it stands 12px under the head's rule, as
+ * the title of a leading section does; the room is the notice's own, so it goes with a notice the
+ * reader puts away.
+ */
+export const recordBodyStyle = defineSlotStyle({
+  slot: "console-record-body",
+  // A part: the body is a `Stack`, which owns `data-slot`.
+  as: "part",
+  base: "[&>[data-slot=console-notice-card]:first-child]:mt-2 [&>[data-slot=alert-banner]:first-child]:mt-2",
   variants: {},
   defaultVariants: {},
 });

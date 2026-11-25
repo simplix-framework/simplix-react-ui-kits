@@ -21,6 +21,7 @@ import { CountedTab } from "../layout/page-tabs";
 import { RecordNote, RecordNoticeMenu, RecordNotices, RecordVerbButton, RecordVerbs, standingNoticeKeys } from "./record-blocks";
 import { PermissionMatrix } from "./permission-matrix";
 import {
+  recordBodyStyle,
   recordHeadFigureLabelStyle,
   recordHeadFigureStyle,
   recordHeadFigureValueStyle,
@@ -329,7 +330,9 @@ export function RecordDetail({
       displayZone="Asia/Seoul"
       footer={
         <CrudDetail.DefaultActions {...(onBack ? { onBack } : { onClose })}>
-          {footerTabVerbs && footerTabVerbs.length > 0 ? (
+          {/* A record with no command hands the footer nothing, so a row that would hold only the
+              close its head already draws is not drawn. */}
+          {actions.length === 0 && !(footerTabVerbs && footerTabVerbs.length > 0) ? null : footerTabVerbs && footerTabVerbs.length > 0 ? (
             // Two groups, so the row has one place to break: the open tab's verbs above, the
             // record's commands below.
             <Flex gap="xs" wrap justify="end">
@@ -352,7 +355,7 @@ export function RecordDetail({
         </CrudDetail.DefaultActions>
       }
     >
-      <Stack gap="sm">
+      <Stack gap="sm" {...partAttributes(recordBodyStyle, {})}>
         {/* Above the body whether or not tabs follow: a notice explains the fields under it, so it is read first. */}
         <RecordNotices notices={notices} />
         <FieldEnumsProvider value={fieldEnums}>{body}</FieldEnumsProvider>

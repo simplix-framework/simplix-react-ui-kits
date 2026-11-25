@@ -470,13 +470,13 @@
     @apply text-xs text-muted-foreground;
   }
   [data-slot="console-record-head-figure"][data-slot][data-s-console-record-head-figure] {
-    @apply flex min-w-0 flex-col;
+    @apply flex min-w-0 items-baseline gap-1.5;
   }
   [data-slot="console-record-head-figure-value"][data-slot][data-s-console-record-head-figure-value] {
-    @apply flex items-center gap-2 text-sm font-semibold tabular-nums;
+    @apply flex min-w-0 items-center gap-2 text-xs font-medium text-foreground tabular-nums;
   }
   [data-slot="console-record-head-figures"][data-slot][data-s-console-record-head-figures] {
-    @apply flex flex-wrap gap-x-6 gap-y-2 pt-2;
+    @apply flex flex-wrap gap-x-5 gap-y-1 pt-1.5;
   }
   [data-slot="console-record-head-subtitle"][data-slot][data-s-console-record-head-subtitle] {
     @apply block truncate pt-0.5 text-xs text-muted-foreground;
@@ -1403,6 +1403,9 @@
   }
   :where([data-part="console-quick-search-input"])[data-part][data-p-console-quick-search-input] {
     @apply ps-7 text-sm;
+  }
+  :where([data-part="console-record-body"])[data-part][data-p-console-record-body] {
+    @apply [&>[data-slot=console-notice-card]:first-child]:mt-2 [&>[data-slot=alert-banner]:first-child]:mt-2;
   }
   :where([data-part="console-record-head"])[data-part][data-p-console-record-head] {
     @apply gap-3 [&_[data-slot=heading]]:truncate [&>[data-slot=console-initials-avatar]]:shrink-0;
