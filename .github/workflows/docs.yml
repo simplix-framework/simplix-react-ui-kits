@@ -88,8 +88,8 @@ jobs:
           ref: main
           path: .docs-tooling
           sparse-checkout: |
-            docs/assets/version-selector.js
-            docs/assets/version-selector.css
+            docs/index.html
+            docs/assets
             scripts/prepare-docs.mjs
           sparse-checkout-cone-mode: false
 

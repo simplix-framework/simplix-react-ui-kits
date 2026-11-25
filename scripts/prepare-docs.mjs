@@ -4,26 +4,57 @@
  *
  *   node scripts/prepare-docs.mjs <previous site> <built site> <output> <snapshot|x.y.z>
  *
- * The folder of the given version is replaced by the build, every other version folder of the
- * previous site is kept, the version selector of every folder is brought up to date, and
- * versions.json and the redirect of the root are written.
+ * The folder of the given version is replaced by the build and every other version folder of the
+ * previous site is kept, except that a release line (2.x, 1.x) keeps its newest release only.
+ * Every folder then takes the current shell of the site (index.html, the shared assets and the
+ * settings of this library), so an archived version looks and navigates like the newest one.
+ * versions.json and the redirect of the root are written last.
+ *
+ * This file is the same in every SimpliX documentation repository.
  */
 
 import fs from 'node:fs';
 import path from 'node:path';
-import { pathToFileURL } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
-const selectorDir = new URL('../docs/assets/', import.meta.url);
-const selectorFiles = ['version-selector.js', 'version-selector.css'];
+const docsDir = fileURLToPath(new URL('../docs/', import.meta.url));
+const selector = path.join(docsDir, 'assets', 'version-selector.js');
 const folder = /^(?:snapshot|\d+\.\d+\.\d+(?:-SNAPSHOT)?)$/;
+/** What a version folder takes from the current site, relative to docs/ and to the folder. */
+const SHELL = ['index.html', 'assets/site', 'assets/site-config.js', 'assets/version-selector.js'];
 
 /** The version selector is a browser script; its path arithmetic is read here without a window. */
 function loadNavigation() {
   const module = { exports: {} };
-  new Function('module', fs.readFileSync(new URL(selectorFiles[0], selectorDir), 'utf8'))(module);
+  new Function('module', fs.readFileSync(selector, 'utf8'))(module);
   return module.exports;
 }
 export const navigation = loadNavigation();
+
+/** The newest release of each major line, newest line first. */
+export function lineLatest(releases) {
+  const lines = new Set();
+  return navigation.versions({ releases, snapshot: null }).filter(version => {
+    const line = version.split('.')[0];
+    if (lines.has(line)) return false;
+    lines.add(line);
+    return true;
+  });
+}
+
+/** The language folders of a version: two letters, with a home page. */
+function languagesOf(directory) {
+  return fs.readdirSync(directory, { withFileTypes: true })
+    .filter(entry => entry.isDirectory() && /^[a-z]{2}$/.test(entry.name) && fs.existsSync(path.join(directory, entry.name, 'README.md')))
+    .map(entry => entry.name)
+    .sort();
+}
+
+function versionFolders(root) {
+  return fs.readdirSync(root, { withFileTypes: true })
+    .filter(entry => entry.isDirectory() && folder.test(entry.name) && fs.existsSync(path.join(root, entry.name, 'index.html')))
+    .map(entry => entry.name);
+}
 
 export function prepareDocs({ previous, built, output, version }) {
   if (!/^(?:snapshot|\d+\.\d+\.\d+)$/.test(version)) throw new Error('Invalid documentation version');
@@ -34,37 +65,39 @@ export function prepareDocs({ previous, built, output, version }) {
   if (!fs.existsSync(path.join(built, 'index.html'))) throw new Error('Missing built documentation');
   fs.mkdirSync(output, { recursive: true });
   if (fs.existsSync(previous)) {
-    for (const entry of fs.readdirSync(previous, { withFileTypes: true })) {
-      if (entry.isDirectory() && folder.test(entry.name) && fs.existsSync(path.join(previous, entry.name, 'index.html'))) {
-        fs.cpSync(path.join(previous, entry.name), path.join(output, entry.name), { recursive: true });
-      }
-    }
+    for (const name of versionFolders(previous)) fs.cpSync(path.join(previous, name), path.join(output, name), { recursive: true });
   }
   const destination = path.join(output, version);
   fs.rmSync(destination, { recursive: true, force: true });
   fs.cpSync(built, destination, { recursive: true });
 
-  const directories = fs.readdirSync(output, { withFileTypes: true })
-    .filter(entry => entry.isDirectory() && folder.test(entry.name) && fs.existsSync(path.join(output, entry.name, 'index.html')))
-    .map(entry => entry.name);
+  // A release line keeps its newest release.
+  const kept = new Set(lineLatest(versionFolders(output)));
+  for (const name of versionFolders(output)) {
+    if (name !== 'snapshot' && !kept.has(name)) fs.rmSync(path.join(output, name), { recursive: true, force: true });
+  }
+
+  const directories = versionFolders(output);
   const sorted = navigation.versions({ releases: directories, snapshot: directories.includes('snapshot') ? 'snapshot' : null });
   const manifest = { releases: sorted.filter(name => name !== 'snapshot'), snapshot: sorted.includes('snapshot') ? 'snapshot' : null };
-  // An archived version keeps its own pages and takes the current version selector.
+
+  // Every version takes the current shell and says which languages it has.
   for (const directory of directories) {
     const base = path.join(output, directory);
-    fs.mkdirSync(path.join(base, 'assets'), { recursive: true });
-    for (const file of selectorFiles) fs.copyFileSync(new URL(file, selectorDir), path.join(base, 'assets', file));
-    const index = path.join(base, 'index.html');
-    let html = fs.readFileSync(index, 'utf8');
-    html = html.replace(/\s*<!-- Version selector -->\s*<script\b[^>]*>[\s\S]*?<\/script>/g, '');
-    html = html.replace(/\s*<link\b[^>]*href=["']assets\/version-selector\.css["'][^>]*>/g, '');
-    html = html.replace('</head>', '<link rel="stylesheet" href="assets/version-selector.css">\n</head>');
-    const script = '<!-- Version selector -->\n<script src="assets/version-selector.js"></script>\n';
-    if (html.includes('<!-- Docsify core -->')) html = html.replace('<!-- Docsify core -->', script + '<!-- Docsify core -->');
-    else html = html.replace(/<script\b[^>]*src=["'][^"']*\/docsify(?:@[^/"']*)?(?:\/[^"']*)?["'][^>]*>/, script + '$&');
-    if (!html.includes('src="assets/version-selector.js"')) throw new Error('Cannot locate Docsify entry in ' + index);
-    fs.writeFileSync(index, html);
+    for (const item of SHELL) {
+      const source = path.join(docsDir, item);
+      if (!fs.existsSync(source)) continue;
+      const target = path.join(base, item);
+      fs.rmSync(target, { recursive: true, force: true });
+      fs.mkdirSync(path.dirname(target), { recursive: true });
+      fs.cpSync(source, target, { recursive: true });
+    }
+    const settings = path.join(base, 'assets', 'site-config.js');
+    if (fs.existsSync(settings)) {
+      fs.appendFileSync(settings, '\n/* The languages this version has. */\nwindow.SIMPLIX_FOLDER = ' + JSON.stringify({ languages: languagesOf(base) }) + ';\n');
+    }
   }
+
   fs.writeFileSync(path.join(output, 'versions.json'), JSON.stringify(manifest, null, 2) + '\n');
   const preferred = manifest.releases[0] || manifest.snapshot;
   const title = /<title>([^<]*)<\/title>/.exec(fs.readFileSync(path.join(built, 'index.html'), 'utf8'))?.[1] ?? 'Documentation';

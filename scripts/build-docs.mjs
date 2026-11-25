@@ -383,9 +383,7 @@ export function buildDocs({ root = REPOSITORY_ROOT, out = join(root, 'build-docs
   rmSync(out, { recursive: true, force: true });
   mkdirSync(out, { recursive: true });
   writeFileSync(join(out, '.nojekyll'), '');
-  for (const file of ['index.html', '_coverpage.md', '_navbar.md']) {
-    writeFileSync(join(out, file), fill(read(join(root, 'docs', file)), values, 'docs/' + file));
-  }
+  writeFileSync(join(out, 'index.html'), fill(read(join(root, 'docs/index.html')), values, 'docs/index.html'));
   for (const page of site.pages) {
     mkdirSync(dirname(join(out, page.site)), { recursive: true });
     writeFileSync(join(out, page.site), renderPage(page, site));
