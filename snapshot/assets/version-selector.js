@@ -2,6 +2,7 @@
 (function (root, factory) {
   var api = factory();
   if (typeof module === 'object' && module.exports) module.exports = api;
+  else if (root.SIMPLIX_SITE) root.SimplixVersions = api; // the shared header draws the control
   else api.start(root);
 })(typeof window === 'undefined' ? globalThis : window, function () {
   'use strict';
