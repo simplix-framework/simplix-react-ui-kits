@@ -66,6 +66,9 @@ jobs:
           RELEASE_VERSION: ${{ steps.version.outputs.release }}
         run: node scripts/sync-version.mjs --set "$RELEASE_VERSION"
 
+      - name: Copy the license into each package
+        run: pnpm -r exec cp "$GITHUB_WORKSPACE/LICENSE" "$GITHUB_WORKSPACE/LICENSE_KO" .
+
       - name: Publish
         env:
           # Publishes @simplix-react-ui-kits/* to the public npm registry. Set NPM_TOKEN
