@@ -1,6 +1,6 @@
 {
   "name": "@simplix-react-ui-kits/site-clarity",
-  "version": "0.1.0-SNAPSHOT",
+  "version": "0.1.0",
   "description": "Web site UI kit, clarity design: the site parts drawn with hairline borders, one accent and hierarchy from type",
   "type": "module",
   "repository": {

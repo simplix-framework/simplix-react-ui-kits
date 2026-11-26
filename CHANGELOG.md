@@ -9,7 +9,7 @@ Every package of this repository is released together, under one version. The to
 always the next version, marked `Unreleased`. The release workflow stamps it with the released
 version and date, then opens a fresh `Unreleased` section for the following development version.
 
-## [0.1.0] - Unreleased
+## [0.1.0] - 2026-11-26
 
 ### Added
 

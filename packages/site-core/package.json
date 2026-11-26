@@ -1,6 +1,6 @@
 {
   "name": "@simplix-react-ui-kits/site-core",
-  "version": "0.1.0-SNAPSHOT",
+  "version": "0.1.0",
   "description": "Web site UI kit parts shared by every site design: the site shell, page column and pricing parts, each element marked with the slot a design draws",
   "type": "module",
   "repository": {
