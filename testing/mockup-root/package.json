@@ -1,6 +1,6 @@
 {
   "name": "@simplix-react-ui-kits/mockup-root",
-  "version": "0.1.0",
+  "version": "0.1.1-SNAPSHOT",
   "private": true,
   "type": "module",
   "description": "Generates a mockup root for every kit, through the mockup package's own generator, and runs what a product runs in it: the checks and the Storybook build.",

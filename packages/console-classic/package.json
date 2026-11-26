@@ -1,6 +1,6 @@
 {
   "name": "@simplix-react-ui-kits/console-classic",
-  "version": "0.1.0",
+  "version": "0.1.1-SNAPSHOT",
   "description": "Console UI kit, classic design: the console parts drawn with the framework's classic look",
   "type": "module",
   "repository": {

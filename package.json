@@ -1,6 +1,6 @@
 {
   "name": "simplix-react-ui-kits",
-  "version": "0.1.0",
+  "version": "0.1.1-SNAPSHOT",
   "private": true,
   "type": "module",
   "packageManager": "pnpm@10.12.4",

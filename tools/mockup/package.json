@@ -1,6 +1,6 @@
 {
   "name": "@simplix-react-ui-kits/mockup",
-  "version": "0.1.0",
+  "version": "0.1.1-SNAPSHOT",
   "description": "Mockup tooling for simplix-react products: the Storybook preview and preset a mockup root runs, the checks its screens pass, and the generator of a new root",
   "type": "module",
   "repository": {
